@@ -14,7 +14,7 @@ plugins {
 }
 
 android {
-    namespace = "com.github.se.bootcamp"
+    namespace = "com.android.sample"
     compileSdk = 34
 
 
@@ -29,7 +29,7 @@ android {
 
 
     defaultConfig {
-        applicationId = "com.github.se.bootcamp"
+        applicationId = "com.android.sample"
         minSdk = 29
         targetSdk = 34
         versionCode = 1
