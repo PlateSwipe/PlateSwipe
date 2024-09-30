@@ -4,7 +4,10 @@ name: CI - Test Runner with Sonar
 on:
   push:
     branches:
-      - chore/ci-setup
+      - main
+      - 'feature/**'
+      - 'chore/**'
+      - 'fix/**'
 
   pull_request:
     types:
