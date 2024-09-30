@@ -1,8 +1,12 @@
 [versions]
+# Plugins
 agp = "8.3.0"
 kotlin = "1.8.10"
+gms = "4.4.2"
 coreKtx = "1.12.0"
 ktfmt = "0.17.0"
+
+# Testing unit
 junit = "4.13.2"
 junitVersion = "1.1.5"
 espressoCore = "3.5.1"
@@ -15,9 +19,9 @@ lifecycleRuntimeKtx = "2.7.0"
 kaspresso = "1.5.5"
 robolectric = "4.11.1"
 sonar = "4.4.1.3373"
-gms = "4.4.2"
 
-# Fire base
+
+# Firebase
 firebaseAuth = "23.0.0"
 firebaseAuthKtx = "23.0.0"
 firebaseDatabaseKtx = "21.0.0"
