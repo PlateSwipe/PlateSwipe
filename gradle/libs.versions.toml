@@ -23,12 +23,17 @@ firebaseDatabaseKtx = "21.0.0"
 firebaseFirestore = "25.1.0"
 firebaseUiAuth = "8.0.0"
 
+# Code bar
+mlkit-barcode = "17.0.0"
+camerax = "1.1.0"
+
 # Google Service and Maps
 playServicesAuth = "21.2.0"
 playServicesMaps = "19.0.0"
 mapsCompose = "4.3.3"
 mapsComposeUtils = "4.3.0"
 
+guava = "31.0.1-android"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -64,6 +69,18 @@ maps-compose-utils = { module = "com.google.maps.android:maps-compose-utils", ve
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
 play-services-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "playServicesMaps" }
 
+# CameraX dependencies
+camerax-camera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "camerax" }
+camerax-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "camerax" }
+camerax-view = { group = "androidx.camera", name = "camera-view", version.ref = "camerax" }
+camerax-core = { group = "androidx.camera", name = "camera-core", version.ref = "camerax" }
+camerax-video = { group = "androidx.camera", name = "camera-video", version.ref = "camerax" }
+camerax-extensions = { group = "androidx.camera", name = "camera-extensions", version.ref = "camerax" }
+
+guava = { group = "com.google.guava", name = "guava", version.ref = "guava" }  # Define the Guava library
+
+# ML Kit Barcode Scanning
+mlkit-barcode-scanning = { group = "com.google.mlkit", name = "barcode-scanning", version.ref = "mlkit-barcode" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

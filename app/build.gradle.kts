@@ -45,6 +45,8 @@ android {
 
     buildFeatures {
         compose = true
+        // Need to understand
+        viewBinding = true
     }
 
     composeOptions {
@@ -162,6 +164,18 @@ dependencies {
     implementation(libs.firebase.ui.auth)
     implementation(libs.firebase.auth.ktx)
     implementation(libs.firebase.auth)
+
+    // Code bar scanning
+    implementation(libs.mlkit.barcode.scanning)
+
+    // CameraX dependencies
+    implementation(libs.camerax.camera2)
+    implementation(libs.camerax.lifecycle)
+    implementation(libs.camerax.view)
+    implementation(libs.camerax.core)
+    implementation(libs.camerax.video)
+    implementation(libs.camerax.extensions)
+    implementation(libs.guava)
 }
 
 tasks.withType<Test> {
