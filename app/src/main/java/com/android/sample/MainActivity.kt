@@ -175,27 +175,6 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
         cameraExecutor.shutdown()
     }
-    private class ImageAnalyzer(private val listener: LumaListener) : ImageAnalysis.Analyzer {
-
-        private fun ByteBuffer.toByteArray(): ByteArray {
-            rewind()    // Rewind the buffer to zero
-            val data = ByteArray(remaining())
-            get(data)   // Copy the buffer into a byte array
-            return data // Return the byte array
-        }
-
-        override fun analyze(image: ImageProxy) {
-
-            val buffer = image.planes[0].buffer
-            val data = buffer.toByteArray()
-            val pixels = data.map { it.toInt() and 0xFF }
-            val luma = pixels.average()
-
-            listener(luma)
-
-            image.close()
-        }
-    }
 
     private class CodeBarAnalyzer(
         private val activity: MainActivity
@@ -209,7 +188,8 @@ class MainActivity : AppCompatActivity() {
                 val options = BarcodeScannerOptions.Builder()
                     .setBarcodeFormats(
                         Barcode.FORMAT_QR_CODE,
-                        Barcode.FORMAT_AZTEC
+                        Barcode.FORMAT_AZTEC,
+                        Barcode.FORMAT_EAN_13,
                     )
                     .build()
                 val scanner = BarcodeScanning.getClient(options)
