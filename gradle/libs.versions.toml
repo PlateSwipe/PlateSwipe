@@ -16,6 +16,7 @@ kaspresso = "1.5.5"
 robolectric = "4.11.1"
 sonar = "4.4.1.3373"
 gms = "4.4.2"
+toolingpreview = "1.7.3"
 # Firebase
 firebaseAuth = "23.0.0"
 firebaseAuthKtx = "23.0.0"
@@ -42,7 +43,7 @@ androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-co
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
-
+compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "toolingpreview" }
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 compose-ui = { group = "androidx.compose.ui", name = "ui" }

@@ -129,7 +129,7 @@ dependencies {
     val composeBom = platform(libs.compose.bom)
     implementation(composeBom)
     globalTestImplementation(composeBom)
-
+    implementation(libs.compose.ui.tooling.preview)
     implementation(libs.compose.ui)
     implementation(libs.compose.ui.graphics)
     // Material Design 3
