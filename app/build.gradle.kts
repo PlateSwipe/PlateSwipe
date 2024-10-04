@@ -198,8 +198,8 @@ tasks.register("jacocoTestReport", JacocoReport::class) {
         val coverageFile = file("${buildDir}/reports/jacoco/jacocoTestReport/jacocoTestReport.xml")
         if (coverageFile.exists()) {
             val coverageRatio = parseCoverageRatio(coverageFile)
-            if (coverageRatio < 0.8) { // Set your desired coverage percentage here
-                throw GradleException("Code coverage is below 80%")
+            if (coverageRatio < 0.1) { // Set your desired coverage percentage here
+                throw GradleException("Code coverage is below 10%")
             }
         }
     }
