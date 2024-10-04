@@ -1,8 +1,8 @@
 [versions]
 # Plugins
-agp = "8.3.0"
+agp = "8.4.2"
 json = "20240303"
-kotlin = "1.8.10"
+kotlin = "1.9.0"
 gms = "4.4.2"
 ktfmt = "0.17.0"
 sonar = "4.4.1.3373"
@@ -54,10 +54,10 @@ mapsCompose = "4.3.3"
 mapsComposeUtils = "4.3.0"
 
 # AndroidX and Core lib
-lifecycleRuntimeKtx = "2.7.0"
-coreKtx = "1.12.0"
+lifecycleRuntimeKtx = "2.8.4"
+coreKtx = "1.13.1"
 fragmentKtx = "1.8.2"
-appcompat = "1.6.1"
+appcompat = "1.7.0"
 activityCompose = "1.9.1"
 coreKtxVersion = "1.8.1"
 kotlinxSerializationJson = "1.6.2"

@@ -47,15 +47,6 @@ android {
         jacocoVersion = "0.8.8"
     }
 
-    buildFeatures {
-        compose = true
-    }
-
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
-    }
-
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
