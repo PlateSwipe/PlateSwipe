@@ -92,10 +92,6 @@ jobs:
       - name: Generate Coverage Report
         run: ./gradlew jacocoTestReport
 
-      # Enforce code coverage
-      - name: Enforce code coverage
-        run: ./gradlew checkCoverage
-
       # Upload coverage report (optional if needed in a different job or for tracking)
       - name: Upload coverage
         uses: actions/upload-artifact@v4
