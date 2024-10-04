@@ -161,8 +161,8 @@ tasks.register("jacocoTestReport", JacocoReport::class) {
     mustRunAfter("testDebugUnitTest", "connectedDebugAndroidTest")
 
     reports {
-        xml.required = true
-        html.required = true
+        xml.required.set(true)
+        html.required.set(true)
     }
 
     val fileFilter = listOf(
@@ -186,20 +186,18 @@ tasks.register("jacocoTestReport", JacocoReport::class) {
         include("outputs/code_coverage/debugAndroidTest/connected/*/coverage.ec")
     })
 
-    afterEvaluate {
-        classDirectories.setFrom(files(classDirectories.files.map {
-            fileTree(it) {
-                exclude(fileFilter)
-            }
-        }))
-    }
+    classDirectories.setFrom(files(classDirectories.files.map {
+        fileTree(it) {
+            exclude(fileFilter)
+        }
+    }))
 
     doLast {
         val coverageFile = file("${buildDir}/reports/jacoco/jacocoTestReport/jacocoTestReport.xml")
         if (coverageFile.exists()) {
             val coverageRatio = parseCoverageRatio(coverageFile)
-            if (coverageRatio < 0.1) { // Set your desired coverage percentage here
-                throw GradleException("Code coverage is below 10%")
+            if (coverageRatio < 0.8) { // Set your desired coverage percentage here
+                throw GradleException("Code coverage is below 80%")
             }
         }
     }
