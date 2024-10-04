@@ -206,12 +206,17 @@ tasks.register("jacocoTestReport", JacocoReport::class) {
 fun parseCoverageRatio(file: File): Double {
     val xml = file.readText()
     println("Coverage XML Content: $xml")
-    val regex = Regex("""<counter type="INSTRUCTION" missed="(\d+)" covered="(\d+)" />""")
-    val match = regex.find(xml)
-    return if (match != null) {
-        val (missed, covered) = match.destructured
-        val total = missed.toDouble() + covered.toDouble()
-        covered.toDouble() / total
+    val regex = Regex("""<counter type="INSTRUCTION" missed="(\d+)" covered="(\d+)"\/>""")
+    val matches = regex.findAll(xml)
+    var missed = 0
+    var covered = 0
+    for (match in matches) {
+        val (missedCount, coveredCount) = match.destructured
+        missed += missedCount.toInt()
+        covered += coveredCount.toInt()
+    }
+    return if (missed + covered > 0) {
+        covered.toDouble() / (missed + covered)
     } else {
         -1.0
     }
