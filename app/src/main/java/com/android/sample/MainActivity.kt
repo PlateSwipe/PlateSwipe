@@ -35,50 +35,50 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun PlateSwipeApp(){
-    val navController = rememberNavController()
-    val navigationActions = NavigationActions(navController)
+fun PlateSwipeApp() {
+  val navController = rememberNavController()
+  val navigationActions = NavigationActions(navController)
 
-    // val listToDosViewModel: TODO: implement ListToDosViewModel
+  // val listToDosViewModel: TODO: implement ListToDosViewModel
 
-    NavHost(navController = navController, startDestination = Route.AUTH) {
-        navigation(
-            startDestination = Screen.AUTH,
-            route = Route.AUTH,
-        ) {
-            composable(Screen.AUTH) {}
-        }
-        navigation(
-            startDestination = Screen.MAIN,
-            route = Route.MAIN,
-        ){
-            composable(Screen.MAIN) {}
-        }
-        navigation(
-            startDestination = Screen.FRIDGE,
-            route = Route.FRIDGE,
-        ) {
-            composable(Screen.FRIDGE) {}
-            composable(Screen.INGREDIENT) {}
-        }
-        navigation(
-            startDestination = Screen.SEARCH,
-            route = Route.SEARCH,
-        ) {
-            composable(Screen.SEARCH) {}
-            composable(Screen.RECIPE) {}
-        }
-        navigation(
-            startDestination = Screen.ADD_RECIPE,
-            route = Route.ADD_RECIPE,
-        ){
-            composable(Screen.ADD_RECIPE) {}
-        }
-        navigation(
-            startDestination = Screen.ACCOUNT,
-            route = Route.ACCOUNT,
-        ){
-            composable(Screen.ACCOUNT) {}
-        }
+  NavHost(navController = navController, startDestination = Route.AUTH) {
+    navigation(
+        startDestination = Screen.AUTH,
+        route = Route.AUTH,
+    ) {
+      composable(Screen.AUTH) {}
     }
+    navigation(
+        startDestination = Screen.MAIN,
+        route = Route.MAIN,
+    ) {
+      composable(Screen.MAIN) {}
+    }
+    navigation(
+        startDestination = Screen.FRIDGE,
+        route = Route.FRIDGE,
+    ) {
+      composable(Screen.FRIDGE) {}
+      composable(Screen.INGREDIENT) {}
+    }
+    navigation(
+        startDestination = Screen.SEARCH,
+        route = Route.SEARCH,
+    ) {
+      composable(Screen.SEARCH) {}
+      composable(Screen.RECIPE) {}
+    }
+    navigation(
+        startDestination = Screen.ADD_RECIPE,
+        route = Route.ADD_RECIPE,
+    ) {
+      composable(Screen.ADD_RECIPE) {}
+    }
+    navigation(
+        startDestination = Screen.ACCOUNT,
+        route = Route.ACCOUNT,
+    ) {
+      composable(Screen.ACCOUNT) {}
+    }
+  }
 }
