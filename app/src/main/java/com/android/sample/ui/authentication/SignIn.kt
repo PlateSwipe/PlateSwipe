@@ -85,7 +85,7 @@ fun SignInScreen() {
                 Image(
                     painter = painterResource(id = R.drawable.plateswipe_logo), // Use the new logo
                     contentDescription = "PlateSwipe Logo",
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.fillMaxSize().testTag("logoImage"),
                     contentScale = ContentScale.Crop)
               }
 
