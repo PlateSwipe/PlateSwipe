@@ -10,7 +10,7 @@ sonar = "4.4.1.3373"
 # IU Compose
 composeActivity = "1.8.2"
 composeViewModel = "2.7.0"
-material = "1.11.0"
+material = "1.6.8"
 composeBom = "2024.02.02"
 mockitoAndroid = "5.13.0"
 ui = "1.6.8"
