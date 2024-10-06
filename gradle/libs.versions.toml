@@ -53,7 +53,6 @@ playServicesMaps = "19.0.0"
 mapsCompose = "4.3.3"
 mapsComposeUtils = "4.3.0"
 navigationRuntimeKtx = "2.8.2"
-navigationCompose = "2.8.2"
 
 # AndroidX and Core lib
 lifecycleRuntimeKtx = "2.8.4"
@@ -75,7 +74,6 @@ androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "j
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 #material = { group = "com.google.android.material", name = "material", version.ref = "material" }
-androidx-material = { module = "androidx.compose.material:material", version.ref = "material" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
