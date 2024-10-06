@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
@@ -40,7 +41,7 @@ fun PlateSwipeApp() {
   val navigationActions = NavigationActions(navController)
 
   // val listToDosViewModel: TODO: implement ListToDosViewModel
-
+    Text("Hello Android!")
   NavHost(navController = navController, startDestination = Route.AUTH) {
     navigation(
         startDestination = Screen.AUTH,
