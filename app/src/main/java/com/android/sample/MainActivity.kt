@@ -41,7 +41,7 @@ fun PlateSwipeApp() {
   val navigationActions = NavigationActions(navController)
 
   // val listToDosViewModel: TODO: implement ListToDosViewModel
-    Text("Hello Android!")
+  Text("Hello Android!")
   NavHost(navController = navController, startDestination = Route.AUTH) {
     navigation(
         startDestination = Screen.AUTH,
