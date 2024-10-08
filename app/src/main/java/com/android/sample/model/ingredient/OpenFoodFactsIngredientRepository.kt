@@ -13,17 +13,18 @@ class OpenFoodFactsIngredientRepository(private val client: OkHttpClient) : Ingr
 
   private val openFoodFactsUrl = "https://world.openfoodfacts.net"
 
-  private fun parseOpenFoodFactsJsonToIngredient(json: JSONObject): Ingredient? {
-    try {
-      val ingredientName = json.getString("product_name")
+  private fun parseOpenFoodFactsJsonToIngredient(json: JSONObject): Ingredient {
 
-      return Ingredient(barCode = json.getLong("_id"), name = ingredientName)
-    } catch (e: JSONException) {
-      return null
-    }
+    val ingredientName = json.getString("product_name")
+
+    return Ingredient(barCode = json.getLong("_id"), name = ingredientName)
   }
 
-  override fun get(barCode: Long, onSuccess: (Ingredient) -> Unit, onFailure: (Exception) -> Unit) {
+  override fun get(
+      barCode: Long,
+      onSuccess: (Ingredient?) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
     val url = "$openFoodFactsUrl/api/v2/product/$barCode"
 
     val request =
@@ -42,16 +43,21 @@ class OpenFoodFactsIngredientRepository(private val client: OkHttpClient) : Ingr
               }
 
               override fun onResponse(call: Call, response: Response) {
-                val productJson = JSONObject(response.body!!.string()).getJSONObject("product")
+                try {
+                  val body = JSONObject(response.body!!.string())
 
-                val ingredient = parseOpenFoodFactsJsonToIngredient(productJson)
+                  val status = body.getInt("status")
 
-                if (ingredient == null) {
-                  onFailure(JSONException("Invalid JSON"))
-                  return
+                  if (status != 1) {
+                    onSuccess(null)
+                  } else {
+                    val productJson = body.getJSONObject("product")
+
+                    onSuccess(parseOpenFoodFactsJsonToIngredient(productJson))
+                  }
+                } catch (e: JSONException) {
+                  onFailure(e)
                 }
-
-                onSuccess(ingredient)
               }
             })
   }
@@ -80,16 +86,21 @@ class OpenFoodFactsIngredientRepository(private val client: OkHttpClient) : Ingr
               }
 
               override fun onResponse(call: Call, response: Response) {
-                val products = JSONObject(response.body!!.string()).getJSONArray("products")
+                try {
+                  val products = JSONObject(response.body!!.string()).getJSONArray("products")
 
-                val ingredients: List<Ingredient> =
-                    (0 until products.length()).mapNotNull { i ->
-                      val ingredient = parseOpenFoodFactsJsonToIngredient(products.getJSONObject(i))
+                  val ingredients: List<Ingredient> =
+                      (0 until products.length()).mapNotNull { i ->
+                        val ingredient =
+                            parseOpenFoodFactsJsonToIngredient(products.getJSONObject(i))
 
-                      ingredient
-                    }
+                        ingredient
+                      }
 
-                onSuccess(ingredients)
+                  onSuccess(ingredients.take(count))
+                } catch (e: JSONException) {
+                  onFailure(e)
+                }
               }
             })
   }
