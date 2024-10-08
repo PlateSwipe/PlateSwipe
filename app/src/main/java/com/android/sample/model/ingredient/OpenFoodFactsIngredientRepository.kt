@@ -30,8 +30,7 @@ class OpenFoodFactsIngredientRepository(private val client: OkHttpClient) : Ingr
     val request =
         Request.Builder()
             .url(url)
-            // TODO: Add a proper User-Agent
-            .header("User-Agent", "PlateSwipe/1.0 (andre.cadet@epfl.ch)")
+            .header("User-Agent", "PlateSwipe/1.0 (plateswipe@gmail.com)")
             .build()
 
     client
@@ -74,7 +73,7 @@ class OpenFoodFactsIngredientRepository(private val client: OkHttpClient) : Ingr
         Request.Builder()
             .url(url)
             // TODO: Add a proper User-Agent
-            .header("User-Agent", "PlateSwipe/1.0 (andre.cadet@epfl.ch)")
+            .header("User-Agent", "PlateSwipe/1.0 (plateswipe@gmail.com)")
             .build()
 
     client
