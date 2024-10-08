@@ -4,40 +4,55 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.testTag
-import androidx.compose.ui.tooling.preview.Preview
-import com.android.sample.resources.C
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navigation
+import com.android.sample.ui.OverviewScreen
+import com.android.sample.ui.authentication.SignInScreen
+import com.android.sample.ui.camera.CameraScreen
+import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.navigation.Route
+import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.SampleAppTheme
 
 class MainActivity : ComponentActivity() {
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContent {
-      SampleAppTheme {
-        // A surface container using the 'background' color from the theme
-        Surface(
-            modifier = Modifier.fillMaxSize().semantics { testTag = C.Tag.main_screen_container },
-            color = MaterialTheme.colorScheme.background) {
-              Greeting("Android")
-            }
-      }
-    }
+    setContent { SampleAppTheme { Surface(modifier = Modifier.fillMaxSize()) { App() } } }
   }
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-  Text(text = "Hello $name!", modifier = modifier.semantics { testTag = C.Tag.greeting })
-}
+fun App() {
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-  SampleAppTheme { Greeting("Android") }
+  val navController = rememberNavController()
+  val navigationActions = NavigationActions(navController)
+
+  NavHost(navController = navController, startDestination = Route.OVERVIEW) {
+    navigation(
+        startDestination = Screen.AUTH,
+        route = Route.AUTH,
+    ) {
+      composable(Screen.AUTH) { SignInScreen() }
+    }
+
+    navigation(
+        startDestination = Screen.OVERVIEW,
+        route = Route.OVERVIEW,
+    ) {
+      composable(Screen.OVERVIEW) { OverviewScreen(navController) }
+    }
+
+    navigation(
+        startDestination = Screen.CAMERA,
+        route = Route.CAMERA,
+    ) {
+      composable(Screen.CAMERA) { CameraScreen() }
+    }
+  }
 }
