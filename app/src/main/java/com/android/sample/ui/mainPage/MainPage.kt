@@ -59,90 +59,73 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainPage(navigationActions: NavigationActions) {
-    val selectedItem = navigationActions.currentRoute()
+  val selectedItem = navigationActions.currentRoute()
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("PlateSwipe", fontSize = 20.sp, fontWeight = FontWeight.Bold) },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary
-                )
-            )
-        },
-        bottomBar = {
-            BottomNavigationMenu(
-                onTabSelect = { tab -> navigationActions.navigateTo(tab) },
-                tabList = LIST_TOP_LEVEL_DESTINATIONS,
-                selectedItem = selectedItem
-            )
-        }
-    ) { paddingValues ->
+  Scaffold(
+      topBar = {
+        TopAppBar(
+            title = { Text("PlateSwipe", fontSize = 20.sp, fontWeight = FontWeight.Bold) },
+            colors =
+                TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary))
+      },
+      bottomBar = {
+        BottomNavigationMenu(
+            onTabSelect = { tab -> navigationActions.navigateTo(tab) },
+            tabList = LIST_TOP_LEVEL_DESTINATIONS,
+            selectedItem = selectedItem)
+      }) { paddingValues ->
         ImageSwipeToDismissGallery(paddingValues)
-    }
+      }
 }
 
 @Composable
 fun ImageSwipeToDismissGallery(paddingValues: PaddingValues) {
-    val height = LocalConfiguration.current.screenHeightDp.dp * 1 / 2
-    val width = height * 3 / 4
-    var isTextVisible by remember { mutableStateOf(false) } // Tracks if the text should be visible
+  val height = LocalConfiguration.current.screenHeightDp.dp * 1 / 2
+  val width = height * 3 / 4
+  var isTextVisible by remember { mutableStateOf(false) } // Tracks if the text should be visible
 
-    var currentId by remember { mutableIntStateOf(R.drawable.burger) }
-    val offsetX = remember { Animatable(0f) }// For tracking drag offset
-    var isDragging by remember { mutableStateOf(false) } // Flag to track if currently dragging
-    val coroutineScope = rememberCoroutineScope()
-    val context = LocalContext.current
+  var currentId by remember { mutableIntStateOf(R.drawable.burger) }
+  val offsetX = remember { Animatable(0f) } // For tracking drag offset
+  var isDragging by remember { mutableStateOf(false) } // Flag to track if currently dragging
+  val coroutineScope = rememberCoroutineScope()
+  val context = LocalContext.current
 
-
-
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(paddingValues)
-        .padding(16.dp)
-        .pointerInput(Unit) {
-            detectHorizontalDragGestures(onDragStart = { isDragging = true }, onDragEnd = {
-                isDragging = false
-            },
-                onDragCancel = {
-                    isDragging = false
-                },
+  Column(
+      modifier =
+          Modifier.fillMaxSize().padding(paddingValues).padding(16.dp).pointerInput(Unit) {
+            detectHorizontalDragGestures(
+                onDragStart = { isDragging = true },
+                onDragEnd = { isDragging = false },
+                onDragCancel = { isDragging = false },
                 onHorizontalDrag = { change, dragAmount ->
-                    change.consume() // Consume gesture so it doesn't propagate further
-                    coroutineScope.launch {
-                        offsetX.snapTo(offsetX.value + dragAmount)
-                    }
+                  change.consume() // Consume gesture so it doesn't propagate further
+                  coroutineScope.launch { offsetX.snapTo(offsetX.value + dragAmount) }
                 })
-        }
-    ) {
+          }) {
         Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp)
-                .graphicsLayer(translationX = offsetX.value), // Apply translation based on drag offset ,
+            modifier =
+                Modifier.fillMaxWidth()
+                    .padding(8.dp)
+                    .graphicsLayer(
+                        translationX = offsetX.value), // Apply translation based on drag offset ,
             shape = RoundedCornerShape(16.dp),
             elevation = CardDefaults.cardElevation(4.dp),
         ) {
-            Column {
-                Image(
-                    painter = painterResource(id = currentId),
-                    contentDescription = "Recipe Image",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .let {
-                            if (isTextVisible) it.size(width, height * 1 / 2) else it.size(
-                                width,
-                                height
-                            )
-                        },
-                    contentScale = ContentScale.FillWidth,
-                )
+          Column {
+            Image(
+                painter = painterResource(id = currentId),
+                contentDescription = "Recipe Image",
+                modifier =
+                    Modifier.fillMaxWidth().let {
+                      if (isTextVisible) it.size(width, height * 1 / 2) else it.size(width, height)
+                    },
+                contentScale = ContentScale.FillWidth,
+            )
 
-                Description(isTextVisible,
-                    modifier = Modifier.clickable {
-                        isTextVisible = !isTextVisible
-                    })
-            }
+            Description(
+                isTextVisible, modifier = Modifier.clickable { isTextVisible = !isTextVisible })
+          }
         }
 
         // Swipe Instructions
@@ -150,110 +133,68 @@ fun ImageSwipeToDismissGallery(paddingValues: PaddingValues) {
         Text(
             text = "Swipe to like or dislike the recipe.",
             color = Color.Gray,
-            modifier = Modifier.padding(16.dp)
-        )
+            modifier = Modifier.padding(16.dp))
 
         // Handle gesture end to check if we need to change images
         LaunchedEffect(offsetX.value) {
-            if (isDragging) {
-                if (offsetX.value > 150) {
-                    // Right Swipe
-                    isDragging = false
-                    isTextVisible = false
-                    currentId = setNextImage(currentId)
-                    val toast =
-                        Toast.makeText(
-                            context,
-                            "Dislike",
-                            Toast.LENGTH_SHORT
-                        ) // in Activity
-                    toast.show()
-                    offsetX.animateTo(0f, animationSpec = tween(50)) // Animate back to center
-                } else if (offsetX.value < -150) {
-                    // Left Swipe
-                    isDragging = false
-                    isTextVisible = false
-                    currentId = setNextImage(currentId)
-                    val toast =
-                        Toast.makeText(
-                            context,
-                            "Like",
-                            Toast.LENGTH_SHORT
-                        ) // in Activity
-                    toast.show()
-                    offsetX.animateTo(0f, animationSpec = tween(50)) // Animate back to center
-                }
-
-            } else {
-                // If not swiped enough, animate back to center
-                offsetX.animateTo(0f, animationSpec = tween(50))
+          if (isDragging) {
+            if (offsetX.value > 150) {
+              // Right Swipe
+              isDragging = false
+              isTextVisible = false
+              currentId = setNextImage(currentId)
+              val toast = Toast.makeText(context, "Dislike", Toast.LENGTH_SHORT) // in Activity
+              toast.show()
+              offsetX.animateTo(0f, animationSpec = tween(50)) // Animate back to center
+            } else if (offsetX.value < -150) {
+              // Left Swipe
+              isDragging = false
+              isTextVisible = false
+              currentId = setNextImage(currentId)
+              val toast = Toast.makeText(context, "Like", Toast.LENGTH_SHORT) // in Activity
+              toast.show()
+              offsetX.animateTo(0f, animationSpec = tween(50)) // Animate back to center
             }
+          } else {
+            // If not swiped enough, animate back to center
+            offsetX.animateTo(0f, animationSpec = tween(50))
+          }
         }
-
-    }
+      }
 }
 
-
 private fun setNextImage(current: Int): Int {
-    if (current == R.drawable.burger) return R.drawable.salad
-    return R.drawable.burger
+  if (current == R.drawable.burger) return R.drawable.salad
+  return R.drawable.burger
 }
 
 @Composable
 private fun Description(isTextVisible: Boolean, modifier: Modifier) {
 
-    Column(
-        modifier = Modifier
-            .padding(16.dp)
-            .verticalScroll(rememberScrollState())
-    ) {
+  Column(modifier = Modifier.padding(16.dp).verticalScroll(rememberScrollState())) {
 
-        //Small Description always visible
-        Text(
-            text = "Pasta",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold
-        )
-        Text(
-            modifier = modifier,
-            text = "...",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold
-        )
+    // Small Description always visible
+    Text(text = "Pasta", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+    Text(modifier = modifier, text = "...", fontSize = 24.sp, fontWeight = FontWeight.Bold)
 
-        Row(
-            modifier = Modifier.padding(5.dp)
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.time_line),
-                contentDescription = "recipes timing"
-            )
-            Text(
-                modifier = Modifier.padding(start = 5.dp),
-                text = "30min",
-                fontSize = 22.sp,
-
-                )
-
-        }
-
-        //Animate when Displaying
-        AnimatedVisibility(
-            visible = isTextVisible,
-            enter = fadeIn(animationSpec = tween(500))
-        ) {
-
-            Text(
-                text = getRecipeDescription(),
-                fontSize = 16.sp
-            )
-        }
-
+    Row(modifier = Modifier.padding(5.dp)) {
+      Icon(painter = painterResource(R.drawable.time_line), contentDescription = "recipes timing")
+      Text(
+          modifier = Modifier.padding(start = 5.dp),
+          text = "30min",
+          fontSize = 22.sp,
+      )
     }
-}
 
+    // Animate when Displaying
+    AnimatedVisibility(visible = isTextVisible, enter = fadeIn(animationSpec = tween(500))) {
+      Text(text = getRecipeDescription(), fontSize = 16.sp)
+    }
+  }
+}
 
 @Composable
 private fun getRecipeDescription(): String {
-    return "Delicious pasta with tomato sauce. In a separate pan, prepare the sauce with garlic, onions, and fresh tomatoes. Combine the cooked pasta with the sauce, and serve hot. Enjoy your meal! Ingredients: Basil, Tomato, Pasta" + "Delicious pasta with tomato sauce. In a separate pan, prepare the sauce with garlic, onions, and fresh tomatoes. Combine the cooked pasta with the sauce, and serve hot. Enjoy your meal! Ingredients: Basil, Tomato, Pasta"
+  return "Delicious pasta with tomato sauce. In a separate pan, prepare the sauce with garlic, onions, and fresh tomatoes. Combine the cooked pasta with the sauce, and serve hot. Enjoy your meal! Ingredients: Basil, Tomato, Pasta" +
+      "Delicious pasta with tomato sauce. In a separate pan, prepare the sauce with garlic, onions, and fresh tomatoes. Combine the cooked pasta with the sauce, and serve hot. Enjoy your meal! Ingredients: Basil, Tomato, Pasta"
 }

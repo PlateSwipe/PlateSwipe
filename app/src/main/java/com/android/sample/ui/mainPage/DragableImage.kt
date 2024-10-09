@@ -4,7 +4,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.anchoredDraggable
-import androidx.compose.foundation.gestures.animateTo
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,9 +15,9 @@ import androidx.compose.ui.unit.IntOffset
 import kotlin.math.roundToInt
 
 enum class DragStates {
-    left,
-    Center,
-    right,
+  left,
+  Center,
+  right,
 }
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalFoundationApi::class)
@@ -30,32 +29,21 @@ fun DragableRecipe(
     endAction: @Composable (BoxScope.() -> Unit)? = {}
 ) {
 
+  Box(modifier = Modifier) {
+    endAction?.let { endAction() }
+
+    startAction?.let { startAction() }
     Box(
-        modifier = Modifier
-
-    ) {
-
-        endAction?.let {
-            endAction()
-        }
-
-        startAction?.let {
-            startAction()
-        }
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
+        modifier =
+            Modifier.fillMaxWidth()
                 .align(Alignment.CenterStart)
                 .offset {
-                    IntOffset(
-                        x = -state
-                            .requireOffset()
-                            .roundToInt(),
-                        y = 0,
-                    )
+                  IntOffset(
+                      x = -state.requireOffset().roundToInt(),
+                      y = 0,
+                  )
                 }
                 .anchoredDraggable(state, Orientation.Horizontal, reverseDirection = true),
-            content = content
-        )
-    }
+        content = content)
+  }
 }
