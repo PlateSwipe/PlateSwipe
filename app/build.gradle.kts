@@ -135,7 +135,6 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(platform(libs.compose.bom))
-    implementation(libs.androidx.espresso.intents)
     testImplementation(libs.junit)
     globalTestImplementation(libs.androidx.junit)
     globalTestImplementation(libs.androidx.espresso.core)
@@ -153,10 +152,7 @@ dependencies {
     debugImplementation(libs.compose.tooling)
     globalTestImplementation(libs.compose.test.junit)
     debugImplementation(libs.compose.test.manifest)
-    // Navigation
-    implementation(libs.androidx.navigation.compose)
-    implementation(libs.androidx.navigation.fragment.ktx)
-    implementation(libs.androidx.navigation.ui.ktx)
+
     globalTestImplementation(libs.kaspresso)
     globalTestImplementation(libs.kaspresso.compose)
 
@@ -190,19 +186,6 @@ dependencies {
     androidTestImplementation(libs.kaspresso.allure.support)
     androidTestImplementation(libs.kaspresso.compose.support)
     testImplementation(libs.kotlinx.coroutines.test)
-
-    // Code bar scanning
-    implementation(libs.mlkit.barcode.scanning)
-
-    // CameraX dependencies
-    implementation(libs.camerax.camera2)
-    implementation(libs.camerax.lifecycle)
-    implementation(libs.camerax.view)
-    implementation(libs.camerax.core)
-    implementation(libs.camerax.video)
-    implementation(libs.camerax.extensions)
-    implementation(libs.guava)
-    implementation(libs.accompanist.permissions)
 }
 
 tasks.withType<Test> {
