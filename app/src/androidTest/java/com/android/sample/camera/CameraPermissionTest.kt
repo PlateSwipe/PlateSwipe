@@ -1,4 +1,5 @@
-import android.util.Log
+package com.android.sample.camera
+
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
