@@ -33,9 +33,7 @@ fun CameraScreen() {
     val context = LocalContext.current
     requestCameraPermission(
         onPermissionGranted = {
-            CameraView(onCapturePhoto = { photoFile ->
-                Toast.makeText(context, "Photo saved at: ${photoFile.absolutePath}", Toast.LENGTH_LONG).show()
-            })
+            CameraView()
         },
         onPermissionDenied = {
             Toast.makeText(context, "Camera permission denied", Toast.LENGTH_SHORT).show()
