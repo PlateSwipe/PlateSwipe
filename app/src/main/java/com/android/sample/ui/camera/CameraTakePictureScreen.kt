@@ -12,7 +12,7 @@ import com.google.accompanist.permissions.rememberPermissionState
 /** Composable that displays the camera screen. */
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun CameraScreen() {
+fun CameraTakePictureScreen() {
   val context = LocalContext.current
   val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
   RequestCameraPermission(

@@ -24,6 +24,7 @@ import com.android.sample.ui.testScreens.MainScreen
 import com.android.sample.ui.testScreens.RecipeScreen
 import com.android.sample.ui.testScreens.SearchScreen
 import com.android.sample.ui.theme.SampleAppTheme
+import androidx.compose.material3.MaterialTheme
 
 class MainActivity : ComponentActivity() {
 
@@ -47,7 +48,7 @@ fun PlateSwipeApp() {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
 
-  NavHost(navController = navController, startDestination = Route.AUTH) {
+  NavHost(navController = navController, startDestination = Route.MAIN) {
     navigation(
         startDestination = Screen.AUTH,
         route = Route.AUTH,
