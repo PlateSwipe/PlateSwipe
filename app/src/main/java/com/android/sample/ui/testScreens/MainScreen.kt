@@ -1,0 +1,25 @@
+package com.android.sample.ui.testScreens
+
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import com.android.sample.ui.navigation.BottomNavigationMenu
+import com.android.sample.ui.navigation.LIST_TOP_LEVEL_DESTINATIONS
+import com.android.sample.ui.navigation.NavigationActions
+
+@Composable
+fun MainScreen(navigationActions: NavigationActions) {
+  Scaffold(
+      modifier = Modifier.testTag("mainScreen"),
+      bottomBar = {
+        BottomNavigationMenu(
+            onTabSelect = { destination -> navigationActions.navigateTo(destination) },
+            tabList = LIST_TOP_LEVEL_DESTINATIONS,
+            selectedItem = navigationActions.currentRoute())
+      }) { innerPadding ->
+        Text(text = "mainScreenText", modifier = Modifier.padding(innerPadding))
+      }
+}

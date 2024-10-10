@@ -1,31 +1,52 @@
 package com.android.sample.ui.navigation
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Menu
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import com.android.sample.R
 
 object Route {
-  const val OVERVIEW = "Overview"
-  const val CAMERA = "CAMERA"
   const val AUTH = "Auth"
+  const val MAIN = "Overview"
+  const val FRIDGE = "Fridge"
+  const val SEARCH = "Search"
+  const val ADD_RECIPE = "AddRecipe"
+  const val ACCOUNT = "Account"
 }
 
 object Screen {
   const val AUTH = "Auth Screen"
-  const val OVERVIEW = "Overview Screen"
-  const val CAMERA = "Camera Screen"
+
+  const val MAIN = "Main Screen"
+
+  const val FRIDGE = "Fridge Screen"
+  const val INGREDIENT = "Ingredient Screen"
+
+  const val SEARCH = "Search Screen"
+  const val RECIPE = "Recipe Screen"
+
+  const val ADD_RECIPE = "AddRecipe Screen"
+
+  const val ACCOUNT = "Account Screen"
 }
 
-data class TopLevelDestination(val route: String, val icon: ImageVector, val textId: String)
+data class TopLevelDestination(val route: String, val iconId: Int, val textId: String)
 
+// TODO: Find good icons for each Route
 object TopLevelDestinations {
-  val OVERVIEW =
-      TopLevelDestination(route = Route.OVERVIEW, icon = Icons.Outlined.Menu, textId = "Overview")
+  val MAIN = TopLevelDestination(Route.MAIN, R.drawable.mainpageicon, "Main")
+  val FRIDGE = TopLevelDestination(Route.FRIDGE, R.drawable.fridgeicon, "Fridge")
+  val SEARCH = TopLevelDestination(Route.SEARCH, R.drawable.searchicon, "Search")
+  val ADD_RECIPE = TopLevelDestination(Route.ADD_RECIPE, R.drawable.addicon, "Add Recipe")
+  val ACCOUNT = TopLevelDestination(Route.ACCOUNT, R.drawable.downloadicon, "Account")
 }
 
-val LIST_TOP_LEVEL_DESTINATION = listOf(TopLevelDestinations.OVERVIEW)
+val LIST_TOP_LEVEL_DESTINATIONS =
+    listOf(
+        TopLevelDestinations.MAIN,
+        TopLevelDestinations.SEARCH,
+        TopLevelDestinations.ADD_RECIPE,
+        TopLevelDestinations.FRIDGE,
+        TopLevelDestinations.ACCOUNT)
 
 open class NavigationActions(
     private val navController: NavHostController,
