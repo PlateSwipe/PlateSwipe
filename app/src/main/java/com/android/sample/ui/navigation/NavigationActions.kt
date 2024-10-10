@@ -44,8 +44,8 @@ val LIST_TOP_LEVEL_DESTINATIONS =
     listOf(
         TopLevelDestinations.MAIN,
         TopLevelDestinations.SEARCH,
-        TopLevelDestinations.FRIDGE,
         TopLevelDestinations.ADD_RECIPE,
+        TopLevelDestinations.FRIDGE,
         TopLevelDestinations.ACCOUNT)
 
 open class NavigationActions(
