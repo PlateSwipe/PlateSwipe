@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import java.io.File
 
@@ -36,7 +37,7 @@ fun CameraView(
 
 
     Box(modifier = Modifier.fillMaxSize()) {
-        AndroidView(factory = { previewView }, modifier = Modifier.fillMaxSize()) {
+        AndroidView(factory = { previewView }, modifier = Modifier.fillMaxSize().testTag("camera_preview")) {
             startCamera(lifecycleOwner,context, imageCapture, previewView)
         }
 
@@ -50,7 +51,7 @@ fun CameraView(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .size(80.dp)
-                .padding(bottom = 20.dp),
+                .padding(bottom = 20.dp).testTag("capture_button"),
             shape = CircleShape,
             colors = ButtonColors(
                 containerColor = Color.White,
@@ -59,7 +60,7 @@ fun CameraView(
                 disabledContainerColor = Color.Gray
             )
         ) {
-            Text("Capture Photo")
+            Text("Capture Photo", modifier = Modifier.testTag("capture_button_text"))
         }
     }
 }
