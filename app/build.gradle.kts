@@ -130,6 +130,10 @@ fun DependencyHandlerScope.globalTestImplementation(dep: Any) {
 }
 
 dependencies {
+    // Core
+    implementation(libs.core.ktx)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -153,6 +157,17 @@ dependencies {
     debugImplementation(libs.compose.tooling)
     globalTestImplementation(libs.compose.test.junit)
     debugImplementation(libs.compose.test.manifest)
+
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.material)
+    implementation(libs.androidx.material3)
+    implementation(platform(libs.androidx.compose.bom))
+    testImplementation(libs.test.core.ktx)
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
+
     // Navigation
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.navigation.fragment.ktx)
