@@ -6,7 +6,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,7 +25,6 @@ fun BottomNavigationMenu(
         tabList.forEach { tab ->
           NavigationBarItem(
               icon = { Icon(painter = painterResource(tab.iconId), contentDescription = null) },
-              label = { Text(tab.textId) },
               selected = tab.route == selectedItem,
               onClick = { onTabSelect(tab) },
               modifier = Modifier.clip(RoundedCornerShape(50.dp)).testTag(tab.textId))
