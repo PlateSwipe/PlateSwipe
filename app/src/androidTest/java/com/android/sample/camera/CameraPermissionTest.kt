@@ -24,9 +24,7 @@ class CameraPermissionTest {
   @Test
   fun testCameraPermissionGranted() {
     composeTestRule.setContent {
-      val permissionState = remember {
-        FakePermissionState(isGranted = true, willBeGranted = true)
-      }
+      val permissionState = remember { FakePermissionState(isGranted = true, willBeGranted = true) }
       RequestCameraPermission(
           cameraPermissionState = permissionState,
           onPermissionGranted = { TestContent("Granted") },
@@ -72,9 +70,7 @@ class CameraPermissionTest {
   @Test
   fun testCameraPermissionStateIsGranted() {
     composeTestRule.setContent {
-      val permissionState = remember {
-        FakePermissionState(isGranted = true, willBeGranted = true)
-      }
+      val permissionState = remember { FakePermissionState(isGranted = true, willBeGranted = true) }
       RequestCameraPermission(
           cameraPermissionState = permissionState,
           onPermissionGranted = { TestContent("Permission is Granted") },

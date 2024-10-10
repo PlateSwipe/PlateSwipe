@@ -6,7 +6,7 @@ import com.android.sample.R
 
 object Route {
   const val AUTH = "Auth"
-  const val MAIN = "Overview"
+  const val MAIN = "Main"
   const val FRIDGE = "Fridge"
   const val SEARCH = "Search"
   const val ADD_RECIPE = "AddRecipe"
@@ -27,6 +27,10 @@ object Screen {
   const val ADD_RECIPE = "AddRecipe Screen"
 
   const val ACCOUNT = "Account Screen"
+
+  const val SCAN_ITEM = "ScanItem Screen"
+
+  const val ADD_ITEM_CAM = "AddItemCam Screen"
 }
 
 data class TopLevelDestination(val route: String, val iconId: Int, val textId: String)

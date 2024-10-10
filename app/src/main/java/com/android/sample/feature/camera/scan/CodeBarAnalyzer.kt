@@ -1,20 +1,16 @@
-package com.android.sample.feature.codebar
+package com.android.sample.feature.camera.scan
 
 import android.util.Log
 import androidx.annotation.OptIn
 import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
-import androidx.camera.lifecycle.ProcessCameraProvider
 import com.google.mlkit.vision.barcode.Barcode
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.common.InputImage
 
-class CodeBarAnalyzer(
-    private val barcodeResultHandler: BarcodeResultHandler,
-    private val cameraProvider: ProcessCameraProvider
-) : ImageAnalysis.Analyzer {
+class CodeBarAnalyzer(private val onBarcodeDetected: (Barcode) -> Unit) : ImageAnalysis.Analyzer {
 
   @OptIn(ExperimentalGetImage::class)
   override fun analyze(imageProxy: ImageProxy) {
@@ -35,11 +31,7 @@ class CodeBarAnalyzer(
           .process(image)
           .addOnSuccessListener { barcodes ->
             for (barcode in barcodes) {
-              val rawValue = barcode.rawValue
-              Log.d(TAG, "Barcode detected: $rawValue")
-              barcodeResultHandler.onBarcodeDetected(rawValue?.toString() ?: "")
-              cameraProvider.unbindAll()
-              break
+              onBarcodeDetected(barcode)
             }
           }
           .addOnFailureListener { Log.e(TAG, "Barcode detection failed", it) }
