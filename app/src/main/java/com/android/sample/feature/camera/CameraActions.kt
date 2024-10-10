@@ -39,7 +39,7 @@ fun startCamera(lifecycleOwner: LifecycleOwner,context: Context,imageCapture: Im
 
         val cameraProvider = cameraProviderFuture.get()
         val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-        val preview = Preview.Builder().build().also{ it.setSurfaceProvider(previewView.surfaceProvider) }
+        val preview = createPreview().also{ it.setSurfaceProvider(previewView.surfaceProvider) }
         try{
             cameraProvider.unbindAll()
             cameraProvider.bindToLifecycle(
