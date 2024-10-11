@@ -1,6 +1,8 @@
 package com.android.sample.ui.mainPage
 
 import android.annotation.SuppressLint
+import android.content.res.Configuration
+import android.content.res.Resources.Theme
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
@@ -45,8 +47,10 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.sample.R
@@ -64,7 +68,8 @@ fun MainPage(navigationActions: NavigationActions) {
   Scaffold(
       topBar = {
         TopAppBar(
-            title = { Text("PlateSwipe", fontSize = 20.sp, fontWeight = FontWeight.Bold) },
+            title = {
+                Text("PlateSwipe") },
             colors =
                 TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary))
@@ -93,16 +98,20 @@ fun ImageSwipeToDismissGallery(paddingValues: PaddingValues) {
 
   Column(
       modifier =
-          Modifier.fillMaxSize().padding(paddingValues).padding(16.dp).pointerInput(Unit) {
-            detectHorizontalDragGestures(
-                onDragStart = { isDragging = true },
-                onDragEnd = { isDragging = false },
-                onDragCancel = { isDragging = false },
-                onHorizontalDrag = { change, dragAmount ->
-                  change.consume() // Consume gesture so it doesn't propagate further
-                  coroutineScope.launch { offsetX.snapTo(offsetX.value + dragAmount) }
-                })
-          }) {
+          Modifier.testTag("draggableItem")
+              .fillMaxSize()
+              .padding(paddingValues)
+              .padding(16.dp)
+              .pointerInput(Unit) {
+                detectHorizontalDragGestures(
+                    onDragStart = { isDragging = true },
+                    onDragEnd = { isDragging = false },
+                    onDragCancel = { isDragging = false },
+                    onHorizontalDrag = { change, dragAmount ->
+                      change.consume() // Consume gesture so it doesn't propagate further
+                      coroutineScope.launch { offsetX.snapTo(offsetX.value + dragAmount) }
+                    })
+              }) {
         Card(
             modifier =
                 Modifier.fillMaxWidth()
@@ -117,7 +126,7 @@ fun ImageSwipeToDismissGallery(paddingValues: PaddingValues) {
                 painter = painterResource(id = currentId),
                 contentDescription = "Recipe Image",
                 modifier =
-                    Modifier.fillMaxWidth().let {
+                    Modifier.testTag("recipeImage").fillMaxWidth().let {
                       if (isTextVisible) it.size(width, height * 1 / 2) else it.size(width, height)
                     },
                 contentScale = ContentScale.FillWidth,
@@ -133,7 +142,7 @@ fun ImageSwipeToDismissGallery(paddingValues: PaddingValues) {
         Text(
             text = "Swipe to like or dislike the recipe.",
             color = Color.Gray,
-            modifier = Modifier.padding(16.dp))
+            modifier = Modifier.testTag("swipeUIDescription").padding(16.dp))
 
         // Handle gesture end to check if we need to change images
         LaunchedEffect(offsetX.value) {
@@ -171,26 +180,41 @@ private fun setNextImage(current: Int): Int {
 @Composable
 private fun Description(isTextVisible: Boolean, modifier: Modifier) {
 
-  Column(modifier = Modifier.padding(16.dp).verticalScroll(rememberScrollState())) {
+  Column(
+      modifier =
+          Modifier.testTag("recipeDescription")
+              .padding(16.dp)
+              .verticalScroll(rememberScrollState())) {
 
-    // Small Description always visible
-    Text(text = "Pasta", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-    Text(modifier = modifier, text = "...", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+        // Small Description always visible
+        Text(text = "Pasta", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+        Text(
+            modifier = modifier.testTag("displayDescription"),
+            text = "...",
+            color = MaterialTheme.colorScheme.onPrimary ,
 
-    Row(modifier = Modifier.padding(5.dp)) {
-      Icon(painter = painterResource(R.drawable.time_line), contentDescription = "recipes timing")
-      Text(
-          modifier = Modifier.padding(start = 5.dp),
-          text = "30min",
-          fontSize = 22.sp,
-      )
-    }
+                    fontSize = 24.sp,
+            fontWeight = FontWeight.Bold)
 
-    // Animate when Displaying
-    AnimatedVisibility(visible = isTextVisible, enter = fadeIn(animationSpec = tween(500))) {
-      Text(text = getRecipeDescription(), fontSize = 16.sp)
-    }
-  }
+        Row(modifier = Modifier.padding(5.dp)) {
+          Icon(
+              painter = painterResource(R.drawable.time_line),
+              contentDescription = "recipes timing")
+          Text(
+              modifier = Modifier.padding(start = 5.dp),
+              text = "30min",
+              fontSize = 22.sp,
+          )
+        }
+
+        // Animate when Displaying
+        AnimatedVisibility(visible = isTextVisible, enter = fadeIn(animationSpec = tween(500))) {
+          Text(
+              modifier = Modifier.testTag("RecipeEntireDescription"),
+              text = getRecipeDescription(),
+              fontSize = 16.sp)
+        }
+      }
 }
 
 @Composable
@@ -198,3 +222,4 @@ private fun getRecipeDescription(): String {
   return "Delicious pasta with tomato sauce. In a separate pan, prepare the sauce with garlic, onions, and fresh tomatoes. Combine the cooked pasta with the sauce, and serve hot. Enjoy your meal! Ingredients: Basil, Tomato, Pasta" +
       "Delicious pasta with tomato sauce. In a separate pan, prepare the sauce with garlic, onions, and fresh tomatoes. Combine the cooked pasta with the sauce, and serve hot. Enjoy your meal! Ingredients: Basil, Tomato, Pasta"
 }
+
