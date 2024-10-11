@@ -8,11 +8,12 @@ interface UserRepository {
     fun init(onSuccess: () -> Unit)
 
     /**
-     * Retrieves the current user from the database
+     * Retrieves a specific user from the database using its id
+     * @param id id of the user that we want to retrieve from the database
      * @param onSuccess function called if the operation is successful
      * @param onFailure function called if the operation is not successful
      */
-    fun getUser(onSuccess: (User) -> Unit, onFailure: (Exception) -> Unit)
+    fun getUserById(id: String, onSuccess: (User) -> Unit, onFailure: (Exception) -> Unit)
 
     /**
      * Adds a new user in the database
