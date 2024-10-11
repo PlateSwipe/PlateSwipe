@@ -8,12 +8,11 @@ interface UserRepository {
     fun init(onSuccess: () -> Unit)
 
     /**
-     * Retrieves the user from the database
-     * @param user user that we want to retrieve
+     * Retrieves the current user from the database
      * @param onSuccess function called if the operation is successful
      * @param onFailure function called if the operation is not successful
      */
-    fun getUser(user: User, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
+    fun getUser(onSuccess: (User) -> Unit, onFailure: (Exception) -> Unit)
 
     /**
      * Adds a new user in the database
@@ -32,7 +31,7 @@ interface UserRepository {
     fun updateUser(user: User, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
 
     /**
-     * Deletes a specific user from the database
+     * Deletes a specific user from the database using its id
      * @param id id of the user that we want to delete from the database
      * @param onSuccess function called if the operation is successful
      * @param onFailure function called if the operation is not successful
