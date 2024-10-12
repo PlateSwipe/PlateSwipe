@@ -33,6 +33,11 @@ class UserViewModel(
     userRepository.init { getCurrentUser() }
   }
 
+  /**
+   * Gets the current user from the database and updates the view model with the values. If the user
+   * does not exist, it creates a new user with the current user id. If no user is logged in, it
+   * does nothing.
+   */
   fun getCurrentUser() {
     val userId: String = firebaseAuth.currentUser?.uid ?: return
 
@@ -60,10 +65,14 @@ class UserViewModel(
         })
   }
 
+  /**
+   * Updates the current user in the database with the values from the view model. If no user is
+   * logged in, it does nothing.
+   */
   fun updateCurrentUser() {
     val savedUser =
         User(
-            uid = firebaseAuth.currentUser?.uid ?: "",
+            uid = firebaseAuth.currentUser?.uid ?: return,
             userName = _userName.value ?: "",
             profilePictureUrl = _profilePictureUrl.value ?: "",
             fridge = _fridge.value?.map { it.barCode.toString() } ?: emptyList(),
@@ -75,14 +84,29 @@ class UserViewModel(
     getCurrentUser()
   }
 
+  /**
+   * Changes the user name to the new user name.
+   *
+   * @param newUserName the new user name
+   */
   fun changeUserName(newUserName: String) {
     _userName.value = newUserName
   }
 
+  /**
+   * Changes the profile picture url to the new profile picture url.
+   *
+   * @param newProfilePictureUrl the new profile picture url
+   */
   fun changeProfilePictureUrl(newProfilePictureUrl: String) {
     _profilePictureUrl.value = newProfilePictureUrl
   }
 
+  /**
+   * Adds an ingredient to the user fridge.
+   *
+   * @param ingredient the ingredient to be added
+   */
   fun addIngredientToUserFridge(ingredient: Ingredient) {
     val currentFridge = _fridge.value ?: emptyList()
     val newFridge = currentFridge.toMutableList()
@@ -90,6 +114,11 @@ class UserViewModel(
     _fridge.value = newFridge
   }
 
+  /**
+   * Removes an ingredient from the user fridge.
+   *
+   * @param ingredient the ingredient to be removed
+   */
   fun removeIngredientFromUserFridge(ingredient: Ingredient) {
     val currentFridge = _fridge.value ?: emptyList()
     val newFridge = currentFridge.toMutableList()
@@ -97,6 +126,11 @@ class UserViewModel(
     _fridge.value = newFridge
   }
 
+  /**
+   * Adds a recipe to the user saved recipes.
+   *
+   * @param recipe the recipe to be added
+   */
   fun addRecipeToUserSavedRecipes(recipe: Recipe) {
     val currentSavedRecipes = _savedRecipes.value ?: emptyList()
     val newSavedRecipes = currentSavedRecipes.toMutableList()
@@ -104,6 +138,11 @@ class UserViewModel(
     _savedRecipes.value = newSavedRecipes
   }
 
+  /**
+   * Removes a recipe from the user saved recipes.
+   *
+   * @param recipe the recipe to be removed
+   */
   fun removeRecipeFromUserSavedRecipes(recipe: Recipe) {
     val currentSavedRecipes = _savedRecipes.value ?: emptyList()
     val newSavedRecipes = currentSavedRecipes.toMutableList()
@@ -111,6 +150,11 @@ class UserViewModel(
     _savedRecipes.value = newSavedRecipes
   }
 
+  /**
+   * Adds a recipe to the user created recipes.
+   *
+   * @param recipe the recipe to be added
+   */
   fun addRecipeToUserCreatedRecipes(recipe: Recipe) {
     val currentCreatedRecipes = _createdRecipes.value ?: emptyList()
     val newCreatedRecipes = currentCreatedRecipes.toMutableList()
@@ -118,6 +162,11 @@ class UserViewModel(
     _createdRecipes.value = newCreatedRecipes
   }
 
+  /**
+   * Removes a recipe from the user created recipes.
+   *
+   * @param recipe the recipe to be removed
+   */
   fun removeRecipeFromUserCreatedRecipes(recipe: Recipe) {
     val currentCreatedRecipes = _createdRecipes.value ?: emptyList()
     val newCreatedRecipes = currentCreatedRecipes.toMutableList()
