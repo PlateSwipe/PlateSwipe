@@ -76,8 +76,8 @@ class UserViewModel(
             userName = _userName.value ?: "",
             profilePictureUrl = _profilePictureUrl.value ?: "",
             fridge = _fridge.value?.map { it.barCode.toString() } ?: emptyList(),
-            savedRecipes = _savedRecipes.value?.map { it.idMeal.toString() } ?: emptyList(),
-            createdRecipes = _createdRecipes.value?.map { it.idMeal.toString() } ?: emptyList())
+            savedRecipes = _savedRecipes.value?.map { it.idMeal } ?: emptyList(),
+            createdRecipes = _createdRecipes.value?.map { it.idMeal } ?: emptyList())
 
     userRepository.updateUser(user = savedUser, onSuccess = {}, onFailure = {})
 
