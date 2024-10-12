@@ -29,11 +29,20 @@ class UserViewModelTest {
 
   private lateinit var mockCall: Call
 
-  val userExample: User = User("001", "Gigel Frone", "", listOf("1"), listOf("2"), listOf("3"))
+  private val userExample: User =
+      User("001", "Gigel Frone", "", listOf("1"), listOf("2"), listOf("3"))
 
-  val ingredientExample: Ingredient = Ingredient(133L, "apple")
-  val recipeExample: Recipe =
-      Recipe(123L, "recipe1", null, null, "instructions", "thumb", listOf(123L), listOf("string"))
+  private val ingredientExample: Ingredient = Ingredient(133L, "apple")
+  private val recipeExample: Recipe =
+      Recipe(
+          "123",
+          "recipe1",
+          null,
+          null,
+          "instructions",
+          "thumb",
+          listOf(Pair("2134", "4231")),
+      )
 
   @Before
   fun setUp() {
@@ -111,8 +120,8 @@ class UserViewModelTest {
     assertEquals(userViewModel.userName.value, userExample.userName)
     assertEquals(userViewModel.profilePictureUrl.value, userExample.profilePictureUrl)
     assertEquals(userViewModel.fridge.value?.get(0)?.name, "apple")
-    assertEquals(userViewModel.savedRecipes.value?.get(0)?.idMeal, 123L)
-    assertEquals(userViewModel.createdRecipes.value?.get(0)?.idMeal, 123L)
+    assertEquals(userViewModel.savedRecipes.value?.get(0)?.idMeal, "123")
+    assertEquals(userViewModel.createdRecipes.value?.get(0)?.idMeal, "123")
 
     userViewModel.removeIngredientFromUserFridge(ingredientExample)
     userViewModel.removeRecipeFromUserSavedRecipes(recipeExample)
