@@ -9,6 +9,11 @@ import okhttp3.Response
 import org.json.JSONException
 import org.json.JSONObject
 
+/**
+ * Repository for fetching recipes from the MealDB API.
+ *
+ * @property client The OkHttpClient used to make network requests.
+ */
 class MealDBRecipeRepository(private val client: OkHttpClient) : RecipeRepository {
 
   private val mealDBUrl = "https://www.themealdb.com/api/json/v1/1/"
@@ -46,7 +51,6 @@ class MealDBRecipeRepository(private val client: OkHttpClient) : RecipeRepositor
     return parsedListOfRecipes
   }
 
-  /** Please limit the number of recipes to 3 */
   override fun random(
       nbOfElements: Int,
       onSuccess: (List<Recipe>) -> Unit,
@@ -54,6 +58,8 @@ class MealDBRecipeRepository(private val client: OkHttpClient) : RecipeRepositor
   ) {
     require(nbOfElements <= 3) { "Please limit the number of recipes to 3" }
     val listOfRandomRecipes = mutableListOf<Recipe>()
+    // Fetch a random recipe for each element because the API does not support fetching multiple
+    // random recipes at once
     for (i in 0 until nbOfElements) {
       getOneRandomRecipe(
           onSuccess = {
@@ -66,6 +72,12 @@ class MealDBRecipeRepository(private val client: OkHttpClient) : RecipeRepositor
     }
   }
 
+  /**
+   * Helper method to fetch a random recipe from the MealDB API.
+   *
+   * @param onSuccess The callback to be invoked when the recipe is successfully fetched.
+   * @param onFailure The callback to be invoked when an error occurs.
+   */
   private fun getOneRandomRecipe(
       onSuccess: (List<Recipe>) -> Unit,
       onFailure: (Exception) -> Unit
