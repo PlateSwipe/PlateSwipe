@@ -13,6 +13,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.swipePage.ReceipeDisplay
+import com.android.sample.ui.swipePage.SwipePage
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import org.junit.After
 import org.junit.Before
@@ -33,11 +34,6 @@ class MainPageTest : TestCase() {
     Intents.init()
     navigationActions = mock(NavigationActions::class.java)
     `when`(navigationActions.currentRoute()).thenReturn(Route.MAIN)
-
-    composeTestRule.setContent {
-      // SwipePage(navigationActions) // Set up the SignInScreen directly
-      ReceipeDisplay(PaddingValues(0.dp))
-    }
   }
 
   @After
@@ -46,7 +42,17 @@ class MainPageTest : TestCase() {
   }
 
   @Test
+  fun swipePageCorrectlyDisplayed() {
+    composeTestRule.setContent {
+      SwipePage(navigationActions) // Set up the SignInScreen directly
+    }
+    composeTestRule.onNodeWithTag("bottomNavigationMenu").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("TopBar").assertIsDisplayed()
+  }
+
+  @Test
   fun recipeAndDescriptionAreCorrectlyDisplayed() {
+    composeTestRule.setContent { ReceipeDisplay(PaddingValues(0.dp)) }
     composeTestRule.onNodeWithTag("recipeDescription").assertIsDisplayed()
     composeTestRule.onNodeWithTag("recipeImage").assertIsDisplayed()
     composeTestRule.onNodeWithTag("swipeUIDescription").assertIsDisplayed()
@@ -54,6 +60,8 @@ class MainPageTest : TestCase() {
 
   @Test
   fun testBiggerDescription() {
+    composeTestRule.setContent { ReceipeDisplay(PaddingValues(0.dp)) }
+
     // Make sure the screen is displayed
     composeTestRule.onNodeWithTag("displayDescription").assertIsDisplayed()
 
@@ -64,8 +72,9 @@ class MainPageTest : TestCase() {
 
   @Test
   fun testDraggingEvent() {
-    // Make sure the screen is displayed
+    composeTestRule.setContent { ReceipeDisplay(PaddingValues(0.dp)) }
 
+    // Make sure the screen is displayed
     composeTestRule.onNodeWithTag("draggableItem").assertIsDisplayed()
 
     // Simulate a drag event
