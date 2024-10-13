@@ -35,13 +35,15 @@ class MealDBRecipeRepository(private val client: OkHttpClient) : RecipeRepositor
       val strInstructions = meal.getString("strInstructions")
       val strMealThumbUrl = meal.getString("strMealThumb")
       val ingredientsAndMeasurements = mutableListOf<Pair<String, String>>()
-      for (j in 1..20) {
+      var j = 1
+      while ((j <= 20) && meal.optString("strIngredient$j", "").isNotEmpty()) {
 
         val ingredient = meal.optString("strIngredient$j", "")
         val measurement = meal.optString("strMeasure$j", "")
         if (ingredient.isNotEmpty() && measurement.isNotEmpty()) {
           ingredientsAndMeasurements.add(Pair(ingredient, measurement))
         }
+        j++
       }
       parsedListOfRecipes.add(
           Recipe(
