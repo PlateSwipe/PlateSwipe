@@ -18,13 +18,13 @@ private val DarkColorScheme =
 
 private val LightColorScheme =
     lightColorScheme(
-        primary = goldenBronze,
+        primary = lightCream,
         secondary = PurpleGrey40,
         tertiary = Pink40,
         background = lightCream,
-        onPrimary = Color.Red,
+        onPrimary = Color.Black,
         onSecondary = graySlate,
-        onTertiary = Color.Yellow
+        onTertiary = Color.Gray
 
         /* Other default colors to override
         background = Color(0xFFFFFBFE),
@@ -44,15 +44,16 @@ fun SampleAppTheme(
     dynamicColor: Boolean = false, // true to enable dynamic color when Dark theme is enabled
     content: @Composable () -> Unit
 ) {
-  val colorScheme =
-      when {
-        /*dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-          val context = LocalContext.current
-          if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }*/
-        // darkTheme -> DarkColorScheme // uncomment this line to enable Dark theme
-        else -> LightColorScheme
-      }
+  val colorScheme = LightColorScheme
+  // uncomment these lines to enable Dark theme
+  /*when {
+    dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+      val context = LocalContext.current
+      if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+    }
+     darkTheme -> DarkColorScheme
+    else -> LightColorScheme
+  }*/
   val view = LocalView.current
   // Set the status bar color
   if (!view.isInEditMode) {

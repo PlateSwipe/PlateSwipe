@@ -75,7 +75,7 @@ fun SwipePage(navigationActions: NavigationActions) {
             tabList = LIST_TOP_LEVEL_DESTINATIONS,
             selectedItem = selectedItem)
       }) { paddingValues ->
-        ImageSwipeGallery(paddingValues)
+        ReceipeDisplay(paddingValues)
       }
 }
 
@@ -85,7 +85,7 @@ fun SwipePage(navigationActions: NavigationActions) {
  * @param paddingValues - Padding values for the column
  */
 @Composable
-fun ImageSwipeGallery(paddingValues: PaddingValues) {
+fun ReceipeDisplay(paddingValues: PaddingValues) {
   val height = LocalConfiguration.current.screenHeightDp.dp * 1 / 2
   val width = height * 3 / 4
   var isDescriptionVisible by remember {

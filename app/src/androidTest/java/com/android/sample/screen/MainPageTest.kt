@@ -12,7 +12,7 @@ import androidx.test.espresso.intent.Intents
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
-import com.android.sample.ui.swipePage.ImageSwipeGallery
+import com.android.sample.ui.swipePage.ReceipeDisplay
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import org.junit.After
 import org.junit.Before
@@ -36,7 +36,7 @@ class MainPageTest : TestCase() {
 
     composeTestRule.setContent {
       // SwipePage(navigationActions) // Set up the SignInScreen directly
-      ImageSwipeGallery(PaddingValues(0.dp))
+      ReceipeDisplay(PaddingValues(0.dp))
     }
   }
 
