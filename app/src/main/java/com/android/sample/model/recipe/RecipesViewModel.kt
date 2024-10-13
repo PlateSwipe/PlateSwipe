@@ -24,8 +24,7 @@ class RecipesViewModel(private val repository: RecipeRepository) : ViewModel() {
     get() = _loading
 
   init {
-    // Fetch a default number of random recipes when ViewModel is created
-    fetchRandomRecipes(5) // Fetch 5 random recipes as an example
+    // Removed the fetchRandomRecipes() call from the init block for testing purposes
   }
 
   /**
