@@ -60,7 +60,7 @@ class MealDBRecipeRepository(private val client: OkHttpClient) : RecipeRepositor
       getOneRandomRecipe(
           onSuccess = {
             listOfRandomRecipes.add(it[0])
-            if (listOfRandomRecipes.size == nbOfElements.toInt()) {
+            if (listOfRandomRecipes.size == nbOfElements) {
               onSuccess(listOfRandomRecipes)
             }
           },
