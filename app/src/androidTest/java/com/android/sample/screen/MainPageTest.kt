@@ -1,18 +1,16 @@
 package com.android.sample.screen
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeLeft
-import androidx.compose.ui.unit.dp
 import androidx.test.espresso.intent.Intents
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
-import com.android.sample.ui.swipePage.ReceipeDisplay
+import com.android.sample.ui.swipePage.SwipePage
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import org.junit.After
 import org.junit.Before
@@ -35,8 +33,7 @@ class MainPageTest : TestCase() {
     `when`(navigationActions.currentRoute()).thenReturn(Route.MAIN)
 
     composeTestRule.setContent {
-      // SwipePage(navigationActions) // Set up the SignInScreen directly
-      ReceipeDisplay(PaddingValues(0.dp))
+      SwipePage(navigationActions) // Set up the SignInScreen directly
     }
   }
 

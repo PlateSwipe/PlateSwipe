@@ -11,7 +11,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -75,101 +74,96 @@ fun SwipePage(navigationActions: NavigationActions) {
             tabList = LIST_TOP_LEVEL_DESTINATIONS,
             selectedItem = selectedItem)
       }) { paddingValues ->
-        ReceipeDisplay(paddingValues)
-      }
-}
+        val height = LocalConfiguration.current.screenHeightDp.dp * 1 / 2
+        val width = height * 3 / 4
+        var isDescriptionVisible by remember {
+          mutableStateOf(false)
+        } // Tracks if the text should be visible
 
-/**
- * Main Composable for the Image Gallery with Swipe feature
- *
- * @param paddingValues - Padding values for the column
- */
-@Composable
-fun ReceipeDisplay(paddingValues: PaddingValues) {
-  val height = LocalConfiguration.current.screenHeightDp.dp * 1 / 2
-  val width = height * 3 / 4
-  var isDescriptionVisible by remember {
-    mutableStateOf(false)
-  } // Tracks if the text should be visible
+        var currentImageId by remember { mutableIntStateOf(R.drawable.burger) }
+        val offsetX = remember { Animatable(0f) } // For tracking drag offset
+        val coroutineScope = rememberCoroutineScope() // Coroutine scope for animations
+        val context = LocalContext.current
+        // Get the screen width to manage swipe gestures
+        val screenWidth = LocalConfiguration.current.screenWidthDp.toFloat()
+        // Handle gesture end to check if we need to change images
+        val swipeThreshold = screenWidth / 4
 
-  var currentImageId by remember { mutableIntStateOf(R.drawable.burger) }
-  val offsetX = remember { Animatable(0f) } // For tracking drag offset
-  val coroutineScope = rememberCoroutineScope() // Coroutine scope for animations
-  val context = LocalContext.current
-  // Get the screen width to manage swipe gestures
-  val screenWidth = LocalConfiguration.current.screenWidthDp.toFloat()
-  // Handle gesture end to check if we need to change images
-  val swipeThreshold = screenWidth / 4
-
-  Column(
-      modifier =
-          Modifier.testTag("draggableItem")
-              .fillMaxSize()
-              .padding(paddingValues)
-              .padding(16.dp)
-              .pointerInput(Unit) {
-                detectHorizontalDragGestures(
-                    onDragEnd = {
-                      if (offsetX.value > swipeThreshold) {
-                        // Right Swipe
-                        isDescriptionVisible = false
-                        currentImageId = setNextImage(currentImageId)
-                        // hard coded toast for now
-                        val toast = Toast.makeText(context, "Dislike", Toast.LENGTH_SHORT)
-                        toast.show()
-                      } else if (offsetX.value < -swipeThreshold) {
-                        // Left Swipe
-                        isDescriptionVisible = false
-                        currentImageId = setNextImage(currentImageId)
-                        // hard coded toast for now
-                        val toast =
-                            Toast.makeText(context, "Like", Toast.LENGTH_SHORT) // in Activity
-                        toast.show()
-                      }
-                    },
-                    onHorizontalDrag = { _, dragAmount ->
-                      coroutineScope.launch { offsetX.snapTo(offsetX.value + dragAmount) }
-                    })
-              }) {
-        Card(
+        Column(
             modifier =
-                Modifier.fillMaxWidth().padding(8.dp).graphicsLayer(translationX = offsetX.value),
-            shape = RoundedCornerShape(16.dp),
-            elevation = CardDefaults.cardElevation(4.dp)) {
-              Column(modifier = Modifier.background(color = MaterialTheme.colorScheme.onPrimary)) {
-                Image(
-                    painter = painterResource(id = currentImageId),
-                    contentDescription = "Recipe Image",
-                    modifier =
-                        Modifier.testTag("recipeImage")
-                            .fillMaxWidth()
-                            .size(
-                                width = width,
-                                height = if (isDescriptionVisible) height * 1 / 2 else height),
-                    contentScale = ContentScale.FillWidth,
-                )
+                Modifier.testTag("draggableItem")
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(16.dp)
+                    .pointerInput(Unit) {
+                      detectHorizontalDragGestures(
+                          onDragEnd = {
+                            if (offsetX.value > swipeThreshold) {
+                              // Right Swipe
+                              isDescriptionVisible = false
+                              currentImageId = setNextImage(currentImageId)
+                              // hard coded toast for now
+                              val toast = Toast.makeText(context, "Dislike", Toast.LENGTH_SHORT)
+                              toast.show()
+                            } else if (offsetX.value < -swipeThreshold) {
+                              // Left Swipe
+                              isDescriptionVisible = false
+                              currentImageId = setNextImage(currentImageId)
+                              // hard coded toast for now
+                              val toast =
+                                  Toast.makeText(context, "Like", Toast.LENGTH_SHORT) // in Activity
+                              toast.show()
+                            }
+                          },
+                          onHorizontalDrag = { _, dragAmount ->
+                            coroutineScope.launch { offsetX.snapTo(offsetX.value + dragAmount) }
+                          })
+                    }) {
+              Card(
+                  modifier =
+                      Modifier.fillMaxWidth()
+                          .padding(8.dp)
+                          .graphicsLayer(translationX = offsetX.value),
+                  shape = RoundedCornerShape(16.dp),
+                  elevation = CardDefaults.cardElevation(4.dp)) {
+                    Column(
+                        modifier =
+                            Modifier.background(color = MaterialTheme.colorScheme.onPrimary)) {
+                          Image(
+                              painter = painterResource(id = currentImageId),
+                              contentDescription = "Recipe Image",
+                              modifier =
+                                  Modifier.testTag("recipeImage")
+                                      .fillMaxWidth()
+                                      .size(
+                                          width = width,
+                                          height =
+                                              if (isDescriptionVisible) height * 1 / 2 else height),
+                              contentScale = ContentScale.FillWidth,
+                          )
+                        }
+                  }
+              // Display Recipe Description
+
+              Description(
+                  isDescriptionVisible,
+                  modifier = Modifier.clickable { isDescriptionVisible = !isDescriptionVisible })
+
+              // Add some space between the image and the description
+              Spacer(modifier = Modifier.height(16.dp))
+
+              // Swipe explanation
+              Text(
+                  text = "Swipe to like or dislike the recipe.",
+                  style = MaterialTheme.typography.bodyMedium,
+                  color = MaterialTheme.colorScheme.onSecondary,
+                  modifier = Modifier.testTag("swipeUIDescription").padding(16.dp))
+
+              // Animate back to center if not swiped
+              LaunchedEffect(offsetX.value) {
+                offsetX.animateTo(0f, animationSpec = tween(50)) // Animate back to center
               }
             }
-        // Display Recipe Description
-
-        Description(
-            isDescriptionVisible,
-            modifier = Modifier.clickable { isDescriptionVisible = !isDescriptionVisible })
-
-        // Add some space between the image and the description
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Swipe explanation
-        Text(
-            text = "Swipe to like or dislike the recipe.",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSecondary,
-            modifier = Modifier.testTag("swipeUIDescription").padding(16.dp))
-
-        // Animate back to center if not swiped
-        LaunchedEffect(offsetX.value) {
-          offsetX.animateTo(0f, animationSpec = tween(50)) // Animate back to center
-        }
       }
 }
 
