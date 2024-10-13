@@ -19,8 +19,6 @@ import org.mockito.kotlin.verify
 
 class UserViewModelTest {
 
-  private val userToUnit: (User) -> Unit = { user -> { user } }
-
   private lateinit var mockUserRepository: UserRepository
   private lateinit var mockFirebaseAuth: FirebaseAuth
   private lateinit var mockCurrentUser: FirebaseUser
