@@ -20,14 +20,14 @@ class UserViewModel(
   private val _profilePictureUrl: MutableStateFlow<String?> = MutableStateFlow(null)
   val profilePictureUrl: StateFlow<String?> = _profilePictureUrl
 
-  private val _fridge: MutableStateFlow<List<Ingredient>?> = MutableStateFlow(null)
-  val fridge: StateFlow<List<Ingredient>?> = _fridge
+  private val _fridge: MutableStateFlow<List<Ingredient>> = MutableStateFlow(emptyList())
+  val fridge: StateFlow<List<Ingredient>> = _fridge
 
-  private val _savedRecipes: MutableStateFlow<List<Recipe>?> = MutableStateFlow(null)
-  val savedRecipes: StateFlow<List<Recipe>?> = _savedRecipes
+  private val _savedRecipes: MutableStateFlow<List<Recipe>> = MutableStateFlow(emptyList())
+  val savedRecipes: StateFlow<List<Recipe>> = _savedRecipes
 
-  private val _createdRecipes: MutableStateFlow<List<Recipe>?> = MutableStateFlow(null)
-  val createdRecipes: StateFlow<List<Recipe>?> = _createdRecipes
+  private val _createdRecipes: MutableStateFlow<List<Recipe>> = MutableStateFlow(emptyList())
+  val createdRecipes: StateFlow<List<Recipe>> = _createdRecipes
 
   init {
     userRepository.init { getCurrentUser() }
@@ -75,9 +75,9 @@ class UserViewModel(
             uid = firebaseAuth.currentUser?.uid ?: return,
             userName = _userName.value ?: "",
             profilePictureUrl = _profilePictureUrl.value ?: "",
-            fridge = _fridge.value?.map { it.barCode.toString() } ?: emptyList(),
-            savedRecipes = _savedRecipes.value?.map { it.idMeal } ?: emptyList(),
-            createdRecipes = _createdRecipes.value?.map { it.idMeal } ?: emptyList())
+            fridge = _fridge.value.map { it.barCode.toString() },
+            savedRecipes = _savedRecipes.value.map { it.idMeal },
+            createdRecipes = _createdRecipes.value.map { it.idMeal })
 
     userRepository.updateUser(user = savedUser, onSuccess = {}, onFailure = {})
 
@@ -102,16 +102,28 @@ class UserViewModel(
     _profilePictureUrl.value = newProfilePictureUrl
   }
 
+  private fun <T> updateList(list: MutableStateFlow<List<T>>, item: T, add: Boolean): List<T> {
+
+    val currentList = list.value
+    val newList = currentList.toMutableList()
+
+    if (add) {
+      newList.add(item)
+    } else {
+      newList.remove(item)
+    }
+
+    list.value = newList
+    return newList
+  }
+
   /**
    * Adds an ingredient to the user fridge.
    *
    * @param ingredient the ingredient to be added
    */
   fun addIngredientToUserFridge(ingredient: Ingredient) {
-    val currentFridge = _fridge.value ?: emptyList()
-    val newFridge = currentFridge.toMutableList()
-    newFridge.add(ingredient)
-    _fridge.value = newFridge
+    updateList(_fridge, ingredient, true)
   }
 
   /**
@@ -120,10 +132,7 @@ class UserViewModel(
    * @param ingredient the ingredient to be removed
    */
   fun removeIngredientFromUserFridge(ingredient: Ingredient) {
-    val currentFridge = _fridge.value ?: emptyList()
-    val newFridge = currentFridge.toMutableList()
-    newFridge.remove(ingredient)
-    _fridge.value = newFridge
+    updateList(_fridge, ingredient, false)
   }
 
   /**
@@ -132,10 +141,7 @@ class UserViewModel(
    * @param recipe the recipe to be added
    */
   fun addRecipeToUserSavedRecipes(recipe: Recipe) {
-    val currentSavedRecipes = _savedRecipes.value ?: emptyList()
-    val newSavedRecipes = currentSavedRecipes.toMutableList()
-    newSavedRecipes.add(recipe)
-    _savedRecipes.value = newSavedRecipes
+    updateList(_savedRecipes, recipe, true)
   }
 
   /**
@@ -144,10 +150,7 @@ class UserViewModel(
    * @param recipe the recipe to be removed
    */
   fun removeRecipeFromUserSavedRecipes(recipe: Recipe) {
-    val currentSavedRecipes = _savedRecipes.value ?: emptyList()
-    val newSavedRecipes = currentSavedRecipes.toMutableList()
-    newSavedRecipes.remove(recipe)
-    _savedRecipes.value = newSavedRecipes
+    updateList(_savedRecipes, recipe, false)
   }
 
   /**
@@ -156,10 +159,7 @@ class UserViewModel(
    * @param recipe the recipe to be added
    */
   fun addRecipeToUserCreatedRecipes(recipe: Recipe) {
-    val currentCreatedRecipes = _createdRecipes.value ?: emptyList()
-    val newCreatedRecipes = currentCreatedRecipes.toMutableList()
-    newCreatedRecipes.add(recipe)
-    _createdRecipes.value = newCreatedRecipes
+    updateList(_createdRecipes, recipe, true)
   }
 
   /**
@@ -168,9 +168,6 @@ class UserViewModel(
    * @param recipe the recipe to be removed
    */
   fun removeRecipeFromUserCreatedRecipes(recipe: Recipe) {
-    val currentCreatedRecipes = _createdRecipes.value ?: emptyList()
-    val newCreatedRecipes = currentCreatedRecipes.toMutableList()
-    newCreatedRecipes.remove(recipe)
-    _createdRecipes.value = newCreatedRecipes
+    updateList(_createdRecipes, recipe, false)
   }
 }
