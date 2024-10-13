@@ -23,7 +23,7 @@ class MealDBRecipeRepository(private val client: OkHttpClient) : RecipeRepositor
    *
    * @param json The JSON object to parse.
    */
-  private fun parseMealDBJsontoRecipe(json: JSONObject): List<Recipe> {
+  private fun parseMealDBJsonToRecipe(json: JSONObject): List<Recipe> {
     val parsedListOfRecipes = mutableListOf<Recipe>()
     val listOfRecipes = json.getJSONArray("meals")
     for (i in 0 until listOfRecipes.length()) {
@@ -103,7 +103,7 @@ class MealDBRecipeRepository(private val client: OkHttpClient) : RecipeRepositor
 
               override fun onResponse(call: Call, response: Response) {
                 try {
-                  val recipe = parseMealDBJsontoRecipe(JSONObject(response.body!!.string()))
+                  val recipe = parseMealDBJsonToRecipe(JSONObject(response.body!!.string()))
                   onSuccess(recipe)
                 } catch (e: JSONException) {
                   onFailure(e)
