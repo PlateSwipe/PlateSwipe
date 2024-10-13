@@ -18,11 +18,11 @@ class MealDBRecipeRepository(private val client: OkHttpClient) : RecipeRepositor
 
   private val mealDBUrl = "https://www.themealdb.com/api/json/v1/1/"
 
-    /**
-     * Fetches a specified number of random recipes from the MealDB API.
-     *
-     * @param json The JSON object to parse.
-     */
+  /**
+   * Fetches a specified number of random recipes from the MealDB API.
+   *
+   * @param json The JSON object to parse.
+   */
   private fun parseMealDBJsontoRecipe(json: JSONObject): List<Recipe> {
     val parsedListOfRecipes = mutableListOf<Recipe>()
     val listOfRecipes = json.getJSONArray("meals")
