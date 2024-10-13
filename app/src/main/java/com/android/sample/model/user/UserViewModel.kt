@@ -1,6 +1,7 @@
 package com.android.sample.model.user
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.recipe.Recipe
 import com.google.firebase.auth.FirebaseAuth
@@ -31,6 +32,22 @@ class UserViewModel(
 
   init {
     userRepository.init { getCurrentUser() }
+  }
+
+  companion object {
+    class UserViewModelFactory(
+        private val userRepository: UserRepository,
+        private val firebaseAuth: FirebaseAuth = Firebase.auth
+    ) : ViewModelProvider.Factory {
+
+      @Suppress("UNCHECKED_CAST")
+      override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(UserViewModel::class.java)) {
+          return UserViewModel(userRepository, firebaseAuth) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
+      }
+    }
   }
 
   /**
