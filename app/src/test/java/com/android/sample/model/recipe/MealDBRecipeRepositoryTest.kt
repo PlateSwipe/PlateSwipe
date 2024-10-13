@@ -88,7 +88,6 @@ class MealDBRecipeRepositoryTest {
   ]
 }"""
 
-  // give me another random meal
   private val mealDBJsonRandomJson2 =
       """{
   "meals": [
