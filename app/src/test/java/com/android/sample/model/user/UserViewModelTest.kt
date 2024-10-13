@@ -117,16 +117,16 @@ class UserViewModelTest {
 
     assertEquals(userViewModel.userName.value, userExample.userName)
     assertEquals(userViewModel.profilePictureUrl.value, userExample.profilePictureUrl)
-    assertEquals(userViewModel.fridge.value?.get(0)?.name, "apple")
-    assertEquals(userViewModel.savedRecipes.value?.get(0)?.idMeal, "123")
-    assertEquals(userViewModel.createdRecipes.value?.get(0)?.idMeal, "123")
+    assertEquals(userViewModel.fridge.value[0].name, "apple")
+    assertEquals(userViewModel.savedRecipes.value[0].idMeal, "123")
+    assertEquals(userViewModel.createdRecipes.value[0].idMeal, "123")
 
     userViewModel.removeIngredientFromUserFridge(ingredientExample)
     userViewModel.removeRecipeFromUserSavedRecipes(recipeExample)
     userViewModel.removeRecipeFromUserCreatedRecipes(recipeExample)
 
-    assertEquals(userViewModel.fridge.value?.count(), 0)
-    assertEquals(userViewModel.savedRecipes.value?.count(), 0)
-    assertEquals(userViewModel.createdRecipes.value?.count(), 0)
+    assertEquals(userViewModel.fridge.value.count(), 0)
+    assertEquals(userViewModel.savedRecipes.value.count(), 0)
+    assertEquals(userViewModel.createdRecipes.value.count(), 0)
   }
 }
