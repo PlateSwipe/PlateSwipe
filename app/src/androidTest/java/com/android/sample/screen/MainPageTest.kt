@@ -47,7 +47,7 @@ class MainPageTest : TestCase() {
       SwipePage(navigationActions) // Set up the SignInScreen directly
     }
     composeTestRule.onNodeWithTag("bottomNavigationMenu").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("TopBar").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("topBar").assertIsDisplayed()
   }
 
   @Test

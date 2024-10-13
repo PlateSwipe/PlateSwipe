@@ -68,7 +68,7 @@ fun SwipePage(navigationActions: NavigationActions) {
             colors =
                 TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary),
-            modifier = Modifier.testTag("TopBar"))
+            modifier = Modifier.testTag("topBar"))
       },
       bottomBar = {
         BottomNavigationMenu(
