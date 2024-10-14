@@ -5,7 +5,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
-import com.android.sample.ui.testScreens.MainScreen
+import com.android.sample.ui.screens.MainScreen
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test

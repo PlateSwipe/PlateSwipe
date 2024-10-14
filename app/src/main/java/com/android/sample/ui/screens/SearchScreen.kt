@@ -1,4 +1,4 @@
-package com.android.sample.ui.testScreens
+package com.android.sample.ui.screens
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -20,6 +20,6 @@ fun SearchScreen(navigationActions: NavigationActions) {
             tabList = LIST_TOP_LEVEL_DESTINATIONS,
             selectedItem = navigationActions.currentRoute())
       }) { innerPadding ->
-        Text(text = "searchScreenText", modifier = Modifier.padding(innerPadding))
+        Text(text = "", modifier = Modifier.padding(innerPadding))
       }
 }

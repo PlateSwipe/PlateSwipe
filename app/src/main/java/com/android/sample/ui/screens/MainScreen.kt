@@ -1,4 +1,4 @@
-package com.android.sample.ui.testScreens
+package com.android.sample.ui.screens
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -11,15 +11,15 @@ import com.android.sample.ui.navigation.LIST_TOP_LEVEL_DESTINATIONS
 import com.android.sample.ui.navigation.NavigationActions
 
 @Composable
-fun AddRecipeScreen(navigationActions: NavigationActions) {
+fun MainScreen(navigationActions: NavigationActions) {
   Scaffold(
-      modifier = Modifier.testTag("addRecipeScreen"),
+      modifier = Modifier.testTag("mainScreen"),
       bottomBar = {
         BottomNavigationMenu(
             onTabSelect = { destination -> navigationActions.navigateTo(destination) },
             tabList = LIST_TOP_LEVEL_DESTINATIONS,
             selectedItem = navigationActions.currentRoute())
       }) { innerPadding ->
-        Text(text = "addRecipeScreenText", modifier = Modifier.padding(innerPadding))
+        Text(text = "", modifier = Modifier.padding(innerPadding))
       }
 }
