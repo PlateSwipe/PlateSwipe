@@ -12,7 +12,7 @@ data class User(
     val uid: String,
     val userName: String,
     val profilePictureUrl: String,
-    val fridge: List<Long>,
-    val savedRecipes: List<Long>,
-    val createdRecipes: List<Long>
+    val fridge: List<String>,
+    val savedRecipes: List<String>,
+    val createdRecipes: List<String>
 )
