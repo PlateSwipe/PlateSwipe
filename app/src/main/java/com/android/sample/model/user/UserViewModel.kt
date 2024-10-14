@@ -72,13 +72,13 @@ class UserViewModel(
               user =
                   User(
                       uid = userId,
-                      userName = userId,
+                      userName = userName.value ?: userId,
                       profilePictureUrl = "",
                       fridge = emptyList(),
                       savedRecipes = emptyList(),
                       createdRecipes = emptyList()),
               onSuccess = { getCurrentUser() },
-              onFailure = {})
+              onFailure = { e -> throw e })
         })
   }
 
@@ -96,9 +96,7 @@ class UserViewModel(
             savedRecipes = _savedRecipes.value.map { it.idMeal },
             createdRecipes = _createdRecipes.value.map { it.idMeal })
 
-    userRepository.updateUser(user = savedUser, onSuccess = {}, onFailure = {})
-
-    getCurrentUser()
+    userRepository.updateUser(user = savedUser, onSuccess = {}, onFailure = { e -> throw e })
   }
 
   /**
