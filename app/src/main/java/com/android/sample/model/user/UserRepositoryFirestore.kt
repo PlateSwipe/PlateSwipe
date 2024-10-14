@@ -52,11 +52,11 @@ class UserRepositoryFirestore(private val db: FirebaseFirestore) : UserRepositor
    */
   @Suppress("UNCHECKED_CAST")
   private fun convertSnapshot(uid: String, snapshot: DocumentSnapshot): User {
-    val userName = snapshot.get("userName") as String
-    val profilePictureUrl = snapshot.get("profilePictureUrl") as String
-    val fridge = snapshot.get("fridge") as List<String>
-    val savedRecipes = snapshot.get("savedRecipes") as List<String>
-    val createdRecipes = snapshot.get("createdRecipes") as List<String>
+    val userName = snapshot["userName"] as String
+    val profilePictureUrl = snapshot["profilePictureUrl"] as String
+    val fridge = snapshot["fridge"] as List<String>
+    val savedRecipes = snapshot["savedRecipes"] as List<String>
+    val createdRecipes = snapshot["createdRecipes"] as List<String>
     return User(uid, userName, profilePictureUrl, fridge, savedRecipes, createdRecipes)
   }
 
