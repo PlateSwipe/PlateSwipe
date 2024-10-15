@@ -39,6 +39,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
@@ -76,7 +77,7 @@ fun SwipePage(navigationActions: NavigationActions) {
             tabList = LIST_TOP_LEVEL_DESTINATIONS,
             selectedItem = selectedItem)
       }) { paddingValues ->
-        ReceipeDisplay(paddingValues)
+        RecipeDisplay(paddingValues)
       }
 }
 
@@ -86,7 +87,7 @@ fun SwipePage(navigationActions: NavigationActions) {
  * @param paddingValues - Padding values for the column
  */
 @Composable
-fun ReceipeDisplay(paddingValues: PaddingValues) {
+fun RecipeDisplay(paddingValues: PaddingValues) {
   val height = LocalConfiguration.current.screenHeightDp.dp * 1 / 2
   val width = height * 3 / 4
   var isDescriptionVisible by remember {
@@ -222,15 +223,26 @@ private fun Description(isDescriptionVisible: Boolean, modifier: Modifier) {
       Spacer(modifier = Modifier.padding(5.dp))
 
       // Display Recipe Timing
-      Row(modifier = Modifier.padding(16.dp)) {
-        Icon(painter = painterResource(R.drawable.time_line), contentDescription = "recipes timing")
-        Text(
-            text = "30min",
-            style = MaterialTheme.typography.bodyLarge,
-            fontSize = 22.sp,
-            color = MaterialTheme.colorScheme.onSecondary,
-        )
-      }
+      Row(
+          modifier = Modifier,
+          verticalAlignment =
+              Alignment.CenterVertically // Aligns the icon and text vertically centered
+          ) {
+            Icon(
+                painter = painterResource(R.drawable.timer),
+                contentDescription = "recipes timing",
+                modifier = Modifier.size(24.dp) // Adjust size to match the text size
+                )
+
+            Spacer(modifier = Modifier.padding(5.dp))
+
+            Text(
+                text = "30min",
+                style = MaterialTheme.typography.bodyLarge,
+                fontSize = 22.sp,
+                color = MaterialTheme.colorScheme.onSecondary,
+            )
+          }
     }
   }
 }
