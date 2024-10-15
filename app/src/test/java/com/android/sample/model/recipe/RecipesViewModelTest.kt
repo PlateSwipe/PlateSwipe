@@ -3,7 +3,9 @@ package com.github.se.bootcamp.model.recipe
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.recipe.RecipeRepository
 import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
 import org.mockito.ArgumentMatchers.eq
@@ -106,5 +108,43 @@ class RecipesViewModelTest {
     assertThat(
         recipesViewModel.recipes.value,
         `is`(emptyList<Recipe>())) // Ensure no recipes are set on failure
+  }
+
+  @Test
+  fun fetchRandomRecipesThrowsExceptionForInvalidNumber() {
+    // Arrange
+    val invalidNumberOfRecipes = 0
+
+    // Act & Assert
+    val exception =
+        assertThrows(IllegalArgumentException::class.java) {
+          recipesViewModel.fetchRandomRecipes(invalidNumberOfRecipes)
+        }
+    assertThat(exception.message, `is`("Number of fetched recipes must be at least 1"))
+  }
+
+  @Test
+  fun updateCurrentRecipeUpdatesState() {
+    // Arrange
+    val recipe = dummyRecipes[0]
+
+    // Act
+    recipesViewModel.updateCurrentRecipe(recipe)
+
+    // Assert
+    assertThat(recipesViewModel.currentRecipe.value, `is`(recipe))
+  }
+
+  @Test
+  fun clearCurrentRecipeClearsState() {
+    // Arrange
+    val recipe = dummyRecipes[0]
+    recipesViewModel.updateCurrentRecipe(recipe)
+
+    // Act
+    recipesViewModel.clearCurrentRecipe()
+
+    // Assert
+    assertThat(recipesViewModel.currentRecipe.value, `is`(nullValue()))
   }
 }
