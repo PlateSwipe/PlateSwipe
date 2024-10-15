@@ -3,6 +3,7 @@ package com.android.sample.model.recipe
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.Assert.assertThrows
 import org.junit.Test
 
 class RecipeTest {
@@ -68,5 +69,28 @@ class RecipeTest {
     assertThat(recipe.strInstructions, `is`(strInstructions))
     assertThat(recipe.strMealThumbUrl, `is`(strMealThumbUrl))
     assertThat(recipe.ingredientsAndMeasurements, `is`(ingredientsAndMeasurements))
+  }
+
+  @Test
+  fun `create Recipe with empty ingredientsAndMeasurements list`() {
+    // Arrange
+    val idMeal = "3"
+    val strMeal = "Empty Ingredients Test"
+    val strInstructions = "Instructions here..."
+    val strMealThumbUrl = "https://example.com/empty-ingredients-test"
+
+    // Act & Assert
+    val exception =
+        assertThrows(IllegalArgumentException::class.java) {
+          Recipe(
+              idMeal = idMeal,
+              strMeal = strMeal,
+              strCategory = null,
+              strArea = null,
+              strInstructions = strInstructions,
+              strMealThumbUrl = strMealThumbUrl,
+              ingredientsAndMeasurements = emptyList())
+        }
+    assertThat(exception.message, `is`("Ingredients and measurements must not be empty"))
   }
 }
