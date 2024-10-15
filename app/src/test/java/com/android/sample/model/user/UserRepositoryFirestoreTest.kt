@@ -127,7 +127,7 @@ class UserRepositoryFirestoreTest {
     `when`(mockSnapshot.get("profilePictureUrl")).thenReturn("")
     `when`(mockSnapshot.get("fridge")).thenReturn(listOf<String>())
     `when`(mockSnapshot.get("createdRecipes")).thenReturn(listOf<String>())
-    `when`(mockSnapshot.get("savedRecipes")).thenReturn(listOf<String>())
+    `when`(mockSnapshot.get("likedRecipes")).thenReturn(listOf<String>())
 
     userRepositoryFirestore.getUserById(
         user.uid,
@@ -153,7 +153,7 @@ class UserRepositoryFirestoreTest {
     `when`(mockSnapshot.get("profilePictureUrl")).thenReturn("")
     `when`(mockSnapshot.get("fridge")).thenReturn(listOf<String>())
     `when`(mockSnapshot.get("createdRecipes")).thenReturn(listOf<String>())
-    `when`(mockSnapshot.get("savedRecipes")).thenReturn(listOf<String>())
+    `when`(mockSnapshot.get("likedRecipes")).thenReturn(listOf<String>())
 
     userRepositoryFirestore.getUserById(
         user.uid,
