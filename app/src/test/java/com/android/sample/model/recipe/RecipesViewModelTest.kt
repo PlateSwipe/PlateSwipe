@@ -1,7 +1,6 @@
-package com.github.se.bootcamp.model.recipe
+package com.android.sample.model.recipe
 
-import com.android.sample.model.recipe.Recipe
-import com.android.sample.model.recipe.RecipeRepository
+import com.github.se.bootcamp.model.recipe.RecipesViewModel
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
@@ -29,7 +28,11 @@ class RecipesViewModelTest {
               strMealThumbUrl =
                   "https://www.recipetineats.com/penne-all-arrabbiata-spicy-tomato-pasta/",
               ingredientsAndMeasurements =
-                  listOf(Pair("Penne", "1 pound"), Pair("Olive oil", "1/4 cup"))),
+                  listOf(Pair("Penne", "1 pound"), Pair("Olive oil", "1/4 cup")),
+              rating = 4.5, // Added rating
+              preparationTime = PreparationTime(0, 30), // Added preparation time
+              cost = 3 // Added cost
+              ),
           Recipe(
               idMeal = "2", // Updated to String
               strMeal = "Chicken Curry",
@@ -39,7 +42,11 @@ class RecipesViewModelTest {
               strMealThumbUrl =
                   "https://www.foodfashionparty.com/2023/08/05/everyday-chicken-curry/",
               ingredientsAndMeasurements =
-                  listOf(Pair("Chicken", "1 pound"), Pair("Curry powder", "2 tbsp")))
+                  listOf(Pair("Chicken", "1 pound"), Pair("Curry powder", "2 tbsp")),
+              rating = 4.0, // Added rating
+              preparationTime = PreparationTime(1, 0), // Added preparation time
+              cost = 4 // Added cost
+              )
           // Add more dummy recipes as needed
           )
 
