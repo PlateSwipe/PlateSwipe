@@ -36,19 +36,14 @@ class UserViewModel(
   }
 
   companion object {
-    class UserViewModelFactory(
-        private val userRepository: UserRepository,
-        private val firebaseAuth: FirebaseAuth = Firebase.auth
-    ) : ViewModelProvider.Factory {
-
-      @Suppress("UNCHECKED_CAST")
-      override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(UserViewModel::class.java)) {
-          return UserViewModel(userRepository, firebaseAuth) as T
+    val Factory: ViewModelProvider.Factory =
+        object : ViewModelProvider.Factory {
+          @Suppress("UNCHECKED_CAST")
+          override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            return UserViewModel(UserRepositoryFirestore(com.google.firebase.Firebase.firestore))
+                as T
+          }
         }
-        throw IllegalArgumentException("Unknown ViewModel class")
-      }
-    }
   }
 
   /**
