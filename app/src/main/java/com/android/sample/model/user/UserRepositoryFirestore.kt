@@ -20,7 +20,12 @@ class UserRepositoryFirestore(private val db: FirebaseFirestore) : UserRepositor
     val doc = db.collection(collectionPath).document(id)
     doc.get().addOnCompleteListener { task ->
       if (task.isSuccessful) {
-        onSuccess(convertSnapshot(id, task.result))
+        val user = convertSnapshot(id, task.result)
+        if (user != null) {
+          onSuccess(user)
+        } else {
+          onFailure(Exception("Error converting snapshot to user"))
+        }
       } else {
         task.exception?.let { onFailure(it) }
       }
@@ -48,16 +53,23 @@ class UserRepositoryFirestore(private val db: FirebaseFirestore) : UserRepositor
    * @param uid unique id of the user of which the snapshot represents
    * @param snapshot DocumentSnapshot that was extracted from Firestore and which we want to convert
    *   into a User
-   * @return a [User] data class that is created from the DocumentSnapshot
+   * @return a [User] data class that is created from the DocumentSnapshot if there is not problem
+   *   otherwise it logs an error and returns null
    */
   @Suppress("UNCHECKED_CAST")
-  private fun convertSnapshot(uid: String, snapshot: DocumentSnapshot): User {
-    val userName = snapshot["userName"] as String
-    val profilePictureUrl = snapshot["profilePictureUrl"] as String
-    val fridge = snapshot["fridge"] as List<String>
-    val likedRecipes = snapshot["likedRecipes"] as List<String>
-    val createdRecipes = snapshot["createdRecipes"] as List<String>
-    return User(uid, userName, profilePictureUrl, fridge, likedRecipes, createdRecipes)
+  private fun convertSnapshot(uid: String, snapshot: DocumentSnapshot): User? {
+    return try {
+      val userName = snapshot["userName"] as String
+      val profilePictureUrl = snapshot["profilePictureUrl"] as String
+      val fridge = snapshot["fridge"] as List<String>
+      val likedRecipes = snapshot["likedRecipes"] as List<String>
+      val createdRecipes = snapshot["createdRecipes"] as List<String>
+
+      User(uid, userName, profilePictureUrl, fridge, likedRecipes, createdRecipes)
+    } catch (e: Exception) {
+      Log.e("UserRepositoryFirestore", "Error converting snapshot to user", e)
+      null
+    }
   }
 
   /**
