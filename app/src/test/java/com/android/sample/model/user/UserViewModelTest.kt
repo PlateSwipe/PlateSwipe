@@ -73,9 +73,19 @@ class UserViewModelTest {
   }
 
   @Test
-  fun `test update user calls repository`() {
+  fun `test update user calls repository with correct values`() {
+    userViewModel.changeUserName(userExample.userName)
+    userViewModel.changeProfilePictureUrl(userExample.profilePictureUrl)
+
+    val userCaptor: ArgumentCaptor<User> = ArgumentCaptor.forClass(User::class.java)
+
     userViewModel.updateCurrentUser()
-    verify(mockUserRepository).updateUser(any(), any(), any())
+
+    verify(mockUserRepository).updateUser(capture(userCaptor), any(), any())
+
+    assertEquals(userCaptor.value.uid, mockCurrentUser.uid)
+    assertEquals(userCaptor.value.userName, userExample.userName)
+    assertEquals(userCaptor.value.profilePictureUrl, userExample.profilePictureUrl)
   }
 
   @Test
@@ -120,7 +130,7 @@ class UserViewModelTest {
   }
 
   @Test
-  fun `test getting throws error on repo failure`() {
+  fun `test updating throws error on repo failure`() {
 
     val onFailureCaptor: ArgumentCaptor<Function1<Exception, Unit>> =
         ArgumentCaptor.forClass(onFailureClass)
