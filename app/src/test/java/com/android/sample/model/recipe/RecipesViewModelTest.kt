@@ -3,7 +3,9 @@ package com.github.se.bootcamp.model.recipe
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.recipe.RecipeRepository
 import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
 import org.mockito.ArgumentMatchers.eq
@@ -21,7 +23,7 @@ class RecipesViewModelTest {
   private val dummyRecipes: List<Recipe> =
       listOf(
           Recipe(
-              idMeal = "1", // Updated to String
+              idMeal = "1",
               strMeal = "Spicy Arrabiata Penne",
               strCategory = "Vegetarian",
               strArea = "Italian",
@@ -31,7 +33,7 @@ class RecipesViewModelTest {
               ingredientsAndMeasurements =
                   listOf(Pair("Penne", "1 pound"), Pair("Olive oil", "1/4 cup"))),
           Recipe(
-              idMeal = "2", // Updated to String
+              idMeal = "2",
               strMeal = "Chicken Curry",
               strCategory = "Non-Vegetarian",
               strArea = "Indian",
@@ -39,9 +41,7 @@ class RecipesViewModelTest {
               strMealThumbUrl =
                   "https://www.foodfashionparty.com/2023/08/05/everyday-chicken-curry/",
               ingredientsAndMeasurements =
-                  listOf(Pair("Chicken", "1 pound"), Pair("Curry powder", "2 tbsp")))
-          // Add more dummy recipes as needed
-          )
+                  listOf(Pair("Chicken", "1 pound"), Pair("Curry powder", "2 tbsp"))))
 
   @Before
   fun setUp() {
@@ -49,6 +49,13 @@ class RecipesViewModelTest {
     recipeRepository = mock(RecipeRepository::class.java)
     // Initialize the RecipesViewModel with the mocked repository
     recipesViewModel = RecipesViewModel(recipeRepository)
+  }
+
+  @Test
+  fun initialStateIsCorrect() {
+    // Assert initial state is correct
+    assertThat(recipesViewModel.recipes.value, `is`(emptyList<Recipe>()))
+    assertThat(recipesViewModel.loading.value, `is`(false))
   }
 
   @Test
@@ -66,6 +73,7 @@ class RecipesViewModelTest {
     assertThat(
         recipesViewModel.recipes.value,
         `is`(dummyRecipes)) // Check if the ViewModel's recipes are updated
+    assertThat(recipesViewModel.loading.value, `is`(false)) // Check loading is false after fetching
   }
 
   @Test
@@ -82,5 +90,61 @@ class RecipesViewModelTest {
             eq(numberOfRecipes),
             any(),
             any()) // Verify that the repository's random method is called
+  }
+
+  @Test
+  fun fetchRandomRecipesHandlesFailure() {
+    // Simulate the failure of the repository
+    `when`(recipeRepository.random(any(), any(), any())).thenAnswer { invocation ->
+      val onFailure = invocation.arguments[2] as (Exception) -> Unit
+      onFailure(Exception("Network error")) // Simulate a failure
+    }
+
+    // Act
+    recipesViewModel.fetchRandomRecipes(2)
+
+    // Assert
+    assertThat(recipesViewModel.loading.value, `is`(false)) // Check loading is false after fetch
+    assertThat(
+        recipesViewModel.recipes.value,
+        `is`(emptyList<Recipe>())) // Ensure no recipes are set on failure
+  }
+
+  @Test
+  fun fetchRandomRecipesThrowsExceptionForInvalidNumber() {
+    // Arrange
+    val invalidNumberOfRecipes = 0
+
+    // Act & Assert
+    val exception =
+        assertThrows(IllegalArgumentException::class.java) {
+          recipesViewModel.fetchRandomRecipes(invalidNumberOfRecipes)
+        }
+    assertThat(exception.message, `is`("Number of fetched recipes must be at least 1"))
+  }
+
+  @Test
+  fun updateCurrentRecipeUpdatesState() {
+    // Arrange
+    val recipe = dummyRecipes[0]
+
+    // Act
+    recipesViewModel.updateCurrentRecipe(recipe)
+
+    // Assert
+    assertThat(recipesViewModel.currentRecipe.value, `is`(recipe))
+  }
+
+  @Test
+  fun clearCurrentRecipeClearsState() {
+    // Arrange
+    val recipe = dummyRecipes[0]
+    recipesViewModel.updateCurrentRecipe(recipe)
+
+    // Act
+    recipesViewModel.clearCurrentRecipe()
+
+    // Assert
+    assertThat(recipesViewModel.currentRecipe.value, `is`(nullValue()))
   }
 }
