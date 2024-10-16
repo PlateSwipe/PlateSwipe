@@ -18,14 +18,11 @@ data class Recipe(
     val strArea: String?,
     val strInstructions: String,
     val strMealThumbUrl: String,
-    val ingredientsAndMeasurements: List<Pair<String, String>>,
-    val rating: Double, // for stars
-    val preparationTime: PreparationTime,
-    val cost: Int // for dollars
-)
-
-data class PreparationTime(val hours: Int, val minutes: Int) {
-  override fun toString(): String {
-    return "${hours} h ${minutes} min"
+    val ingredientsAndMeasurements: List<Pair<String, String>>
+) {
+  init {
+    require(ingredientsAndMeasurements.isNotEmpty()) {
+      "Ingredients and measurements must not be empty"
+    }
   }
 }

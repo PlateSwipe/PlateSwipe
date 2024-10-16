@@ -23,9 +23,13 @@ class RecipesViewModel(private val repository: RecipeRepository) : ViewModel() {
   val loading: StateFlow<Boolean>
     get() = _loading
 
+  // StateFlow for the current selected recipe
+  private val _currentRecipe = MutableStateFlow<Recipe?>(null)
+  val currentRecipe: StateFlow<Recipe?>
+    get() = _currentRecipe
+
   init {
-    // Fetch a default number of random recipes when ViewModel is created
-    fetchRandomRecipes(5) // Fetch 5 random recipes as an example
+    // Removed the fetchRandomRecipes() call from the init block for testing purposes
   }
 
   /**
@@ -34,6 +38,8 @@ class RecipesViewModel(private val repository: RecipeRepository) : ViewModel() {
    * @param numberOfRecipes The number of random recipes to fetch.
    */
   fun fetchRandomRecipes(numberOfRecipes: Int) {
+    require(numberOfRecipes >= 1) { "Number of fetched recipes must be at least 1" }
+
     _loading.value = true // Set loading to true while fetching
     repository.random(
         nbOfElements = numberOfRecipes,
@@ -45,5 +51,19 @@ class RecipesViewModel(private val repository: RecipeRepository) : ViewModel() {
           _loading.value = false // Set loading to false on failure
           // Handle error (e.g., log it or show a message)
         })
+  }
+
+  /**
+   * Updates the current selected recipe.
+   *
+   * @param recipe The recipe to set as the current recipe.
+   */
+  fun updateCurrentRecipe(recipe: Recipe) {
+    _currentRecipe.value = recipe
+  }
+
+  /** Clears the current selected recipe. */
+  fun clearCurrentRecipe() {
+    _currentRecipe.value = null
   }
 }

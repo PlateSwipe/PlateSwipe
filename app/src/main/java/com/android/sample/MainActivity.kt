@@ -15,14 +15,17 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import com.android.sample.resources.C
-import com.android.sample.ui.authentication.SignInScreen
-import com.android.sample.ui.navigation.*
-import com.android.sample.ui.screens.AccountScreen
-import com.android.sample.ui.screens.AddRecipeScreen
-import com.android.sample.ui.screens.FridgeScreen
-import com.android.sample.ui.screens.IngredientScreen
-import com.android.sample.ui.screens.MainScreen
-import com.android.sample.ui.screens.SearchScreen
+import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.navigation.Route
+import com.android.sample.ui.navigation.Screen
+import com.android.sample.ui.swipePage.SwipePage
+import com.android.sample.ui.testScreens.AccountScreen
+import com.android.sample.ui.testScreens.AddRecipeScreen
+import com.android.sample.ui.testScreens.AuthScreen
+import com.android.sample.ui.testScreens.FridgeScreen
+import com.android.sample.ui.testScreens.IngredientScreen
+import com.android.sample.ui.testScreens.RecipeScreen
+import com.android.sample.ui.testScreens.SearchScreen
 import com.android.sample.ui.theme.SampleAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -51,13 +54,13 @@ fun PlateSwipeApp() {
         startDestination = Screen.AUTH,
         route = Route.AUTH,
     ) {
-      composable(Screen.AUTH) { SignInScreen() }
+      composable(Screen.AUTH) { AuthScreen() }
     }
     navigation(
         startDestination = Screen.MAIN,
         route = Route.MAIN,
     ) {
-      composable(Screen.MAIN) { MainScreen(navigationActions) }
+      composable(Screen.MAIN) { SwipePage(navigationActions) }
     }
     navigation(
         startDestination = Screen.FRIDGE,
@@ -71,7 +74,7 @@ fun PlateSwipeApp() {
         route = Route.SEARCH,
     ) {
       composable(Screen.SEARCH) { SearchScreen(navigationActions) }
-      composable(Screen.RECIPE) {} // RecipeScreen(), TODO: repository not implemented
+      composable(Screen.RECIPE) { RecipeScreen() }
     }
     navigation(
         startDestination = Screen.ADD_RECIPE,
