@@ -57,10 +57,10 @@ fun PlateSwipeApp() {
       composable(Screen.AUTH) { AuthScreen() }
     }
     navigation(
-        startDestination = Screen.MAIN,
-        route = Route.MAIN,
+        startDestination = Screen.SWIPE,
+        route = Route.SWIPE,
     ) {
-      composable(Screen.MAIN) { SwipePage(navigationActions) }
+      composable(Screen.SWIPE) { SwipePage(navigationActions) }
     }
     navigation(
         startDestination = Screen.FRIDGE,
