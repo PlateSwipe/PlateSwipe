@@ -6,6 +6,7 @@ import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.recipe.Recipe
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,8 +25,8 @@ class UserViewModel(
   private val _fridge: MutableStateFlow<List<Ingredient>> = MutableStateFlow(emptyList())
   val fridge: StateFlow<List<Ingredient>> = _fridge
 
-  private val _savedRecipes: MutableStateFlow<List<Recipe>> = MutableStateFlow(emptyList())
-  val savedRecipes: StateFlow<List<Recipe>> = _savedRecipes
+  private val _likedRecipes: MutableStateFlow<List<Recipe>> = MutableStateFlow(emptyList())
+  val likedRecipes: StateFlow<List<Recipe>> = _likedRecipes
 
   private val _createdRecipes: MutableStateFlow<List<Recipe>> = MutableStateFlow(emptyList())
   val createdRecipes: StateFlow<List<Recipe>> = _createdRecipes
@@ -64,7 +65,7 @@ class UserViewModel(
           _userName.value = user.userName
           _profilePictureUrl.value = user.profilePictureUrl
           _fridge.value = emptyList()
-          _savedRecipes.value = emptyList()
+          _likedRecipes.value = emptyList()
           _createdRecipes.value = emptyList()
         },
         onFailure = {
@@ -75,7 +76,7 @@ class UserViewModel(
                       userName = userName.value ?: userId,
                       profilePictureUrl = "",
                       fridge = emptyList(),
-                      savedRecipes = emptyList(),
+                      likedRecipes = emptyList(),
                       createdRecipes = emptyList()),
               onSuccess = { getCurrentUser() },
               onFailure = { e -> throw e })
@@ -93,7 +94,7 @@ class UserViewModel(
             userName = _userName.value ?: "",
             profilePictureUrl = _profilePictureUrl.value ?: "",
             fridge = _fridge.value.map { it.barCode.toString() },
-            savedRecipes = _savedRecipes.value.map { it.idMeal },
+            likedRecipes = _likedRecipes.value.map { it.idMeal },
             createdRecipes = _createdRecipes.value.map { it.idMeal })
 
     userRepository.updateUser(user = savedUser, onSuccess = {}, onFailure = { e -> throw e })
@@ -156,7 +157,7 @@ class UserViewModel(
    * @param recipe the recipe to be added
    */
   fun addRecipeToUserSavedRecipes(recipe: Recipe) {
-    updateList(_savedRecipes, recipe, true)
+    updateList(_likedRecipes, recipe, true)
   }
 
   /**
@@ -165,7 +166,7 @@ class UserViewModel(
    * @param recipe the recipe to be removed
    */
   fun removeRecipeFromUserSavedRecipes(recipe: Recipe) {
-    updateList(_savedRecipes, recipe, false)
+    updateList(_likedRecipes, recipe, false)
   }
 
   /**
