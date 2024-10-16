@@ -56,6 +56,9 @@ import com.android.sample.ui.navigation.LIST_TOP_LEVEL_DESTINATIONS
 import com.android.sample.ui.navigation.NavigationActions
 import kotlinx.coroutines.launch
 
+private const val hardCodedDesacription =
+    "Delicious pasta with tomato sauce. In a separate pan, prepare the sauce with garlic, onions, and fresh tomatoes. Combine the cooked pasta with the sauce, and serve hot. Enjoy your meal! Ingredients: Basil, Tomato, Pasta"
+
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -250,7 +253,5 @@ private fun Description(isDescriptionVisible: Boolean, modifier: Modifier) {
 /** @return The recipe description hard coded for now */
 @Composable
 private fun getRecipeDescription(): String {
-  return "Delicious pasta with tomato sauce. In a separate pan, prepare the sauce with garlic, onions, and fresh tomatoes. Combine the cooked pasta with the sauce, and serve hot. Enjoy your meal! Ingredients: Basil, Tomato, Pasta" +
-      "Delicious pasta with tomato sauce. In a separate pan, prepare the sauce with garlic, onions, and fresh tomatoes. Combine the cooked pasta with the sauce, and serve hot. Enjoy your meal! Ingredients: Basil, Tomato, Pasta" +
-      "Delicious pasta with tomato sauce. In a separate pan, prepare the sauce with garlic, onions, and fresh tomatoes. Combine the cooked pasta with the sauce, and serve hot. Enjoy your meal! Ingredients: Basil, Tomato, Pasta"
+  return hardCodedDesacription
 }
