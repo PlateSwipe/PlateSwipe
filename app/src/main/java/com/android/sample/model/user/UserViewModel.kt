@@ -151,7 +151,7 @@ class UserViewModel(
    *
    * @param recipe the recipe to be added
    */
-  fun addRecipeToUserSavedRecipes(recipe: Recipe) {
+  fun addRecipeToUserLikedRecipes(recipe: Recipe) {
     updateList(_likedRecipes, recipe, true)
   }
 
@@ -160,7 +160,7 @@ class UserViewModel(
    *
    * @param recipe the recipe to be removed
    */
-  fun removeRecipeFromUserSavedRecipes(recipe: Recipe) {
+  fun removeRecipeFromUserLikedRecipes(recipe: Recipe) {
     updateList(_likedRecipes, recipe, false)
   }
 
