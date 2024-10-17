@@ -152,6 +152,7 @@ fun RecipeOverview(navigationActions: NavigationActions, recipesViewModel: Recip
       }
 }
 
+/** Display of the recipe image */
 @Composable
 private fun RecipeImage(currentRecipe: Recipe?, width: Dp, height: Dp) {
   Card(
@@ -172,6 +173,7 @@ private fun RecipeImage(currentRecipe: Recipe?, width: Dp, height: Dp) {
       }
 }
 
+/** Display of the recipe title, rating and category */
 @Composable
 private fun RecipeDescription(currentRecipe: Recipe?) {
   Column {
@@ -217,6 +219,7 @@ private fun RecipeDescription(currentRecipe: Recipe?) {
   }
 }
 
+/** Display of the preparation time, cooking time and total time */
 @Composable
 private fun PrepareCookTotalTimeDisplay() {
   Row(
@@ -249,25 +252,26 @@ private fun PrepareCookTotalTimeDisplay() {
   }
 }
 
+/** Display of the list of ingredients and instructions */
 @Composable
 private fun IngredientInstructionView(
     ingredientsView: Boolean,
     servingsCount: Int,
     currentRecipe: Recipe?
 ) {
-  val servingsCount1 = servingsCount
   Column {
     if (ingredientsView) {
-      IngredientView(servingsCount1, currentRecipe)
+      IngredientView(servingsCount, currentRecipe)
     } else {
       InstructionView(currentRecipe)
     }
   }
 }
 
+/** Display of the ingredients and the ability to change the number of servings */
 @Composable
-private fun IngredientView(servingsCount1: Int, currentRecipe: Recipe?) {
-  var servingsCount11 = servingsCount1
+private fun IngredientView(servingsCount: Int, currentRecipe: Recipe?) {
+  var servingsCountVar = servingsCount
   Row(
       modifier = Modifier.fillMaxWidth(),
       verticalAlignment = Alignment.CenterVertically,
@@ -286,20 +290,21 @@ private fun IngredientView(servingsCount1: Int, currentRecipe: Recipe?) {
                     .width(53.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically) {
+              // Display of the buttons to change the number of servings
               Button(
-                  onClick = { if (servingsCount11 > 1) --servingsCount11 },
+                  onClick = { if (servingsCountVar > 1) --servingsCountVar },
                   colors = ButtonColors(goldenBronze, Color.Black, goldenBronze, Color.Black),
                   modifier = Modifier.size(20.dp).testTag("removeServings"),
                   contentPadding = PaddingValues()) {
                     Text("-", fontSize = 12.sp)
                   }
               Text(
-                  servingsCount11.toString(),
+                  servingsCountVar.toString(),
                   fontSize = 12.sp,
                   color = Color.Black,
                   modifier = Modifier.testTag("numberServings"))
               Button(
-                  onClick = { ++servingsCount11 },
+                  onClick = { ++servingsCountVar },
                   colors = ButtonColors(goldenBronze, Color.Black, goldenBronze, Color.Black),
                   modifier = Modifier.size(20.dp).testTag("addServings"),
                   contentPadding = PaddingValues()) {
@@ -311,6 +316,7 @@ private fun IngredientView(servingsCount1: Int, currentRecipe: Recipe?) {
   IngredientsList(currentRecipe)
 }
 
+/** Display of the list of ingredients */
 @Composable
 private fun IngredientsList(currentRecipe: Recipe?) {
   Column(modifier = Modifier.testTag("ingredientsView")) {
@@ -319,6 +325,7 @@ private fun IngredientsList(currentRecipe: Recipe?) {
       Row(
           modifier = Modifier.padding(start = 56.dp).testTag("requiredIngredientsList"),
           verticalAlignment = Alignment.CenterVertically) {
+            // Display of the checkbox
             Checkbox(
                 checked = ticked,
                 onCheckedChange = { ticked = it },
@@ -343,12 +350,14 @@ private fun IngredientsList(currentRecipe: Recipe?) {
   }
 }
 
+/** Display of the instructions */
 @Composable
 private fun InstructionView(currentRecipe: Recipe?) {
   Column(
       modifier =
           Modifier.padding(start = 25.dp, end = 15.dp, top = 10.dp, bottom = 5.dp)
               .testTag("instructionsView")) {
+        // Display of the instructions
         currentRecipe?.let {
           Text(
               text = it.strInstructions,
