@@ -54,7 +54,6 @@ class RecipesViewModel(private val repository: RecipeRepository) : ViewModel() {
    */
   fun fetchRandomRecipes(numberOfRecipes: Int) {
     require(numberOfRecipes >= 1) { "Number of fetched recipes must be at least 1" }
-
     _loading.value = true // Set loading to true while fetching
     repository.random(
         nbOfElements = numberOfRecipes,
@@ -85,14 +84,29 @@ class RecipesViewModel(private val repository: RecipeRepository) : ViewModel() {
 
   /** Gives the next recipe in the list of recipes. */
   fun nextRecipe() {
-    val currentRecipes = _recipes.value
-    if (currentRecipes.isNotEmpty()) {
-      val nextRecipeIndex = (currentRecipes.indexOf(_currentRecipe.value) + 1) % currentRecipes.size
+    val currentRecipes = _recipes.value.toMutableList()
+    if (currentRecipes.isNotEmpty() && _currentRecipe.value != null) {
+      // Get the index of the current recipe
+      val currentIndex = currentRecipes.indexOf(_currentRecipe.value)
+
+      // Calculate the next recipe index
+      val nextRecipeIndex = (currentIndex + 1) % currentRecipes.size
       val nextRecipe = currentRecipes[nextRecipeIndex]
 
+      // Remove the current recipe from the list
+      currentRecipes.removeAt(currentIndex)
+      _recipes.value = currentRecipes
+
+      // Update the current recipe to the next one
       _currentRecipe.value = nextRecipe
-      _recipes.value = currentRecipes.toMutableList().apply { remove(nextRecipe) }
+
+      // Update the next recipe
       updateNextRecipe()
+
+      // Check if there are only 3 recipes left and fetch 2 new recipes
+      if (currentRecipes.size <= 3) {
+        viewModelScope.launch { fetchRandomRecipes(2) }
+      }
     }
   }
 
