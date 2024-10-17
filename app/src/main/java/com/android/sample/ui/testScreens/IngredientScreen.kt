@@ -11,5 +11,5 @@ import androidx.compose.ui.platform.testTag
 fun IngredientScreen() {
   Scaffold(
       modifier = Modifier.testTag("ingredientScreen"),
-      content = { Text(text = "", modifier = Modifier.padding(it)) })
+      content = { Text(text = "ingredientScreenText", modifier = Modifier.padding(it)) })
 }

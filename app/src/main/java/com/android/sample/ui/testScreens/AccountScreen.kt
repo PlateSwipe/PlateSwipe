@@ -20,6 +20,6 @@ fun AccountScreen(navigationActions: NavigationActions) {
             tabList = LIST_TOP_LEVEL_DESTINATIONS,
             selectedItem = navigationActions.currentRoute())
       }) { innerPadding ->
-        Text(text = "", modifier = Modifier.padding(innerPadding))
+        Text(text = "accountScreenText", modifier = Modifier.padding(innerPadding))
       }
 }
