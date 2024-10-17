@@ -10,10 +10,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
+import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.resources.C
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
@@ -48,8 +50,10 @@ class MainActivity : ComponentActivity() {
 fun PlateSwipeApp() {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
+    val recipesViewModel: RecipesViewModel = viewModel(factory = RecipesViewModel.Factory)
 
-  NavHost(navController = navController, startDestination = Route.AUTH) {
+
+    NavHost(navController = navController, startDestination = Route.MAIN) {
     navigation(
         startDestination = Screen.AUTH,
         route = Route.AUTH,
@@ -60,7 +64,7 @@ fun PlateSwipeApp() {
         startDestination = Screen.MAIN,
         route = Route.MAIN,
     ) {
-      composable(Screen.MAIN) { SwipePage(navigationActions) }
+      composable(Screen.MAIN) { SwipePage(navigationActions, recipesViewModel) }
     }
     navigation(
         startDestination = Screen.FRIDGE,
