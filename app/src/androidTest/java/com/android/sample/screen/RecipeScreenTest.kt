@@ -82,18 +82,18 @@ class RecipeScreenTest {
               listOf(Pair("1", "peu"), Pair("2", "beaucoup"), Pair("3", "peu")),
           ))
 
-    private val testRecipe =
-        Recipe(
-            idMeal = "12345",
-            strMeal = "Test Recipe",
-            strCategory = "Test Category",
-            strArea = "Test Area",
-            strInstructions = "Test Instructions",
-            strMealThumbUrl = "https://example.com/image.jpg",
-            ingredientsAndMeasurements = listOf(Pair("1", "Test Ingredient")),
-        )
+  private val testRecipe =
+      Recipe(
+          idMeal = "12345",
+          strMeal = "Test Recipe",
+          strCategory = "Test Category",
+          strArea = "Test Area",
+          strInstructions = "Test Instructions",
+          strMealThumbUrl = "https://example.com/image.jpg",
+          ingredientsAndMeasurements = listOf(Pair("1", "Test Ingredient")),
+      )
 
-    @get:Rule val composeTestRule = createComposeRule()
+  @get:Rule val composeTestRule = createComposeRule()
 
   @Before
   fun setUp() {
@@ -128,55 +128,59 @@ class RecipeScreenTest {
     composeTestRule.onNodeWithTag("recipeCard${testRecipe.idMeal}").assertIsDisplayed()
   }
 
+  @Test
+  fun recipeTitle_displaysCorrectContent() {
 
-    @Test
-    fun recipeTitle_displaysCorrectContent() {
+    composeTestRule.setContent { RecipeTitle(recipe = testRecipe) }
 
-        composeTestRule.setContent { RecipeTitle(recipe = testRecipe) }
+    composeTestRule
+        .onNodeWithTag("recipeTitle${testRecipe.idMeal}")
+        .assertIsDisplayed()
+        .assertTextEquals(testRecipe.strMeal)
+  }
 
-        composeTestRule.onNodeWithTag("recipeTitle${testRecipe.idMeal}").assertIsDisplayed().assertTextEquals(testRecipe.strMeal)
-    }
+  @Test
+  fun recipeList_displaysCorrectContent() {
 
-    @Test
-    fun recipeList_displaysCorrectContent() {
+    composeTestRule.setContent { RecipeList(userViewModel, mockNavigationActions) }
 
-        composeTestRule.setContent { RecipeList(userViewModel, mockNavigationActions) }
+    composeTestRule.onNodeWithTag("recipeList").assertIsDisplayed()
+  }
 
-        composeTestRule.onNodeWithTag("recipeList").assertIsDisplayed()
-    }
+  @Test
+  fun price_displaysCorrectContent() {
 
-    @Test
-    fun price_displaysCorrectContent() {
+    composeTestRule.setContent { Price(cost = 2, recipe = testRecipe) }
 
-        composeTestRule.setContent { Price(cost = 2, recipe = testRecipe) }
+    composeTestRule.onNodeWithTag("priceRating${testRecipe.idMeal}").assertIsDisplayed()
+  }
 
-        composeTestRule.onNodeWithTag("priceRating${testRecipe.idMeal}").assertIsDisplayed()
-    }
+  @Test
+  fun recipeRating_displaysCorrectContent() {
 
-    @Test
-    fun recipeRating_displaysCorrectContent() {
+    composeTestRule.setContent { RecipeRating(recipe = testRecipe) }
 
-        composeTestRule.setContent { RecipeRating(recipe = testRecipe) }
+    composeTestRule.onNodeWithTag("recipeRating${testRecipe.idMeal}").assertIsDisplayed()
+  }
 
-        composeTestRule.onNodeWithTag("recipeRating${testRecipe.idMeal}").assertIsDisplayed()
-    }
+  @Test
+  fun recipeTime_displaysCorrectContent() {
 
-    @Test
-    fun recipeTime_displaysCorrectContent() {
+    composeTestRule.setContent { RecipeTime(recipe = testRecipe) }
 
-        composeTestRule.setContent { RecipeTime(recipe = testRecipe) }
+    composeTestRule.onNodeWithTag("recipeTime${testRecipe.idMeal}").assertIsDisplayed()
+  }
 
-        composeTestRule.onNodeWithTag("recipeTime${testRecipe.idMeal}").assertIsDisplayed()
-    }
+  @Test
+  fun searchBar_displaysCorrectContent() {
 
-    @Test
-    fun searchBar_displaysCorrectContent() {
+    composeTestRule.setContent { SearchBar() }
 
-        composeTestRule.setContent { SearchBar() }
-
-        composeTestRule.onNodeWithTag("SearchButton").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("searchText").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("searchTextText", useUnmergedTree = true).assertTextEquals("search")
-        composeTestRule.onNodeWithTag("searchButtonIcon", useUnmergedTree = true).assertIsDisplayed()
-    }
+    composeTestRule.onNodeWithTag("SearchButton").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("searchText").assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag("searchTextText", useUnmergedTree = true)
+        .assertTextEquals("search")
+    composeTestRule.onNodeWithTag("searchButtonIcon", useUnmergedTree = true).assertIsDisplayed()
+  }
 }
