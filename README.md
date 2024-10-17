@@ -23,6 +23,8 @@ The insight behind our solution is that cooking at home should be enjoyable and 
 ## Figma Design
 For mockups and design assets, please visit our Figma project: [Figma Link](https://www.figma.com/files/team/1362766805858708238/project/284123972?fuid=1345006704253084542)
 
+## Architecture 
+[M1 Architecture Diagram](https://www.figma.com/design/lWFaH9B1YIkVyy45Cva9yk/M1?node-id=526-1216&t=JuFdVLhx8xig8xMP-1)
 ## Wiki
 For more information about the project and its development, please refer to our Wiki: [Wiki Link](https://github.com/PlateSwipe/PlateSwipe/wiki)
 
