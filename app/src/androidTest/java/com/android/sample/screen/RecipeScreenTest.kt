@@ -4,6 +4,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onRoot
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.user.UserRepository
 import com.android.sample.model.user.UserViewModel
@@ -47,6 +48,8 @@ class RecipeScreenTest {
     `when`(mockCurrentUser.uid).thenReturn("001")
 
     userViewModel = UserViewModel(mockUserRepository, mockFirebaseAuth)
+
+    composeTestRule.onRoot(useUnmergedTree = true)
 
     recipesList =
         listOf(
@@ -105,7 +108,7 @@ class RecipeScreenTest {
 
   @Test
   fun recipeCard_displaysCorrectContent() {
-    // Crée un exemple d'objet Recipe
+
     val testRecipe =
         Recipe(
             idMeal = "12345",
@@ -117,7 +120,6 @@ class RecipeScreenTest {
             ingredientsAndMeasurements = listOf(Pair("1", "Test Ingredient")),
         )
 
-    // Configure l'UI avec RecipeCard
     composeTestRule.setContent { RecipeCard(recipe = testRecipe) }
 
     composeTestRule.onNodeWithTag("recipeTitle12345").assertIsDisplayed()
