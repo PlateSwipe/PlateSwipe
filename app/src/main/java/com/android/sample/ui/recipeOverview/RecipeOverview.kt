@@ -99,14 +99,15 @@ fun RecipeOverview(navigationActions: NavigationActions, recipesViewModel: Recip
                     .padding(16.dp)
                     .verticalScroll(scrollState)) {
               // Display of the recipe image
-            RecipeImage(currentRecipe, width, height)
-            //Display of the recipe title
-            RecipeDescription(currentRecipe)
+              RecipeImage(currentRecipe, width, height)
+              // Display of the recipe title
+              RecipeDescription(currentRecipe)
               Spacer(modifier = Modifier.size(16.dp))
-            //Display of the prepare, cook and the total time
-            PrepareCookTotalTimeDisplay()
+              // Display of the prepare, cook and the total time
+              PrepareCookTotalTimeDisplay()
               Spacer(modifier = Modifier.size(14.dp))
-            //Display of the Ingredient and Instruction buttons that allow us to change between the different views
+              // Display of the Ingredient and Instruction buttons that allow us to change between
+              // the different views
               Column(
                   horizontalAlignment = Alignment.CenterHorizontally,
                   modifier =
@@ -114,9 +115,9 @@ fun RecipeOverview(navigationActions: NavigationActions, recipesViewModel: Recip
                               MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(5))
                           .fillMaxSize()) {
                     Spacer(modifier = Modifier.height(6.dp))
-                  //Display of the buttons
+                    // Display of the buttons
                     Row {
-                        //Display of the Ingredients button
+                      // Display of the Ingredients button
                       Button(
                           onClick = { ingredientsView = true },
                           shape = RoundedCornerShape(0.dp),
@@ -129,7 +130,7 @@ fun RecipeOverview(navigationActions: NavigationActions, recipesViewModel: Recip
                                 fontSize = 12.sp,
                                 textAlign = TextAlign.Center)
                           }
-                        //Display of the Instruction buttons
+                      // Display of the Instruction buttons
                       Button(
                           onClick = { ingredientsView = false },
                           shape = RoundedCornerShape(0.dp),
@@ -143,130 +144,109 @@ fun RecipeOverview(navigationActions: NavigationActions, recipesViewModel: Recip
                                 textAlign = TextAlign.Center)
                           }
                     }
-                  //Display of the list of ingredients with the ability to change the number of servings
-                  IngredientInstructionView(ingredientsView, servingsCount, currentRecipe)
+                    // Display of the list of ingredients with the ability to change the number of
+                    // servings
+                    IngredientInstructionView(ingredientsView, servingsCount, currentRecipe)
                   }
             }
       }
 }
 
 @Composable
-private fun RecipeImage(
-    currentRecipe: Recipe?,
-    width: Dp,
-    height: Dp
-) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
-        shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(4.dp)
-    ) {
-        Column(
-            modifier =
-            Modifier.background(color = MaterialTheme.colorScheme.onPrimary)
-        ) {
-            Image(
-                painter =
-                rememberAsyncImagePainter(model = currentRecipe?.strMealThumbUrl),
-                contentDescription = "Recipe Image",
-                modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .size(width = width, height = height)
-                    .testTag("recipeImage"),
-                contentScale = ContentScale.FillHeight,
-            )
+private fun RecipeImage(currentRecipe: Recipe?, width: Dp, height: Dp) {
+  Card(
+      modifier = Modifier.fillMaxWidth().padding(8.dp),
+      shape = RoundedCornerShape(16.dp),
+      elevation = CardDefaults.cardElevation(4.dp)) {
+        Column(modifier = Modifier.background(color = MaterialTheme.colorScheme.onPrimary)) {
+          Image(
+              painter = rememberAsyncImagePainter(model = currentRecipe?.strMealThumbUrl),
+              contentDescription = "Recipe Image",
+              modifier =
+                  Modifier.fillMaxWidth()
+                      .size(width = width, height = height)
+                      .testTag("recipeImage"),
+              contentScale = ContentScale.FillHeight,
+          )
         }
-    }
+      }
 }
 
 @Composable
 private fun RecipeDescription(currentRecipe: Recipe?) {
-    Column {
-        Row {
-            currentRecipe?.let {
-                Text(
-                    text = it.strMeal,
-                    fontSize = 20.sp,
-                    color = Color.Black,
-                    modifier = Modifier.testTag("recipeTitle")
-                )
-            }
-        }
-        Spacer(modifier = Modifier.size(17.dp))
-        //Display of the rating of the recipe as well as the category
-        Row(horizontalArrangement = Arrangement.Start) {
-            //Display of the rating Icon
-            Icon(
-                imageVector = Icons.Filled.Star,
-                contentDescription = "Rating",
-                tint = starColor,
-                modifier = Modifier
-                    .width(12.dp)
-                    .height(12.dp)
-                    .testTag("ratingIcon")
-            )
-            Spacer(modifier = Modifier.size(8.dp))
-            //Display of the recipe rating
-            Row {
-                Text(
-                    text = "Rating",
-                    fontSize = 12.sp,
-                    color = Color.Black,
-                    modifier = Modifier.testTag("ratingText")
-                )
-            }
-            Spacer(modifier = Modifier.size(8.dp))
-            //Display of the recipe category
-            Row {
-                currentRecipe?.strCategory?.let {
-                    Text(
-                        text = it,
-                        fontSize = 12.sp,
-                        color = Color.Black,
-                        modifier = Modifier.testTag("categoryText")
-                    )
-                }
-            }
-        }
+  Column {
+    Row {
+      currentRecipe?.let {
+        Text(
+            text = it.strMeal,
+            fontSize = 20.sp,
+            color = Color.Black,
+            modifier = Modifier.testTag("recipeTitle"))
+      }
     }
+    Spacer(modifier = Modifier.size(17.dp))
+    // Display of the rating of the recipe as well as the category
+    Row(horizontalArrangement = Arrangement.Start) {
+      // Display of the rating Icon
+      Icon(
+          imageVector = Icons.Filled.Star,
+          contentDescription = "Rating",
+          tint = starColor,
+          modifier = Modifier.width(12.dp).height(12.dp).testTag("ratingIcon"))
+      Spacer(modifier = Modifier.size(8.dp))
+      // Display of the recipe rating
+      Row {
+        Text(
+            text = "Rating",
+            fontSize = 12.sp,
+            color = Color.Black,
+            modifier = Modifier.testTag("ratingText"))
+      }
+      Spacer(modifier = Modifier.size(8.dp))
+      // Display of the recipe category
+      Row {
+        currentRecipe?.strCategory?.let {
+          Text(
+              text = it,
+              fontSize = 12.sp,
+              color = Color.Black,
+              modifier = Modifier.testTag("categoryText"))
+        }
+      }
+    }
+  }
 }
 
 @Composable
 private fun PrepareCookTotalTimeDisplay() {
-    Row(
-        modifier =
-        Modifier
-            .fillMaxWidth(0.85f)
-            .padding(start = 55.dp)
-            .background(
-                MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(10)
-            ),
-        horizontalArrangement = Arrangement.Center,
-    ) {
-        //Display of the preparation time
-        Column(modifier = Modifier.testTag("prepTimeText")) {
-            Text("Prep time", fontSize = 12.sp, color = Color.Black)
-            Spacer(modifier = Modifier.size(14.dp))
-            Text("30 min", fontSize = 12.sp, color = Color.Black)
-        }
-        Spacer(modifier = Modifier.size(40.dp))
-        //Display of the cooking time
-        Column(modifier = Modifier.testTag("cookTimeText")) {
-            Text("Cook time", fontSize = 12.sp, color = Color.Black)
-            Spacer(modifier = Modifier.size(14.dp))
-            Text("20 min", fontSize = 12.sp, color = Color.Black)
-        }
-        Spacer(modifier = Modifier.size(40.dp))
-        //Display of the total time that it takes
-        Column(modifier = Modifier.testTag("totalTimeText")) {
-            Text("Total time", fontSize = 12.sp, color = Color.Black)
-            Spacer(modifier = Modifier.size(14.dp))
-            Text("50 min", fontSize = 12.sp, color = Color.Black)
-        }
+  Row(
+      modifier =
+          Modifier.fillMaxWidth(0.85f)
+              .padding(start = 55.dp)
+              .background(MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(10)),
+      horizontalArrangement = Arrangement.Center,
+  ) {
+    // Display of the preparation time
+    Column(modifier = Modifier.testTag("prepTimeText")) {
+      Text("Prep time", fontSize = 12.sp, color = Color.Black)
+      Spacer(modifier = Modifier.size(14.dp))
+      Text("30 min", fontSize = 12.sp, color = Color.Black)
     }
+    Spacer(modifier = Modifier.size(40.dp))
+    // Display of the cooking time
+    Column(modifier = Modifier.testTag("cookTimeText")) {
+      Text("Cook time", fontSize = 12.sp, color = Color.Black)
+      Spacer(modifier = Modifier.size(14.dp))
+      Text("20 min", fontSize = 12.sp, color = Color.Black)
+    }
+    Spacer(modifier = Modifier.size(40.dp))
+    // Display of the total time that it takes
+    Column(modifier = Modifier.testTag("totalTimeText")) {
+      Text("Total time", fontSize = 12.sp, color = Color.Black)
+      Spacer(modifier = Modifier.size(14.dp))
+      Text("50 min", fontSize = 12.sp, color = Color.Black)
+    }
+  }
 }
 
 @Composable
@@ -275,150 +255,106 @@ private fun IngredientInstructionView(
     servingsCount: Int,
     currentRecipe: Recipe?
 ) {
-    val servingsCount1 = servingsCount
-    Column {
-        if (ingredientsView) {
-            IngredientView(servingsCount1, currentRecipe)
-        } else {
-            InstructionView(currentRecipe)
-        }
+  val servingsCount1 = servingsCount
+  Column {
+    if (ingredientsView) {
+      IngredientView(servingsCount1, currentRecipe)
+    } else {
+      InstructionView(currentRecipe)
     }
+  }
 }
 
 @Composable
-private fun IngredientView(
-    servingsCount1: Int,
-    currentRecipe: Recipe?
-) {
-    var servingsCount11 = servingsCount1
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
-    ) {
+private fun IngredientView(servingsCount1: Int, currentRecipe: Recipe?) {
+  var servingsCount11 = servingsCount1
+  Row(
+      modifier = Modifier.fillMaxWidth(),
+      verticalAlignment = Alignment.CenterVertically,
+      horizontalArrangement = Arrangement.Center) {
         Text(
             "Servings",
             textAlign = TextAlign.Left,
             color = Color.Black,
             fontSize = 12.sp,
-            modifier = Modifier
-                .width(56.dp)
-                .height(18.dp)
-        )
+            modifier = Modifier.width(56.dp).height(18.dp))
         Spacer(modifier = Modifier.width(190.dp))
         Row(
             modifier =
-            Modifier
-                .background(
-                    goldenBronze, shape = RoundedCornerShape(25)
-                )
-                .height(25.dp)
-                .width(53.dp),
+                Modifier.background(goldenBronze, shape = RoundedCornerShape(25))
+                    .height(25.dp)
+                    .width(53.dp),
             horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Button(
-                onClick = { if (servingsCount11 > 1) --servingsCount11 },
-                colors =
-                ButtonColors(
-                    goldenBronze,
-                    Color.Black,
-                    goldenBronze,
-                    Color.Black
-                ),
-                modifier = Modifier
-                    .size(20.dp)
-                    .testTag("removeServings"),
-                contentPadding = PaddingValues()
-            ) {
-                Text("-", fontSize = 12.sp)
+            verticalAlignment = Alignment.CenterVertically) {
+              Button(
+                  onClick = { if (servingsCount11 > 1) --servingsCount11 },
+                  colors = ButtonColors(goldenBronze, Color.Black, goldenBronze, Color.Black),
+                  modifier = Modifier.size(20.dp).testTag("removeServings"),
+                  contentPadding = PaddingValues()) {
+                    Text("-", fontSize = 12.sp)
+                  }
+              Text(
+                  servingsCount11.toString(),
+                  fontSize = 12.sp,
+                  color = Color.Black,
+                  modifier = Modifier.testTag("numberServings"))
+              Button(
+                  onClick = { ++servingsCount11 },
+                  colors = ButtonColors(goldenBronze, Color.Black, goldenBronze, Color.Black),
+                  modifier = Modifier.size(20.dp).testTag("addServings"),
+                  contentPadding = PaddingValues()) {
+                    Text("+", fontSize = 12.sp)
+                  }
             }
-            Text(
-                servingsCount11.toString(),
-                fontSize = 12.sp,
-                color = Color.Black,
-                modifier = Modifier.testTag("numberServings")
-            )
-            Button(
-                onClick = { ++servingsCount11 },
-                colors =
-                ButtonColors(
-                    goldenBronze,
-                    Color.Black,
-                    goldenBronze,
-                    Color.Black
-                ),
-                modifier = Modifier
-                    .size(20.dp)
-                    .testTag("addServings"),
-                contentPadding = PaddingValues()
-            ) {
-                Text("+", fontSize = 12.sp)
-            }
-        }
-    }
-    Spacer(modifier = Modifier.height(7.dp))
-    IngredientsList(currentRecipe)
+      }
+  Spacer(modifier = Modifier.height(7.dp))
+  IngredientsList(currentRecipe)
 }
 
 @Composable
 private fun IngredientsList(currentRecipe: Recipe?) {
-    Column(modifier = Modifier.testTag("ingredientsView")) {
-        currentRecipe?.ingredientsAndMeasurements?.forEach { (ingredient, measurement) ->
-            var ticked by remember { mutableStateOf(false) }
-            Row(
-                modifier =
-                Modifier
-                    .padding(start = 56.dp)
-                    .testTag("requiredIngredientsList"),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Checkbox(
-                    checked = ticked,
-                    onCheckedChange = { ticked = it },
-                    modifier = Modifier
-                        .size(15.dp)
-                        .testTag("checkboxIngredient")
-                )
-                Spacer(modifier = Modifier.width(6.dp))
-                Text(
-                    ingredient,
-                    textAlign = TextAlign.Left,
-                    fontSize = 12.sp,
-                    color = Color.Black,
-                    modifier = Modifier.testTag("ingredient")
-                )
-                Spacer(modifier = Modifier.width(6.dp))
-                Text(
-                    measurement,
-                    textAlign = TextAlign.Left,
-                    fontSize = 12.sp,
-                    color = Color.Black,
-                    modifier = Modifier.testTag("measurement")
-                )
-            }
-            Spacer(modifier = Modifier.height(12.dp))
-        }
+  Column(modifier = Modifier.testTag("ingredientsView")) {
+    currentRecipe?.ingredientsAndMeasurements?.forEach { (ingredient, measurement) ->
+      var ticked by remember { mutableStateOf(false) }
+      Row(
+          modifier = Modifier.padding(start = 56.dp).testTag("requiredIngredientsList"),
+          verticalAlignment = Alignment.CenterVertically) {
+            Checkbox(
+                checked = ticked,
+                onCheckedChange = { ticked = it },
+                modifier = Modifier.size(15.dp).testTag("checkboxIngredient"))
+            Spacer(modifier = Modifier.width(6.dp))
+            Text(
+                ingredient,
+                textAlign = TextAlign.Left,
+                fontSize = 12.sp,
+                color = Color.Black,
+                modifier = Modifier.testTag("ingredient"))
+            Spacer(modifier = Modifier.width(6.dp))
+            Text(
+                measurement,
+                textAlign = TextAlign.Left,
+                fontSize = 12.sp,
+                color = Color.Black,
+                modifier = Modifier.testTag("measurement"))
+          }
+      Spacer(modifier = Modifier.height(12.dp))
     }
+  }
 }
 
 @Composable
 private fun InstructionView(currentRecipe: Recipe?) {
-    Column(
-        modifier =
-        Modifier
-            .padding(
-                start = 25.dp, end = 15.dp, top = 10.dp, bottom = 5.dp
-            )
-            .testTag("instructionsView")
-    ) {
+  Column(
+      modifier =
+          Modifier.padding(start = 25.dp, end = 15.dp, top = 10.dp, bottom = 5.dp)
+              .testTag("instructionsView")) {
         currentRecipe?.let {
-            Text(
-                text = it.strInstructions,
-                color = Color.Black,
-                fontSize = 16.sp,
-                modifier = Modifier.testTag("instructionsText")
-            )
+          Text(
+              text = it.strInstructions,
+              color = Color.Black,
+              fontSize = 16.sp,
+              modifier = Modifier.testTag("instructionsText"))
         }
-    }
+      }
 }
