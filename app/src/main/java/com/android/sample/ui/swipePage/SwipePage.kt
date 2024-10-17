@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -68,7 +67,7 @@ private const val endAnimation = 1500f
 @Composable
 fun SwipePage(
     navigationActions: NavigationActions,
-    recipesViewModel: RecipesViewModel = viewModel(factory = RecipesViewModel.Factory)
+    recipesViewModel: RecipesViewModel = viewModel(factory = RecipesViewModel.Factory),
 ) {
   val selectedItem = navigationActions.currentRoute()
 
@@ -113,7 +112,6 @@ fun RecipeDisplay(
   val swipeThreshold = screenWidth * 14 / 15
 
   val currentRecipe by recipesViewModel.currentRecipe.collectAsState()
-  val coroutineUpdateRecipe = rememberCoroutineScope()
 
   Column(
       modifier =
@@ -231,41 +229,49 @@ private fun ImageDescription(name: String, rate: String, tag: String, modifier: 
         horizontalArrangement = Arrangement.SpaceBetween) {
 
           // Display Recipe Name
-          Text(
-              modifier =
-                  Modifier.weight(1f)
-                      .testTag("recipeName"), // Let the text take up as much space as needed
-              text = name,
-              style = MaterialTheme.typography.bodyLarge,
-              color = MaterialTheme.colorScheme.onSecondary,
-          )
-          Row(
-              horizontalArrangement = Arrangement.End,
-              modifier = Modifier.size(75.dp, 24.dp) // Padding for inside spacing
-              ) {
-                Icon(
-                    painter = painterResource(R.drawable.star_rate),
-                    contentDescription = "Star rate",
-                    modifier =
-                        Modifier.size(24.dp)
-                            .testTag("recipeStar"), // Adjust size to match the text size
-                    tint = starColor // Adjust color to match the text color
-                    )
-
-                Spacer(modifier = Modifier.padding(5.dp))
-
-                Text(
-                    text = rate,
-                    modifier = Modifier.testTag("recipeRate"),
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontSize = 24.sp,
-                    color = MaterialTheme.colorScheme.onSecondary,
-                )
-              }
+          RecipeDescription(name, rate)
         }
     Spacer(modifier = Modifier.padding(2.dp))
     Row(verticalAlignment = Alignment.CenterVertically) { Tag(tag) }
   }
+}
+
+/**
+ * Composable for the Recipe Description
+ *
+ * @param name - Recipe Name
+ * @param rate - Recipe Rate
+ */
+@Composable
+fun RecipeDescription(name: String, rate: String) {
+  Text(
+      modifier = Modifier.testTag("recipeName"), // Let the text take up as much space as needed
+      text = name,
+      style = MaterialTheme.typography.bodyLarge,
+      color = MaterialTheme.colorScheme.onSecondary,
+  )
+  Row(
+      horizontalArrangement = Arrangement.End,
+      modifier = Modifier.size(75.dp, 24.dp) // Padding for inside spacing
+      ) {
+        Icon(
+            painter = painterResource(R.drawable.star_rate),
+            contentDescription = "Star rate",
+            modifier =
+                Modifier.size(24.dp).testTag("recipeStar"), // Adjust size to match the text size
+            tint = starColor // Adjust color to match the text color
+            )
+
+        Spacer(modifier = Modifier.padding(5.dp))
+
+        Text(
+            text = rate,
+            modifier = Modifier.testTag("recipeRate"),
+            style = MaterialTheme.typography.bodyLarge,
+            fontSize = 24.sp,
+            color = MaterialTheme.colorScheme.onSecondary,
+        )
+      }
 }
 
 /**
