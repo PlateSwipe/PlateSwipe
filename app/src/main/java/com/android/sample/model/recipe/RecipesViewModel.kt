@@ -3,6 +3,8 @@ package com.android.sample.model.recipe
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.android.sample.resources.C.Tag.MINIMUM_RECIPES_BEFORE_FETCH
+import com.android.sample.resources.C.Tag.NUMBER_RECIPES_TO_FETCH
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -36,7 +38,7 @@ class RecipesViewModel(private val repository: RecipeRepository) : ViewModel() {
 
   init {
     viewModelScope.launch {
-      fetchRandomRecipes(3)
+      fetchRandomRecipes(NUMBER_RECIPES_TO_FETCH)
 
       _loading.collect { isLoading ->
         if (!isLoading) {
@@ -104,13 +106,18 @@ class RecipesViewModel(private val repository: RecipeRepository) : ViewModel() {
       updateNextRecipe()
 
       // Check if there are only 3 recipes left and fetch 2 new recipes
-      if (currentRecipes.size <= 3) {
-        viewModelScope.launch { fetchRandomRecipes(2) }
+      if (currentRecipes.size <= MINIMUM_RECIPES_BEFORE_FETCH) {
+        viewModelScope.launch { fetchRandomRecipes(NUMBER_RECIPES_TO_FETCH) }
       }
     }
   }
 
-  /** Updates the next recipe in the list of recipes. */
+  /**
+   * Updates the next recipe in the list of recipes.
+   *
+   * This method assumes that _currentRecipe is already set and valid. It should be called after
+   * nextRecipe() to ensure the next recipe is updated correctly.
+   */
   fun updateNextRecipe() {
     val currentRecipes = _recipes.value
     if (currentRecipes.isNotEmpty()) {

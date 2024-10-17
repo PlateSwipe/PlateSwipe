@@ -12,5 +12,9 @@ object C {
     const val END_ANIMATION = 1500f
 
     const val LOADING = "Loading..."
+
+    // RecipesViewModel
+    const val MINIMUM_RECIPES_BEFORE_FETCH = 3
+    const val NUMBER_RECIPES_TO_FETCH = 2
   }
 }
