@@ -3,7 +3,7 @@ package com.android.sample.account
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import com.android.sample.ui.account.AccountScreen
+import com.android.sample.ui.fridge.FridgeScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import org.junit.Before
@@ -25,9 +25,8 @@ class AccountScreenTest {
   }
 
   @Test
-  fun mainTextIsDisplayed() {
-    composeTestRule.setContent { AccountScreen(navigationActions = navigationActions) }
-    composeTestRule.onNodeWithText("Account Screen").assertIsDisplayed()
-    composeTestRule.onNodeWithText("Work in progress... Stay tuned!").assertIsDisplayed()
+  fun emptyTest() {
+    composeTestRule.setContent { FridgeScreen(navigationActions) }
+    composeTestRule.onNodeWithText("Fridge Screen").assertIsDisplayed()
   }
 }

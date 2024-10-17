@@ -8,15 +8,15 @@ import androidx.compose.ui.test.onRoot
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.user.UserRepository
 import com.android.sample.model.user.UserViewModel
+import com.android.sample.ui.account.Price
+import com.android.sample.ui.account.RecipeCard
+import com.android.sample.ui.account.RecipeList
+import com.android.sample.ui.account.RecipeRating
+import com.android.sample.ui.account.RecipeTime
+import com.android.sample.ui.account.RecipeTitle
+import com.android.sample.ui.account.SearchBar
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
-import com.android.sample.ui.testScreens.Price
-import com.android.sample.ui.testScreens.RecipeCard
-import com.android.sample.ui.testScreens.RecipeList
-import com.android.sample.ui.testScreens.RecipeRating
-import com.android.sample.ui.testScreens.RecipeTime
-import com.android.sample.ui.testScreens.RecipeTitle
-import com.android.sample.ui.testScreens.SearchBar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import okhttp3.Call
@@ -117,7 +117,7 @@ class RecipeScreenTest {
       userViewModel.addRecipeToUserLikedRecipes(recipe)
     }
 
-    `when`(mockNavigationActions.currentRoute()).thenReturn(Screen.RECIPE)
+    `when`(mockNavigationActions.currentRoute()).thenReturn(Screen.ACCOUNT)
   }
 
   @Test
