@@ -63,7 +63,7 @@ class MealDBRecipeRepository(private val client: OkHttpClient) : RecipeRepositor
       onSuccess: (List<Recipe>) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    require(nbOfElements <= 3) { "Please limit the number of recipes to 3" }
+    require(nbOfElements <= 5) { "Please limit the number of recipes to 3" }
     val listOfRandomRecipes = mutableListOf<Recipe>()
     // Fetch a random recipe for each element because the API does not support fetching multiple
     // random recipes at once
