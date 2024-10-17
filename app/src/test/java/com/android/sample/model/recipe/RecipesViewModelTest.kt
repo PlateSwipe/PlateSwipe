@@ -1,5 +1,6 @@
 package com.android.sample.model.recipe
 
+import kotlin.text.Typography.times
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -17,6 +18,8 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.ArgumentMatchers.eq
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.spy
+import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
@@ -212,32 +215,6 @@ class RecipesViewModelTest {
   }
 
   @Test
-  fun nextRecipeCyclesCorrectly() {
-    // Arrange
-    `when`(recipeRepository.random(any(), any(), any())).thenAnswer { invocation ->
-      val onSuccess = invocation.arguments[1] as (List<Recipe>) -> Unit
-      onSuccess(dummyRecipes) // Return the dummy recipes
-    }
-
-    // First fetch recipes to populate the ViewModel
-    recipesViewModel.fetchRandomRecipes(2)
-    recipesViewModel.updateCurrentRecipe(dummyRecipes[0]) // Set the first recipe as current
-
-    // Act
-    recipesViewModel.nextRecipe() // Get the next recipe
-
-    // Assert
-    assertThat(
-        recipesViewModel.currentRecipe.value,
-        `is`(dummyRecipes[1])) // Check the current recipe is now the second one
-    assertThat(
-        recipesViewModel.recipes.value.size, `is`(1)) // Check that one recipe has been removed
-    assertThat(
-        recipesViewModel.recipes.value[0],
-        `is`(dummyRecipes[0])) // Ensure the first recipe is still in the list
-  }
-
-  @Test
   fun nextRecipeWrapsAround() {
     // Arrange
     recipesViewModel.fetchRandomRecipes(2) // Fetch dummy recipes
@@ -275,34 +252,6 @@ class RecipesViewModelTest {
 
   @OptIn(ExperimentalCoroutinesApi::class)
   @Test
-  fun nextRecipeMethodUpdatesStateCorrectly() = runTest {
-    // Arrange: Mock the repository to return dummy recipes
-    `when`(recipeRepository.random(any(), any(), any())).thenAnswer { invocation ->
-      val onSuccess = invocation.arguments[1] as (List<Recipe>) -> Unit
-      onSuccess(dummyRecipes) // Return the dummy recipes
-    }
-
-    // Act: Initialize the ViewModel and fetch recipes
-    recipesViewModel = RecipesViewModel(recipeRepository)
-    advanceUntilIdle()
-
-    // Act: Call nextRecipe method
-    recipesViewModel.nextRecipe()
-    advanceUntilIdle()
-
-    // Assert: Verify that the current and next recipes are updated correctly
-    assertNotNull(recipesViewModel.currentRecipe.value) // Ensure current recipe is not null
-    assertThat(
-        recipesViewModel.currentRecipe.value,
-        `is`(dummyRecipes[1])) // Check the current recipe is the second one
-    assertNotNull(recipesViewModel.nextRecipe.value) // Ensure next recipe is not null
-    assertThat(
-        recipesViewModel.nextRecipe.value,
-        `is`(dummyRecipes[0])) // Check the next recipe is the first one
-  }
-
-  @OptIn(ExperimentalCoroutinesApi::class)
-  @Test
   fun updateCurrentRecipeUpdatesNextRecipe() = runTest {
     // Arrange: Mock the repository to return dummy recipes
     `when`(recipeRepository.random(any(), any(), any())).thenAnswer { invocation ->
@@ -323,6 +272,122 @@ class RecipesViewModelTest {
     assertThat(
         recipesViewModel.nextRecipe.value,
         `is`(dummyRecipes[1])) // Check the next recipe is the second one
+  }
+
+  @OptIn(ExperimentalCoroutinesApi::class)
+  @Test
+  fun nextRecipeUpdatesCurrentAndNextRecipe() = runTest {
+    // Arrange: Mock the repository to return dummy recipes
+    val extendedDummyRecipes =
+        dummyRecipes +
+            Recipe(
+                idMeal = "3",
+                strMeal = "Beef Stroganoff",
+                strCategory = "Non-Vegetarian",
+                strArea = "Russian",
+                strInstructions = "Instructions here...",
+                strMealThumbUrl = "https://www.example.com/beef-stroganoff/",
+                ingredientsAndMeasurements =
+                    listOf(Pair("Beef", "1 pound"), Pair("Sour cream", "1 cup")))
+
+    `when`(recipeRepository.random(any(), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.arguments[1] as (List<Recipe>) -> Unit
+      onSuccess(extendedDummyRecipes) // Return the extended dummy recipes
+    }
+
+    // Act: Initialize the ViewModel and fetch recipes
+    recipesViewModel = RecipesViewModel(recipeRepository)
+    advanceUntilIdle()
+
+    // Print the list of recipes
+    println("Fetched recipes: ${recipesViewModel.recipes.value}")
+
+    // Set the first recipe as the current recipe
+    recipesViewModel.updateCurrentRecipe(extendedDummyRecipes[0])
+    advanceUntilIdle()
+
+    // Act: Call nextRecipe
+    recipesViewModel.nextRecipe()
+    advanceUntilIdle()
+
+    // Assert: Verify that the current recipe is updated to the next one
+    assertThat(recipesViewModel.currentRecipe.value, `is`(extendedDummyRecipes[1]))
+    assertThat(
+        recipesViewModel.nextRecipe.value,
+        `is`(extendedDummyRecipes[2])) // Next recipe is the third one
+  }
+
+  @OptIn(ExperimentalCoroutinesApi::class)
+  @Test
+  fun nextRecipeFetchesNewRecipesWhenThreeLeft() = runTest {
+    // Arrange: Mock the repository to return dummy recipes
+    `when`(recipeRepository.random(any(), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.arguments[1] as (List<Recipe>) -> Unit
+      onSuccess(dummyRecipes) // Return the dummy recipes
+    }
+
+    // Spy on the RecipesViewModel
+    val spyViewModel = spy(RecipesViewModel(recipeRepository))
+
+    // Set the first recipe as the current recipe
+    spyViewModel.updateCurrentRecipe(dummyRecipes[0])
+    advanceUntilIdle()
+
+    // Act: Call nextRecipe until there are three recipes left
+    spyViewModel.nextRecipe()
+    advanceUntilIdle()
+    spyViewModel.nextRecipe()
+    advanceUntilIdle()
+
+    // Assert: Verify that fetchRandomRecipes is called twice (once during init and once during the
+    // test)
+    verify(spyViewModel, times(2)).fetchRandomRecipes(eq(2))
+  }
+
+  @OptIn(ExperimentalCoroutinesApi::class)
+  @Test
+  fun nextRecipeDoesNotFetchNewRecipesWhenMoreThanThree() = runTest {
+    // Arrange: Mock the repository to return extended dummy recipes
+    val extendedDummyRecipes =
+        dummyRecipes +
+            listOf(
+                Recipe(
+                    idMeal = "3",
+                    strMeal = "Beef Stroganoff",
+                    strCategory = "Non-Vegetarian",
+                    strArea = "Russian",
+                    strInstructions = "Instructions here...",
+                    strMealThumbUrl = "https://www.example.com/beef-stroganoff/",
+                    ingredientsAndMeasurements =
+                        listOf(Pair("Beef", "1 pound"), Pair("Sour cream", "1 cup"))),
+                Recipe(
+                    idMeal = "4",
+                    strMeal = "Chicken Curry",
+                    strCategory = "Non-Vegetarian",
+                    strArea = "Indian",
+                    strInstructions = "Instructions here...",
+                    strMealThumbUrl = "https://www.example.com/chicken-curry/",
+                    ingredientsAndMeasurements =
+                        listOf(Pair("Chicken", "1 kg"), Pair("Curry powder", "2 tbsp"))))
+
+    `when`(recipeRepository.random(any(), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.arguments[1] as (List<Recipe>) -> Unit
+      onSuccess(extendedDummyRecipes) // Return the extended dummy recipes
+    }
+
+    // Spy on the RecipesViewModel
+    val spyViewModel = spy(RecipesViewModel(recipeRepository))
+
+    // Set the first recipe as the current recipe
+    spyViewModel.updateCurrentRecipe(extendedDummyRecipes[0])
+    advanceUntilIdle()
+
+    // Act: Call nextRecipe
+    spyViewModel.nextRecipe()
+    advanceUntilIdle()
+
+    // Assert: Verify that fetchRandomRecipes is called only once (during init)
+    verify(spyViewModel, times(1)).fetchRandomRecipes(any())
   }
 
   @OptIn(ExperimentalCoroutinesApi::class)
