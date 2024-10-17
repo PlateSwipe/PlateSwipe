@@ -16,6 +16,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import com.android.sample.model.recipe.RecipesViewModel
+import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
@@ -26,7 +27,7 @@ import com.android.sample.ui.testScreens.AddRecipeScreen
 import com.android.sample.ui.testScreens.AuthScreen
 import com.android.sample.ui.testScreens.FridgeScreen
 import com.android.sample.ui.testScreens.IngredientScreen
-import com.android.sample.ui.testScreens.RecipeScreen
+import com.android.sample.ui.testScreens.RecipeList
 import com.android.sample.ui.testScreens.SearchScreen
 import com.android.sample.ui.theme.SampleAppTheme
 
@@ -52,7 +53,9 @@ fun PlateSwipeApp() {
   val navigationActions = NavigationActions(navController)
   val recipesViewModel: RecipesViewModel = viewModel(factory = RecipesViewModel.Factory)
 
-  NavHost(navController = navController, startDestination = Route.MAIN) {
+ViewModel = UserViewModel.Factory.create(UserViewModel::class.java)
+
+  NavHost(navController = navController, startDestination = Route.AUTH) {
     navigation(
         startDestination = Screen.AUTH,
         route = Route.AUTH,
@@ -77,7 +80,7 @@ fun PlateSwipeApp() {
         route = Route.SEARCH,
     ) {
       composable(Screen.SEARCH) { SearchScreen(navigationActions) }
-      composable(Screen.RECIPE) { RecipeScreen() }
+      composable(Screen.RECIPE) { RecipeList(userViewModel, navigationActions) }
     }
     navigation(
         startDestination = Screen.ADD_RECIPE,
