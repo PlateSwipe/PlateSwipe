@@ -24,10 +24,10 @@ import org.mockito.MockitoAnnotations
 class RecipeScreenTest {
   private lateinit var mockNavigationActions: NavigationActions
   private lateinit var mockUserRepository: UserRepository
-    private lateinit var mockFirebaseAuth: FirebaseAuth
-    private lateinit var mockCurrentUser: FirebaseUser
-    private lateinit var userViewModel: UserViewModel
-    private lateinit var mockCall: Call
+  private lateinit var mockFirebaseAuth: FirebaseAuth
+  private lateinit var mockCurrentUser: FirebaseUser
+  private lateinit var userViewModel: UserViewModel
+  private lateinit var mockCall: Call
   private lateinit var recipesList: List<Recipe>
 
   @get:Rule val composeTestRule = createComposeRule()
@@ -40,11 +40,11 @@ class RecipeScreenTest {
 
     mockNavigationActions = mock(NavigationActions::class.java)
     mockUserRepository = mock(UserRepository::class.java)
-      mockFirebaseAuth = mock(FirebaseAuth::class.java)
-      mockCurrentUser = mock(FirebaseUser::class.java)
+    mockFirebaseAuth = mock(FirebaseAuth::class.java)
+    mockCurrentUser = mock(FirebaseUser::class.java)
 
-      `when`(mockFirebaseAuth.currentUser).thenReturn(mockCurrentUser)
-      `when`(mockCurrentUser.uid).thenReturn("001")
+    `when`(mockFirebaseAuth.currentUser).thenReturn(mockCurrentUser)
+    `when`(mockCurrentUser.uid).thenReturn("001")
 
     userViewModel = UserViewModel(mockUserRepository, mockFirebaseAuth)
 
