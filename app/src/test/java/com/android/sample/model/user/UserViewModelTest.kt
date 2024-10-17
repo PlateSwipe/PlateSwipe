@@ -1,7 +1,6 @@
 package com.android.sample.model.user
 
 import com.android.sample.model.ingredient.Ingredient
-import com.android.sample.model.recipe.PreparationTime
 import com.android.sample.model.recipe.Recipe
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -50,9 +49,7 @@ class UserViewModelTest {
           "instructions",
           "thumb",
           listOf(Pair("2134", "4231")),
-          3.4,
-          PreparationTime(1, 30),
-          2)
+      )
 
   @Before
   fun setUp() {
