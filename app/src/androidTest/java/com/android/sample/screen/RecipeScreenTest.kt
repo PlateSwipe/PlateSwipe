@@ -5,6 +5,7 @@ import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import com.android.sample.model.recipe.Recipe
+import com.android.sample.model.user.UserRepository
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
@@ -19,7 +20,8 @@ import org.mockito.MockitoAnnotations
 
 class RecipeScreenTest {
   private lateinit var mockNavigationActions: NavigationActions
-  private lateinit var mockUserViewModel: UserViewModel
+  private lateinit var mockUserRepository: UserRepository
+  private lateinit var userViewModel: UserViewModel
   private lateinit var mockCall: Call
   private lateinit var recipesList: List<Recipe>
 
@@ -32,7 +34,8 @@ class RecipeScreenTest {
     mockCall = mock(Call::class.java)
 
     mockNavigationActions = mock(NavigationActions::class.java)
-    mockUserViewModel = mock(UserViewModel::class.java)
+    mockUserRepository = mock(UserRepository::class.java)
+    userViewModel = UserViewModel(mockUserRepository)
 
     recipesList =
         listOf(
@@ -82,14 +85,16 @@ class RecipeScreenTest {
                 listOf(Pair("1", "peu"), Pair("2", "beaucoup"), Pair("3", "peu")),
             ))
 
-    val savedRecipes = MutableStateFlow(recipesList)
+    for (recipe in recipesList) {
+      userViewModel.addRecipeToUserLikedRecipes(recipe)
+    }
 
     `when`(mockNavigationActions.currentRoute()).thenReturn(Screen.RECIPE)
   }
 
   @Test
   fun displayAllComponents() {
-    composeTestRule.setContent { RecipeList(mockUserViewModel, mockNavigationActions) }
+    composeTestRule.setContent { RecipeList(userViewModel, mockNavigationActions) }
 
     composeTestRule.onNodeWithTag("recipeList").assertIsDisplayed()
 
