@@ -1,18 +1,15 @@
 package com.android.sample.screen
 
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeLeft
 import androidx.compose.ui.test.swipeRight
 import androidx.compose.ui.unit.dp
 import androidx.test.espresso.intent.Intents
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.recipe.RecipeRepository
 import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.ui.navigation.NavigationActions
@@ -20,8 +17,6 @@ import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.swipePage.RecipeDisplay
 import com.android.sample.ui.swipePage.SwipePage
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -62,7 +57,7 @@ class SwipePageTest : TestCase() {
   @Test
   fun swipePageCorrectlyDisplayed() {
     composeTestRule.setContent {
-            SwipePage(navigationActions, recipesViewModel) // Set up the SignInScreen directly
+      SwipePage(navigationActions, recipesViewModel) // Set up the SignInScreen directly
     }
     composeTestRule.onNodeWithTag("bottomNavigationMenu").assertIsDisplayed()
     composeTestRule.onNodeWithTag("topBar").assertIsDisplayed()

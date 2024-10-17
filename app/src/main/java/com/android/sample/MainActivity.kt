@@ -50,10 +50,9 @@ class MainActivity : ComponentActivity() {
 fun PlateSwipeApp() {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
-    val recipesViewModel: RecipesViewModel = viewModel(factory = RecipesViewModel.Factory)
+  val recipesViewModel: RecipesViewModel = viewModel(factory = RecipesViewModel.Factory)
 
-
-    NavHost(navController = navController, startDestination = Route.MAIN) {
+  NavHost(navController = navController, startDestination = Route.MAIN) {
     navigation(
         startDestination = Screen.AUTH,
         route = Route.AUTH,
