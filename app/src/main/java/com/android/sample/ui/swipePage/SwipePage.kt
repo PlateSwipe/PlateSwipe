@@ -53,6 +53,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import com.android.sample.R
 import com.android.sample.model.recipe.RecipesViewModel
+import com.android.sample.model.user.UserViewModel
 import com.android.sample.ui.navigation.BottomNavigationMenu
 import com.android.sample.ui.navigation.LIST_TOP_LEVEL_DESTINATIONS
 import com.android.sample.ui.navigation.NavigationActions
@@ -68,6 +69,7 @@ private const val endAnimation = 1500f
 fun SwipePage(
     navigationActions: NavigationActions,
     recipesViewModel: RecipesViewModel = viewModel(factory = RecipesViewModel.Factory),
+    userViewModel: UserViewModel = viewModel(factory = UserViewModel.Factory)
 ) {
   val selectedItem = navigationActions.currentRoute()
 
@@ -87,7 +89,7 @@ fun SwipePage(
             tabList = LIST_TOP_LEVEL_DESTINATIONS,
             selectedItem = selectedItem)
       }) { paddingValues ->
-        RecipeDisplay(paddingValues, recipesViewModel)
+        RecipeDisplay(paddingValues, recipesViewModel, userViewModel)
       }
 }
 
@@ -100,7 +102,8 @@ fun SwipePage(
 @Composable
 fun RecipeDisplay(
     paddingValues: PaddingValues,
-    recipesViewModel: RecipesViewModel = viewModel(factory = RecipesViewModel.Factory)
+    recipesViewModel: RecipesViewModel = viewModel(factory = RecipesViewModel.Factory),
+    userViewModel: UserViewModel = viewModel(factory = UserViewModel.Factory)
 ) {
   val height = LocalConfiguration.current.screenHeightDp.dp * 1 / 2
   val width = height * 3 / 4
@@ -124,6 +127,8 @@ fun RecipeDisplay(
                       if (offsetX.value > swipeThreshold) {
                         isDescriptionVisible = false
                         recipesViewModel.nextRecipe()
+                        if (currentRecipe != null)
+                            userViewModel.addRecipeToUserLikedRecipes(currentRecipe!!)
                       } else if (offsetX.value < -swipeThreshold) {
                         isDescriptionVisible = false
                         recipesViewModel.nextRecipe()
