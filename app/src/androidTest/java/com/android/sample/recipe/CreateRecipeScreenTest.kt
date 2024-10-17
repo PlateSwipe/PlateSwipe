@@ -14,24 +14,20 @@ import org.mockito.Mockito.`when`
 
 class CreateRecipeScreenTest {
 
+  private lateinit var navigationActions: NavigationActions
 
-    private lateinit var navigationActions: NavigationActions
+  @get:Rule val composeTestRule = createComposeRule()
 
-    @get:Rule
-    val composeTestRule = createComposeRule()
+  @Before
+  fun setUp() {
+    navigationActions = mock(NavigationActions::class.java)
+    `when`(navigationActions.currentRoute()).thenReturn(Screen.CREATE_RECIPE)
+  }
 
-    @Before
-    fun setUp() {
-        navigationActions = mock(NavigationActions::class.java)
-        `when`(navigationActions.currentRoute()).thenReturn(Screen.CREATE_RECIPE)
-    }
-
-    @Test
-    fun mainTextIsDisplayed() {
-        composeTestRule.setContent {
-            FridgeScreen(navigationActions = navigationActions)
-        }
-        composeTestRule.onNodeWithText("Create Recipe Screen").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Work in progress... Stay tuned!").assertIsDisplayed()
-    }
+  @Test
+  fun mainTextIsDisplayed() {
+    composeTestRule.setContent { FridgeScreen(navigationActions = navigationActions) }
+    composeTestRule.onNodeWithText("Create Recipe Screen").assertIsDisplayed()
+    composeTestRule.onNodeWithText("Work in progress... Stay tuned!").assertIsDisplayed()
+  }
 }

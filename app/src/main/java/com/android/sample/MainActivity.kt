@@ -8,13 +8,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.testTag
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
-import com.android.sample.resources.C
 import com.android.sample.ui.account.AccountScreen
 import com.android.sample.ui.authentication.SignInScreen
 import com.android.sample.ui.fridge.FridgeScreen
@@ -31,11 +28,9 @@ class MainActivity : ComponentActivity() {
     super.onCreate(savedInstanceState)
     setContent {
       SampleAppTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize().semantics { testTag = C.Tag.main_screen_container },
-            color = MaterialTheme.colorScheme.background) {
-              PlateSwipeApp()
-            }
+        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+          PlateSwipeApp()
+        }
       }
     }
   }
@@ -48,14 +43,14 @@ fun PlateSwipeApp() {
 
   NavHost(navController = navController, startDestination = Route.AUTH) {
 
-      // Authentication Screen Navigation
-      navigation(
+    // Authentication Screen Navigation
+    navigation(
         startDestination = Screen.AUTH,
         route = Route.AUTH,
     ) {
       composable(Screen.AUTH) { SignInScreen(navigationActions) }
     }
-      // Swipe Screen Navigation
+    // Swipe Screen Navigation
     navigation(
         startDestination = Screen.SWIPE,
         route = Route.SWIPE,
@@ -63,7 +58,7 @@ fun PlateSwipeApp() {
       composable(Screen.SWIPE) { SwipePage(navigationActions) }
     }
 
-      // Fridge Screen Navigation
+    // Fridge Screen Navigation
     navigation(
         startDestination = Screen.FRIDGE,
         route = Route.FRIDGE,
@@ -71,14 +66,14 @@ fun PlateSwipeApp() {
       composable(Screen.FRIDGE) { FridgeScreen(navigationActions) }
     }
 
-      // Search Recipe Screen Navigation
+    // Search Recipe Screen Navigation
     navigation(
         startDestination = Screen.SEARCH,
         route = Route.SEARCH,
     ) {
       composable(Screen.SEARCH) { SearchScreen(navigationActions) }
     }
-      // Create Recipe Screen Navigation
+    // Create Recipe Screen Navigation
     navigation(
         startDestination = Screen.CREATE_RECIPE,
         route = Route.CREATE_RECIPE,
@@ -86,13 +81,12 @@ fun PlateSwipeApp() {
       composable(Screen.CREATE_RECIPE) { CreateRecipeScreen(navigationActions) }
     }
 
-      // Account Screen Navigation
+    // Account Screen Navigation
     navigation(
         startDestination = Screen.ACCOUNT,
         route = Route.ACCOUNT,
     ) {
       composable(Screen.ACCOUNT) { AccountScreen(navigationActions) }
     }
-
   }
 }

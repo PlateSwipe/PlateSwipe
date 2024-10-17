@@ -1,6 +1,5 @@
 package com.android.sample.fridge
 
-
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
@@ -15,24 +14,20 @@ import org.mockito.Mockito.`when`
 
 class FridgeScreenTest {
 
+  private lateinit var navigationActions: NavigationActions
 
-    private lateinit var navigationActions: NavigationActions
+  @get:Rule val composeTestRule = createComposeRule()
 
-    @get:Rule
-    val composeTestRule = createComposeRule()
+  @Before
+  fun setUp() {
+    navigationActions = mock(NavigationActions::class.java)
+    `when`(navigationActions.currentRoute()).thenReturn(Screen.FRIDGE)
+  }
 
-    @Before
-    fun setUp() {
-        navigationActions = mock(NavigationActions::class.java)
-        `when`(navigationActions.currentRoute()).thenReturn(Screen.FRIDGE)
-    }
-
-    @Test
-    fun mainTextIsDisplayed() {
-        composeTestRule.setContent {
-            FridgeScreen(navigationActions = navigationActions)
-        }
-        composeTestRule.onNodeWithText("Fridge Screen").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Work in progress... Stay tuned!").assertIsDisplayed()
-    }
+  @Test
+  fun mainTextIsDisplayed() {
+    composeTestRule.setContent { FridgeScreen(navigationActions = navigationActions) }
+    composeTestRule.onNodeWithText("Fridge Screen").assertIsDisplayed()
+    composeTestRule.onNodeWithText("Work in progress... Stay tuned!").assertIsDisplayed()
+  }
 }

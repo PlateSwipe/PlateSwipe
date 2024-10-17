@@ -14,28 +14,22 @@ import com.android.sample.ui.navigation.BottomNavigationMenu
 import com.android.sample.ui.navigation.LIST_TOP_LEVEL_DESTINATIONS
 import com.android.sample.ui.navigation.NavigationActions
 
-
 @Composable
-fun CreateRecipeScreen(
-    navigationActions: NavigationActions
-) {
-    Scaffold(
-        bottomBar = {
-            BottomNavigationMenu(
-                onTabSelect = { tab -> navigationActions.navigateTo(tab) },
-                tabList = LIST_TOP_LEVEL_DESTINATIONS,
-                selectedItem = navigationActions.currentRoute())
-        }) { paddingValues ->
+fun CreateRecipeScreen(navigationActions: NavigationActions) {
+  Scaffold(
+      bottomBar = {
+        BottomNavigationMenu(
+            onTabSelect = { tab -> navigationActions.navigateTo(tab) },
+            tabList = LIST_TOP_LEVEL_DESTINATIONS,
+            selectedItem = navigationActions.currentRoute())
+      }) { paddingValues ->
         Box(
             modifier = Modifier.fillMaxSize().padding(paddingValues),
-            contentAlignment = Alignment.Center
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+            contentAlignment = Alignment.Center) {
+              Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text("Create Recipe Screen", style = MaterialTheme.typography.titleLarge)
                 Text("Work in progress... Stay tuned!", style = MaterialTheme.typography.bodyMedium)
+              }
             }
-        }
-    }
+      }
 }
