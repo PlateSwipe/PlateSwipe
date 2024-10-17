@@ -1,10 +1,17 @@
-package com.github.se.bootcamp.model.recipe
+package com.android.sample.model.recipe
 
-import com.android.sample.model.recipe.Recipe
-import com.android.sample.model.recipe.RecipeRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.After
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
@@ -45,10 +52,20 @@ class RecipesViewModelTest {
 
   @Before
   fun setUp() {
+    // Set the main dispatcher for tests
+    val testDispatcher = StandardTestDispatcher()
+    Dispatchers.setMain(testDispatcher)
+
     // Mock the RecipeRepository
     recipeRepository = mock(RecipeRepository::class.java)
     // Initialize the RecipesViewModel with the mocked repository
     recipesViewModel = RecipesViewModel(recipeRepository)
+  }
+
+  @After
+  fun tearDown() {
+    // Reset the main dispatcher after tests
+    Dispatchers.resetMain()
   }
 
   @Test
@@ -56,6 +73,28 @@ class RecipesViewModelTest {
     // Assert initial state is correct
     assertThat(recipesViewModel.recipes.value, `is`(emptyList<Recipe>()))
     assertThat(recipesViewModel.loading.value, `is`(false))
+  }
+
+  @OptIn(ExperimentalCoroutinesApi::class)
+  @Test
+  fun initFetchesInitialRecipeAndUpdatesCurrentRecipe() = runTest {
+    // Arrange: Mock the repository to return dummy recipes
+    `when`(recipeRepository.random(any(), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.arguments[1] as (List<Recipe>) -> Unit
+      onSuccess(dummyRecipes) // Return the dummy recipes
+    }
+
+    // Act: Initialize the ViewModel
+    recipesViewModel = RecipesViewModel(recipeRepository)
+
+    // Wait for the coroutine to complete
+    advanceUntilIdle()
+
+    // Assert: Verify that the initial recipe is fetched and set as the current recipe
+    assertNotNull(recipesViewModel.currentRecipe.value) // Ensure current recipe is not null
+    assertThat(
+        recipesViewModel.currentRecipe.value,
+        `is`(dummyRecipes[0])) // Check the current recipe is the first one
   }
 
   @Test
@@ -124,6 +163,30 @@ class RecipesViewModelTest {
   }
 
   @Test
+  fun fetchRandomRecipesAppendsToExistingList() {
+    // Arrange: Mock the repository to return dummy recipes
+    `when`(recipeRepository.random(any(), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.arguments[1] as (List<Recipe>) -> Unit
+      onSuccess(dummyRecipes) // Return the dummy recipes
+    }
+
+    // Act: Initially fetch 2 dummy recipes
+    recipesViewModel.fetchRandomRecipes(2)
+
+    // Fetch additional random recipes
+    recipesViewModel.fetchRandomRecipes(2) // Fetch 2 more recipes
+
+    // Assert: Verify that the recipes in the ViewModel now contain the original and the new ones
+    assertThat(recipesViewModel.recipes.value.size, `is`(4)) // Expecting 4 total recipes
+    assertThat(
+        recipesViewModel.recipes.value,
+        `is`(
+            dummyRecipes +
+                dummyRecipes)) // Check if the ViewModel's recipes are the combination of the
+    // originals
+  }
+
+  @Test
   fun updateCurrentRecipeUpdatesState() {
     // Arrange
     val recipe = dummyRecipes[0]
@@ -146,5 +209,47 @@ class RecipesViewModelTest {
 
     // Assert
     assertThat(recipesViewModel.currentRecipe.value, `is`(nullValue()))
+  }
+
+  @Test
+  fun nextRecipeCyclesCorrectly() {
+    // Arrange
+    `when`(recipeRepository.random(any(), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.arguments[1] as (List<Recipe>) -> Unit
+      onSuccess(dummyRecipes) // Return the dummy recipes
+    }
+
+    // First fetch recipes to populate the ViewModel
+    recipesViewModel.fetchRandomRecipes(2)
+    recipesViewModel.updateCurrentRecipe(dummyRecipes[0]) // Set the first recipe as current
+
+    // Act
+    recipesViewModel.nextRecipe() // Get the next recipe
+
+    // Assert
+    assertThat(
+        recipesViewModel.currentRecipe.value,
+        `is`(dummyRecipes[1])) // Check the current recipe is now the second one
+    assertThat(
+        recipesViewModel.recipes.value.size, `is`(1)) // Check that one recipe has been removed
+    assertThat(
+        recipesViewModel.recipes.value[0],
+        `is`(dummyRecipes[0])) // Ensure the first recipe is still in the list
+  }
+
+  @Test
+  fun nextRecipeWrapsAround() {
+    // Arrange
+    recipesViewModel.fetchRandomRecipes(2) // Fetch dummy recipes
+    recipesViewModel.updateCurrentRecipe(dummyRecipes[0]) // Set the first recipe as current
+
+    // Act
+    recipesViewModel.nextRecipe() // Get the next recipe
+    recipesViewModel.nextRecipe() // Get the next recipe again (should wrap around)
+
+    // Assert
+    assertThat(
+        recipesViewModel.currentRecipe.value,
+        `is`(dummyRecipes[0])) // Check we are back to the first recipe
   }
 }
