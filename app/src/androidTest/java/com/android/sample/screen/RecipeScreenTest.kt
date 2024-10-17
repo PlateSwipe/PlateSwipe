@@ -9,6 +9,7 @@ import com.android.sample.model.user.UserRepository
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
+import com.android.sample.ui.testScreens.RecipeCard
 import com.android.sample.ui.testScreens.RecipeList
 import okhttp3.Call
 import org.junit.Before
@@ -91,6 +92,45 @@ class RecipeScreenTest {
 
     `when`(mockNavigationActions.currentRoute()).thenReturn(Screen.RECIPE)
   }
+
+
+    @Test
+    fun recipeCard_displaysCorrectContent() {
+        // Crée un exemple d'objet Recipe
+        val testRecipe = Recipe(
+            idMeal = "12345",
+            strMeal = "Test Recipe",
+            strCategory = "Test Category",
+            strArea = "Test Area",
+            strInstructions = "Test Instructions",
+            strMealThumbUrl = "https://example.com/image.jpg",
+            ingredientsAndMeasurements =  listOf(Pair("1", "Test Ingredient")),
+        )
+
+        // Configure l'UI avec RecipeCard
+        composeTestRule.setContent {
+            RecipeCard(recipe = testRecipe)
+        }
+
+        composeTestRule.onNodeWithTag("recipeTitle12345")
+            .assertIsDisplayed()
+
+
+        composeTestRule.onNodeWithTag("recipeImage12345")
+            .assertIsDisplayed()
+
+
+        composeTestRule.onNodeWithTag("recipeRating12345")
+            .assertIsDisplayed()
+
+
+        composeTestRule.onNodeWithTag("recipeTime12345")
+            .assertIsDisplayed()
+
+        composeTestRule.onNodeWithTag("priceRating12345")
+            .assertIsDisplayed()
+    }
+
 
   @Test
   fun displayAllComponents() {

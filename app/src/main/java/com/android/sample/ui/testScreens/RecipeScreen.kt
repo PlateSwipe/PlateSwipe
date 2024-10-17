@@ -45,7 +45,10 @@ import com.android.sample.ui.navigation.LIST_TOP_LEVEL_DESTINATIONS
 import com.android.sample.ui.navigation.NavigationActions
 import java.util.Random
 
-/** Recipe card composable that displays a recipe. */
+/** Recipe card composable that displays a recipe.
+ *
+ * @param recipe recipe to display
+ */
 @Composable
 fun RecipeCard(recipe: Recipe) {
   Column(
@@ -124,9 +127,13 @@ fun RecipeCard(recipe: Recipe) {
       }
 }
 
-/** Recipe list composable that displays a list of recipes. */
 
-// Ajouter le parametre listeViewModel après avoir tester sans
+/**
+ * Recipe list composable that displays a list of recipes.
+ *
+ * @param userViewModel view model for user data
+ * @param navigationActions navigation actions
+ */
 @Composable
 fun RecipeList(userViewModel: UserViewModel, navigationActions: NavigationActions) {
   var searchText by remember { mutableStateOf("") }
@@ -187,7 +194,12 @@ fun RecipeList(userViewModel: UserViewModel, navigationActions: NavigationAction
   }
 }
 
-/** Price rating composable that displays the price rating of a recipe with dollar icons. */
+/** Price rating composable that displays the price rating of a recipe with dollar icons.
+ *
+ * @param maxDollars maximum number of dollar icons to display
+ * @param cost cost of the recipe
+ * @param recipe recipe to display the price rating for
+ */
 @Composable
 fun Price(maxDollars: Int = 3, cost: Int, recipe: Recipe) {
   Row(
