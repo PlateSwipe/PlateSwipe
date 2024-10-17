@@ -1,4 +1,4 @@
-package com.android.sample.ui.screens
+package com.android.sample.ui.testScreens
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold

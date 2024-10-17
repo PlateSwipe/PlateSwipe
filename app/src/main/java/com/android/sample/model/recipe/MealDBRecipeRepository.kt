@@ -53,10 +53,7 @@ class MealDBRecipeRepository(private val client: OkHttpClient) : RecipeRepositor
               strArea,
               strInstructions,
               strMealThumbUrl,
-              ingredientsAndMeasurements,
-              rating = 0.0,
-              preparationTime = PreparationTime(0, 0),
-              cost = 0))
+              ingredientsAndMeasurements))
     }
     return parsedListOfRecipes
   }

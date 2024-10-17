@@ -1,4 +1,4 @@
-package com.android.sample.ui.screens
+package com.android.sample.ui.testScreens
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -11,9 +11,9 @@ import com.android.sample.ui.navigation.LIST_TOP_LEVEL_DESTINATIONS
 import com.android.sample.ui.navigation.NavigationActions
 
 @Composable
-fun FridgeScreen(navigationActions: NavigationActions) {
+fun AccountScreen(navigationActions: NavigationActions) {
   Scaffold(
-      modifier = Modifier.testTag("fridgeScreen"),
+      modifier = Modifier.testTag("accountScreen"),
       bottomBar = {
         BottomNavigationMenu(
             onTabSelect = { destination -> navigationActions.navigateTo(destination) },

@@ -1,4 +1,4 @@
-package com.android.sample.ui.screens
+package com.android.sample.ui.testScreens
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -43,6 +43,7 @@ import com.android.sample.model.user.UserViewModel
 import com.android.sample.ui.navigation.BottomNavigationMenu
 import com.android.sample.ui.navigation.LIST_TOP_LEVEL_DESTINATIONS
 import com.android.sample.ui.navigation.NavigationActions
+import java.util.Random
 
 /** Recipe card composable that displays a recipe. */
 @Composable
@@ -90,7 +91,7 @@ fun RecipeCard(recipe: Recipe) {
                           tint = Color.Gray)
                       Text(
                           modifier = Modifier.padding(4.dp).testTag("recipeRating${recipe.idMeal}"),
-                          text = recipe.rating.toString(),
+                          text = "${Random().nextFloat() * 3 + 2}",
                           style = MaterialTheme.typography.bodyMedium)
                     }
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -102,13 +103,21 @@ fun RecipeCard(recipe: Recipe) {
                           tint = Color.Gray)
                       Text(
                           modifier = Modifier.padding(4.dp).testTag("recipeTime${recipe.idMeal}"),
-                          text = recipe.preparationTime.toString(),
+                          text =
+                              "${arrayOf(
+                              10,
+                              15,
+                              20,
+                              30,
+                              45,
+                              50
+                          ).random()} min",
                           style = MaterialTheme.typography.bodyMedium)
 
                       Spacer(modifier = Modifier.width(8.dp))
 
                       // recipe cost
-                      Price(cost = recipe.cost, recipe = recipe)
+                      Price(cost = Random().nextInt(3), recipe = recipe)
                     }
                   }
             }
@@ -121,7 +130,7 @@ fun RecipeCard(recipe: Recipe) {
 @Composable
 fun RecipeList(userViewModel: UserViewModel, navigationActions: NavigationActions) {
   var searchText by remember { mutableStateOf("") }
-  val recipesList: List<Recipe> = userViewModel.savedRecipes.collectAsState().value
+  val recipesList: List<Recipe> = userViewModel.likedRecipes.collectAsState().value
   Scaffold(
       modifier = Modifier.testTag("recipeList"),
       containerColor = Color(0xFFFFFFFF),
