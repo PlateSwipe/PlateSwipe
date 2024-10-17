@@ -54,15 +54,23 @@ import coil.compose.rememberAsyncImagePainter
 import com.android.sample.R
 import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.model.user.UserViewModel
+import com.android.sample.resources.C.Tag.END_ANIMATION
+import com.android.sample.resources.C.Tag.LOADING
 import com.android.sample.ui.navigation.BottomNavigationMenu
 import com.android.sample.ui.navigation.LIST_TOP_LEVEL_DESTINATIONS
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.theme.starColor
 import com.android.sample.ui.theme.tagBackground
+import kotlin.math.absoluteValue
 import kotlinx.coroutines.launch
 
-private const val endAnimation = 1500f
-
+/**
+ * Composable for the Swipe Page
+ *
+ * @param navigationActions - Navigation Actions
+ * @param recipesViewModel - Recipes View Model
+ * @param userViewModel - User View Model
+ */
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -118,30 +126,24 @@ fun RecipeDisplay(
 
   Column(
       modifier =
-          Modifier.fillMaxSize()
-              .padding(paddingValues) // Apply padding from the Scaffold
-              .padding(16.dp)
-              .pointerInput(Unit) {
-                detectHorizontalDragGestures(
-                    onDragEnd = {
-                      if (offsetX.value > swipeThreshold) {
-                        isDescriptionVisible = false
-                        recipesViewModel.nextRecipe()
-                        if (currentRecipe != null)
-                            userViewModel.addRecipeToUserLikedRecipes(currentRecipe!!)
-                      } else if (offsetX.value < -swipeThreshold) {
-                        isDescriptionVisible = false
-                        recipesViewModel.nextRecipe()
-                      }
-                    },
-                    onHorizontalDrag = { _, dragAmount ->
-                      coroutineScope.launch { offsetX.snapTo(offsetX.value + dragAmount) }
-                    })
-              }) {
+          Modifier.fillMaxSize().padding(paddingValues).padding(16.dp).pointerInput(Unit) {
+            detectHorizontalDragGestures(
+                onDragEnd = {
+                  if (kotlin.math.abs(offsetX.value) > swipeThreshold) {
+                    isDescriptionVisible = false
+                    recipesViewModel.nextRecipe()
+                    if (offsetX.value > 0 && currentRecipe != null) {
+                      userViewModel.addRecipeToUserLikedRecipes(currentRecipe!!)
+                    }
+                  }
+                },
+                onHorizontalDrag = { _, dragAmount ->
+                  coroutineScope.launch { offsetX.snapTo(offsetX.value + dragAmount) }
+                })
+          }) {
+        // Snap back to center when animation is finished
         coroutineScope.launch {
-          if (offsetX.value > endAnimation - 200) {
-            offsetX.snapTo(0f)
-          } else if (offsetX.value < -(endAnimation - 200)) {
+          if (offsetX.value.absoluteValue > END_ANIMATION - 200) {
             offsetX.snapTo(0f)
           }
         }
@@ -170,9 +172,8 @@ fun RecipeDisplay(
 
         // Image Description
         ImageDescription(
-            currentRecipe?.strMeal ?: "Loading...",
-            "4.5",
-            currentRecipe?.strCategory ?: "Loading...",
+            currentRecipe?.strMeal ?: LOADING,
+            currentRecipe?.strCategory ?: LOADING,
             modifier = Modifier.clickable { isDescriptionVisible = !isDescriptionVisible })
 
         // Spacer to push content to bottom
@@ -185,7 +186,7 @@ fun RecipeDisplay(
         ) {
           // Display Recipe Description (truncated with ellipsis)
           Text(
-              text = currentRecipe?.strInstructions ?: "Loading...",
+              text = currentRecipe?.strInstructions ?: LOADING,
               style = MaterialTheme.typography.bodyMedium,
               color = MaterialTheme.colorScheme.onSecondary,
               maxLines =
@@ -204,13 +205,13 @@ fun RecipeDisplay(
 
         // Animate back to center if not swiped
         LaunchedEffect(offsetX.value) {
-          if (offsetX.value > swipeThreshold) {
-            offsetX.animateTo(endAnimation, animationSpec = tween(50))
-          } else if (offsetX.value < -swipeThreshold) {
-            offsetX.animateTo(-endAnimation, animationSpec = tween(50)) // Animate back to center
-          } else {
-            offsetX.animateTo(0f, animationSpec = tween(50)) // Animate back to center
-          }
+          val animationTarget =
+              when {
+                offsetX.value > swipeThreshold -> END_ANIMATION
+                offsetX.value < -swipeThreshold -> -END_ANIMATION
+                else -> 0f
+              }
+          offsetX.animateTo(animationTarget, animationSpec = tween(50))
         }
       }
 }
@@ -219,12 +220,11 @@ fun RecipeDisplay(
  * Composable for the Image Description
  *
  * @param name - Recipe Name
- * @param rate - Recipe Rate
  * @param tag - Recipe Tag
  * @param modifier - Modifier
  */
 @Composable
-private fun ImageDescription(name: String, rate: String, tag: String, modifier: Modifier) {
+private fun ImageDescription(name: String, tag: String, modifier: Modifier) {
 
   Column(modifier = Modifier.padding(16.dp)) {
     Row(
@@ -234,7 +234,7 @@ private fun ImageDescription(name: String, rate: String, tag: String, modifier: 
         horizontalArrangement = Arrangement.SpaceBetween) {
 
           // Display Recipe Name
-          RecipeDescription(name, rate)
+          RecipeDescription(name, "4.5")
         }
     Spacer(modifier = Modifier.padding(2.dp))
     Row(verticalAlignment = Alignment.CenterVertically) { Tag(tag) }
@@ -250,7 +250,7 @@ private fun ImageDescription(name: String, rate: String, tag: String, modifier: 
 @Composable
 fun RecipeDescription(name: String, rate: String) {
   Text(
-      modifier = Modifier.testTag("recipeName"), // Let the text take up as much space as needed
+      modifier = Modifier.testTag("recipeName"),
       text = name,
       style = MaterialTheme.typography.bodyLarge,
       color = MaterialTheme.colorScheme.onSecondary,
@@ -262,10 +262,8 @@ fun RecipeDescription(name: String, rate: String) {
         Icon(
             painter = painterResource(R.drawable.star_rate),
             contentDescription = "Star rate",
-            modifier =
-                Modifier.size(24.dp).testTag("recipeStar"), // Adjust size to match the text size
-            tint = starColor // Adjust color to match the text color
-            )
+            modifier = Modifier.size(24.dp).testTag("recipeStar"),
+            tint = starColor)
 
         Spacer(modifier = Modifier.padding(5.dp))
 
