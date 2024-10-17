@@ -15,7 +15,7 @@ import com.android.sample.ui.navigation.LIST_TOP_LEVEL_DESTINATIONS
 import com.android.sample.ui.navigation.NavigationActions
 
 @Composable
-fun SearchScreen(navigationActions: NavigationActions) {
+fun SearchRecipeScreen(navigationActions: NavigationActions) {
   Scaffold(
       bottomBar = {
         BottomNavigationMenu(

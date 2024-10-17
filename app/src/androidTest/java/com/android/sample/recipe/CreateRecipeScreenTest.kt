@@ -3,9 +3,9 @@ package com.android.sample.recipe
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import com.android.sample.ui.fridge.FridgeScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
+import com.android.sample.ui.recipe.CreateRecipeScreen
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -26,7 +26,7 @@ class CreateRecipeScreenTest {
 
   @Test
   fun mainTextIsDisplayed() {
-    composeTestRule.setContent { FridgeScreen(navigationActions = navigationActions) }
+    composeTestRule.setContent { CreateRecipeScreen(navigationActions = navigationActions) }
     composeTestRule.onNodeWithText("Create Recipe Screen").assertIsDisplayed()
     composeTestRule.onNodeWithText("Work in progress... Stay tuned!").assertIsDisplayed()
   }
