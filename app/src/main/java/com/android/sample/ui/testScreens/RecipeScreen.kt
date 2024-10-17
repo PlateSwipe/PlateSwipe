@@ -2,6 +2,7 @@ package com.android.sample.ui.testScreens
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,6 +16,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.AttachMoney
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
@@ -45,7 +48,8 @@ import com.android.sample.ui.navigation.LIST_TOP_LEVEL_DESTINATIONS
 import com.android.sample.ui.navigation.NavigationActions
 import java.util.Random
 
-/** Recipe card composable that displays a recipe.
+/**
+ * Recipe card composable that displays a recipe.
  *
  * @param recipe recipe to display
  */
@@ -74,40 +78,57 @@ fun RecipeCard(recipe: Recipe) {
               Column(
                   modifier =
                       Modifier.weight(1f).padding(end = 16.dp).align(Alignment.CenterVertically)) {
+                    var isLiked by remember { mutableStateOf(true) }
+
                     // recipe title
-                    Text(
-                        modifier =
-                            Modifier.padding(top = 8.dp)
-                                .testTag("recipeTitle${recipe.idMeal}")
-                                .align(Alignment.CenterHorizontally),
-                        text = recipe.strMeal,
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                    )
-                    // recipe rating
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                      Icon(
-                          imageVector = Icons.Filled.Star,
-                          contentDescription = "rating",
-                          modifier =
-                              Modifier.size(16.dp).testTag("recipeRatingIcon${recipe.idMeal}"),
-                          tint = Color.Gray)
-                      Text(
-                          modifier = Modifier.padding(4.dp).testTag("recipeRating${recipe.idMeal}"),
-                          text = "${Random().nextFloat() * 3 + 2}",
-                          style = MaterialTheme.typography.bodyMedium)
-                    }
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                      // recipe time
-                      Icon(
-                          imageVector = Icons.Filled.AccessTime,
-                          contentDescription = "rating",
-                          modifier = Modifier.size(16.dp).testTag("recipeTimeIcon${recipe.idMeal}"),
-                          tint = Color.Gray)
-                      Text(
-                          modifier = Modifier.padding(4.dp).testTag("recipeTime${recipe.idMeal}"),
-                          text =
-                              "${arrayOf(
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween) {
+                          Text(
+                              modifier =
+                                  Modifier.padding(top = 8.dp)
+                                      .testTag("recipeTitle${recipe.idMeal}"),
+                              text = recipe.strMeal,
+                              style = MaterialTheme.typography.titleMedium,
+                              fontWeight = FontWeight.Bold,
+                          )
+                          Icon(
+                              imageVector =
+                                  if (isLiked) Icons.Filled.Favorite
+                                  else Icons.Filled.FavoriteBorder,
+                              contentDescription = "like",
+                              modifier =
+                                  Modifier.size(16.dp)
+                                      .testTag("recipeFavoriteIcon${recipe.idMeal}")
+                                      .clickable { isLiked = !isLiked },
+                              tint = Color.Red)
+                        }
+                  }
+              // recipe rating
+              Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Filled.Star,
+                    contentDescription = "rating",
+                    modifier = Modifier.size(16.dp).testTag("recipeRatingIcon${recipe.idMeal}"),
+                    tint = Color.Gray)
+                Text(
+                    modifier = Modifier.padding(4.dp).testTag("recipeRating${recipe.idMeal}"),
+                    text = "${Random().nextFloat() * 3 + 2}",
+                    style = MaterialTheme.typography.bodyMedium)
+              }
+              Row(verticalAlignment = Alignment.CenterVertically) {
+                // recipe time
+                Icon(
+                    imageVector = Icons.Filled.AccessTime,
+                    contentDescription = "rating",
+                    modifier = Modifier.size(16.dp).testTag("recipeTimeIcon${recipe.idMeal}"),
+                    tint = Color.Gray)
+                Text(
+                    modifier = Modifier.padding(4.dp).testTag("recipeTime${recipe.idMeal}"),
+                    text =
+                        "${arrayOf(
                               10,
                               15,
                               20,
@@ -115,18 +136,16 @@ fun RecipeCard(recipe: Recipe) {
                               45,
                               50
                           ).random()} min",
-                          style = MaterialTheme.typography.bodyMedium)
+                    style = MaterialTheme.typography.bodyMedium)
 
-                      Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(8.dp))
 
-                      // recipe cost
-                      Price(cost = Random().nextInt(3), recipe = recipe)
-                    }
-                  }
+                // recipe cost
+                Price(cost = Random().nextInt(3), recipe = recipe)
+              }
             }
       }
 }
-
 
 /**
  * Recipe list composable that displays a list of recipes.
@@ -194,7 +213,8 @@ fun RecipeList(userViewModel: UserViewModel, navigationActions: NavigationAction
   }
 }
 
-/** Price rating composable that displays the price rating of a recipe with dollar icons.
+/**
+ * Price rating composable that displays the price rating of a recipe with dollar icons.
  *
  * @param maxDollars maximum number of dollar icons to display
  * @param cost cost of the recipe
