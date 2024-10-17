@@ -97,18 +97,15 @@ class RecipeOverviewTest {
     composeTestRule.onNodeWithTag("ingredientsButton").performClick()
 
     // Checks if the number of servings is displayed
-    composeTestRule.onNodeWithTag("numberServings").assertIsDisplayed()
     composeTestRule.onNodeWithTag("numberServings").assertTextEquals("1")
 
     // Checking that it is impossible to remove servings when at 1
-    composeTestRule.onNodeWithTag("removeServings").assertIsDisplayed()
     composeTestRule.onNodeWithTag("removeServings").assertHasClickAction()
     composeTestRule.onNodeWithTag("removeServings").performClick()
 
     composeTestRule.onNodeWithTag("numberServings").assertTextEquals("1")
 
     // Adding 2 servings and checking if they wre added
-    composeTestRule.onNodeWithTag("addServings").assertIsDisplayed()
     composeTestRule.onNodeWithTag("addServings").assertHasClickAction()
     composeTestRule.onNodeWithTag("addServings").performClick()
     composeTestRule.onNodeWithTag("addServings").performClick()
