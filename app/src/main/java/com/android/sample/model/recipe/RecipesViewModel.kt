@@ -30,6 +30,10 @@ class RecipesViewModel(private val repository: RecipeRepository) : ViewModel() {
   val currentRecipe: StateFlow<Recipe?>
     get() = _currentRecipe
 
+  private val _nextRecipe = MutableStateFlow<Recipe?>(null)
+  val nextRecipe: StateFlow<Recipe?>
+    get() = _nextRecipe
+
   init {
     viewModelScope.launch {
       fetchRandomRecipes(3)
@@ -71,6 +75,7 @@ class RecipesViewModel(private val repository: RecipeRepository) : ViewModel() {
    */
   fun updateCurrentRecipe(recipe: Recipe) {
     _currentRecipe.value = recipe
+    updateNextRecipe()
   }
 
   /** Clears the current selected recipe. */
@@ -82,15 +87,23 @@ class RecipesViewModel(private val repository: RecipeRepository) : ViewModel() {
   fun nextRecipe() {
     val currentRecipes = _recipes.value
     if (currentRecipes.isNotEmpty()) {
-      // Find the next recipe
       val nextRecipeIndex = (currentRecipes.indexOf(_currentRecipe.value) + 1) % currentRecipes.size
       val nextRecipe = currentRecipes[nextRecipeIndex]
 
-      // Set the next as the current one
       _currentRecipe.value = nextRecipe
-
-      // Remove the selected recipe from the list
       _recipes.value = currentRecipes.toMutableList().apply { remove(nextRecipe) }
+      updateNextRecipe()
+    }
+  }
+
+  /** Updates the next recipe in the list of recipes. */
+  fun updateNextRecipe() {
+    val currentRecipes = _recipes.value
+    if (currentRecipes.isNotEmpty()) {
+      val nextRecipeIndex = (currentRecipes.indexOf(_currentRecipe.value) + 1) % currentRecipes.size
+      _nextRecipe.value = currentRecipes[nextRecipeIndex]
+    } else {
+      _nextRecipe.value = null
     }
   }
 

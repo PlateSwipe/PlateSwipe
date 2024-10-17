@@ -252,4 +252,76 @@ class RecipesViewModelTest {
         recipesViewModel.currentRecipe.value,
         `is`(dummyRecipes[0])) // Check we are back to the first recipe
   }
+
+  @OptIn(ExperimentalCoroutinesApi::class)
+  @Test
+  fun nextRecipeStateFlowUpdatesCorrectly() = runTest {
+    // Arrange: Mock the repository to return dummy recipes
+    `when`(recipeRepository.random(any(), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.arguments[1] as (List<Recipe>) -> Unit
+      onSuccess(dummyRecipes) // Return the dummy recipes
+    }
+
+    // Act: Initialize the ViewModel and fetch recipes
+    recipesViewModel = RecipesViewModel(recipeRepository)
+    advanceUntilIdle()
+
+    // Assert: Verify that the next recipe is set correctly
+    assertNotNull(recipesViewModel.nextRecipe.value) // Ensure next recipe is not null
+    assertThat(
+        recipesViewModel.nextRecipe.value,
+        `is`(dummyRecipes[1])) // Check the next recipe is the second one
+  }
+
+  @OptIn(ExperimentalCoroutinesApi::class)
+  @Test
+  fun nextRecipeMethodUpdatesStateCorrectly() = runTest {
+    // Arrange: Mock the repository to return dummy recipes
+    `when`(recipeRepository.random(any(), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.arguments[1] as (List<Recipe>) -> Unit
+      onSuccess(dummyRecipes) // Return the dummy recipes
+    }
+
+    // Act: Initialize the ViewModel and fetch recipes
+    recipesViewModel = RecipesViewModel(recipeRepository)
+    advanceUntilIdle()
+
+    // Act: Call nextRecipe method
+    recipesViewModel.nextRecipe()
+    advanceUntilIdle()
+
+    // Assert: Verify that the current and next recipes are updated correctly
+    assertNotNull(recipesViewModel.currentRecipe.value) // Ensure current recipe is not null
+    assertThat(
+        recipesViewModel.currentRecipe.value,
+        `is`(dummyRecipes[1])) // Check the current recipe is the second one
+    assertNotNull(recipesViewModel.nextRecipe.value) // Ensure next recipe is not null
+    assertThat(
+        recipesViewModel.nextRecipe.value,
+        `is`(dummyRecipes[0])) // Check the next recipe is the first one
+  }
+
+  @OptIn(ExperimentalCoroutinesApi::class)
+  @Test
+  fun updateCurrentRecipeUpdatesNextRecipe() = runTest {
+    // Arrange: Mock the repository to return dummy recipes
+    `when`(recipeRepository.random(any(), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.arguments[1] as (List<Recipe>) -> Unit
+      onSuccess(dummyRecipes) // Return the dummy recipes
+    }
+
+    // Act: Initialize the ViewModel and fetch recipes
+    recipesViewModel = RecipesViewModel(recipeRepository)
+    advanceUntilIdle()
+
+    // Act: Update the current recipe
+    recipesViewModel.updateCurrentRecipe(dummyRecipes[0])
+    advanceUntilIdle()
+
+    // Assert: Verify that the next recipe is set correctly
+    assertNotNull(recipesViewModel.nextRecipe.value) // Ensure next recipe is not null
+    assertThat(
+        recipesViewModel.nextRecipe.value,
+        `is`(dummyRecipes[1])) // Check the next recipe is the second one
+  }
 }
