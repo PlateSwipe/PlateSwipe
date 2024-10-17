@@ -103,7 +103,7 @@ class UserViewModelTest {
     assertEquals(userViewModel.userName.value, userExample.userName)
     assertEquals(userViewModel.profilePictureUrl.value, userExample.profilePictureUrl)
     assertEquals(userViewModel.fridge.value, userExample.fridge)
-    assertEquals(userViewModel.savedRecipes.value, userExample.savedRecipes)
+    assertEquals(userViewModel.likedRecipes.value, userExample.likedRecipes)
     assertEquals(userViewModel.createdRecipes.value, userExample.createdRecipes)
   }
 
@@ -168,7 +168,7 @@ class UserViewModelTest {
     assertEquals(addedUserCaptor.value.userName, userExample.userName)
     assertEquals(addedUserCaptor.value.profilePictureUrl, userExample.profilePictureUrl)
     assertEquals(addedUserCaptor.value.fridge, userExample.fridge)
-    assertEquals(addedUserCaptor.value.savedRecipes, userExample.savedRecipes)
+    assertEquals(addedUserCaptor.value.likedRecipes, userExample.likedRecipes)
     assertEquals(addedUserCaptor.value.createdRecipes, userExample.createdRecipes)
   }
 
@@ -177,21 +177,21 @@ class UserViewModelTest {
     userViewModel.changeUserName(userExample.userName)
     userViewModel.changeProfilePictureUrl(userExample.profilePictureUrl)
     userViewModel.addIngredientToUserFridge(ingredientExample)
-    userViewModel.addRecipeToUserSavedRecipes(recipeExample)
+    userViewModel.addRecipeToUserLikedRecipes(recipeExample)
     userViewModel.addRecipeToUserCreatedRecipes(recipeExample)
 
     assertEquals(userViewModel.userName.value, userExample.userName)
     assertEquals(userViewModel.profilePictureUrl.value, userExample.profilePictureUrl)
     assertEquals(userViewModel.fridge.value[0].name, "apple")
-    assertEquals(userViewModel.savedRecipes.value[0].idMeal, "123")
+    assertEquals(userViewModel.likedRecipes.value[0].idMeal, "123")
     assertEquals(userViewModel.createdRecipes.value[0].idMeal, "123")
 
     userViewModel.removeIngredientFromUserFridge(ingredientExample)
-    userViewModel.removeRecipeFromUserSavedRecipes(recipeExample)
+    userViewModel.removeRecipeFromUserLikedRecipes(recipeExample)
     userViewModel.removeRecipeFromUserCreatedRecipes(recipeExample)
 
     assertEquals(userViewModel.fridge.value.count(), 0)
-    assertEquals(userViewModel.savedRecipes.value.count(), 0)
+    assertEquals(userViewModel.likedRecipes.value.count(), 0)
     assertEquals(userViewModel.createdRecipes.value.count(), 0)
   }
 }
