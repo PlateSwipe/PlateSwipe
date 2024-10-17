@@ -179,39 +179,4 @@ class RecipeScreenTest {
         composeTestRule.onNodeWithTag("searchTextText", useUnmergedTree = true).assertTextEquals("search")
         composeTestRule.onNodeWithTag("searchButtonIcon", useUnmergedTree = true).assertIsDisplayed()
     }
-
-  @Test
-  fun displayAllComponents() {
-    composeTestRule.setContent { RecipeList(userViewModel, mockNavigationActions) }
-
-    composeTestRule.onNodeWithTag("recipeList").assertIsDisplayed()
-
-    composeTestRule.onNodeWithTag("SearchButton").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("searchText").assertIsDisplayed()
-    composeTestRule
-        .onNodeWithTag("searchTextText", useUnmergedTree = true)
-        .assertTextEquals("search")
-    composeTestRule.onNodeWithTag("searchButtonIcon", useUnmergedTree = true).assertIsDisplayed()
-
-    composeTestRule
-        .onNodeWithTag("bottomNavigationMenu", useUnmergedTree = true)
-        .assertIsDisplayed()
-
-    for (recipe in recipesList) {
-      composeTestRule.onNodeWithTag("recipeCard${recipe.idMeal}").assertIsDisplayed()
-
-      composeTestRule.onNodeWithTag("recipeImage${recipe.idMeal}").assertIsDisplayed()
-
-      composeTestRule.onNodeWithTag("recipeTitle${recipe.idMeal}").assertIsDisplayed()
-      composeTestRule.onNodeWithTag("recipeTitle${recipe.idMeal}").assertTextEquals(recipe.strMeal)
-
-      composeTestRule.onNodeWithTag("recipeRatingIcon${recipe.idMeal}").assertIsDisplayed()
-      composeTestRule.onNodeWithTag("recipeRating${recipe.idMeal}").assertIsDisplayed()
-
-      composeTestRule.onNodeWithTag("recipeTime${recipe.idMeal}").assertIsDisplayed()
-      composeTestRule.onNodeWithTag("recipeTimeIcon${recipe.idMeal}").assertIsDisplayed()
-
-      composeTestRule.onNodeWithTag("priceRating${recipe.idMeal}").assertIsDisplayed()
-    }
-  }
 }
