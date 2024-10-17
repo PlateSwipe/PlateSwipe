@@ -10,6 +10,7 @@ object C {
 
     // SwipePage
     const val END_ANIMATION = 1500f
+
     const val LOADING = "Loading..."
   }
 }
