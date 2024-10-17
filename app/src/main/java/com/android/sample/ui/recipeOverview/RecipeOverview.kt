@@ -66,7 +66,7 @@ fun RecipeOverview(navigationActions: NavigationActions, recipesViewModel: Recip
   val width = height * 3 / 4
   val currentRecipe by recipesViewModel.currentRecipe.collectAsState()
   var ingredientsView by remember { mutableStateOf(false) }
-  var servingsCount by remember { mutableIntStateOf(1) }
+  val servingsCount by remember { mutableIntStateOf(1) }
   val scrollState = rememberScrollState()
 
   Scaffold(
@@ -275,7 +275,7 @@ private fun IngredientInstructionView(
     servingsCount: Int,
     currentRecipe: Recipe?
 ) {
-    var servingsCount1 = servingsCount
+    val servingsCount1 = servingsCount
     Column {
         if (ingredientsView) {
             IngredientView(servingsCount1, currentRecipe)
