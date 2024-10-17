@@ -180,7 +180,7 @@ class UserViewModelTest {
     userViewModel.changeUserName(userExample.userName)
     userViewModel.changeProfilePictureUrl(userExample.profilePictureUrl)
     userViewModel.addIngredientToUserFridge(ingredientExample)
-    userViewModel.addRecipeToUserSavedRecipes(recipeExample)
+    userViewModel.addRecipeToUserLikedRecipes(recipeExample)
     userViewModel.addRecipeToUserCreatedRecipes(recipeExample)
 
     assertEquals(userViewModel.userName.value, userExample.userName)
@@ -190,7 +190,7 @@ class UserViewModelTest {
     assertEquals(userViewModel.createdRecipes.value[0].idMeal, "123")
 
     userViewModel.removeIngredientFromUserFridge(ingredientExample)
-    userViewModel.removeRecipeFromUserSavedRecipes(recipeExample)
+    userViewModel.removeRecipeFromUserLikedRecipes(recipeExample)
     userViewModel.removeRecipeFromUserCreatedRecipes(recipeExample)
 
     assertEquals(userViewModel.fridge.value.count(), 0)
