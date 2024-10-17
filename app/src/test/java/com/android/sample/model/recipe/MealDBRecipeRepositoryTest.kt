@@ -427,4 +427,52 @@ class MealDBRecipeRepositoryTest {
     assertNotNull(searchException)
     assertNotNull(searchRecipe)
   }
+
+  @Test
+  fun `test the search function searches correctly`() {
+    val callbackCapture: ArgumentCaptor<Callback> = ArgumentCaptor.forClass(Callback::class.java)
+    val requestCapture: ArgumentCaptor<Request> = ArgumentCaptor.forClass(Request::class.java)
+
+    `when`(mockHttpClient.newCall(capture(requestCapture))).thenReturn(mockCall)
+    doNothing().`when`(mockCall).enqueue(capture(callbackCapture))
+
+    var searchRecipe: Recipe? = null
+    var searchException: Exception? = null
+
+    mealDBRecipeRepository.search(
+        mealID = "52771",
+        onSuccess = { recipe -> searchRecipe = recipe },
+        onFailure = { exception -> searchException = exception })
+
+    val searchCallBack = callbackCapture.value
+
+    `when`(mockResponseBody.string()).thenReturn(mealDBJsonRandomJson1)
+
+    searchCallBack.onResponse(mockCall, response)
+
+    assertNull(searchException)
+    assertNotNull(searchRecipe)
+    assert(searchRecipe?.idMeal == "52771")
+    assert(searchRecipe?.strMeal == "Spicy Arrabiata Penne")
+    assert(searchRecipe?.strCategory == "Vegetarian")
+    assert(searchRecipe?.strArea == "Italian")
+    assert(
+        searchRecipe?.strInstructions ==
+            "Bring a large pot of water to a boil. Add kosher salt to the boiling water, then add the pasta. Cook according to the package instructions, about 9 minutes.\r\nIn a large skillet over medium-high heat, add the olive oil and heat until the oil starts to shimmer. Add the garlic and cook, stirring, until fragrant, 1 to 2 minutes. Add the chopped tomatoes, red chile flakes, Italian seasoning and salt and pepper to taste. Bring to a boil and cook for 5 minutes. Remove from the heat and add the chopped basil.\r\nDrain the pasta and add it to the sauce. Garnish with Parmigiano-Reggiano flakes and more basil and serve warm.")
+    assert(
+        searchRecipe?.strMealThumbUrl ==
+            "https://www.themealdb.com/images/media/meals/ustsqw1468250014.jpg")
+
+    assert(
+        searchRecipe?.ingredientsAndMeasurements ==
+            listOf(
+                Pair("penne rigate", "1 pound"),
+                Pair("olive oil", "1/4 cup"),
+                Pair("garlic", "3 cloves"),
+                Pair("chopped tomatoes", "1 tin "),
+                Pair("red chilli flakes", "1/2 teaspoon"),
+                Pair("italian seasoning", "1/2 teaspoon"),
+                Pair("basil", "6 leaves"),
+                Pair("Parmigiano-Reggiano", "spinkling")))
+  }
 }

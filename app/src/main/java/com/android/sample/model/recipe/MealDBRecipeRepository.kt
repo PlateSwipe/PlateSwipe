@@ -79,6 +79,36 @@ class MealDBRecipeRepository(private val client: OkHttpClient) : RecipeRepositor
     }
   }
 
+  override fun search(mealID: String, onSuccess: (Recipe) -> Unit, onFailure: (Exception) -> Unit) {
+    val url = "$mealDBUrl/lookup.php?i=$mealID"
+    val request =
+        Request.Builder()
+            .url(url)
+            .header("User-Agent", "PlateSwipe/1.0 (plateswipe@gmail.com)")
+            .build()
+
+    client
+        .newCall(request)
+        .enqueue(
+            object : Callback {
+              override fun onFailure(call: Call, e: IOException) {
+                onFailure(e)
+              }
+
+              override fun onResponse(call: Call, response: Response) {
+                try {
+                  val recipe = parseMealDBJsonToRecipe(JSONObject(response.body!!.string()))
+                  if (recipe.isEmpty()) {
+                    throw JSONException("No recipe found")
+                  }
+                  onSuccess(recipe[0])
+                } catch (e: JSONException) {
+                  onFailure(e)
+                }
+              }
+            })
+  }
+
   /**
    * Helper method to fetch a random recipe from the MealDB API.
    *
