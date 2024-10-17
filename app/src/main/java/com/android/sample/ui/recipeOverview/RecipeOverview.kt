@@ -66,7 +66,7 @@ fun RecipeOverview(navigationActions: NavigationActions, recipesViewModel: Recip
   val width = height * 3 / 4
   val currentRecipe by recipesViewModel.currentRecipe.collectAsState()
   var ingredientsView by remember { mutableStateOf(false) }
-  val servingsCount by remember { mutableIntStateOf(1) }
+  var servingsCount by remember { mutableIntStateOf(1) }
   val scrollState = rememberScrollState()
 
   Scaffold(
@@ -146,7 +146,10 @@ fun RecipeOverview(navigationActions: NavigationActions, recipesViewModel: Recip
                     }
                     // Display of the list of ingredients with the ability to change the number of
                     // servings
-                    IngredientInstructionView(ingredientsView, servingsCount, currentRecipe)
+                    IngredientInstructionView(ingredientsView, servingsCount, currentRecipe) {
+                        newServingsCount ->
+                      servingsCount = newServingsCount
+                    }
                   }
             }
       }
@@ -257,11 +260,12 @@ private fun PrepareCookTotalTimeDisplay() {
 private fun IngredientInstructionView(
     ingredientsView: Boolean,
     servingsCount: Int,
-    currentRecipe: Recipe?
+    currentRecipe: Recipe?,
+    changeServingsCount: (Int) -> Unit
 ) {
   Column {
     if (ingredientsView) {
-      IngredientView(servingsCount, currentRecipe)
+      IngredientView(servingsCount, changeServingsCount, currentRecipe)
     } else {
       InstructionView(currentRecipe)
     }
@@ -270,7 +274,11 @@ private fun IngredientInstructionView(
 
 /** Display of the ingredients and the ability to change the number of servings */
 @Composable
-private fun IngredientView(servingsCount: Int, currentRecipe: Recipe?) {
+private fun IngredientView(
+    servingsCount: Int,
+    changeServingsCount: (Int) -> Unit,
+    currentRecipe: Recipe?
+) {
   var servingsCountVar = servingsCount
   Row(
       modifier = Modifier.fillMaxWidth(),
@@ -292,7 +300,7 @@ private fun IngredientView(servingsCount: Int, currentRecipe: Recipe?) {
             verticalAlignment = Alignment.CenterVertically) {
               // Display of the buttons to change the number of servings
               Button(
-                  onClick = { if (servingsCountVar > 1) --servingsCountVar },
+                  onClick = { if (servingsCountVar > 1) changeServingsCount(--servingsCountVar) },
                   colors = ButtonColors(goldenBronze, Color.Black, goldenBronze, Color.Black),
                   modifier = Modifier.size(20.dp).testTag("removeServings"),
                   contentPadding = PaddingValues()) {
@@ -304,7 +312,7 @@ private fun IngredientView(servingsCount: Int, currentRecipe: Recipe?) {
                   color = Color.Black,
                   modifier = Modifier.testTag("numberServings"))
               Button(
-                  onClick = { ++servingsCountVar },
+                  onClick = { changeServingsCount(++servingsCountVar) },
                   colors = ButtonColors(goldenBronze, Color.Black, goldenBronze, Color.Black),
                   modifier = Modifier.size(20.dp).testTag("addServings"),
                   contentPadding = PaddingValues()) {
