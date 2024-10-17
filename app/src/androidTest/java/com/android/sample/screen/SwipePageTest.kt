@@ -11,6 +11,8 @@ import androidx.compose.ui.test.swipeRight
 import androidx.compose.ui.unit.dp
 import androidx.test.espresso.intent.Intents
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.android.sample.model.recipe.RecipeRepository
+import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.swipePage.RecipeDisplay
@@ -21,21 +23,29 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentMatchers.eq
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
+import org.mockito.kotlin.anyOrNull
 
 @RunWith(AndroidJUnit4::class)
 class SwipePageTest : TestCase() {
   private lateinit var navigationActions: NavigationActions
+  private lateinit var repository: RecipeRepository
+  private lateinit var recipesViewModel: RecipesViewModel
 
   @get:Rule val composeTestRule = createComposeRule()
 
   /** This method runs before the test execution. */
   @Before
   fun setUp() {
-    Intents.init()
     navigationActions = mock(NavigationActions::class.java)
+    repository = mock(RecipeRepository::class.java)
+    recipesViewModel = RecipesViewModel(repository)
     `when`(navigationActions.currentRoute()).thenReturn(Route.MAIN)
+    `when`(navigationActions.navigateTo(Route.AUTH)).then {}
+    `when`(repository.random(eq(1), anyOrNull(), anyOrNull())).then {}
+    Intents.init()
   }
 
   /** This method runs after the test execution. */
@@ -48,7 +58,7 @@ class SwipePageTest : TestCase() {
   @Test
   fun swipePageCorrectlyDisplayed() {
     composeTestRule.setContent {
-      SwipePage(navigationActions) // Set up the SignInScreen directly
+      SwipePage(navigationActions, recipesViewModel) // Set up the SignInScreen directly
     }
     composeTestRule.onNodeWithTag("bottomNavigationMenu").assertIsDisplayed()
     composeTestRule.onNodeWithTag("topBar").assertIsDisplayed()
@@ -60,7 +70,7 @@ class SwipePageTest : TestCase() {
    */
   @Test
   fun recipeAndDescriptionAreCorrectlyDisplayed() {
-    composeTestRule.setContent { RecipeDisplay(PaddingValues(0.dp)) }
+    composeTestRule.setContent { RecipeDisplay(PaddingValues(0.dp), recipesViewModel) }
     composeTestRule.onNodeWithTag("recipeDescription").assertIsDisplayed()
     composeTestRule.onNodeWithTag("recipeImage").assertIsDisplayed()
     composeTestRule.onNodeWithTag("swipeUIDescription").assertIsDisplayed()
@@ -72,7 +82,7 @@ class SwipePageTest : TestCase() {
    */
   @Test
   fun testDescriptionExpandCorrectly() {
-    composeTestRule.setContent { RecipeDisplay(PaddingValues(0.dp)) }
+    composeTestRule.setContent { RecipeDisplay(PaddingValues(0.dp), recipesViewModel) }
 
     // Make sure the screen is displayed
     composeTestRule.onNodeWithTag("displayDescription").assertIsDisplayed()
@@ -85,7 +95,7 @@ class SwipePageTest : TestCase() {
   /** This test checks the Dislike swipe of the image. */
   @Test
   fun testDraggingEventLeft() {
-    composeTestRule.setContent { RecipeDisplay(PaddingValues(0.dp)) }
+    composeTestRule.setContent { RecipeDisplay(PaddingValues(0.dp), recipesViewModel) }
 
     // Make sure the screen is displayed
     composeTestRule.onNodeWithTag("draggableItem").assertIsDisplayed()
@@ -98,7 +108,7 @@ class SwipePageTest : TestCase() {
   /** This test checks the Like swipe of the image. */
   @Test
   fun testDraggingEventRight() {
-    composeTestRule.setContent { RecipeDisplay(PaddingValues(0.dp)) }
+    composeTestRule.setContent { RecipeDisplay(PaddingValues(0.dp), recipesViewModel) }
 
     // Make sure the screen is displayed
     composeTestRule.onNodeWithTag("draggableItem").assertIsDisplayed()
