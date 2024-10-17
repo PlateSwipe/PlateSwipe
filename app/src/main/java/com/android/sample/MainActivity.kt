@@ -15,17 +15,15 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import com.android.sample.resources.C
+import com.android.sample.ui.account.AccountScreen
+import com.android.sample.ui.authentication.SignInScreen
+import com.android.sample.ui.fridge.FridgeScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
+import com.android.sample.ui.recipe.CreateRecipeScreen
+import com.android.sample.ui.recipe.SearchScreen
 import com.android.sample.ui.swipePage.SwipePage
-import com.android.sample.ui.testScreens.AccountScreen
-import com.android.sample.ui.testScreens.AddRecipeScreen
-import com.android.sample.ui.testScreens.AuthScreen
-import com.android.sample.ui.testScreens.FridgeScreen
-import com.android.sample.ui.testScreens.IngredientScreen
-import com.android.sample.ui.testScreens.RecipeScreen
-import com.android.sample.ui.testScreens.SearchScreen
 import com.android.sample.ui.theme.SampleAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -33,7 +31,6 @@ class MainActivity : ComponentActivity() {
     super.onCreate(savedInstanceState)
     setContent {
       SampleAppTheme {
-        // A surface container using the 'background' color from the theme
         Surface(
             modifier = Modifier.fillMaxSize().semantics { testTag = C.Tag.main_screen_container },
             color = MaterialTheme.colorScheme.background) {
@@ -50,43 +47,52 @@ fun PlateSwipeApp() {
   val navigationActions = NavigationActions(navController)
 
   NavHost(navController = navController, startDestination = Route.AUTH) {
-    navigation(
+
+      // Authentication Screen Navigation
+      navigation(
         startDestination = Screen.AUTH,
         route = Route.AUTH,
     ) {
-      composable(Screen.AUTH) { AuthScreen() }
+      composable(Screen.AUTH) { SignInScreen(navigationActions) }
     }
+      // Swipe Screen Navigation
     navigation(
         startDestination = Screen.SWIPE,
         route = Route.SWIPE,
     ) {
       composable(Screen.SWIPE) { SwipePage(navigationActions) }
     }
+
+      // Fridge Screen Navigation
     navigation(
         startDestination = Screen.FRIDGE,
         route = Route.FRIDGE,
     ) {
       composable(Screen.FRIDGE) { FridgeScreen(navigationActions) }
-      composable(Screen.INGREDIENT) { IngredientScreen() }
     }
+
+      // Search Recipe Screen Navigation
     navigation(
         startDestination = Screen.SEARCH,
         route = Route.SEARCH,
     ) {
       composable(Screen.SEARCH) { SearchScreen(navigationActions) }
-      composable(Screen.RECIPE) { RecipeScreen() }
     }
+      // Create Recipe Screen Navigation
     navigation(
-        startDestination = Screen.ADD_RECIPE,
-        route = Route.ADD_RECIPE,
+        startDestination = Screen.CREATE_RECIPE,
+        route = Route.CREATE_RECIPE,
     ) {
-      composable(Screen.ADD_RECIPE) { AddRecipeScreen(navigationActions) }
+      composable(Screen.CREATE_RECIPE) { CreateRecipeScreen(navigationActions) }
     }
+
+      // Account Screen Navigation
     navigation(
         startDestination = Screen.ACCOUNT,
         route = Route.ACCOUNT,
     ) {
       composable(Screen.ACCOUNT) { AccountScreen(navigationActions) }
     }
+
   }
 }
