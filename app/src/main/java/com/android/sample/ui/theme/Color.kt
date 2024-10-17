@@ -13,3 +13,6 @@ val Pink40 = Color(0xFF7D5260)
 val lightCream = Color(0xFFEFE5D8)
 val graySlate = Color(0xFF6E6E6E)
 val goldenBronze = Color(0xFFD6A55C)
+
+val starColor = Color(0xFFFFAC4B)
+val tagBackground = Color.Gray

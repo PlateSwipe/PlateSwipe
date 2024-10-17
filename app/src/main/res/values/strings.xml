@@ -3,4 +3,11 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_second">SecondActivity</string>
     <string name="default_web_client_id">308109588643-14cdmrd4mgdqns8sn27i9p25cm2b0mlq.apps.googleusercontent.com</string>
+    <string name="recipe_image">Recipe Image</string>
+    <string name="rate">4.5</string>
+    <string name="star_rate_description">Star rate</string>
+
+    <dimen name="paddingBasic">16dp</dimen>
+    <dimen name="star_size">150dp</dimen>
+
 </resources>
