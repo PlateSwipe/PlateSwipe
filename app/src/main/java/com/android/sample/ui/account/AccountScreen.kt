@@ -111,7 +111,6 @@ fun RecipeList(userViewModel: UserViewModel, navigationActions: NavigationAction
   Scaffold(
       modifier = Modifier.testTag("recipeList"),
       containerColor = Color(0xFFFFFFFF),
-      topBar = { SearchBar() },
       bottomBar = {
         BottomNavigationMenu(
             onTabSelect = { destination -> navigationActions.navigateTo(destination) },
