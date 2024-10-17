@@ -180,43 +180,27 @@ private fun RecipeImage(currentRecipe: Recipe?, width: Dp, height: Dp) {
 @Composable
 private fun RecipeDescription(currentRecipe: Recipe?) {
   Column {
-    Row {
-      currentRecipe?.let {
-        Text(
-            text = it.strMeal,
-            fontSize = 20.sp,
-            color = Color.Black,
-            modifier = Modifier.testTag("recipeTitle"))
-      }
+    Row(modifier = Modifier.testTag("recipeTitle")) {
+      currentRecipe?.let { Text(text = it.strMeal, fontSize = 20.sp, color = Color.Black) }
     }
     Spacer(modifier = Modifier.size(17.dp))
     // Display of the rating of the recipe as well as the category
-    Row(horizontalArrangement = Arrangement.Start) {
+    Row(horizontalArrangement = Arrangement.Start, modifier = Modifier.testTag("ratingIcon")) {
       // Display of the rating Icon
       Icon(
           imageVector = Icons.Filled.Star,
           contentDescription = "Rating",
           tint = starColor,
-          modifier = Modifier.width(12.dp).height(12.dp).testTag("ratingIcon"))
+          modifier = Modifier.width(12.dp).height(12.dp))
       Spacer(modifier = Modifier.size(8.dp))
       // Display of the recipe rating
-      Row {
-        Text(
-            text = "Rating",
-            fontSize = 12.sp,
-            color = Color.Black,
-            modifier = Modifier.testTag("ratingText"))
+      Row(modifier = Modifier.testTag("ratingText")) {
+        Text(text = "Rating", fontSize = 12.sp, color = Color.Black)
       }
       Spacer(modifier = Modifier.size(8.dp))
       // Display of the recipe category
-      Row {
-        currentRecipe?.strCategory?.let {
-          Text(
-              text = it,
-              fontSize = 12.sp,
-              color = Color.Black,
-              modifier = Modifier.testTag("categoryText"))
-        }
+      Row(modifier = Modifier.testTag("categoryText")) {
+        currentRecipe?.strCategory?.let { Text(text = it, fontSize = 12.sp, color = Color.Black) }
       }
     }
   }

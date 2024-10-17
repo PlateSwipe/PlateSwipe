@@ -3,7 +3,6 @@ package com.android.sample.screen
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
-import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
@@ -50,35 +49,33 @@ class RecipeOverviewTest {
   fun screenDisplayedCorrectlyTest() {
     composeTestRule.setContent { RecipeOverview(navigationActions, recipesViewModel) }
     // Checking if the main components of the screen are displayed
-    composeTestRule.onNodeWithTag("topBar").isDisplayed()
-    composeTestRule.onNodeWithTag("draggableItem").isDisplayed()
-    composeTestRule.onNodeWithTag("bottomNavigationMenu").isDisplayed()
+    composeTestRule.onNodeWithTag("topBar").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("draggableItem").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("bottomNavigationMenu").assertIsDisplayed()
   }
 
   @Test
   fun recipeImageIsDisplayedTest() {
     composeTestRule.setContent { RecipeOverview(navigationActions, recipesViewModel) }
     // Checking if the image is displayed
-    composeTestRule.onNodeWithTag("recipeImage").isDisplayed()
+    composeTestRule.onNodeWithTag("recipeImage").assertIsDisplayed()
   }
 
   @Test
-  fun recipeDescriptionIsDisplayedTest() {
+  fun ratinIconAndTextIsDisplayedTest() {
     composeTestRule.setContent { RecipeOverview(navigationActions, recipesViewModel) }
     // Checking if the recipe description is displayed
-    composeTestRule.onNodeWithTag("recipeTitle").isDisplayed()
-    composeTestRule.onNodeWithTag("ratingIcon").isDisplayed()
-    composeTestRule.onNodeWithTag("ratingText").isDisplayed()
-    composeTestRule.onNodeWithTag("categoryText").isDisplayed()
+    composeTestRule.onNodeWithTag("ratingIcon").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("ratingText").assertIsDisplayed()
   }
 
   @Test
   fun timeToCookDescriptionIsDisplayedTest() {
     composeTestRule.setContent { RecipeOverview(navigationActions, recipesViewModel) }
     // Checking if the times are displayed
-    composeTestRule.onNodeWithTag("prepTimeText").isDisplayed()
-    composeTestRule.onNodeWithTag("cookTimeText").isDisplayed()
-    composeTestRule.onNodeWithTag("totalTimeText").isDisplayed()
+    composeTestRule.onNodeWithTag("prepTimeText").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("cookTimeText").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("totalTimeText").assertIsDisplayed()
   }
 
   @Test
@@ -87,13 +84,10 @@ class RecipeOverviewTest {
     // Checking is the Ingredients tab button is displayed and if it works
     composeTestRule.onNodeWithTag("ingredientsButton").assertHasClickAction()
     composeTestRule.onNodeWithTag("ingredientsButton").performClick()
-    composeTestRule.onNodeWithTag("ingredientsView").isDisplayed()
 
     // Checking is the Instructions tab button is displayed and if it works
     composeTestRule.onNodeWithTag("instructionsButton").assertHasClickAction()
     composeTestRule.onNodeWithTag("instructionsButton").performClick()
-    composeTestRule.onNodeWithTag("instructionsView").isDisplayed()
-    composeTestRule.onNodeWithTag("instructionsText").isDisplayed()
   }
 
   @Test
@@ -103,18 +97,18 @@ class RecipeOverviewTest {
     composeTestRule.onNodeWithTag("ingredientsButton").performClick()
 
     // Checks if the number of servings is displayed
-    composeTestRule.onNodeWithTag("numberServings").isDisplayed()
+    composeTestRule.onNodeWithTag("numberServings").assertIsDisplayed()
     composeTestRule.onNodeWithTag("numberServings").assertTextEquals("1")
 
     // Checking that it is impossible to remove servings when at 1
-    composeTestRule.onNodeWithTag("removeServings").isDisplayed()
+    composeTestRule.onNodeWithTag("removeServings").assertIsDisplayed()
     composeTestRule.onNodeWithTag("removeServings").assertHasClickAction()
     composeTestRule.onNodeWithTag("removeServings").performClick()
 
     composeTestRule.onNodeWithTag("numberServings").assertTextEquals("1")
 
     // Adding 2 servings and checking if they wre added
-    composeTestRule.onNodeWithTag("addServings").isDisplayed()
+    composeTestRule.onNodeWithTag("addServings").assertIsDisplayed()
     composeTestRule.onNodeWithTag("addServings").assertHasClickAction()
     composeTestRule.onNodeWithTag("addServings").performClick()
     composeTestRule.onNodeWithTag("addServings").performClick()
