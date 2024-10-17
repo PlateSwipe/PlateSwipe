@@ -11,6 +11,8 @@ import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.testScreens.RecipeCard
 import com.android.sample.ui.testScreens.RecipeList
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import okhttp3.Call
 import org.junit.Before
 import org.junit.Rule
@@ -22,8 +24,10 @@ import org.mockito.MockitoAnnotations
 class RecipeScreenTest {
   private lateinit var mockNavigationActions: NavigationActions
   private lateinit var mockUserRepository: UserRepository
-  private lateinit var userViewModel: UserViewModel
-  private lateinit var mockCall: Call
+    private lateinit var mockFirebaseAuth: FirebaseAuth
+    private lateinit var mockCurrentUser: FirebaseUser
+    private lateinit var userViewModel: UserViewModel
+    private lateinit var mockCall: Call
   private lateinit var recipesList: List<Recipe>
 
   @get:Rule val composeTestRule = createComposeRule()
@@ -36,7 +40,13 @@ class RecipeScreenTest {
 
     mockNavigationActions = mock(NavigationActions::class.java)
     mockUserRepository = mock(UserRepository::class.java)
-    userViewModel = UserViewModel(mockUserRepository)
+      mockFirebaseAuth = mock(FirebaseAuth::class.java)
+      mockCurrentUser = mock(FirebaseUser::class.java)
+
+      `when`(mockFirebaseAuth.currentUser).thenReturn(mockCurrentUser)
+      `when`(mockCurrentUser.uid).thenReturn("001")
+
+    userViewModel = UserViewModel(mockUserRepository, mockFirebaseAuth)
 
     recipesList =
         listOf(
