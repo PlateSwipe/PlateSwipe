@@ -19,4 +19,10 @@ data class Recipe(
     val strInstructions: String,
     val strMealThumbUrl: String,
     val ingredientsAndMeasurements: List<Pair<String, String>>
-)
+) {
+  init {
+    require(ingredientsAndMeasurements.isNotEmpty()) {
+      "Ingredients and measurements must not be empty"
+    }
+  }
+}

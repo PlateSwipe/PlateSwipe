@@ -15,13 +15,15 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import com.android.sample.resources.C
-import com.android.sample.ui.navigation.*
+import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.navigation.Route
+import com.android.sample.ui.navigation.Screen
+import com.android.sample.ui.swipePage.SwipePage
 import com.android.sample.ui.testScreens.AccountScreen
 import com.android.sample.ui.testScreens.AddRecipeScreen
 import com.android.sample.ui.testScreens.AuthScreen
 import com.android.sample.ui.testScreens.FridgeScreen
 import com.android.sample.ui.testScreens.IngredientScreen
-import com.android.sample.ui.testScreens.MainScreen
 import com.android.sample.ui.testScreens.RecipeScreen
 import com.android.sample.ui.testScreens.SearchScreen
 import com.android.sample.ui.theme.SampleAppTheme
@@ -58,7 +60,7 @@ fun PlateSwipeApp() {
         startDestination = Screen.MAIN,
         route = Route.MAIN,
     ) {
-      composable(Screen.MAIN) { MainScreen(navigationActions) }
+      composable(Screen.MAIN) { SwipePage(navigationActions) }
     }
     navigation(
         startDestination = Screen.FRIDGE,
