@@ -40,8 +40,8 @@ class NavigationActionsTest {
 
   @Test
   fun navigateToCallsController() {
-    navigationActions.navigateTo(TopLevelDestinations.MAIN)
-    verify(navHostController).navigate(eq(Route.MAIN), any<NavOptionsBuilder.() -> Unit>())
+    navigationActions.navigateTo(TopLevelDestinations.SWIPE)
+    verify(navHostController).navigate(eq(Route.SWIPE), any<NavOptionsBuilder.() -> Unit>())
 
     navigationActions.navigateTo(Screen.FRIDGE)
     verify(navHostController).navigate(Screen.FRIDGE)
@@ -56,8 +56,8 @@ class NavigationActionsTest {
   @Test
   fun currentRouteWorksWithDestination() {
     `when`(navHostController.currentDestination).thenReturn(navigationDestination)
-    `when`(navigationDestination.route).thenReturn(Route.MAIN)
+    `when`(navigationDestination.route).thenReturn(Route.SWIPE)
 
-    assertThat(navigationActions.currentRoute(), `is`(Route.MAIN))
+    assertThat(navigationActions.currentRoute(), `is`(Route.SWIPE))
   }
 }

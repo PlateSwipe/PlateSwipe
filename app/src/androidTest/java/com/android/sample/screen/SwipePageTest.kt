@@ -35,7 +35,7 @@ class SwipePageTest : TestCase() {
   fun setUp() {
     Intents.init()
     navigationActions = mock(NavigationActions::class.java)
-    `when`(navigationActions.currentRoute()).thenReturn(Route.MAIN)
+    `when`(navigationActions.currentRoute()).thenReturn(Route.SWIPE)
   }
 
   /** This method runs after the test execution. */
