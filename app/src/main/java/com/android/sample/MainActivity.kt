@@ -8,19 +8,25 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
-import com.android.sample.ui.account.AccountScreen
-import com.android.sample.ui.authentication.SignInScreen
-import com.android.sample.ui.fridge.FridgeScreen
+import com.android.sample.model.user.UserViewModel
+import com.android.sample.resources.C
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
-import com.android.sample.ui.recipe.CreateRecipeScreen
-import com.android.sample.ui.recipe.SearchRecipeScreen
 import com.android.sample.ui.swipePage.SwipePage
+import com.android.sample.ui.testScreens.AccountScreen
+import com.android.sample.ui.testScreens.AddRecipeScreen
+import com.android.sample.ui.testScreens.AuthScreen
+import com.android.sample.ui.testScreens.FridgeScreen
+import com.android.sample.ui.testScreens.IngredientScreen
+import com.android.sample.ui.testScreens.RecipeList
+import com.android.sample.ui.testScreens.SearchScreen
 import com.android.sample.ui.theme.SampleAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -28,9 +34,12 @@ class MainActivity : ComponentActivity() {
     super.onCreate(savedInstanceState)
     setContent {
       SampleAppTheme {
-        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-          PlateSwipeApp()
-        }
+        // A surface container using the 'background' color from the theme
+        Surface(
+            modifier = Modifier.fillMaxSize().semantics { testTag = C.Tag.main_screen_container },
+            color = MaterialTheme.colorScheme.background) {
+              PlateSwipeApp()
+            }
       }
     }
   }
@@ -41,47 +50,41 @@ fun PlateSwipeApp() {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
 
-  NavHost(navController = navController, startDestination = Route.AUTH) {
+  val userViewModel = UserViewModel.Factory.create(UserViewModel::class.java)
 
-    // Authentication Screen Navigation
+  NavHost(navController = navController, startDestination = Route.AUTH) {
     navigation(
         startDestination = Screen.AUTH,
         route = Route.AUTH,
     ) {
-      composable(Screen.AUTH) { SignInScreen(navigationActions) }
+      composable(Screen.AUTH) { AuthScreen() }
     }
-    // Swipe Screen Navigation
     navigation(
-        startDestination = Screen.SWIPE,
-        route = Route.SWIPE,
+        startDestination = Screen.MAIN,
+        route = Route.MAIN,
     ) {
-      composable(Screen.SWIPE) { SwipePage(navigationActions) }
+      composable(Screen.MAIN) { SwipePage(navigationActions) }
     }
-
-    // Fridge Screen Navigation
     navigation(
         startDestination = Screen.FRIDGE,
         route = Route.FRIDGE,
     ) {
       composable(Screen.FRIDGE) { FridgeScreen(navigationActions) }
+      composable(Screen.INGREDIENT) { IngredientScreen() }
     }
-
-    // Search Recipe Screen Navigation
     navigation(
         startDestination = Screen.SEARCH,
         route = Route.SEARCH,
     ) {
-      composable(Screen.SEARCH) { SearchRecipeScreen(navigationActions) }
+      composable(Screen.SEARCH) { SearchScreen(navigationActions) }
+      composable(Screen.RECIPE) { RecipeList(userViewModel, navigationActions) }
     }
-    // Create Recipe Screen Navigation
     navigation(
-        startDestination = Screen.CREATE_RECIPE,
-        route = Route.CREATE_RECIPE,
+        startDestination = Screen.ADD_RECIPE,
+        route = Route.ADD_RECIPE,
     ) {
-      composable(Screen.CREATE_RECIPE) { CreateRecipeScreen(navigationActions) }
+      composable(Screen.ADD_RECIPE) { AddRecipeScreen(navigationActions) }
     }
-
-    // Account Screen Navigation
     navigation(
         startDestination = Screen.ACCOUNT,
         route = Route.ACCOUNT,
