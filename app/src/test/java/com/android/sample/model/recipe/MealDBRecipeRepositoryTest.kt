@@ -245,7 +245,7 @@ class MealDBRecipeRepositoryTest {
           onFailure = { exception -> searchException = exception })
     } catch (e: Exception) {
       assert(e is IllegalArgumentException)
-      assert(e.message == "Please limit the number of recipes to 3")
+      assert(e.message == "Please limit the number of recipes to 5")
     }
   }
 
