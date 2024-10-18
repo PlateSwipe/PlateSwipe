@@ -14,8 +14,5 @@ val lightCream = Color(0xFFEFE5D8)
 val graySlate = Color(0xFF6E6E6E)
 val goldenBronze = Color(0xFFD6A55C)
 
-val babyPowder = Color(0xFFFFFFFB)
-val Black = Color(0xFF000000)
-val champagne = Color(0xFFFCEADE)
-val orange = Color(0xFFFE8160)
-val star = Color(0xFFFFAC4B)
+val starColor = Color(0xFFFFAC4B)
+val tagBackground = Color.Gray

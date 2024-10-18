@@ -1,10 +1,14 @@
-package com.github.se.bootcamp.model.recipe
+package com.android.sample.model.recipe
 
 import androidx.lifecycle.ViewModel
-import com.android.sample.model.recipe.Recipe
-import com.android.sample.model.recipe.RecipeRepository
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import com.android.sample.resources.C.Tag.MINIMUM_RECIPES_BEFORE_FETCH
+import com.android.sample.resources.C.Tag.NUMBER_RECIPES_TO_FETCH
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import okhttp3.OkHttpClient
 
 /**
  * ViewModel for managing recipes.
@@ -28,8 +32,21 @@ class RecipesViewModel(private val repository: RecipeRepository) : ViewModel() {
   val currentRecipe: StateFlow<Recipe?>
     get() = _currentRecipe
 
+  private val _nextRecipe = MutableStateFlow<Recipe?>(null)
+  val nextRecipe: StateFlow<Recipe?>
+    get() = _nextRecipe
+
   init {
-    // Removed the fetchRandomRecipes() call from the init block for testing purposes
+    viewModelScope.launch {
+      fetchRandomRecipes(NUMBER_RECIPES_TO_FETCH)
+
+      _loading.collect { isLoading ->
+        if (!isLoading) {
+          updateCurrentRecipe(_recipes.value.first())
+          return@collect
+        }
+      }
+    }
   }
 
   /**
@@ -39,12 +56,11 @@ class RecipesViewModel(private val repository: RecipeRepository) : ViewModel() {
    */
   fun fetchRandomRecipes(numberOfRecipes: Int) {
     require(numberOfRecipes >= 1) { "Number of fetched recipes must be at least 1" }
-
     _loading.value = true // Set loading to true while fetching
     repository.random(
         nbOfElements = numberOfRecipes,
         onSuccess = { randomRecipes ->
-          _recipes.value = randomRecipes // Update the list of recipes
+          _recipes.value += randomRecipes // Add to the list of recipes
           _loading.value = false // Set loading to false after fetching
         },
         onFailure = { exception ->
@@ -60,10 +76,67 @@ class RecipesViewModel(private val repository: RecipeRepository) : ViewModel() {
    */
   fun updateCurrentRecipe(recipe: Recipe) {
     _currentRecipe.value = recipe
+    updateNextRecipe()
   }
 
   /** Clears the current selected recipe. */
   fun clearCurrentRecipe() {
     _currentRecipe.value = null
+  }
+
+  /** Gives the next recipe in the list of recipes. */
+  fun nextRecipe() {
+    val currentRecipes = _recipes.value.toMutableList()
+    if (currentRecipes.isNotEmpty() && _currentRecipe.value != null) {
+      // Get the index of the current recipe
+      val currentIndex = currentRecipes.indexOf(_currentRecipe.value)
+
+      // Calculate the next recipe index
+      val nextRecipeIndex = (currentIndex + 1) % currentRecipes.size
+      val nextRecipe = currentRecipes[nextRecipeIndex]
+
+      // Remove the current recipe from the list
+      currentRecipes.removeAt(currentIndex)
+      _recipes.value = currentRecipes
+
+      // Update the current recipe to the next one
+      _currentRecipe.value = nextRecipe
+
+      // Update the next recipe
+      updateNextRecipe()
+
+      // Check if there are only 3 recipes left and fetch 2 new recipes
+      if (currentRecipes.size <= MINIMUM_RECIPES_BEFORE_FETCH) {
+        viewModelScope.launch { fetchRandomRecipes(NUMBER_RECIPES_TO_FETCH) }
+      }
+    }
+  }
+
+  /**
+   * Updates the next recipe in the list of recipes.
+   *
+   * This method assumes that _currentRecipe is already set and valid. It should be called after
+   * nextRecipe() to ensure the next recipe is updated correctly.
+   */
+  fun updateNextRecipe() {
+    val currentRecipes = _recipes.value
+    if (currentRecipes.isNotEmpty()) {
+      val nextRecipeIndex = (currentRecipes.indexOf(_currentRecipe.value) + 1) % currentRecipes.size
+      _nextRecipe.value = currentRecipes[nextRecipeIndex]
+    } else {
+      _nextRecipe.value = null
+    }
+  }
+
+  companion object {
+    val Factory: ViewModelProvider.Factory =
+        object : ViewModelProvider.Factory {
+          @Suppress("UNCHECKED_CAST")
+          override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            val okHttpClient = OkHttpClient()
+            val repository = MealDBRecipeRepository(okHttpClient)
+            return RecipesViewModel(repository) as T
+          }
+        }
   }
 }
