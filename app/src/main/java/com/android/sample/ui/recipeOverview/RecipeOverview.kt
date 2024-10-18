@@ -217,25 +217,22 @@ private fun PrepareCookTotalTimeDisplay() {
       horizontalArrangement = Arrangement.Center,
   ) {
     // Display of the preparation time
-    Column(modifier = Modifier.testTag("prepTimeText")) {
-      Text("Prep time", fontSize = 12.sp, color = Color.Black)
-      Spacer(modifier = Modifier.size(14.dp))
-      Text("30 min", fontSize = 12.sp, color = Color.Black)
-    }
+    RecipePropertyText("Prep time", "30 min", "prepTimeText")
     Spacer(modifier = Modifier.size(40.dp))
     // Display of the cooking time
-    Column(modifier = Modifier.testTag("cookTimeText")) {
-      Text("Cook time", fontSize = 12.sp, color = Color.Black)
-      Spacer(modifier = Modifier.size(14.dp))
-      Text("20 min", fontSize = 12.sp, color = Color.Black)
-    }
+    RecipePropertyText("Cook time", "20 min", "cookTimeText")
     Spacer(modifier = Modifier.size(40.dp))
     // Display of the total time that it takes
-    Column(modifier = Modifier.testTag("totalTimeText")) {
-      Text("Total time", fontSize = 12.sp, color = Color.Black)
-      Spacer(modifier = Modifier.size(14.dp))
-      Text("50 min", fontSize = 12.sp, color = Color.Black)
-    }
+    RecipePropertyText("Total time", "50 min", "totalTimeText")
+  }
+}
+
+@Composable
+private fun RecipePropertyText(title: String, time: String, testTag: String) {
+  Column(modifier = Modifier.testTag(testTag)) {
+    Text(title, fontSize = 12.sp, color = Color.Black)
+    Spacer(modifier = Modifier.size(14.dp))
+    Text(time, fontSize = 12.sp, color = Color.Black)
   }
 }
 
