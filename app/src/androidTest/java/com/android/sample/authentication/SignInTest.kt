@@ -7,33 +7,34 @@ import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.Intents.intended
 import androidx.test.espresso.intent.matcher.IntentMatchers.toPackage
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.sample.ui.authentication.SignInScreen
 import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.navigation.Screen
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.`when`
 
 @RunWith(AndroidJUnit4::class)
 class SignInTest : TestCase() {
   @get:Rule val composeTestRule = createComposeRule()
+  private lateinit var navigationActions: NavigationActions
 
   @Before
   fun setUp() {
+    navigationActions = mock(NavigationActions::class.java)
+    `when`(navigationActions.navigateTo(Screen.SWIPE)).then {}
     Intents.init()
     composeTestRule.setContent {
-      val navController = rememberNavController()
-      SignInScreen(
-          navigationActions =
-              mockNavigationActions(navController)) // Pass a mock or dummy navigationActions
+      SignInScreen(navigationActions) // Set up the SignInScreen directly
     }
   }
 
@@ -68,9 +69,5 @@ class SignInTest : TestCase() {
   @Test
   fun logoImageIsDisplayed() {
     composeTestRule.onNodeWithTag("logoImage").assertIsDisplayed()
-  }
-
-  private fun mockNavigationActions(navController: NavHostController): NavigationActions {
-    return NavigationActions(navController)
   }
 }
