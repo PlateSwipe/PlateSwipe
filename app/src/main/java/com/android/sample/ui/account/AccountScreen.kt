@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.user.UserViewModel
+import com.android.sample.ui.EmptyScreen
 import com.android.sample.ui.navigation.BottomNavigationMenu
 import com.android.sample.ui.navigation.LIST_TOP_LEVEL_DESTINATIONS
 import com.android.sample.ui.navigation.NavigationActions
@@ -54,7 +55,8 @@ import java.util.Random
 
 @Composable
 fun AccountScreen(navigationActions: NavigationActions, userViewModel: UserViewModel) {
-  RecipeList(userViewModel = userViewModel, navigationActions = navigationActions)
+  EmptyScreen(navigationActions, "Account Screen")
+  // RecipeList(userViewModel = userViewModel, navigationActions = navigationActions)
 }
 
 /**
