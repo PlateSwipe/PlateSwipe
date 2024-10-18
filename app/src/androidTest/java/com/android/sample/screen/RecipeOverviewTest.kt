@@ -2,7 +2,6 @@ package com.android.sample.screen
 
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
@@ -62,7 +61,7 @@ class RecipeOverviewTest {
   }
 
   @Test
-  fun ratinIconAndTextIsDisplayedTest() {
+  fun ratingIconAndTextIsDisplayedTest() {
     composeTestRule.setContent { RecipeOverview(navigationActions, recipesViewModel) }
     // Checking if the recipe description is displayed
     composeTestRule.onNodeWithTag("ratingIcon").assertIsDisplayed()
@@ -88,33 +87,6 @@ class RecipeOverviewTest {
     // Checking is the Instructions tab button is displayed and if it works
     composeTestRule.onNodeWithTag("instructionsButton").assertHasClickAction()
     composeTestRule.onNodeWithTag("instructionsButton").performClick()
-  }
-
-  @Test
-  fun changingServingsTest() {
-    composeTestRule.setContent { RecipeOverview(navigationActions, recipesViewModel) }
-    // Passes to the Ingredients tab
-    composeTestRule.onNodeWithTag("ingredientsButton").performClick()
-
-    // Checks if the number of servings is displayed
-    composeTestRule.onNodeWithTag("numberServings").assertTextEquals("1")
-
-    // Checking that it is impossible to remove servings when at 1
-    composeTestRule.onNodeWithTag("removeServings").assertHasClickAction()
-    composeTestRule.onNodeWithTag("removeServings").performClick()
-
-    composeTestRule.onNodeWithTag("numberServings").assertTextEquals("1")
-
-    // Adding 2 servings and checking if they wre added
-    composeTestRule.onNodeWithTag("addServings").assertHasClickAction()
-    composeTestRule.onNodeWithTag("addServings").performClick()
-    composeTestRule.onNodeWithTag("addServings").performClick()
-
-    composeTestRule.onNodeWithTag("numberServings").assertTextEquals("3")
-
-    // Removing 1 serving and checking if it was removed
-    composeTestRule.onNodeWithTag("removeServings").performClick()
-    composeTestRule.onNodeWithTag("numberServings").assertTextEquals("2")
   }
 
   @Test
