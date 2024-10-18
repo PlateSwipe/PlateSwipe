@@ -235,17 +235,17 @@ class MealDBRecipeRepositoryTest {
   }
 
   @Test
-  fun `throws IllegalArgumentException when nbOfElements is greater than 3`() {
+  fun `throws IllegalArgumentException when nbOfElements is greater than 5`() {
     var searchRecipe: List<Recipe>? = emptyList()
     var searchException: Exception? = null
     try {
       mealDBRecipeRepository.random(
-          nbOfElements = 4,
+          nbOfElements = 6,
           onSuccess = { recipe -> searchRecipe = recipe },
           onFailure = { exception -> searchException = exception })
     } catch (e: Exception) {
       assert(e is IllegalArgumentException)
-      assert(e.message == "Please limit the number of recipes to 3")
+      assert(e.message == "Please limit the number of recipes to 5")
     }
   }
 

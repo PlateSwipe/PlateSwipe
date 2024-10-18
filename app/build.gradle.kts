@@ -224,6 +224,9 @@ dependencies {
     implementation(libs.camerax.extensions)
     implementation(libs.guava)
     implementation(libs.accompanist.permissions)
+
+    // Image
+    implementation(libs.coil.compose)
 }
 
 tasks.withType<Test> {
