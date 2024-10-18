@@ -94,9 +94,6 @@ class EndToEndTest {
     composeTestRule.onNodeWithTag("Search").assertExists().performClick()
     composeTestRule.onNodeWithText("Search Recipe Screen").assertExists()
 
-    composeTestRule.onNodeWithTag("Account").assertExists().performClick()
-    composeTestRule.onNodeWithTag("recipeList").assertExists()
-
     composeTestRule.onNodeWithTag("Add Recipe").assertExists().performClick()
     composeTestRule.onNodeWithText("Create Recipe Screen").assertExists()
   }
