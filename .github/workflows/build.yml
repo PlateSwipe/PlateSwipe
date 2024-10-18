@@ -23,6 +23,9 @@ jobs:
         java-version: '11'
         cache: 'gradle'
 
+    - name: Change wrapper permissions
+      run: chmod +x ./gradlew
+
       # Run Build Project
     - name: Build gradle project
       run: ./gradlew build
