@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeLeft
 import androidx.compose.ui.test.swipeRight
@@ -14,6 +15,7 @@ import com.android.sample.model.recipe.RecipeRepository
 import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
+import com.android.sample.ui.swipePage.RecipeDescription
 import com.android.sample.ui.swipePage.RecipeDisplay
 import com.android.sample.ui.swipePage.SwipePage
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
@@ -41,7 +43,7 @@ class SwipePageTest : TestCase() {
     navigationActions = mock(NavigationActions::class.java)
     repository = mock(RecipeRepository::class.java)
     recipesViewModel = RecipesViewModel(repository)
-    `when`(navigationActions.currentRoute()).thenReturn(Route.MAIN)
+    `when`(navigationActions.currentRoute()).thenReturn(Route.SWIPE)
     `when`(navigationActions.navigateTo(Route.AUTH)).then {}
     `when`(repository.random(eq(1), anyOrNull(), anyOrNull())).then {}
     Intents.init()
@@ -65,19 +67,13 @@ class SwipePageTest : TestCase() {
 
   /**
    * This test checks if the RecipeDisplay composable displays the recipe information correctly :
-   * the recipe image, the recipe description and the swipe UI description.
+   * the recipe image and the recipe description.
    */
-  /*
   @Test
   fun recipeAndDescriptionAreCorrectlyDisplayed() {
-    composeTestRule.setContent { `when`(recipesViewModel.currentRecipe.collectAsState()).thenReturn( // Mock the current recipe
-      MutableStateFlow(
-        Recipe("1","Recipe","Description","strArea",
-          "Instructions", "url", listOf(
-            Pair("Flour", "2 cups")))
-      ).collectAsState()
-    )
-      RecipeDisplay(PaddingValues(0.dp), recipesViewModel)
+    composeTestRule.setContent {
+      RecipeDisplay(paddingValues = PaddingValues(0.dp), recipesViewModel)
+      RecipeDescription("Description", "4.5")
     }
 
     composeTestRule.onNodeWithTag("recipeName").assertIsDisplayed()
@@ -87,7 +83,7 @@ class SwipePageTest : TestCase() {
     composeTestRule.onNodeWithTag("recipeDescription").performClick()
 
     composeTestRule.onNodeWithTag("recipeImage").assertIsDisplayed()
-  }*/
+  }
 
   /** This test checks the Dislike swipe of the image. */
   @Test

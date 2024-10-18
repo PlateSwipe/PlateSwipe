@@ -15,9 +15,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -46,7 +46,9 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -54,21 +56,31 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import com.android.sample.R
 import com.android.sample.model.recipe.RecipesViewModel
+import com.android.sample.model.user.UserViewModel
+import com.android.sample.resources.C.Tag.END_ANIMATION
+import com.android.sample.resources.C.Tag.LOADING
 import com.android.sample.ui.navigation.BottomNavigationMenu
 import com.android.sample.ui.navigation.LIST_TOP_LEVEL_DESTINATIONS
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.theme.starColor
 import com.android.sample.ui.theme.tagBackground
+import kotlin.math.absoluteValue
 import kotlinx.coroutines.launch
 
-private const val endAnimation = 1500f
-
+/**
+ * Composable for the Swipe Page
+ *
+ * @param navigationActions - Navigation Actions
+ * @param recipesViewModel - Recipes View Model
+ * @param userViewModel - User View Model
+ */
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SwipePage(
     navigationActions: NavigationActions,
-    recipesViewModel: RecipesViewModel = viewModel(factory = RecipesViewModel.Factory)
+    recipesViewModel: RecipesViewModel = viewModel(factory = RecipesViewModel.Factory),
+    userViewModel: UserViewModel = viewModel(factory = UserViewModel.Factory)
 ) {
   val selectedItem = navigationActions.currentRoute()
 
@@ -79,7 +91,8 @@ fun SwipePage(
             title = { Text("PlateSwipe") },
             colors =
                 TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary),
+                    containerColor = MaterialTheme.colorScheme.background,
+                ),
             modifier = Modifier.testTag("topBar"))
       },
       bottomBar = {
@@ -88,7 +101,7 @@ fun SwipePage(
             tabList = LIST_TOP_LEVEL_DESTINATIONS,
             selectedItem = selectedItem)
       }) { paddingValues ->
-        RecipeDisplay(paddingValues, recipesViewModel)
+        RecipeDisplay(paddingValues, recipesViewModel, userViewModel)
       }
 }
 
@@ -101,7 +114,8 @@ fun SwipePage(
 @Composable
 fun RecipeDisplay(
     paddingValues: PaddingValues,
-    recipesViewModel: RecipesViewModel = viewModel(factory = RecipesViewModel.Factory)
+    recipesViewModel: RecipesViewModel = viewModel(factory = RecipesViewModel.Factory),
+    userViewModel: UserViewModel = viewModel(factory = UserViewModel.Factory)
 ) {
   val height = LocalConfiguration.current.screenHeightDp.dp * 1 / 2
   val width = height * 3 / 4
@@ -113,45 +127,45 @@ fun RecipeDisplay(
   val swipeThreshold = screenWidth * 14 / 15
 
   val currentRecipe by recipesViewModel.currentRecipe.collectAsState()
-  val coroutineUpdateRecipe = rememberCoroutineScope()
 
   Column(
       modifier =
           Modifier.fillMaxSize()
-              .padding(paddingValues) // Apply padding from the Scaffold
-              .padding(16.dp)
+              .padding(paddingValues)
+              .padding(dimensionResource(id = R.dimen.paddingBasic))
               .pointerInput(Unit) {
                 detectHorizontalDragGestures(
                     onDragEnd = {
-                      if (offsetX.value > swipeThreshold) {
+                      if (kotlin.math.abs(offsetX.value) > swipeThreshold) {
                         isDescriptionVisible = false
                         recipesViewModel.nextRecipe()
-                      } else if (offsetX.value < -swipeThreshold) {
-                        isDescriptionVisible = false
-                        recipesViewModel.nextRecipe()
+                        if (offsetX.value > 0 && currentRecipe != null) {
+                          userViewModel.addRecipeToUserLikedRecipes(currentRecipe!!)
+                        }
                       }
                     },
                     onHorizontalDrag = { _, dragAmount ->
                       coroutineScope.launch { offsetX.snapTo(offsetX.value + dragAmount) }
                     })
               }) {
+        // Snap back to center when animation is finished
         coroutineScope.launch {
-          if (offsetX.value > endAnimation - 200) {
-            offsetX.snapTo(0f)
-          } else if (offsetX.value < -(endAnimation - 200)) {
+          if (offsetX.value.absoluteValue > END_ANIMATION - 200) {
             offsetX.snapTo(0f)
           }
         }
         // Recipe card with image
         Card(
             modifier =
-                Modifier.fillMaxWidth().padding(8.dp).graphicsLayer(translationX = offsetX.value),
+                Modifier.fillMaxWidth()
+                    .padding(dimensionResource(id = R.dimen.paddingBasic) / 2)
+                    .graphicsLayer(translationX = offsetX.value),
             shape = RoundedCornerShape(16.dp),
             elevation = CardDefaults.cardElevation(4.dp)) {
               Column(modifier = Modifier.background(color = MaterialTheme.colorScheme.onPrimary)) {
                 Image(
                     painter = rememberAsyncImagePainter(model = currentRecipe?.strMealThumbUrl),
-                    contentDescription = "Recipe Image",
+                    contentDescription = stringResource(R.string.recipe_image),
                     modifier =
                         Modifier.fillMaxWidth()
                             .size(
@@ -167,9 +181,8 @@ fun RecipeDisplay(
 
         // Image Description
         ImageDescription(
-            currentRecipe?.strMeal ?: "Loading...",
-            "4.5",
-            currentRecipe?.strCategory ?: "Loading...",
+            currentRecipe?.strMeal ?: LOADING,
+            currentRecipe?.strCategory ?: LOADING,
             modifier = Modifier.clickable { isDescriptionVisible = !isDescriptionVisible })
 
         // Spacer to push content to bottom
@@ -178,11 +191,13 @@ fun RecipeDisplay(
         // The last column for recipe description at the bottom
         Column(
             verticalArrangement = Arrangement.Bottom,
-            modifier = Modifier.verticalScroll(rememberScrollState()).padding(bottom = 16.dp),
+            modifier =
+                Modifier.verticalScroll(rememberScrollState())
+                    .padding(bottom = dimensionResource(id = R.dimen.paddingBasic)),
         ) {
           // Display Recipe Description (truncated with ellipsis)
           Text(
-              text = currentRecipe?.strInstructions ?: "Loading...",
+              text = currentRecipe?.strInstructions ?: LOADING,
               style = MaterialTheme.typography.bodyMedium,
               color = MaterialTheme.colorScheme.onSecondary,
               maxLines =
@@ -191,7 +206,7 @@ fun RecipeDisplay(
               overflow = TextOverflow.Ellipsis, // Add "..." if text exceeds one line
               modifier =
                   Modifier.fillMaxWidth()
-                      .padding(top = 8.dp)
+                      .padding(top = dimensionResource(id = R.dimen.paddingBasic) / 2)
                       .clickable {
                         isDescriptionVisible = !isDescriptionVisible // Toggle visibility on click
                       }
@@ -201,13 +216,13 @@ fun RecipeDisplay(
 
         // Animate back to center if not swiped
         LaunchedEffect(offsetX.value) {
-          if (offsetX.value > swipeThreshold) {
-            offsetX.animateTo(endAnimation, animationSpec = tween(50))
-          } else if (offsetX.value < -swipeThreshold) {
-            offsetX.animateTo(-endAnimation, animationSpec = tween(50)) // Animate back to center
-          } else {
-            offsetX.animateTo(0f, animationSpec = tween(50)) // Animate back to center
-          }
+          val animationTarget =
+              when {
+                offsetX.value > swipeThreshold -> END_ANIMATION
+                offsetX.value < -swipeThreshold -> -END_ANIMATION
+                else -> 0f
+              }
+          offsetX.animateTo(animationTarget, animationSpec = tween(50))
         }
       }
 }
@@ -216,14 +231,13 @@ fun RecipeDisplay(
  * Composable for the Image Description
  *
  * @param name - Recipe Name
- * @param rate - Recipe Rate
  * @param tag - Recipe Tag
  * @param modifier - Modifier
  */
 @Composable
-private fun ImageDescription(name: String, rate: String, tag: String, modifier: Modifier) {
+private fun ImageDescription(name: String, tag: String, modifier: Modifier) {
 
-  Column(modifier = Modifier.padding(16.dp)) {
+  Column(modifier = Modifier.padding(dimensionResource(id = R.dimen.paddingBasic))) {
     Row(
         modifier =
             modifier.fillMaxWidth().testTag("draggableItem"), // Ensure the Row takes up full width
@@ -231,41 +245,52 @@ private fun ImageDescription(name: String, rate: String, tag: String, modifier: 
         horizontalArrangement = Arrangement.SpaceBetween) {
 
           // Display Recipe Name
-          Text(
-              modifier =
-                  Modifier.weight(1f)
-                      .testTag("recipeName"), // Let the text take up as much space as needed
-              text = name,
-              style = MaterialTheme.typography.bodyLarge,
-              color = MaterialTheme.colorScheme.onSecondary,
-          )
-          Row(
-              horizontalArrangement = Arrangement.End,
-              modifier = Modifier.size(75.dp, 24.dp) // Padding for inside spacing
-              ) {
-                Icon(
-                    painter = painterResource(R.drawable.star_rate),
-                    contentDescription = "Star rate",
-                    modifier =
-                        Modifier.size(24.dp)
-                            .testTag("recipeStar"), // Adjust size to match the text size
-                    tint = starColor // Adjust color to match the text color
-                    )
-
-                Spacer(modifier = Modifier.padding(5.dp))
-
-                Text(
-                    text = rate,
-                    modifier = Modifier.testTag("recipeRate"),
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontSize = 24.sp,
-                    color = MaterialTheme.colorScheme.onSecondary,
-                )
-              }
+          RecipeDescription(name, stringResource(R.string.rate))
         }
     Spacer(modifier = Modifier.padding(2.dp))
     Row(verticalAlignment = Alignment.CenterVertically) { Tag(tag) }
   }
+}
+
+/**
+ * Composable for the Recipe Description
+ *
+ * @param name - Recipe Name
+ * @param rate - Recipe Rate
+ */
+@Composable
+fun RecipeDescription(name: String, rate: String) {
+  Text(
+      modifier =
+          Modifier.testTag("recipeName")
+              .width(
+                  LocalConfiguration.current.screenWidthDp.dp -
+                      dimensionResource(id = R.dimen.paddingBasic) -
+                      dimensionResource(id = R.dimen.paddingBasic) -
+                      dimensionResource(id = R.dimen.star_size)),
+      text = name,
+      style = MaterialTheme.typography.bodyLarge,
+      color = MaterialTheme.colorScheme.onSecondary,
+  )
+
+  Row(
+      horizontalArrangement = Arrangement.End, modifier = Modifier // Padding for inside spacing
+      ) {
+        Icon(
+            painter = painterResource(R.drawable.star_rate),
+            contentDescription = stringResource(R.string.star_rate_description),
+            modifier = Modifier.testTag("recipeStar"),
+            tint = starColor)
+
+        Spacer(modifier = Modifier.padding(5.dp))
+
+        Text(
+            text = rate,
+            modifier = Modifier.testTag("recipeRate"),
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSecondary,
+        )
+      }
 }
 
 /**
