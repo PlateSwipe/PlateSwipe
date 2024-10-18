@@ -1,4 +1,4 @@
-package com.android.sample.ui.testScreens
+package com.android.sample.ui.account
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -45,12 +45,19 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.user.UserViewModel
+import com.android.sample.ui.EmptyScreen
 import com.android.sample.ui.navigation.BottomNavigationMenu
 import com.android.sample.ui.navigation.LIST_TOP_LEVEL_DESTINATIONS
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.theme.goldenBronze
 import java.util.Locale
 import java.util.Random
+
+@Composable
+fun AccountScreen(navigationActions: NavigationActions, userViewModel: UserViewModel) {
+  EmptyScreen(navigationActions, "Account Screen")
+  // RecipeList(userViewModel = userViewModel, navigationActions = navigationActions)
+}
 
 /**
  * Recipe card composable that displays a recipe.
@@ -106,7 +113,6 @@ fun RecipeList(userViewModel: UserViewModel, navigationActions: NavigationAction
   Scaffold(
       modifier = Modifier.testTag("recipeList"),
       containerColor = Color(0xFFFFFFFF),
-      topBar = { SearchBar() },
       bottomBar = {
         BottomNavigationMenu(
             onTabSelect = { destination -> navigationActions.navigateTo(destination) },
@@ -174,13 +180,13 @@ fun RecipeTime(recipe: Recipe) {
       modifier = Modifier.padding(4.dp).testTag("recipeTime${recipe.idMeal}"),
       text =
           "${arrayOf(
-            10,
-            15,
-            20,
-            30,
-            45,
-            50
-        ).random()} min",
+      10,
+      15,
+      20,
+      30,
+      45,
+      50
+    ).random()} min",
       style = MaterialTheme.typography.bodyMedium)
 }
 

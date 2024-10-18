@@ -43,7 +43,7 @@ class SwipePageTest : TestCase() {
     navigationActions = mock(NavigationActions::class.java)
     repository = mock(RecipeRepository::class.java)
     recipesViewModel = RecipesViewModel(repository)
-    `when`(navigationActions.currentRoute()).thenReturn(Route.MAIN)
+    `when`(navigationActions.currentRoute()).thenReturn(Route.SWIPE)
     `when`(navigationActions.navigateTo(Route.AUTH)).then {}
     `when`(repository.random(eq(1), anyOrNull(), anyOrNull())).then {}
     Intents.init()
