@@ -17,6 +17,7 @@ import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.swipePage.SwipePage
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import junit.framework.TestCase.assertEquals
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertNotEquals
 import org.junit.Before
@@ -114,35 +115,34 @@ class SwipePageTest : TestCase() {
 
   /** This test checks the Dislike swipe of the image. */
   @Test
-  fun testDraggingEventLeft() {
+  fun testDraggingEventLeft() = runBlocking {
     val currentRecipe = recipesViewModel.currentRecipe.value
     // Make sure the screen is displayed
-    composeTestRule.onNodeWithTag("draggableItem", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag("draggableItem").assertIsDisplayed()
 
     // Simulate a drag event
-    composeTestRule.onNodeWithTag("draggableItem", useUnmergedTree = true).performTouchInput {
-      swipeLeft()
-    }
-    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithTag("draggableItem").performTouchInput { swipeLeft() }
+    composeTestRule.awaitIdle()
+
     assertNotEquals(currentRecipe, recipesViewModel.currentRecipe.value)
   }
 
   /** This test checks the Like swipe of the image. */
   @Test
-  fun testDraggingEventRight() {
+  fun testDraggingEventRight() = runBlocking {
     val currentRecipe = recipesViewModel.currentRecipe.value
     // Make sure the screen is displayed
     composeTestRule.onNodeWithTag("draggableItem").assertIsDisplayed()
 
     // Simulate a drag event
     composeTestRule.onNodeWithTag("draggableItem").performTouchInput { swipeRight() }
-    composeTestRule.waitForIdle()
+    composeTestRule.awaitIdle()
     assertNotEquals(currentRecipe, recipesViewModel.currentRecipe.value)
   }
 
   /** This test checks when the swipe is not enough. */
   @Test
-  fun testDraggingNotEnough() {
+  fun testDraggingNotEnough() = runBlocking {
     val currentRecipe = recipesViewModel.currentRecipe.value
     // Make sure the screen is displayed
     composeTestRule.onNodeWithTag("draggableItem").assertIsDisplayed()
@@ -152,7 +152,7 @@ class SwipePageTest : TestCase() {
       swipeRight(0f, 1f)
       swipeLeft(0f, -1f)
     }
-    composeTestRule.waitForIdle()
+    composeTestRule.awaitIdle()
     assertEquals(currentRecipe, recipesViewModel.currentRecipe.value)
   }
 }
