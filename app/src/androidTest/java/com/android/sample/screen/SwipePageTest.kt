@@ -17,6 +17,7 @@ import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.swipePage.SwipePage
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import junit.framework.TestCase.assertEquals
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertNotEquals
 import org.junit.Before
@@ -67,7 +68,12 @@ class SwipePageTest : TestCase() {
     doAnswer { invocation ->
           val onSuccess =
               invocation.getArgument<(List<Recipe>) -> Unit>(1) // Get the onSuccess callback
-          onSuccess(mockedRecipesList) // Call onSuccess with the mocked recipes list
+
+          // Run the onSuccess callback on the main thread
+          composeTestRule.runOnUiThread {
+            onSuccess(mockedRecipesList) // Call onSuccess with the mocked recipes list
+          }
+
           null // Return null as this method doesn't return anything
         }
         .whenever(mockRepository)
@@ -114,53 +120,58 @@ class SwipePageTest : TestCase() {
 
   /** This test checks the Dislike swipe of the image. */
   @Test
-  fun testDraggingEventLeft() {
-    val currentRecipe = recipesViewModel.currentRecipe.value
-    // Make sure the screen is displayed
-    composeTestRule.onNodeWithTag("draggableItem").assertIsDisplayed()
+  fun testDraggingEventLeft() =
+      runBlocking() {
+        val currentRecipe = recipesViewModel.currentRecipe.value
+        // Make sure the screen is displayed
+        composeTestRule.onNodeWithTag("draggableItem").assertIsDisplayed()
 
-    // Simulate a drag event
-    composeTestRule.onNodeWithTag("draggableItem").performTouchInput { swipeLeft() }
-    // need to wait for the animation to finish -> 3 seconds
-    composeTestRule.waitUntil(3000L) {
-      currentRecipe != null && recipesViewModel.currentRecipe.value != currentRecipe
-    }
-
-    assertNotEquals(currentRecipe, recipesViewModel.currentRecipe.value)
-  }
+        // Simulate a drag event
+        composeTestRule.onNodeWithTag("draggableItem").performTouchInput { swipeLeft() }
+        // need to wait for the animation to finish -> 3 seconds
+        composeTestRule.waitUntil(3000L) {
+          currentRecipe != null && recipesViewModel.currentRecipe.value != currentRecipe
+        }
+        composeTestRule.waitForIdle()
+        assertNotEquals(currentRecipe, recipesViewModel.currentRecipe.value)
+      }
 
   /** This test checks the Like swipe of the image. */
   @Test
-  fun testDraggingEventRight() {
-    val currentRecipe = recipesViewModel.currentRecipe.value
-    // Make sure the screen is displayed
-    composeTestRule.onNodeWithTag("draggableItem").assertIsDisplayed()
+  fun testDraggingEventRight() =
+      runBlocking() {
+        val currentRecipe = recipesViewModel.currentRecipe.value
+        // Make sure the screen is displayed
+        composeTestRule.onNodeWithTag("draggableItem").assertIsDisplayed()
 
-    // Simulate a drag event
-    composeTestRule.onNodeWithTag("draggableItem").performTouchInput { swipeRight() }
-    // need to wait for the animation to finish -> 3 seconds
-    composeTestRule.waitUntil(3000L) {
-      currentRecipe != null && recipesViewModel.currentRecipe.value != currentRecipe
-    }
+        // Simulate a drag event
+        composeTestRule.onNodeWithTag("draggableItem").performTouchInput { swipeRight() }
+        // need to wait for the animation to finish -> 3 seconds
+        composeTestRule.waitUntil(3000L) {
+          currentRecipe != null && recipesViewModel.currentRecipe.value != currentRecipe
+        }
+        composeTestRule.waitForIdle()
 
-    assertNotEquals(currentRecipe, recipesViewModel.currentRecipe.value)
-  }
+        assertNotEquals(currentRecipe, recipesViewModel.currentRecipe.value)
+      }
 
   /** This test checks when the swipe is not enough. */
   @Test
-  fun testDraggingNotEnough() {
-    val currentRecipe = recipesViewModel.currentRecipe.value
-    // Make sure the screen is displayed
-    composeTestRule.onNodeWithTag("draggableItem").assertIsDisplayed()
+  fun testDraggingNotEnough() =
+      runBlocking() {
+        val currentRecipe = recipesViewModel.currentRecipe.value
+        // Make sure the screen is displayed
+        composeTestRule.onNodeWithTag("draggableItem").assertIsDisplayed()
 
-    // Simulate a drag event
-    composeTestRule.onNodeWithTag("draggableItem").performTouchInput {
-      swipeRight(0f, 1f)
-      swipeLeft(0f, -1f)
-    }
-    // need to wait for the animation to finish -> 3 seconds
-    composeTestRule.waitUntil(3000L) { currentRecipe != null }
+        // Simulate a drag event
+        composeTestRule.onNodeWithTag("draggableItem").performTouchInput {
+          swipeRight(0f, 1f)
+          swipeLeft(0f, -1f)
+        }
+        // need to wait for the animation to finish -> 3 seconds
+        composeTestRule.waitUntil(3000L) { currentRecipe != null }
+        composeTestRule.waitForIdle()
 
-    assertEquals(currentRecipe, recipesViewModel.currentRecipe.value)
-  }
+        assertEquals(currentRecipe, recipesViewModel.currentRecipe.value)
+      }
 }
