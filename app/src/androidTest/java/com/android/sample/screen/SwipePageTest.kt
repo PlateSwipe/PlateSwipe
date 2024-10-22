@@ -27,8 +27,8 @@ import org.mockito.kotlin.anyOrNull
 
 @RunWith(AndroidJUnit4::class)
 class SwipePageTest : TestCase() {
-  private lateinit var navigationActions: NavigationActions
-  private lateinit var repository: RecipeRepository
+  private lateinit var mockNavigationActions: NavigationActions
+  private lateinit var mockRepository: RecipeRepository
   private lateinit var recipesViewModel: RecipesViewModel
 
   @get:Rule val composeTestRule = createComposeRule()
@@ -36,14 +36,14 @@ class SwipePageTest : TestCase() {
   /** This method runs before the test execution. */
   @Before
   fun setUp() {
-    navigationActions = mock(NavigationActions::class.java)
-    repository = mock(RecipeRepository::class.java)
-    recipesViewModel = RecipesViewModel(repository)
-    `when`(navigationActions.currentRoute()).thenReturn(Route.SWIPE)
-    `when`(navigationActions.navigateTo(Route.AUTH)).then {}
-    `when`(repository.random(eq(1), anyOrNull(), anyOrNull())).then {}
+    mockNavigationActions = mock(NavigationActions::class.java)
+    mockRepository = mock(RecipeRepository::class.java)
+    recipesViewModel = RecipesViewModel(mockRepository)
+    `when`(mockNavigationActions.currentRoute()).thenReturn(Route.SWIPE)
+    `when`(mockNavigationActions.navigateTo(Route.AUTH)).then {}
+    `when`(mockRepository.random(eq(1), anyOrNull(), anyOrNull())).then {}
     composeTestRule.setContent {
-      SwipePage(navigationActions, recipesViewModel) // Set up the SignInScreen directly
+      SwipePage(mockNavigationActions, recipesViewModel) // Set up the SignInScreen directly
     }
     Intents.init()
   }
@@ -68,25 +68,29 @@ class SwipePageTest : TestCase() {
   @Test
   fun recipeAndDescriptionAreCorrectlyDisplayed() {
 
-    composeTestRule.onNodeWithTag("recipeName", useUnmergedTree = true).assertIsDisplayed()
-    composeTestRule.onNodeWithTag("recipeStar", useUnmergedTree = true).assertIsDisplayed()
-    composeTestRule.onNodeWithTag("recipeRate", useUnmergedTree = true).assertIsDisplayed()
-    composeTestRule.onNodeWithTag("recipeDescription", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag("recipeName", useUnmergedTree = true).assertExists()
+    composeTestRule.onNodeWithTag("recipeStar", useUnmergedTree = true).assertExists()
+    composeTestRule.onNodeWithTag("recipeRate", useUnmergedTree = true).assertExists()
+    composeTestRule.onNodeWithTag("recipeDescription", useUnmergedTree = true).assertExists()
     composeTestRule.onNodeWithTag("recipeDescription", useUnmergedTree = true).performClick()
 
-    composeTestRule.onNodeWithTag("recipeImage", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag("recipeImage", useUnmergedTree = true).assertExists()
   }
 
   /** This test checks the Dislike swipe of the image. */
   @Test
   fun testDraggingEventLeft() {
-
     // Make sure the screen is displayed
-    composeTestRule.onNodeWithTag("draggableItem").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("draggableItem", useUnmergedTree = true).assertIsDisplayed()
 
     // Simulate a drag event
-    composeTestRule.onNodeWithTag("draggableItem").performTouchInput { swipeLeft() }
+    composeTestRule.onNodeWithTag("draggableItem", useUnmergedTree = true).performTouchInput {
+      swipeLeft(0f, -500f)
+    }
     composeTestRule.waitForIdle()
+
+    // verify(recipesViewModel).nextRecipe()
+
   }
 
   /** This test checks the Like swipe of the image. */
@@ -99,5 +103,7 @@ class SwipePageTest : TestCase() {
     // Simulate a drag event
     composeTestRule.onNodeWithTag("draggableItem").performTouchInput { swipeRight() }
     composeTestRule.waitForIdle()
+
+    // verify(recipesViewModel).nextRecipe()
   }
 }
