@@ -9,21 +9,26 @@ import androidx.compose.ui.test.swipeLeft
 import androidx.compose.ui.test.swipeRight
 import androidx.test.espresso.intent.Intents
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.recipe.RecipeRepository
 import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.swipePage.SwipePage
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
+import junit.framework.TestCase.assertEquals
 import org.junit.After
+import org.junit.Assert.assertNotEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers.eq
+import org.mockito.Mockito.doAnswer
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
+import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.whenever
 
 @RunWith(AndroidJUnit4::class)
 class SwipePageTest : TestCase() {
@@ -38,10 +43,40 @@ class SwipePageTest : TestCase() {
   fun setUp() {
     mockNavigationActions = mock(NavigationActions::class.java)
     mockRepository = mock(RecipeRepository::class.java)
+
+    val recipe1 =
+        Recipe(
+            "Recipe 1",
+            "",
+            "url1",
+            "Instructions 1",
+            "Category 1",
+            "Area 1",
+            listOf(Pair("Ingredient 1", "Ingredient 1")))
+    val recipe2 =
+        Recipe(
+            "Recipe 2",
+            "",
+            "url2",
+            "Instructions 2",
+            "Category 2",
+            "Area 2",
+            listOf(Pair("Ingredient 2", "Ingredient 2")))
+    val mockedRecipesList = listOf(recipe1, recipe2)
+
+    doAnswer { invocation ->
+          val onSuccess =
+              invocation.getArgument<(List<Recipe>) -> Unit>(1) // Get the onSuccess callback
+          onSuccess(mockedRecipesList) // Call onSuccess with the mocked recipes list
+          null // Return null as this method doesn't return anything
+        }
+        .whenever(mockRepository)
+        .random(any(), any(), any())
+
     recipesViewModel = RecipesViewModel(mockRepository)
     `when`(mockNavigationActions.currentRoute()).thenReturn(Route.SWIPE)
     `when`(mockNavigationActions.navigateTo(Route.AUTH)).then {}
-    `when`(mockRepository.random(eq(1), anyOrNull(), anyOrNull())).then {}
+    `when`(mockRepository.random(anyOrNull(), anyOrNull(), anyOrNull())).then {}
     composeTestRule.setContent {
       SwipePage(mockNavigationActions, recipesViewModel) // Set up the SignInScreen directly
     }
@@ -80,30 +115,44 @@ class SwipePageTest : TestCase() {
   /** This test checks the Dislike swipe of the image. */
   @Test
   fun testDraggingEventLeft() {
+    val currentRecipe = recipesViewModel.currentRecipe.value
     // Make sure the screen is displayed
     composeTestRule.onNodeWithTag("draggableItem", useUnmergedTree = true).assertIsDisplayed()
 
     // Simulate a drag event
     composeTestRule.onNodeWithTag("draggableItem", useUnmergedTree = true).performTouchInput {
-      swipeLeft(0f, -500f)
+      swipeLeft()
     }
     composeTestRule.waitForIdle()
-
-    // verify(recipesViewModel).nextRecipe()
-
+    assertNotEquals(currentRecipe, recipesViewModel.currentRecipe.value)
   }
 
   /** This test checks the Like swipe of the image. */
   @Test
   fun testDraggingEventRight() {
-
+    val currentRecipe = recipesViewModel.currentRecipe.value
     // Make sure the screen is displayed
     composeTestRule.onNodeWithTag("draggableItem").assertIsDisplayed()
 
     // Simulate a drag event
     composeTestRule.onNodeWithTag("draggableItem").performTouchInput { swipeRight() }
     composeTestRule.waitForIdle()
+    assertNotEquals(currentRecipe, recipesViewModel.currentRecipe.value)
+  }
 
-    // verify(recipesViewModel).nextRecipe()
+  /** This test checks when the swipe is not enough. */
+  @Test
+  fun testDraggingNotEnough() {
+    val currentRecipe = recipesViewModel.currentRecipe.value
+    // Make sure the screen is displayed
+    composeTestRule.onNodeWithTag("draggableItem").assertIsDisplayed()
+
+    // Simulate a drag event
+    composeTestRule.onNodeWithTag("draggableItem").performTouchInput {
+      swipeRight(0f, 1f)
+      swipeLeft(0f, -1f)
+    }
+    composeTestRule.waitForIdle()
+    assertEquals(currentRecipe, recipesViewModel.currentRecipe.value)
   }
 }

@@ -117,9 +117,8 @@ fun RecipeDisplay(
     recipesViewModel: RecipesViewModel = viewModel(factory = RecipesViewModel.Factory),
     userViewModel: UserViewModel = viewModel(factory = UserViewModel.Factory)
 ) {
-  val height = LocalConfiguration.current.screenHeightDp.dp * 1 / 2
-  val width = height * 3 / 4
   var isDescriptionVisible by remember { mutableStateOf(false) }
+  var retrieveNextRecipe by remember { mutableStateOf(false) }
 
   val offsetX = remember { Animatable(0f) }
   val coroutineScope = rememberCoroutineScope()
@@ -138,7 +137,7 @@ fun RecipeDisplay(
                     onDragEnd = {
                       if (kotlin.math.abs(offsetX.value) > swipeThreshold) {
                         isDescriptionVisible = false
-                        recipesViewModel.nextRecipe()
+                        retrieveNextRecipe = true
                         if (offsetX.value > 0 && currentRecipe != null) {
                           userViewModel.addRecipeToUserLikedRecipes(currentRecipe!!)
                         }
@@ -160,11 +159,6 @@ fun RecipeDisplay(
                 Modifier.fillMaxWidth()
                     .padding(dimensionResource(id = R.dimen.paddingBasic) / 2)
                     .graphicsLayer(translationX = offsetX.value)
-                    .width(
-                        LocalConfiguration.current.screenWidthDp.dp -
-                            dimensionResource(id = R.dimen.paddingBasic) -
-                            dimensionResource(id = R.dimen.paddingBasic) -
-                            dimensionResource(id = R.dimen.star_size))
                     .weight(15f),
             shape = RoundedCornerShape(16.dp),
             elevation = CardDefaults.cardElevation(4.dp)) {
@@ -172,16 +166,8 @@ fun RecipeDisplay(
                 Image(
                     painter = rememberAsyncImagePainter(model = currentRecipe?.strMealThumbUrl),
                     contentDescription = stringResource(R.string.recipe_image),
-                    modifier =
-                        Modifier.fillMaxWidth()
-                            /*.size(
-                                width = width,
-                                height = if (isDescriptionVisible) height * 1 / 2 else height
-                            )*/
-                            .testTag("recipeImage"),
-                    contentScale =
-                        if (!isDescriptionVisible) ContentScale.FillWidth
-                        else ContentScale.FillWidth,
+                    modifier = Modifier.fillMaxSize().testTag("recipeImage"),
+                    contentScale = ContentScale.Crop,
                 )
               }
             }
@@ -227,6 +213,10 @@ fun RecipeDisplay(
                 offsetX.value < -swipeThreshold -> -END_ANIMATION
                 else -> 0f
               }
+          if (retrieveNextRecipe && offsetX.value == 0f) {
+            recipesViewModel.nextRecipe()
+            retrieveNextRecipe = false
+          }
           offsetX.animateTo(animationTarget, animationSpec = tween(50))
         }
       }
@@ -237,7 +227,6 @@ fun RecipeDisplay(
  *
  * @param name - Recipe Name
  * @param tag - Recipe Tag
- * @param modifier - Modifier
  */
 @Composable
 private fun ImageDescription(name: String, tag: String) {
