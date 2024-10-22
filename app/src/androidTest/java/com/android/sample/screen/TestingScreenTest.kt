@@ -33,6 +33,6 @@ class TestingScreenTest : TestCase() {
     // Check that the elements are displayed
     composeTestRule.onNodeWithTag("textInput").assertIsDisplayed()
     composeTestRule.onNodeWithTag("button").assertIsDisplayed()
-    // composeTestRule.onNodeWithTag("buttonText").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("buttonText", useUnmergedTree = true).assertIsDisplayed()
   }
 }
