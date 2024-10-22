@@ -23,16 +23,26 @@ class TestingScreenTest : TestCase() {
   @Before
   fun setUp() {
     navigationActions = mock(NavigationActions::class.java)
+    composeTestRule.setContent { TestingScreen(navigationActions = navigationActions) }
   }
 
-  /** This test checks if the BottomBar and the topBar of the swipe page are correctly displayed. */
+  /** This test checks if the page is correctly displayed */
   @Test
   fun pageCorrectlyDisplayed() {
-    composeTestRule.setContent { TestingScreen(navigationActions = navigationActions) }
 
     // Check that the elements are displayed
     composeTestRule.onNodeWithTag("textInput").assertIsDisplayed()
     composeTestRule.onNodeWithTag("button").assertIsDisplayed()
     composeTestRule.onNodeWithTag("buttonText", useUnmergedTree = true).assertIsDisplayed()
+  }
+
+  /** This test checks if the rows are correctly displayed */
+  @Test
+  fun rowCorrectlyDisplayed() {
+
+    // Check that the elements are displayed
+    composeTestRule.onNodeWithTag("Row1").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("Row2").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("Row3").assertIsDisplayed()
   }
 }

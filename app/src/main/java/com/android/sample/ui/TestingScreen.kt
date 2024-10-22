@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -68,7 +69,20 @@ private fun SimpleComposable(paddingValues: PaddingValues) {
                     .size(200.dp, 60.dp)
                     .clip(RoundedCornerShape(8.dp)),
             content = { Text(text = "Click Me", modifier = Modifier.testTag("buttonText")) })
+
+        RowComposable()
       }
+}
+
+@Composable
+private fun RowComposable() {
+  Row {
+    Text(modifier = Modifier.testTag("Row1"), text = "Row1")
+    Row {
+      Text(modifier = Modifier.testTag("Row2"), text = "Row2")
+      Row { Text(modifier = Modifier.testTag("Row3"), text = "Row3") }
+    }
+  }
 }
 /*
 /**
