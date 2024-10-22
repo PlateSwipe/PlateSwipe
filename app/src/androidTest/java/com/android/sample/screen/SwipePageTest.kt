@@ -68,13 +68,13 @@ class SwipePageTest : TestCase() {
   @Test
   fun recipeAndDescriptionAreCorrectlyDisplayed() {
 
-    composeTestRule.onNodeWithTag("recipeName", useUnmergedTree = true).assertExists()
-    composeTestRule.onNodeWithTag("recipeStar", useUnmergedTree = true).assertExists()
-    composeTestRule.onNodeWithTag("recipeRate", useUnmergedTree = true).assertExists()
-    composeTestRule.onNodeWithTag("recipeDescription", useUnmergedTree = true).assertExists()
+    composeTestRule.onNodeWithTag("recipeName", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag("recipeStar", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag("recipeRate", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag("recipeDescription", useUnmergedTree = true).assertIsDisplayed()
     composeTestRule.onNodeWithTag("recipeDescription", useUnmergedTree = true).performClick()
 
-    composeTestRule.onNodeWithTag("recipeImage", useUnmergedTree = true).assertExists()
+    composeTestRule.onNodeWithTag("recipeImage", useUnmergedTree = true).assertIsDisplayed()
   }
 
   /** This test checks the Dislike swipe of the image. */

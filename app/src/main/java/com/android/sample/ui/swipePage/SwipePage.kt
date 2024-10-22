@@ -159,7 +159,13 @@ fun RecipeDisplay(
             modifier =
                 Modifier.fillMaxWidth()
                     .padding(dimensionResource(id = R.dimen.paddingBasic) / 2)
-                    .graphicsLayer(translationX = offsetX.value),
+                    .graphicsLayer(translationX = offsetX.value)
+                    .width(
+                        LocalConfiguration.current.screenWidthDp.dp -
+                            dimensionResource(id = R.dimen.paddingBasic) -
+                            dimensionResource(id = R.dimen.paddingBasic) -
+                            dimensionResource(id = R.dimen.star_size))
+                    .weight(15f),
             shape = RoundedCornerShape(16.dp),
             elevation = CardDefaults.cardElevation(4.dp)) {
               Column(modifier = Modifier.background(color = MaterialTheme.colorScheme.onPrimary)) {
@@ -168,22 +174,20 @@ fun RecipeDisplay(
                     contentDescription = stringResource(R.string.recipe_image),
                     modifier =
                         Modifier.fillMaxWidth()
-                            .size(
+                            /*.size(
                                 width = width,
-                                height = if (isDescriptionVisible) height * 1 / 2 else height)
+                                height = if (isDescriptionVisible) height * 1 / 2 else height
+                            )*/
                             .testTag("recipeImage"),
                     contentScale =
-                        if (!isDescriptionVisible) ContentScale.FillHeight
+                        if (!isDescriptionVisible) ContentScale.FillWidth
                         else ContentScale.FillWidth,
                 )
               }
             }
 
         // Image Description
-        ImageDescription(
-            currentRecipe?.strMeal ?: LOADING,
-            currentRecipe?.strCategory ?: LOADING,
-            modifier = Modifier.clickable { isDescriptionVisible = !isDescriptionVisible })
+        ImageDescription(currentRecipe?.strMeal ?: LOADING, currentRecipe?.strCategory ?: LOADING)
 
         // Spacer to push content to bottom
         Spacer(modifier = Modifier.weight(1f))
@@ -192,7 +196,8 @@ fun RecipeDisplay(
         Column(
             verticalArrangement = Arrangement.Bottom,
             modifier =
-                Modifier.verticalScroll(rememberScrollState())
+                Modifier.weight(if (!isDescriptionVisible) 2f else 20f)
+                    .verticalScroll(rememberScrollState())
                     .padding(bottom = dimensionResource(id = R.dimen.paddingBasic)),
         ) {
           // Display Recipe Description (truncated with ellipsis)
@@ -235,62 +240,54 @@ fun RecipeDisplay(
  * @param modifier - Modifier
  */
 @Composable
-private fun ImageDescription(name: String, tag: String, modifier: Modifier) {
-
+private fun ImageDescription(name: String, tag: String) {
   Column(modifier = Modifier.padding(dimensionResource(id = R.dimen.paddingBasic))) {
     Row(
         modifier =
-            modifier.fillMaxWidth().testTag("draggableItem"), // Ensure the Row takes up full width
+            Modifier.fillMaxWidth().testTag("draggableItem"), // Ensure the Row takes up full width
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween) {
-
           // Display Recipe Name
-          RecipeDescription(name, stringResource(R.string.rate))
+          Text(
+              modifier =
+                  Modifier.testTag("recipeName")
+                      .weight(3f), // Takes up 3 parts of the available space
+              text = name,
+              style = MaterialTheme.typography.bodyLarge,
+              color = MaterialTheme.colorScheme.onSecondary,
+              maxLines = 2, // Limit to 1 line to prevent overflow
+              overflow = TextOverflow.Ellipsis // Show "..." if text is too long
+              )
+
+          // Row for the star and rate text
+          Row(
+              horizontalArrangement = Arrangement.End,
+              verticalAlignment = Alignment.CenterVertically,
+              modifier = Modifier.weight(1f) // Takes 1 part of the space for icon and rating
+              ) {
+                // Star Icon (fixed size, no weight needed)
+                Icon(
+                    painter = painterResource(R.drawable.star_rate),
+                    contentDescription = stringResource(R.string.star_rate_description),
+                    modifier =
+                        Modifier.testTag("recipeStar").size(24.dp), // Use fixed size for the icon
+                    tint = starColor)
+
+                Spacer(modifier = Modifier.width(8.dp)) // Add spacing between icon and rate
+
+                // Rating Text
+                Text(
+                    text = stringResource(R.string.rate),
+                    modifier = Modifier.testTag("recipeRate"),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSecondary)
+              }
         }
+
     Spacer(modifier = Modifier.padding(2.dp))
+
     Row(verticalAlignment = Alignment.CenterVertically) { Tag(tag) }
   }
-}
-
-/**
- * Composable for the Recipe Description
- *
- * @param name - Recipe Name
- * @param rate - Recipe Rate
- */
-@Composable
-fun RecipeDescription(name: String, rate: String) {
-  Text(
-      modifier =
-          Modifier.testTag("recipeName")
-              .width(
-                  LocalConfiguration.current.screenWidthDp.dp -
-                      dimensionResource(id = R.dimen.paddingBasic) -
-                      dimensionResource(id = R.dimen.paddingBasic) -
-                      dimensionResource(id = R.dimen.star_size)),
-      text = name,
-      style = MaterialTheme.typography.bodyLarge,
-      color = MaterialTheme.colorScheme.onSecondary,
-  )
-
-  Row(
-      horizontalArrangement = Arrangement.End, modifier = Modifier // Padding for inside spacing
-      ) {
-        Icon(
-            painter = painterResource(R.drawable.star_rate),
-            contentDescription = stringResource(R.string.star_rate_description),
-            modifier = Modifier.testTag("recipeStar"),
-            tint = starColor)
-
-        Spacer(modifier = Modifier.padding(5.dp))
-
-        Text(
-            text = rate,
-            modifier = Modifier.testTag("recipeRate"),
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSecondary,
-        )
-      }
 }
 
 /**
