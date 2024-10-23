@@ -19,8 +19,10 @@ import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.junit.After
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
 import org.junit.Before
 import org.junit.Rule
@@ -89,6 +91,42 @@ class SwipePageTest : TestCase() {
     Intents.release()
   }
 
+  @Test
+  fun testFetchRandomRecipes() {
+    val recipe1 =
+        Recipe(
+            "Recipe 1",
+            "",
+            "url1",
+            "Instructions 1",
+            "Category 1",
+            "Area 1",
+            listOf(Pair("Ingredient 1", "Ingredient 1")))
+    val recipe2 =
+        Recipe(
+            "Recipe 2",
+            "",
+            "url2",
+            "Instructions 2",
+            "Category 2",
+            "Area 2",
+            listOf(Pair("Ingredient 2", "Ingredient 2")))
+    val mockedRecipesList = listOf(recipe1, recipe2)
+
+    // Setup the mock to trigger onSuccess
+    `when`(mockRepository.random(anyInt(), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.getArgument<(List<Recipe>) -> Unit>(1)
+      onSuccess(mockedRecipesList)
+      null
+    }
+
+    // Init the recipesViewModel will call fetchRandomRecipes
+
+    // Assert that _recipes contains the mocked recipes and _loading is false
+    assertEquals(mockedRecipesList, recipesViewModel.recipes.value)
+    assertFalse(recipesViewModel.loading.value)
+  }
+
   /** This test checks if the BottomBar and the topBar of the swipe page are correctly displayed. */
   @Test
   fun swipePageCorrectlyDisplayed() {
@@ -124,8 +162,7 @@ class SwipePageTest : TestCase() {
     composeTestRule.onNodeWithTag("draggableItem").performTouchInput { swipeLeft() }
 
     // Runs all other coroutines on the scheduler until there is nothing left in the queue
-    advanceUntilIdle()
-
+    runCurrent()
     // need to wait for the animation to finish -> 3 seconds
     composeTestRule.waitUntil(3000L) {
       currentRecipe != null && recipesViewModel.currentRecipe.value != currentRecipe
