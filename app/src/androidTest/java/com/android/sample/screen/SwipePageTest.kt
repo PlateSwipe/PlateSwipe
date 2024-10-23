@@ -24,12 +24,10 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mockito.doAnswer
+import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
-import org.mockito.kotlin.anyOrNull
-import org.mockito.kotlin.whenever
 
 @RunWith(AndroidJUnit4::class)
 class SwipePageTest : TestCase() {
@@ -65,24 +63,16 @@ class SwipePageTest : TestCase() {
             listOf(Pair("Ingredient 2", "Ingredient 2")))
     val mockedRecipesList = listOf(recipe1, recipe2)
 
-    doAnswer { invocation ->
-          val onSuccess =
-              invocation.getArgument<(List<Recipe>) -> Unit>(1) // Get the onSuccess callback
-
-          // Run the onSuccess callback on the main thread
-          composeTestRule.runOnUiThread {
-            onSuccess(mockedRecipesList) // Call onSuccess with the mocked recipes list
-          }
-
-          null // Return null as this method doesn't return anything
-        }
-        .whenever(mockRepository)
-        .random(any(), any(), any())
+    // Setup the mock to trigger onSuccess
+    `when`(mockRepository.random(anyInt(), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.getArgument<(List<Recipe>) -> Unit>(1)
+      onSuccess(mockedRecipesList)
+      null
+    }
 
     recipesViewModel = RecipesViewModel(mockRepository)
     `when`(mockNavigationActions.currentRoute()).thenReturn(Route.SWIPE)
     `when`(mockNavigationActions.navigateTo(Route.AUTH)).then {}
-    `when`(mockRepository.random(anyOrNull(), anyOrNull(), anyOrNull())).then {}
     composeTestRule.setContent {
       SwipePage(mockNavigationActions, recipesViewModel) // Set up the SignInScreen directly
     }
