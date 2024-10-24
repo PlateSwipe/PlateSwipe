@@ -138,8 +138,6 @@ fun RecipeDisplay(
                       if (kotlin.math.abs(offsetX.value) > swipeThreshold) {
                         isDescriptionVisible = false
                         retrieveNextRecipe = true
-                        recipesViewModel.nextRecipe()
-                        retrieveNextRecipe = false
                         if (offsetX.value > 0 && currentRecipe != null) {
                           userViewModel.addRecipeToUserLikedRecipes(currentRecipe!!)
                         }
@@ -216,7 +214,7 @@ fun RecipeDisplay(
                 else -> 0f
               }
           if (retrieveNextRecipe && offsetX.value == 0f) {
-            // recipesViewModel.nextRecipe()
+            recipesViewModel.nextRecipe()
             retrieveNextRecipe = false
           }
           offsetX.animateTo(animationTarget, animationSpec = tween(50))
