@@ -215,12 +215,9 @@ class SwipePageTest : TestCase() {
           composeTestRule.onNodeWithTag("draggableItem").assertIsDisplayed()
 
           // Simulate a drag event
-          composeTestRule.onNodeWithTag("draggableItem").performTouchInput { swipeLeft() }
-
-          composeTestRule.mainClock.autoAdvance = false
-
-          composeTestRule.mainClock.advanceTimeBy(
-              200) // Adjust the time as per your animation duration
+          composeTestRule.onNodeWithTag("draggableItem").performTouchInput {
+            swipeLeft(0f, -10000f)
+          }
 
           advanceUntilIdle()
 
@@ -244,12 +241,9 @@ class SwipePageTest : TestCase() {
           composeTestRule.onNodeWithTag("draggableItem").assertIsDisplayed()
 
           // Simulate a drag event
-          composeTestRule.onNodeWithTag("draggableItem").performTouchInput { swipeRight() }
-
-          composeTestRule.mainClock.autoAdvance = false
-
-          composeTestRule.mainClock.advanceTimeBy(
-              200) // Adjust the time as per your animation duration
+          composeTestRule.onNodeWithTag("draggableItem").performTouchInput {
+            swipeRight(0f, 10000f)
+          }
 
           composeTestRule.waitForIdle()
 
@@ -270,12 +264,7 @@ class SwipePageTest : TestCase() {
     composeTestRule.onNodeWithTag("draggableItem").assertIsDisplayed()
 
     // Simulate a drag event
-    composeTestRule.onNodeWithTag("draggableItem").performTouchInput { swipeRight() }
-
-    composeTestRule.mainClock.autoAdvance = false
-
-    composeTestRule.mainClock.advanceTimeBy(200) // Adjust the time as per your animation duration
-
+    composeTestRule.onNodeWithTag("draggableItem").performTouchInput { swipeRight(0f, 10000f) }
     advanceUntilIdle()
 
     composeTestRule.waitForIdle()
