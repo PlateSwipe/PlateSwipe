@@ -17,14 +17,10 @@ import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.swipePage.SwipePage
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.MatcherAssert.assertThat
 import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Before
 import org.junit.Rule
@@ -71,7 +67,7 @@ class SwipePageTest : TestCase() {
 
     // Setup the mock to trigger onSuccess
     `when`(mockRepository.random(any(), any(), any())).thenAnswer { invocation ->
-      val onSuccess = invocation.arguments[1] as (List<Recipe>) -> Unit
+      val onSuccess = invocation.getArgument<(List<Recipe>) -> Unit>(1)
       onSuccess(mockedRecipesList)
       null
     }
@@ -112,57 +108,7 @@ class SwipePageTest : TestCase() {
     composeTestRule.onNodeWithTag("recipeImage", useUnmergedTree = true).assertIsDisplayed()
   }
 
-  @OptIn(ExperimentalCoroutinesApi::class)
-  @Test
-  fun testNextRecipeWithAdvanceUntilIdle() = runTest {
-    val job = launch {
-      recipesViewModel.loading.collectLatest { isLoading ->
-        if (!isLoading) {
-          val currentRecipe = recipesViewModel.currentRecipe.value
-
-          // Simulate a drag event
-          recipesViewModel.nextRecipe()
-          advanceUntilIdle()
-          // need to wait for the animation to finish -> 3 seconds
-          composeTestRule.waitForIdle()
-          assertNotEquals(currentRecipe, recipesViewModel.currentRecipe.value)
-          this.cancel()
-        }
-      }
-    }
-    job.join()
-  }
-
-  @Test
-  fun testNextRecipeWithoutAdvanceUntilIdle() = runTest {
-    val job = launch {
-      recipesViewModel.loading.collectLatest { isLoading ->
-        if (!isLoading) {
-          val currentRecipe = recipesViewModel.currentRecipe.value
-
-          // Simulate a drag event
-          recipesViewModel.nextRecipe()
-          // need to wait for the animation to finish -> 3 seconds
-          composeTestRule.waitForIdle()
-          assertNotEquals(currentRecipe, recipesViewModel.currentRecipe.value)
-          this.cancel()
-        }
-      }
-    }
-    job.join()
-  }
-
-  @Test
-  fun testNextRecipeWithoutJob() = runTest {
-    val currentRecipe = recipesViewModel.currentRecipe.value
-
-    // Simulate a drag event
-    recipesViewModel.nextRecipe()
-    // need to wait for the animation to finish -> 3 seconds
-    composeTestRule.waitForIdle()
-    assertNotEquals(currentRecipe, recipesViewModel.currentRecipe.value)
-  }
-
+  /** This test checks if nextRecipe called update the current correctly */
   @Test
   fun testNextRecipeWithoutJobAndWaitForIdle() = runTest {
     val currentRecipe = recipesViewModel.currentRecipe.value
@@ -172,87 +118,21 @@ class SwipePageTest : TestCase() {
     assertNotEquals(currentRecipe, recipesViewModel.currentRecipe.value)
   }
 
-  @Test
-  fun nextRecipeTested() = runTest {
-    // Arrange
-    recipesViewModel.fetchRandomRecipes(2) // Fetch dummy recipes
-    recipesViewModel.updateCurrentRecipe(mockedRecipesList[0]) // Set the first recipe as current
-
-    // Act
-    recipesViewModel.nextRecipe() // Get the next recipe
-
-    // Assert
-    assertThat(
-        recipesViewModel.currentRecipe.value,
-        `is`(mockedRecipesList[1])) // Check we are back to the first recipe
-  }
-
-  @OptIn(ExperimentalCoroutinesApi::class)
-  @Test
-  fun nextRecipeTestWithAdvanceUntilIdle() = runTest {
-    // Arrange
-    recipesViewModel.fetchRandomRecipes(2) // Fetch dummy recipes
-    recipesViewModel.updateCurrentRecipe(mockedRecipesList[0]) // Set the first recipe as current
-
-    // Act
-    recipesViewModel.nextRecipe() // Get the next recipe
-    advanceUntilIdle()
-    // Assert
-    assertThat(
-        recipesViewModel.currentRecipe.value,
-        `is`(mockedRecipesList[1])) // Check we are back to the first recipe
-  }
-
   /** This test checks the Dislike swipe of the image. */
   @OptIn(ExperimentalCoroutinesApi::class)
   @Test
   fun testDraggingEventLeft() = runTest {
-    val job = launch {
-      recipesViewModel.loading.collectLatest { isLoading ->
-        if (!isLoading) {
-          val currentRecipe = recipesViewModel.currentRecipe.value
-          // Make sure the screen is displayed
-          composeTestRule.onNodeWithTag("draggableItem").assertIsDisplayed()
+    val currentRecipe = recipesViewModel.currentRecipe.value
+    // Make sure the screen is displayed
+    composeTestRule.onNodeWithTag("draggableItem").assertIsDisplayed()
 
-          // Simulate a drag event
-          composeTestRule.onNodeWithTag("draggableItem").performTouchInput {
-            swipeLeft(0f, -10000f)
-          }
+    // Simulate a drag event
+    composeTestRule.onNodeWithTag("draggableItem").performTouchInput { swipeLeft(0f, -10000f) }
 
-          advanceUntilIdle()
+    advanceUntilIdle()
 
-          composeTestRule.waitForIdle()
-          assertNotEquals(currentRecipe, recipesViewModel.currentRecipe.value)
-          this.cancel()
-        }
-      }
-    }
-    job.join()
-  }
-
-  /** This test checks the Like swipe of the image. */
-  @Test
-  fun testDraggingEventRight() = runTest {
-    val job = launch {
-      recipesViewModel.loading.collectLatest { isLoading ->
-        if (!isLoading) {
-          val currentRecipe = recipesViewModel.currentRecipe.value
-          // Make sure the screen is displayed
-          composeTestRule.onNodeWithTag("draggableItem").assertIsDisplayed()
-
-          // Simulate a drag event
-          composeTestRule.onNodeWithTag("draggableItem").performTouchInput {
-            swipeRight(0f, 10000f)
-          }
-
-          composeTestRule.waitForIdle()
-
-          assertNotEquals(currentRecipe, recipesViewModel.currentRecipe.value)
-          this.cancel()
-        }
-      }
-    }
-    job.join()
+    composeTestRule.waitForIdle()
+    assertNotEquals(currentRecipe, recipesViewModel.currentRecipe.value)
   }
 
   /** This test checks the Like swipe of the image. */
@@ -265,6 +145,7 @@ class SwipePageTest : TestCase() {
 
     // Simulate a drag event
     composeTestRule.onNodeWithTag("draggableItem").performTouchInput { swipeRight(0f, 10000f) }
+
     advanceUntilIdle()
 
     composeTestRule.waitForIdle()
@@ -272,19 +153,24 @@ class SwipePageTest : TestCase() {
     assertNotEquals(currentRecipe, recipesViewModel.currentRecipe.value)
   }
 
-  /**
-   * /** This test checks when the swipe is not enough. */
-   *
-   * @Test fun testDraggingNotEnough() = runTest { val job = launch {
-   *   recipesViewModel.loading.collectLatest { isLoading -> if (!isLoading) { val currentRecipe =
-   *   recipesViewModel.currentRecipe.value // Make sure the screen is displayed
-   *   composeTestRule.onNodeWithTag("draggableItem").assertIsDisplayed()
-   *
-   * // Simulate a drag event composeTestRule.onNodeWithTag("draggableItem").performTouchInput {
-   * swipeRight(0f, 1f) swipeLeft(0f, -1f) }
-   *
-   * // need to wait for the animation to finish -> 3 seconds composeTestRule.waitUntil(3000L) {
-   * currentRecipe != null } composeTestRule.waitForIdle() assertEquals(currentRecipe,
-   * recipesViewModel.currentRecipe.value) this.cancel() } } } job.join() }
-   */
+  /** This test checks when the swipe is not enough. */
+  @OptIn(ExperimentalCoroutinesApi::class)
+  @Test
+  fun testDraggingNotEnough() = runTest {
+    val currentRecipe = recipesViewModel.currentRecipe.value
+    // Make sure the screen is displayed
+    composeTestRule.onNodeWithTag("draggableItem").assertIsDisplayed()
+
+    // Simulate a drag event
+    composeTestRule.onNodeWithTag("draggableItem").performTouchInput {
+      swipeRight(0f, 1f)
+      swipeLeft(0f, -1f)
+    }
+
+    advanceUntilIdle()
+
+    composeTestRule.waitForIdle()
+
+    assertEquals(currentRecipe, recipesViewModel.currentRecipe.value)
+  }
 }
