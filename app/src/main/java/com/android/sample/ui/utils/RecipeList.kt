@@ -61,6 +61,7 @@ fun RecipeList(
     modifier: Modifier = Modifier,
 ) {
   LazyColumn(
+      modifier = modifier.testTag("recipeList"),
       verticalArrangement = Arrangement.Center,
       horizontalAlignment = Alignment.CenterHorizontally,
   ) {
@@ -103,7 +104,7 @@ private fun RecipeCard(recipe: Recipe, onRecipeSelected: (Recipe) -> Unit) {
                 Row(
                     modifier = Modifier.fillMaxWidth().weight(1f),
                     horizontalArrangement = Arrangement.SpaceBetween) {
-                      RecipeRating(recipe)
+                      RecipeRating()
                     }
 
                 Row(
@@ -137,7 +138,7 @@ private fun RecipePrice(maxDollars: Int = 3, cost: Int, recipe: Recipe) {
 }
 
 @Composable
-private fun RecipeRating(recipe: Recipe) {
+private fun RecipeRating() {
   Row(
       modifier = Modifier.height(24.dp),
       verticalAlignment = Alignment.CenterVertically,
