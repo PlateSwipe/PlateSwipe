@@ -105,7 +105,8 @@ class SwipePageTest : TestCase() {
     composeTestRule.onNodeWithTag("recipeDescription", useUnmergedTree = true).assertIsDisplayed()
     composeTestRule.onNodeWithTag("recipeDescription", useUnmergedTree = true).performClick()
 
-    composeTestRule.onNodeWithTag("recipeImage", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag("recipeImage1", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag("recipeImage2", useUnmergedTree = true).assertIsDisplayed()
   }
 
   /** This test checks if nextRecipe called update the current correctly */

@@ -52,6 +52,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import com.android.sample.R
@@ -119,14 +120,25 @@ fun RecipeDisplay(
 ) {
   var isDescriptionVisible by remember { mutableStateOf(false) }
   var retrieveNextRecipe by remember { mutableStateOf(false) }
+  var displayCard1 by remember { mutableStateOf(true) }
+  var displayCard2 by remember { mutableStateOf(false) }
 
   val offsetX = remember { Animatable(0f) }
+
   val coroutineScope = rememberCoroutineScope()
   val screenWidth = LocalConfiguration.current.screenWidthDp.toFloat()
   val swipeThreshold = screenWidth * 14 / 15
 
   val currentRecipe by recipesViewModel.currentRecipe.collectAsState()
-
+  val nextRecipe by recipesViewModel.nextRecipe.collectAsState()
+  // Snap back to center when animation is finished
+  coroutineScope.launch {
+    if (offsetX.value.absoluteValue > END_ANIMATION - 200) {
+      offsetX.snapTo(0f)
+      displayCard1 = !displayCard1
+      displayCard2 = !displayCard2
+    }
+  }
   Column(
       modifier =
           Modifier.fillMaxSize()
@@ -147,30 +159,55 @@ fun RecipeDisplay(
                       coroutineScope.launch { offsetX.snapTo(offsetX.value + dragAmount) }
                     })
               }) {
-        // Snap back to center when animation is finished
-        coroutineScope.launch {
-          if (offsetX.value.absoluteValue > END_ANIMATION - 200) {
-            offsetX.snapTo(0f)
-          }
-        }
+
         // Recipe card with image
-        Card(
-            modifier =
-                Modifier.fillMaxWidth()
-                    .padding(dimensionResource(id = R.dimen.paddingBasic) / 2)
-                    .graphicsLayer(translationX = offsetX.value)
-                    .weight(15f),
-            shape = RoundedCornerShape(16.dp),
-            elevation = CardDefaults.cardElevation(4.dp)) {
-              Column(modifier = Modifier.background(color = MaterialTheme.colorScheme.onPrimary)) {
-                Image(
-                    painter = rememberAsyncImagePainter(model = currentRecipe?.strMealThumbUrl),
-                    contentDescription = stringResource(R.string.recipe_image),
-                    modifier = Modifier.fillMaxSize().testTag("recipeImage"),
-                    contentScale = ContentScale.Crop,
-                )
+        Box(modifier = Modifier.weight(15f)) {
+          Card(
+              modifier =
+                  Modifier.fillMaxWidth()
+                      .padding(dimensionResource(id = R.dimen.paddingBasic) / 2)
+                      .graphicsLayer(translationX = if (displayCard1) offsetX.value else 0f)
+                      .zIndex(if (displayCard1) 1f else 0f),
+              shape = RoundedCornerShape(16.dp),
+              elevation = CardDefaults.cardElevation(4.dp)) {
+                Column(
+                    modifier = Modifier.background(color = MaterialTheme.colorScheme.onPrimary)) {
+                      Image(
+                          painter =
+                              rememberAsyncImagePainter(
+                                  model =
+                                      if (displayCard1) currentRecipe?.strMealThumbUrl
+                                      else nextRecipe?.strMealThumbUrl),
+                          contentDescription = stringResource(R.string.recipe_image),
+                          modifier = Modifier.fillMaxSize().testTag("recipeImage1"),
+                          contentScale = ContentScale.Crop,
+                      )
+                    }
               }
-            }
+
+          Card(
+              modifier =
+                  Modifier.fillMaxWidth()
+                      .padding(dimensionResource(id = R.dimen.paddingBasic) / 2)
+                      .graphicsLayer(translationX = if (displayCard2) offsetX.value else 0f)
+                      .zIndex(if (displayCard2) 1f else 0f),
+              shape = RoundedCornerShape(16.dp),
+              elevation = CardDefaults.cardElevation(4.dp)) {
+                Column(
+                    modifier = Modifier.background(color = MaterialTheme.colorScheme.onPrimary)) {
+                      Image(
+                          painter =
+                              rememberAsyncImagePainter(
+                                  model =
+                                      if (displayCard2) currentRecipe?.strMealThumbUrl
+                                      else nextRecipe?.strMealThumbUrl),
+                          contentDescription = stringResource(R.string.recipe_image),
+                          modifier = Modifier.fillMaxSize().testTag("recipeImage2"),
+                          contentScale = ContentScale.Crop,
+                      )
+                    }
+              }
+        }
 
         // Image Description
         ImageDescription(currentRecipe?.strMeal ?: LOADING, currentRecipe?.strCategory ?: LOADING)
