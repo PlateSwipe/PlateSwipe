@@ -61,7 +61,6 @@ fun RecipeList(
     modifier: Modifier = Modifier,
 ) {
   LazyColumn(
-      modifier = modifier.background(color = MaterialTheme.colorScheme.background),
       verticalArrangement = Arrangement.Center,
       horizontalAlignment = Alignment.CenterHorizontally,
   ) {
