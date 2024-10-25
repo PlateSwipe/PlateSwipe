@@ -7,6 +7,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
+import com.android.sample.ui.navigation.TopLevelDestinations
 import com.android.sample.ui.utils.PlateSwipeScaffold
 import org.junit.Before
 import org.junit.Rule
@@ -59,5 +60,17 @@ class PlateSwipeScaffoldTest {
     composeTestRule.waitForIdle()
 
     verify(mockNavigationActions).goBack()
+  }
+
+  @Test
+  fun testBottomNavigationMenuCallsNavigationWhenClicked() {
+    composeTestRule.setContent {
+      PlateSwipeScaffold(mockNavigationActions, selectedItem = "Fridge", content = {})
+    }
+
+    composeTestRule.onNodeWithTag("tabSwipe").performClick()
+    composeTestRule.waitForIdle()
+
+    verify(mockNavigationActions).navigateTo(TopLevelDestinations.SWIPE)
   }
 }
