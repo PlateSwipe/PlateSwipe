@@ -20,6 +20,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
+/**
+ * A search bar that allows users to search for recipes.
+ *
+ * @param modifier the modifier to apply to this layout node.
+ * @param onValueChange the callback to invoke when the search text changes.
+ */
 @Preview
 @Composable
 fun SearchBar(modifier: Modifier = Modifier, onValueChange: (String) -> Unit = {}) {
