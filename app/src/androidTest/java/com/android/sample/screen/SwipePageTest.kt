@@ -14,6 +14,7 @@ import com.android.sample.model.recipe.RecipeRepository
 import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
+import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.swipePage.SwipePage
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -27,6 +28,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
 
@@ -103,10 +105,17 @@ class SwipePageTest : TestCase() {
     composeTestRule.onNodeWithTag("recipeStar", useUnmergedTree = true).assertIsDisplayed()
     composeTestRule.onNodeWithTag("recipeRate", useUnmergedTree = true).assertIsDisplayed()
     composeTestRule.onNodeWithTag("recipeDescription", useUnmergedTree = true).assertIsDisplayed()
-    composeTestRule.onNodeWithTag("recipeDescription", useUnmergedTree = true).performClick()
 
     composeTestRule.onNodeWithTag("recipeImage1", useUnmergedTree = true).assertIsDisplayed()
     composeTestRule.onNodeWithTag("recipeImage2", useUnmergedTree = true).assertIsDisplayed()
+  }
+
+  /**  */
+  @Test
+  fun navigateToRecipeInfoWhenDescriptionIsPushed() = runTest {
+    composeTestRule.onNodeWithTag("recipeDescription", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag("recipeDescription", useUnmergedTree = true).performClick()
+    verify(mockNavigationActions).navigateTo(Screen.OVERVIEW_RECIPE)
   }
 
   /** This test checks if nextRecipe called update the current correctly */

@@ -63,6 +63,7 @@ import com.android.sample.resources.C.Tag.LOADING
 import com.android.sample.ui.navigation.BottomNavigationMenu
 import com.android.sample.ui.navigation.LIST_TOP_LEVEL_DESTINATIONS
 import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.starColor
 import com.android.sample.ui.theme.tagBackground
 import kotlin.math.absoluteValue
@@ -102,7 +103,7 @@ fun SwipePage(
             tabList = LIST_TOP_LEVEL_DESTINATIONS,
             selectedItem = selectedItem)
       }) { paddingValues ->
-        RecipeDisplay(paddingValues, recipesViewModel, userViewModel)
+        RecipeDisplay(navigationActions, paddingValues, recipesViewModel, userViewModel)
       }
 }
 
@@ -114,11 +115,11 @@ fun SwipePage(
 @SuppressLint("StateFlowValueCalledInComposition", "CoroutineCreationDuringComposition")
 @Composable
 fun RecipeDisplay(
+    navigationActions: NavigationActions,
     paddingValues: PaddingValues,
     recipesViewModel: RecipesViewModel = viewModel(factory = RecipesViewModel.Factory),
     userViewModel: UserViewModel = viewModel(factory = UserViewModel.Factory)
 ) {
-  var isDescriptionVisible by remember { mutableStateOf(false) }
   var retrieveNextRecipe by remember { mutableStateOf(false) }
   var displayCard1 by remember { mutableStateOf(true) }
   var displayCard2 by remember { mutableStateOf(false) }
@@ -148,7 +149,6 @@ fun RecipeDisplay(
                 detectHorizontalDragGestures(
                     onDragEnd = {
                       if (kotlin.math.abs(offsetX.value) > swipeThreshold) {
-                        isDescriptionVisible = false
                         retrieveNextRecipe = true
                         if (offsetX.value > 0 && currentRecipe != null) {
                           userViewModel.addRecipeToUserLikedRecipes(currentRecipe!!)
@@ -219,7 +219,7 @@ fun RecipeDisplay(
         Column(
             verticalArrangement = Arrangement.Bottom,
             modifier =
-                Modifier.weight(if (!isDescriptionVisible) 2f else 20f)
+                Modifier.weight(2f)
                     .verticalScroll(rememberScrollState())
                     .padding(bottom = dimensionResource(id = R.dimen.paddingBasic)),
         ) {
@@ -228,15 +228,15 @@ fun RecipeDisplay(
               text = currentRecipe?.strInstructions ?: LOADING,
               style = MaterialTheme.typography.bodyMedium,
               color = MaterialTheme.colorScheme.onSecondary,
-              maxLines =
-                  if (isDescriptionVisible) Int.MAX_VALUE
-                  else 1, // Show full text if visible, otherwise one line
+              maxLines = 1, // Show full text if visible, otherwise one line
               overflow = TextOverflow.Ellipsis, // Add "..." if text exceeds one line
               modifier =
                   Modifier.fillMaxWidth()
                       .padding(top = dimensionResource(id = R.dimen.paddingBasic) / 2)
                       .clickable {
-                        isDescriptionVisible = !isDescriptionVisible // Toggle visibility on click
+                        navigationActions.navigateTo(Screen.OVERVIEW_RECIPE)
+                        // isDescriptionVisible = !isDescriptionVisible // Toggle visibility on
+                        // click
                       }
                       .testTag("recipeDescription"),
           )
