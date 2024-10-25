@@ -235,11 +235,7 @@ fun RecipeDisplay(
               modifier =
                   Modifier.fillMaxWidth()
                       .padding(top = dimensionResource(id = R.dimen.paddingBasic) / 2)
-                      .clickable {
-                        navigationActions.navigateTo(Screen.OVERVIEW_RECIPE)
-                        // isDescriptionVisible = !isDescriptionVisible // Toggle visibility on
-                        // click
-                      }
+                      .clickable { navigationActions.navigateTo(Screen.OVERVIEW_RECIPE) }
                       .testTag("recipeDescription"),
           )
         }
