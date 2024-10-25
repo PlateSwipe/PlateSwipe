@@ -15,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -62,5 +63,10 @@ fun SearchBar(modifier: Modifier = Modifier, onValueChange: (String) -> Unit = {
       colors =
           TextFieldDefaults.colors(
               focusedContainerColor = MaterialTheme.colorScheme.onSecondary,
+
+              // we need to make these transparent or a weird line appears
+              focusedIndicatorColor = Color.Transparent,
+              disabledIndicatorColor = Color.Transparent,
+              unfocusedIndicatorColor = Color.Transparent,
           ))
 }
