@@ -123,13 +123,14 @@ fun RecipeDisplay(
   var retrieveNextRecipe by remember { mutableStateOf(false) }
   var displayCard1 by remember { mutableStateOf(true) }
   var displayCard2 by remember { mutableStateOf(false) }
-
+  // Offset for the swipe animation
   val offsetX = remember { Animatable(0f) }
 
   val coroutineScope = rememberCoroutineScope()
   val screenWidth = LocalConfiguration.current.screenWidthDp.toFloat()
-  val swipeThreshold = screenWidth * 14 / 15
-
+  // Threshold to like/dislike a recipe when swiped
+  val swipeThreshold = screenWidth * 2 / 3
+  // Collect the current and next recipe from the ViewModel
   val currentRecipe by recipesViewModel.currentRecipe.collectAsState()
   val nextRecipe by recipesViewModel.nextRecipe.collectAsState()
   // Snap back to center when animation is finished
@@ -160,7 +161,7 @@ fun RecipeDisplay(
                     })
               }) {
 
-        // Recipe card with image
+        // First Recipe card with image
         Box(modifier = Modifier.weight(15f)) {
           Card(
               modifier =
@@ -185,6 +186,7 @@ fun RecipeDisplay(
                     }
               }
 
+          // Second Recipe card with image
           Card(
               modifier =
                   Modifier.fillMaxWidth()
