@@ -61,6 +61,40 @@ class MealDBRecipeRepository(private val client: OkHttpClient) : RecipeRepositor
     return parsedListOfRecipes
   }
 
+    /**
+     * Parses the JSON object to a list of categories.
+     *
+     * @param json The JSON object to parse.
+     */
+  private fun parseMealDBJsonToCategory(json: JSONObject): List<String> {
+    val parsedListOfCategories = mutableListOf<String>()
+    val listOfCategories = json.getJSONArray("meals")
+    for (i in 0 until listOfCategories.length()) {
+      val category = listOfCategories.getJSONObject(i)
+      val strCategory = category.getString("strCategory")
+      parsedListOfCategories.add(strCategory)
+    }
+    return parsedListOfCategories
+  }
+
+    /**
+     * Parses the JSON object to a list of thumbnails.
+     *
+     * @param json The JSON object to parse.
+     */
+  private fun parseMealDBJsonToThumbnails(json: JSONObject): List<List<String>> {
+    val parsedListOfThumbnails = mutableListOf<List<String>>()
+    val listOfThumbnails = json.getJSONArray("meals")
+    for (i in 0 until listOfThumbnails.length()) {
+      val thumbnail = listOfThumbnails.getJSONObject(i)
+      val strMeal = thumbnail.getString("strMeal")
+      val idMeal = thumbnail.getString("idMeal")
+      val strMealThumb = thumbnail.getString("strMealThumb")
+      parsedListOfThumbnails.add(listOf(strMeal, idMeal, strMealThumb))
+    }
+    return parsedListOfThumbnails
+  }
+
   override fun random(
       nbOfElements: Int,
       onSuccess: (List<Recipe>) -> Unit,
@@ -107,6 +141,69 @@ class MealDBRecipeRepository(private val client: OkHttpClient) : RecipeRepositor
                     throw JSONException("No recipe found")
                   }
                   onSuccess(recipe[0])
+                } catch (e: JSONException) {
+                  onFailure(e)
+                }
+              }
+            })
+  }
+
+  override fun searchByCategory(
+      category: String,
+      onSuccess: (List<Recipe>) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+
+    val url = "$mealDBUrl/filter.php?c=$category"
+    val request =
+        Request.Builder()
+            .url(url)
+            .header("User-Agent", "PlateSwipe/1.0 (plateswipe@gmail.com)")
+            .build()
+
+    client
+        .newCall(request)
+        .enqueue(
+            object : Callback {
+              override fun onFailure(call: Call, e: IOException) {
+                onFailure(e)
+              }
+
+              override fun onResponse(call: Call, response: Response) {
+                try {
+
+                  val listOfRecipes = mutableListOf<Recipe>()
+                  val recipes = parseMealDBJsonToThumbnails(JSONObject(response.body!!.string()))
+                  for (recipe in recipes) {
+                    search(recipe[1], { rec -> listOfRecipes.add(rec) }, onFailure)
+                  }
+                  onSuccess(listOfRecipes)
+                } catch (e: JSONException) {
+                  onFailure(e)
+                }
+              }
+            })
+  }
+
+  override fun listCategories(onSuccess: (List<String>) -> Unit, onFailure: (Exception) -> Unit) {
+    val url = "$mealDBUrl/categories.php"
+    val request =
+        Request.Builder()
+            .url(url)
+            .header("User-Agent", "PlateSwipe/1.0 (plateswipe@gmail.com)")
+            .build()
+    client
+        .newCall(request)
+        .enqueue(
+            object : Callback {
+              override fun onFailure(call: Call, e: IOException) {
+                onFailure(e)
+              }
+
+              override fun onResponse(call: Call, response: Response) {
+                try {
+                  val categories = parseMealDBJsonToCategory(JSONObject(response.body!!.string()))
+                  onSuccess(categories)
                 } catch (e: JSONException) {
                   onFailure(e)
                 }

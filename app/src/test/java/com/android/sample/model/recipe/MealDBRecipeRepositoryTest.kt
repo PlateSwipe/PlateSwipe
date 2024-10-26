@@ -476,4 +476,143 @@ class MealDBRecipeRepositoryTest {
                 Pair("basil", "6 leaves"),
                 Pair("Parmigiano-Reggiano", "spinkling")))
   }
+
+  @Test
+  fun `test the search function searches correctly with invalid JSON`() {
+    val callbackCapture: ArgumentCaptor<Callback> = ArgumentCaptor.forClass(Callback::class.java)
+    val requestCapture: ArgumentCaptor<Request> = ArgumentCaptor.forClass(Request::class.java)
+
+    `when`(mockHttpClient.newCall(capture(requestCapture))).thenReturn(mockCall)
+    doNothing().`when`(mockCall).enqueue(capture(callbackCapture))
+
+    var searchRecipe: Recipe? = null
+    var searchException: Exception? = null
+
+    mealDBRecipeRepository.search(
+        mealID = "52771",
+        onSuccess = { recipe -> searchRecipe = recipe },
+        onFailure = { exception -> searchException = exception })
+
+    val searchCallBack = callbackCapture.value
+
+    `when`(mockResponseBody.string()).thenReturn(mealDBInvalidJSON)
+
+    searchCallBack.onResponse(mockCall, response)
+
+    assertNotNull(searchException)
+    assertNull(searchRecipe)
+  }
+
+  @Test
+  fun `test the categories list function`() {
+    val callbackCapture: ArgumentCaptor<Callback> = ArgumentCaptor.forClass(Callback::class.java)
+    val requestCapture: ArgumentCaptor<Request> = ArgumentCaptor.forClass(Request::class.java)
+
+    `when`(mockHttpClient.newCall(capture(requestCapture))).thenReturn(mockCall)
+    doNothing().`when`(mockCall).enqueue(capture(callbackCapture))
+
+    var searchCategories: List<String>? = null
+    var searchException: Exception? = null
+
+    mealDBRecipeRepository.listCategories(
+        onSuccess = { categories -> searchCategories = categories },
+        onFailure = { exception -> searchException = exception })
+
+    val searchCallBack = callbackCapture.value
+
+    `when`(mockResponseBody.string())
+        .thenReturn(
+            """{
+                "meals": [
+                    {
+                        "strCategory": "Beef"
+                    },
+                    {
+                        "strCategory": "Chicken"
+                    },
+                    {
+                        "strCategory": "Dessert"
+                    }
+                ]
+            }""")
+
+    searchCallBack.onResponse(mockCall, response)
+
+    assertNull(searchException)
+    assertNotNull(searchCategories)
+    assert(searchCategories?.size == 3)
+    assert(searchCategories?.get(0) == "Beef")
+    assert(searchCategories?.get(1) == "Chicken")
+    assert(searchCategories?.get(2) == "Dessert")
+  }
+
+    @Test
+    fun `test listCategory on failure`(){
+        val callbackCapture: ArgumentCaptor<Callback> = ArgumentCaptor.forClass(Callback::class.java)
+        val requestCapture: ArgumentCaptor<Request> = ArgumentCaptor.forClass(Request::class.java)
+
+        `when`(mockHttpClient.newCall(capture(requestCapture))).thenReturn(mockCall)
+        doNothing().`when`(mockCall).enqueue(capture(callbackCapture))
+
+        var searchCategories: List<String>? = null
+        var searchException: Exception? = null
+
+        mealDBRecipeRepository.listCategories(
+            onSuccess = { categories -> searchCategories = categories },
+            onFailure = { exception -> searchException = exception })
+
+        val searchCallBack = callbackCapture.value
+
+        `when`(mockResponseBody.string()).thenReturn("")
+
+        searchCallBack.onResponse(mockCall, response)
+
+        assertNotNull(searchException)
+        assertNull(searchCategories)
+    }
+
+  @Test
+  fun `test the searchByCategory function correctly fetches recipes by category`() {
+    val callbackCapture: ArgumentCaptor<Callback> = ArgumentCaptor.forClass(Callback::class.java)
+    val requestCapture: ArgumentCaptor<Request> = ArgumentCaptor.forClass(Request::class.java)
+
+    `when`(mockHttpClient.newCall(capture(requestCapture))).thenReturn(mockCall)
+    doNothing().`when`(mockCall).enqueue(capture(callbackCapture))
+
+    var searchRecipes: List<Recipe>? = null
+    var searchException: Exception? = null
+
+    // Call the function to test
+    mealDBRecipeRepository.searchByCategory(
+        category = "Beef",
+        onSuccess = { recipes -> searchRecipes = recipes },
+        onFailure = { exception -> searchException = exception })
+
+    // First response: Return a list of thumbnails from searchByCategory
+    val searchCategoryCallBack = callbackCapture.value
+    `when`(mockResponseBody.string())
+        .thenReturn(
+            """{"meals":[{"strMeal":"Baked salmon with fennel & tomatoes","strMealThumb":"https:\/\/www.themealdb.com\/images\/media\/meals\/1548772327.jpg","idMeal":"52771"}]}""")
+    searchCategoryCallBack.onResponse(mockCall, response)
+
+    // Simulate individual search call to fetch detailed recipe info
+    val searchDetailCallBack = callbackCapture.value
+    `when`(mockResponseBody.string()).thenReturn(mealDBJsonRandomJson1)
+    searchDetailCallBack.onResponse(mockCall, response)
+
+    // Assertions
+    assertNull(searchException)
+    assertNotNull(searchRecipes)
+    assert(searchRecipes?.size == 1)
+    assert(searchRecipes?.get(0)?.idMeal == "52771")
+    assert(searchRecipes?.get(0)?.strMeal == "Spicy Arrabiata Penne")
+    assert(searchRecipes?.get(0)?.strCategory == "Vegetarian")
+    assert(searchRecipes?.get(0)?.strArea == "Italian")
+    assert(
+        searchRecipes?.get(0)?.strInstructions ==
+            "Bring a large pot of water to a boil. Add kosher salt to the boiling water, then add the pasta. Cook according to the package instructions, about 9 minutes.\r\nIn a large skillet over medium-high heat, add the olive oil and heat until the oil starts to shimmer. Add the garlic and cook, stirring, until fragrant, 1 to 2 minutes. Add the chopped tomatoes, red chile flakes, Italian seasoning and salt and pepper to taste. Bring to a boil and cook for 5 minutes. Remove from the heat and add the chopped basil.\r\nDrain the pasta and add it to the sauce. Garnish with Parmigiano-Reggiano flakes and more basil and serve warm.")
+    assert(
+        searchRecipes?.get(0)?.strMealThumbUrl ==
+            "https://www.themealdb.com/images/media/meals/ustsqw1468250014.jpg")
+  }
 }
