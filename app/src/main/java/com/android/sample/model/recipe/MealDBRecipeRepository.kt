@@ -1,5 +1,7 @@
 package com.android.sample.model.recipe
 
+import com.android.sample.resources.C.Tag.MAXIMUM_RECIPES_TO_FETCH_MEAL_DB
+import com.android.sample.resources.C.Tag.MAX_NB_OF_INGREDIENTS_IN_A_RECIPE_MEAL_DB
 import java.io.IOException
 import okhttp3.Call
 import okhttp3.Callback
@@ -36,7 +38,8 @@ class MealDBRecipeRepository(private val client: OkHttpClient) : RecipeRepositor
       val strMealThumbUrl = meal.getString("strMealThumb")
       val ingredientsAndMeasurements = mutableListOf<Pair<String, String>>()
       var j = 1
-      while ((j <= 20) && meal.optString("strIngredient$j", "").isNotEmpty()) {
+      while ((j <= MAX_NB_OF_INGREDIENTS_IN_A_RECIPE_MEAL_DB) &&
+          meal.optString("strIngredient$j", "").isNotEmpty()) {
 
         val ingredient = meal.optString("strIngredient$j", "")
         val measurement = meal.optString("strMeasure$j", "")
@@ -63,7 +66,9 @@ class MealDBRecipeRepository(private val client: OkHttpClient) : RecipeRepositor
       onSuccess: (List<Recipe>) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    require(nbOfElements <= 5) { "Please limit the number of recipes to 5" }
+    require(nbOfElements <= MAXIMUM_RECIPES_TO_FETCH_MEAL_DB) {
+      "Please limit the number of recipes to 5"
+    }
     val listOfRandomRecipes = mutableListOf<Recipe>()
     // Fetch a random recipe for each element because the API does not support fetching multiple
     // random recipes at once

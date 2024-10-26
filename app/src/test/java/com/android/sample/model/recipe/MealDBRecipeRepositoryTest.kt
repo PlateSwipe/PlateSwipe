@@ -1,5 +1,6 @@
 package com.android.sample.model.recipe
 
+import com.android.sample.resources.C.Tag.MAXIMUM_RECIPES_TO_FETCH_MEAL_DB
 import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertNull
 import okhttp3.Call
@@ -240,7 +241,7 @@ class MealDBRecipeRepositoryTest {
     var searchException: Exception? = null
     try {
       mealDBRecipeRepository.random(
-          nbOfElements = 6,
+          nbOfElements = MAXIMUM_RECIPES_TO_FETCH_MEAL_DB + 1,
           onSuccess = { recipe -> searchRecipe = recipe },
           onFailure = { exception -> searchException = exception })
     } catch (e: Exception) {
