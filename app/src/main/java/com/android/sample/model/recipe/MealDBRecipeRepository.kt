@@ -2,6 +2,8 @@ package com.android.sample.model.recipe
 
 import com.android.sample.resources.C.Tag.MAXIMUM_RECIPES_TO_FETCH_MEAL_DB
 import com.android.sample.resources.C.Tag.MAX_NB_OF_INGREDIENTS_IN_A_RECIPE_MEAL_DB
+import com.android.sample.resources.C.Tag.MEAL_DB_USER_AGENT
+import com.android.sample.resources.C.Tag.MEAL_DB_USER_AGENT_VALUE
 import java.io.IOException
 import okhttp3.Call
 import okhttp3.Callback
@@ -121,10 +123,7 @@ class MealDBRecipeRepository(private val client: OkHttpClient) : RecipeRepositor
   override fun search(mealID: String, onSuccess: (Recipe) -> Unit, onFailure: (Exception) -> Unit) {
     val url = "$mealDBUrl/lookup.php?i=$mealID"
     val request =
-        Request.Builder()
-            .url(url)
-            .header("User-Agent", "PlateSwipe/1.0 (plateswipe@gmail.com)")
-            .build()
+        Request.Builder().url(url).header(MEAL_DB_USER_AGENT, MEAL_DB_USER_AGENT_VALUE).build()
 
     client
         .newCall(request)
@@ -156,10 +155,7 @@ class MealDBRecipeRepository(private val client: OkHttpClient) : RecipeRepositor
 
     val url = "$mealDBUrl/filter.php?c=$category"
     val request =
-        Request.Builder()
-            .url(url)
-            .header("User-Agent", "PlateSwipe/1.0 (plateswipe@gmail.com)")
-            .build()
+        Request.Builder().url(url).header(MEAL_DB_USER_AGENT, MEAL_DB_USER_AGENT_VALUE).build()
 
     client
         .newCall(request)
@@ -188,10 +184,7 @@ class MealDBRecipeRepository(private val client: OkHttpClient) : RecipeRepositor
   override fun listCategories(onSuccess: (List<String>) -> Unit, onFailure: (Exception) -> Unit) {
     val url = "$mealDBUrl/categories.php"
     val request =
-        Request.Builder()
-            .url(url)
-            .header("User-Agent", "PlateSwipe/1.0 (plateswipe@gmail.com)")
-            .build()
+        Request.Builder().url(url).header(MEAL_DB_USER_AGENT, MEAL_DB_USER_AGENT_VALUE).build()
     client
         .newCall(request)
         .enqueue(
@@ -223,10 +216,7 @@ class MealDBRecipeRepository(private val client: OkHttpClient) : RecipeRepositor
   ) {
     val url = "$mealDBUrl/random.php"
     val request =
-        Request.Builder()
-            .url(url)
-            .header("User-Agent", "PlateSwipe/1.0 (plateswipe@gmail.com)")
-            .build()
+        Request.Builder().url(url).header(MEAL_DB_USER_AGENT, MEAL_DB_USER_AGENT_VALUE).build()
     client
         .newCall(request)
         .enqueue(

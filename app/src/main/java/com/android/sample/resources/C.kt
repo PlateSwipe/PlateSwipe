@@ -18,5 +18,7 @@ object C {
     const val NUMBER_RECIPES_TO_FETCH = 2
     const val MAXIMUM_RECIPES_TO_FETCH_MEAL_DB = 5
     const val MAX_NB_OF_INGREDIENTS_IN_A_RECIPE_MEAL_DB = 20
+    const val MEAL_DB_USER_AGENT = "User-Agent"
+    const val MEAL_DB_USER_AGENT_VALUE = "PlateSwipe/1.0 (plateswipe@gmail.com)"
   }
 }
