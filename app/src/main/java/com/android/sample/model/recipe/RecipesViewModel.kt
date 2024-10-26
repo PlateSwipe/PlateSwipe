@@ -128,6 +128,20 @@ class RecipesViewModel(private val repository: RecipeRepository) : ViewModel() {
     }
   }
 
+  /**
+   * Searches for a recipe by its meal ID.
+   *
+   * @param mealID The ID of the meal to search for.
+   * @param onSuccess Callback to be invoked when the search is successful.
+   * @param onFailure Callback to be invoked when the search fails.
+   */
+  fun search(mealID: String, onSuccess: (Recipe) -> Unit, onFailure: (Exception) -> Unit) {
+    repository.search(
+        mealID = mealID,
+        onSuccess = { recipe -> onSuccess(recipe) },
+        onFailure = { exception -> onFailure(exception) })
+  }
+
   companion object {
     val Factory: ViewModelProvider.Factory =
         object : ViewModelProvider.Factory {
