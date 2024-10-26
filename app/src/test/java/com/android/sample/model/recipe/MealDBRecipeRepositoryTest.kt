@@ -546,30 +546,30 @@ class MealDBRecipeRepositoryTest {
     assert(searchCategories?.get(2) == "Dessert")
   }
 
-    @Test
-    fun `test listCategory on failure`(){
-        val callbackCapture: ArgumentCaptor<Callback> = ArgumentCaptor.forClass(Callback::class.java)
-        val requestCapture: ArgumentCaptor<Request> = ArgumentCaptor.forClass(Request::class.java)
+  @Test
+  fun `test listCategory on failure`() {
+    val callbackCapture: ArgumentCaptor<Callback> = ArgumentCaptor.forClass(Callback::class.java)
+    val requestCapture: ArgumentCaptor<Request> = ArgumentCaptor.forClass(Request::class.java)
 
-        `when`(mockHttpClient.newCall(capture(requestCapture))).thenReturn(mockCall)
-        doNothing().`when`(mockCall).enqueue(capture(callbackCapture))
+    `when`(mockHttpClient.newCall(capture(requestCapture))).thenReturn(mockCall)
+    doNothing().`when`(mockCall).enqueue(capture(callbackCapture))
 
-        var searchCategories: List<String>? = null
-        var searchException: Exception? = null
+    var searchCategories: List<String>? = null
+    var searchException: Exception? = null
 
-        mealDBRecipeRepository.listCategories(
-            onSuccess = { categories -> searchCategories = categories },
-            onFailure = { exception -> searchException = exception })
+    mealDBRecipeRepository.listCategories(
+        onSuccess = { categories -> searchCategories = categories },
+        onFailure = { exception -> searchException = exception })
 
-        val searchCallBack = callbackCapture.value
+    val searchCallBack = callbackCapture.value
 
-        `when`(mockResponseBody.string()).thenReturn("")
+    `when`(mockResponseBody.string()).thenReturn("")
 
-        searchCallBack.onResponse(mockCall, response)
+    searchCallBack.onResponse(mockCall, response)
 
-        assertNotNull(searchException)
-        assertNull(searchCategories)
-    }
+    assertNotNull(searchException)
+    assertNull(searchCategories)
+  }
 
   @Test
   fun `test the searchByCategory function correctly fetches recipes by category`() {

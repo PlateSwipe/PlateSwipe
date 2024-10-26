@@ -61,11 +61,11 @@ class MealDBRecipeRepository(private val client: OkHttpClient) : RecipeRepositor
     return parsedListOfRecipes
   }
 
-    /**
-     * Parses the JSON object to a list of categories.
-     *
-     * @param json The JSON object to parse.
-     */
+  /**
+   * Parses the JSON object to a list of categories.
+   *
+   * @param json The JSON object to parse.
+   */
   private fun parseMealDBJsonToCategory(json: JSONObject): List<String> {
     val parsedListOfCategories = mutableListOf<String>()
     val listOfCategories = json.getJSONArray("meals")
@@ -77,11 +77,11 @@ class MealDBRecipeRepository(private val client: OkHttpClient) : RecipeRepositor
     return parsedListOfCategories
   }
 
-    /**
-     * Parses the JSON object to a list of thumbnails.
-     *
-     * @param json The JSON object to parse.
-     */
+  /**
+   * Parses the JSON object to a list of thumbnails.
+   *
+   * @param json The JSON object to parse.
+   */
   private fun parseMealDBJsonToThumbnails(json: JSONObject): List<List<String>> {
     val parsedListOfThumbnails = mutableListOf<List<String>>()
     val listOfThumbnails = json.getJSONArray("meals")
