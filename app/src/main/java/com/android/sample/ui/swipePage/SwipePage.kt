@@ -21,10 +21,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.InputChip
+import androidx.compose.material3.InputChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -123,6 +127,8 @@ fun RecipeDisplay(
   var retrieveNextRecipe by remember { mutableStateOf(false) }
   var displayCard1 by remember { mutableStateOf(true) }
   var displayCard2 by remember { mutableStateOf(false) }
+  var showFilter by remember { mutableStateOf(false) }
+
   // Offset for the swipe animation
   val offsetX = remember { Animatable(0f) }
 
@@ -141,6 +147,7 @@ fun RecipeDisplay(
       displayCard2 = !displayCard2
     }
   }
+
   Column(
       modifier =
           Modifier.fillMaxSize()
@@ -160,6 +167,33 @@ fun RecipeDisplay(
                       coroutineScope.launch { offsetX.snapTo(offsetX.value + dragAmount) }
                     })
               }) {
+        Row(
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth().weight(1f)) {
+              // Star Icon (fixed size, no weight needed)
+              Icon(
+                  painter = painterResource(R.drawable.filter),
+                  contentDescription = "filterIcon",
+                  modifier =
+                      Modifier.testTag("recipeStar").size(24.dp).clickable {
+                        showFilter = !showFilter
+                      }, // Use fixed size for the icon
+                  tint = starColor)
+            }
+        if (showFilter) {
+          var selected by remember { mutableStateOf(false) }
+          InputChip(
+              selected = selected,
+              onClick = { selected = !selected },
+              label = { Text("Dessert") },
+              trailingIcon = {
+                Icon(
+                    Icons.Filled.Close,
+                    contentDescription = "Localized description",
+                    modifier = Modifier.size(InputChipDefaults.IconSize).clickable {})
+              })
+        }
 
         // First Recipe card with image
         Box(modifier = Modifier.weight(15f)) {
