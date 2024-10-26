@@ -5,8 +5,8 @@ open class Filter(
     val price: Int,
     val type: TypeOfRecipe,
     val Difficulty: Difficulty,
-    val diet: String
-) {}
+    val diet: List<String>
+)
 
 object TypeOfRecipe {
   const val Breakfast = 1
