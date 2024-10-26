@@ -18,7 +18,7 @@ import org.json.JSONObject
  *
  * @property client The OkHttpClient used to make network requests.
  */
-class MealDBRecipeRepository(private val client: OkHttpClient) : RecipeRepository {
+class MealDBRecipesRepository(private val client: OkHttpClient) : RecipesRepository {
 
   private val mealDBUrl = "https://www.themealdb.com/api/json/v1/1/"
 

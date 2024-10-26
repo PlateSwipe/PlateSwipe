@@ -19,14 +19,14 @@ import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.capture
 import org.mockito.kotlin.doNothing
 
-class MealDBRecipeRepositoryTest {
+class MealDBRecipesRepositoryTest {
 
   private lateinit var mockHttpClient: OkHttpClient
   private lateinit var mockCall: Call
   private lateinit var response: Response
   private lateinit var mockResponseBody: ResponseBody
 
-  private lateinit var mealDBRecipeRepository: MealDBRecipeRepository
+  private lateinit var mealDBRecipesRepository: MealDBRecipesRepository
 
   private val mealDBJsonRandomJson1 =
       """{
@@ -232,7 +232,7 @@ class MealDBRecipeRepositoryTest {
             .body(mockResponseBody)
             .build()
 
-    mealDBRecipeRepository = MealDBRecipeRepository(mockHttpClient)
+    mealDBRecipesRepository = MealDBRecipesRepository(mockHttpClient)
   }
 
   @Test
@@ -240,7 +240,7 @@ class MealDBRecipeRepositoryTest {
     var searchRecipe: List<Recipe>? = emptyList()
     var searchException: Exception? = null
     try {
-      mealDBRecipeRepository.random(
+      mealDBRecipesRepository.random(
           nbOfElements = MAXIMUM_RECIPES_TO_FETCH_MEAL_DB + 1,
           onSuccess = { recipe -> searchRecipe = recipe },
           onFailure = { exception -> searchException = exception })
@@ -261,7 +261,7 @@ class MealDBRecipeRepositoryTest {
     var searchRecipe: List<Recipe>? = emptyList()
     var searchException: Exception? = null
 
-    mealDBRecipeRepository.random(
+    mealDBRecipesRepository.random(
         nbOfElements = 1,
         onSuccess = { recipe -> searchRecipe = recipe },
         onFailure = { exception -> searchException = exception })
@@ -308,7 +308,7 @@ class MealDBRecipeRepositoryTest {
     var searchRecipe: List<Recipe>? = mutableListOf()
     var searchException: Exception? = null
 
-    mealDBRecipeRepository.random(
+    mealDBRecipesRepository.random(
         nbOfElements = 3,
         onSuccess = { recipe -> searchRecipe = recipe },
         onFailure = { exception -> searchException = exception })
@@ -414,7 +414,7 @@ class MealDBRecipeRepositoryTest {
     var searchRecipe: List<Recipe>? = emptyList()
     var searchException: Exception? = null
 
-    mealDBRecipeRepository.random(
+    mealDBRecipesRepository.random(
         nbOfElements = 1,
         onSuccess = { recipe -> searchRecipe = recipe },
         onFailure = { exception -> searchException = exception })
@@ -440,7 +440,7 @@ class MealDBRecipeRepositoryTest {
     var searchRecipe: Recipe? = null
     var searchException: Exception? = null
 
-    mealDBRecipeRepository.search(
+    mealDBRecipesRepository.search(
         mealID = "52771",
         onSuccess = { recipe -> searchRecipe = recipe },
         onFailure = { exception -> searchException = exception })
@@ -488,7 +488,7 @@ class MealDBRecipeRepositoryTest {
     var searchRecipe: Recipe? = null
     var searchException: Exception? = null
 
-    mealDBRecipeRepository.search(
+    mealDBRecipesRepository.search(
         mealID = "52771",
         onSuccess = { recipe -> searchRecipe = recipe },
         onFailure = { exception -> searchException = exception })
@@ -514,7 +514,7 @@ class MealDBRecipeRepositoryTest {
     var searchCategories: List<String>? = null
     var searchException: Exception? = null
 
-    mealDBRecipeRepository.listCategories(
+    mealDBRecipesRepository.listCategories(
         onSuccess = { categories -> searchCategories = categories },
         onFailure = { exception -> searchException = exception })
 
@@ -557,7 +557,7 @@ class MealDBRecipeRepositoryTest {
     var searchCategories: List<String>? = null
     var searchException: Exception? = null
 
-    mealDBRecipeRepository.listCategories(
+    mealDBRecipesRepository.listCategories(
         onSuccess = { categories -> searchCategories = categories },
         onFailure = { exception -> searchException = exception })
 
@@ -583,7 +583,7 @@ class MealDBRecipeRepositoryTest {
     var searchException: Exception? = null
 
     // Call the function to test
-    mealDBRecipeRepository.searchByCategory(
+    mealDBRecipesRepository.searchByCategory(
         category = "Beef",
         onSuccess = { recipes -> searchRecipes = recipes },
         onFailure = { exception -> searchException = exception })

@@ -1,7 +1,7 @@
 package com.android.sample.model.recipe
 
 /** Interface for retrieving recipe data. */
-interface RecipeRepository {
+interface RecipesRepository {
 
   /**
    * Fetches a specified number of random recipes.

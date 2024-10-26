@@ -148,7 +148,7 @@ class RecipesViewModel(private val repository: RecipeRepository) : ViewModel() {
           @Suppress("UNCHECKED_CAST")
           override fun <T : ViewModel> create(modelClass: Class<T>): T {
             val okHttpClient = OkHttpClient()
-            val repository = MealDBRecipeRepository(okHttpClient)
+            val repository = MealDBRecipesRepository(okHttpClient)
             return RecipesViewModel(repository) as T
           }
         }
