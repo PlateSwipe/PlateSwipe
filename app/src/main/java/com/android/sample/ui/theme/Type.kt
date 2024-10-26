@@ -14,6 +14,12 @@ val Montserrat =
         Font(R.font.montserrat_bold, FontWeight.Bold),
         Font(R.font.montserrat_light, FontWeight.Light))
 
+val Roboto =
+    FontFamily(
+        Font(R.font.roboto_regular, FontWeight.Normal), Font(R.font.roboto_bold, FontWeight.Bold))
+
+val MeeraInimai = FontFamily(Font(R.font.meera_inimai_regular, FontWeight.Normal))
+
 val Typography =
     Typography(
         bodySmall =
