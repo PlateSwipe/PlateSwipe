@@ -20,4 +20,18 @@ interface RecipeRepository {
    * @param onFailure Callback that is called when an error occurs.
    */
   fun search(mealID: String, onSuccess: (Recipe) -> Unit, onFailure: (Exception) -> Unit)
+
+  /**
+   * Fetches a list of recipes by category.
+   *
+   * @param category The category of the recipes to fetch.
+   */
+  fun searchByCategory(
+      category: String,
+      onSuccess: (List<Recipe>) -> Unit,
+      onFailure: (Exception) -> Unit
+  )
+
+  /** Lists all the categories in the API. */
+  fun listCategories(onSuccess: (List<String>) -> Unit, onFailure: (Exception) -> Unit)
 }
