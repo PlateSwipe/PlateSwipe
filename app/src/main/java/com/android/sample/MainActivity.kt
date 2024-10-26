@@ -20,11 +20,13 @@ import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C
 import com.android.sample.ui.account.AccountScreen
 import com.android.sample.ui.authentication.SignInScreen
+import com.android.sample.ui.createRecipe.CreateRecipeScreen
+import com.android.sample.ui.createRecipe.RecipeIngredientsScreen
+import com.android.sample.ui.createRecipe.RecipeInstructionsScreen
 import com.android.sample.ui.fridge.FridgeScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
-import com.android.sample.ui.recipe.CreateRecipeScreen
 import com.android.sample.ui.recipe.SearchRecipeScreen
 import com.android.sample.ui.swipePage.SwipePage
 import com.android.sample.ui.theme.SampleAppTheme
@@ -82,6 +84,12 @@ fun PlateSwipeApp() {
         route = Route.CREATE_RECIPE,
     ) {
       composable(Screen.CREATE_RECIPE) { CreateRecipeScreen(navigationActions) }
+      composable(Screen.CREATE_RECIPE_INGREDIENTS) {
+        RecipeIngredientsScreen(navigationActions, 1)
+      } // Really not sure about adding this line
+      composable(Screen.CREATE_RECIPE_INSTRUCTIONS) {
+        RecipeInstructionsScreen(navigationActions, 2)
+      }
     }
     navigation(
         startDestination = Screen.ACCOUNT,

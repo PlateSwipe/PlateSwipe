@@ -14,12 +14,12 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.sample.model.user.UserRepository
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.ui.account.AccountScreen
+import com.android.sample.ui.createRecipe.CreateRecipeScreen
 import com.android.sample.ui.fridge.FridgeScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.navigation.TopLevelDestinations
-import com.android.sample.ui.recipe.CreateRecipeScreen
 import com.android.sample.ui.recipe.SearchRecipeScreen
 import com.android.sample.ui.swipePage.SwipePage
 import com.google.firebase.auth.FirebaseAuth
@@ -95,7 +95,7 @@ class EndToEndTest {
     composeTestRule.onNodeWithText("Search Recipe Screen").assertExists()
 
     composeTestRule.onNodeWithTag("Add Recipe").assertExists().performClick()
-    composeTestRule.onNodeWithText("Create Recipe Screen").assertExists()
+    composeTestRule.onNodeWithText("Create your recipe").assertExists()
   }
 }
 

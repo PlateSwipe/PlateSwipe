@@ -24,6 +24,10 @@ object Screen {
 
   const val CREATE_RECIPE = "AddRecipe Screen"
 
+  const val CREATE_RECIPE_INGREDIENTS = "Add Recipe Ingredients"
+
+  const val CREATE_RECIPE_INSTRUCTIONS = "Add Recipe Instructions"
+
   const val ACCOUNT = "Account Screen"
 }
 
