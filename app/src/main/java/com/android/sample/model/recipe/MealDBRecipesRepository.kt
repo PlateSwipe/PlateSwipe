@@ -2,6 +2,16 @@ package com.android.sample.model.recipe
 
 import com.android.sample.resources.C.Tag.MAXIMUM_RECIPES_TO_FETCH_MEAL_DB
 import com.android.sample.resources.C.Tag.MAX_NB_OF_INGREDIENTS_IN_A_RECIPE_MEAL_DB
+import com.android.sample.resources.C.Tag.MEAL_DB_ARRAY_NAME
+import com.android.sample.resources.C.Tag.MEAL_DB_MEAL_AREA
+import com.android.sample.resources.C.Tag.MEAL_DB_MEAL_CATEGORY
+import com.android.sample.resources.C.Tag.MEAL_DB_MEAL_ID
+import com.android.sample.resources.C.Tag.MEAL_DB_MEAL_INGREDIENT
+import com.android.sample.resources.C.Tag.MEAL_DB_MEAL_INSTRUCTIONS
+import com.android.sample.resources.C.Tag.MEAL_DB_MEAL_MEASURE
+import com.android.sample.resources.C.Tag.MEAL_DB_MEAL_NAME
+import com.android.sample.resources.C.Tag.MEAL_DB_MEAL_THUMB
+import com.android.sample.resources.C.Tag.MEAL_DB_URL
 import com.android.sample.resources.C.Tag.MEAL_DB_USER_AGENT
 import com.android.sample.resources.C.Tag.MEAL_DB_USER_AGENT_VALUE
 import java.io.IOException
@@ -20,8 +30,6 @@ import org.json.JSONObject
  */
 class MealDBRecipesRepository(private val client: OkHttpClient) : RecipesRepository {
 
-  private val mealDBUrl = "https://www.themealdb.com/api/json/v1/1/"
-
   /**
    * Fetches a specified number of random recipes from the MealDB API.
    *
@@ -29,22 +37,24 @@ class MealDBRecipesRepository(private val client: OkHttpClient) : RecipesReposit
    */
   private fun parseMealDBJsonToRecipe(json: JSONObject): List<Recipe> {
     val parsedListOfRecipes = mutableListOf<Recipe>()
-    val listOfRecipes = json.getJSONArray("meals")
+    val listOfRecipes = json.getJSONArray(MEAL_DB_ARRAY_NAME)
     for (i in 0 until listOfRecipes.length()) {
       val meal = listOfRecipes.getJSONObject(i)
-      val idMeal = meal.getString("idMeal")
-      val strMeal = meal.getString("strMeal")
-      val strCategory = meal.getString("strCategory")
-      val strArea = meal.getString("strArea")
-      val strInstructions = meal.getString("strInstructions")
-      val strMealThumbUrl = meal.getString("strMealThumb")
+      val idMeal = meal.getString(MEAL_DB_MEAL_ID)
+      val strMeal = meal.getString(MEAL_DB_MEAL_NAME)
+      val strCategory = meal.getString(MEAL_DB_MEAL_CATEGORY)
+      val strArea = meal.getString(MEAL_DB_MEAL_AREA)
+      val strInstructions = meal.getString(
+          MEAL_DB_MEAL_INSTRUCTIONS)
+      val strMealThumbUrl = meal.getString(MEAL_DB_MEAL_THUMB)
       val ingredientsAndMeasurements = mutableListOf<Pair<String, String>>()
       var j = 1
       while ((j <= MAX_NB_OF_INGREDIENTS_IN_A_RECIPE_MEAL_DB) &&
-          meal.optString("strIngredient$j", "").isNotEmpty()) {
+          meal.optString( MEAL_DB_MEAL_INGREDIENT + j
+              , "").isNotEmpty()) {
 
-        val ingredient = meal.optString("strIngredient$j", "")
-        val measurement = meal.optString("strMeasure$j", "")
+        val ingredient = meal.optString(MEAL_DB_MEAL_INGREDIENT+j, "")
+        val measurement = meal.optString(MEAL_DB_MEAL_MEASURE +j, "")
         if (ingredient.isNotEmpty() && measurement.isNotEmpty()) {
           ingredientsAndMeasurements.add(Pair(ingredient, measurement))
         }
@@ -70,10 +80,10 @@ class MealDBRecipesRepository(private val client: OkHttpClient) : RecipesReposit
    */
   private fun parseMealDBJsonToCategory(json: JSONObject): List<String> {
     val parsedListOfCategories = mutableListOf<String>()
-    val listOfCategories = json.getJSONArray("meals")
+    val listOfCategories = json.getJSONArray(MEAL_DB_ARRAY_NAME)
     for (i in 0 until listOfCategories.length()) {
       val category = listOfCategories.getJSONObject(i)
-      val strCategory = category.getString("strCategory")
+      val strCategory = category.getString(MEAL_DB_MEAL_CATEGORY)
       parsedListOfCategories.add(strCategory)
     }
     return parsedListOfCategories
@@ -86,12 +96,12 @@ class MealDBRecipesRepository(private val client: OkHttpClient) : RecipesReposit
    */
   private fun parseMealDBJsonToThumbnails(json: JSONObject): List<List<String>> {
     val parsedListOfThumbnails = mutableListOf<List<String>>()
-    val listOfThumbnails = json.getJSONArray("meals")
+    val listOfThumbnails = json.getJSONArray(MEAL_DB_ARRAY_NAME)
     for (i in 0 until listOfThumbnails.length()) {
       val thumbnail = listOfThumbnails.getJSONObject(i)
-      val strMeal = thumbnail.getString("strMeal")
-      val idMeal = thumbnail.getString("idMeal")
-      val strMealThumb = thumbnail.getString("strMealThumb")
+      val strMeal = thumbnail.getString(MEAL_DB_MEAL_NAME)
+      val idMeal = thumbnail.getString(MEAL_DB_MEAL_ID)
+      val strMealThumb = thumbnail.getString(MEAL_DB_MEAL_THUMB)
       parsedListOfThumbnails.add(listOf(strMeal, idMeal, strMealThumb))
     }
     return parsedListOfThumbnails
@@ -121,7 +131,7 @@ class MealDBRecipesRepository(private val client: OkHttpClient) : RecipesReposit
   }
 
   override fun search(mealID: String, onSuccess: (Recipe) -> Unit, onFailure: (Exception) -> Unit) {
-    val url = "$mealDBUrl/lookup.php?i=$mealID"
+    val url = "$MEAL_DB_URL/lookup.php?i=$mealID"
     val request =
         Request.Builder().url(url).header(MEAL_DB_USER_AGENT, MEAL_DB_USER_AGENT_VALUE).build()
 
@@ -153,7 +163,7 @@ class MealDBRecipesRepository(private val client: OkHttpClient) : RecipesReposit
       onFailure: (Exception) -> Unit
   ) {
 
-    val url = "$mealDBUrl/filter.php?c=$category"
+    val url = "$MEAL_DB_URL/filter.php?c=$category"
     val request =
         Request.Builder().url(url).header(MEAL_DB_USER_AGENT, MEAL_DB_USER_AGENT_VALUE).build()
 
@@ -182,7 +192,7 @@ class MealDBRecipesRepository(private val client: OkHttpClient) : RecipesReposit
   }
 
   override fun listCategories(onSuccess: (List<String>) -> Unit, onFailure: (Exception) -> Unit) {
-    val url = "$mealDBUrl/categories.php"
+    val url = "$MEAL_DB_URL/categories.php"
     val request =
         Request.Builder().url(url).header(MEAL_DB_USER_AGENT, MEAL_DB_USER_AGENT_VALUE).build()
     client
@@ -214,7 +224,7 @@ class MealDBRecipesRepository(private val client: OkHttpClient) : RecipesReposit
       onSuccess: (List<Recipe>) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    val url = "$mealDBUrl/random.php"
+    val url = "$MEAL_DB_URL/random.php"
     val request =
         Request.Builder().url(url).header(MEAL_DB_USER_AGENT, MEAL_DB_USER_AGENT_VALUE).build()
     client
