@@ -176,7 +176,7 @@ fun RecipeDisplay(
                   painter = painterResource(R.drawable.filter),
                   contentDescription = "filterIcon",
                   modifier =
-                      Modifier.testTag("recipeStar").size(24.dp).clickable {
+                      Modifier.testTag("filter").size(24.dp).clickable {
                         showFilter = !showFilter
                       }, // Use fixed size for the icon
                   tint = starColor)
