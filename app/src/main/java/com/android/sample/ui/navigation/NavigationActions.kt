@@ -6,43 +6,42 @@ import com.android.sample.R
 
 object Route {
   const val AUTH = "Auth"
-  const val MAIN = "Overview"
+  const val SWIPE = "Swipe"
   const val FRIDGE = "Fridge"
   const val SEARCH = "Search"
-  const val ADD_RECIPE = "AddRecipe"
+  const val CREATE_RECIPE = "AddRecipe"
   const val ACCOUNT = "Account"
 }
 
 object Screen {
   const val AUTH = "Auth Screen"
 
-  const val MAIN = "Main Screen"
+  const val SWIPE = "Swipe Screen"
 
   const val FRIDGE = "Fridge Screen"
-  const val INGREDIENT = "Ingredient Screen"
 
   const val SEARCH = "Search Screen"
-  const val RECIPE = "Recipe Screen"
 
-  const val ADD_RECIPE = "AddRecipe Screen"
+  const val CREATE_RECIPE = "AddRecipe Screen"
 
   const val ACCOUNT = "Account Screen"
+  const val OVERVIEW_RECIPE = "Overview Recipe Screen"
 }
 
 data class TopLevelDestination(val route: String, val iconId: Int, val textId: String)
 
 // TODO: Find good icons for each Route
 object TopLevelDestinations {
-  val MAIN = TopLevelDestination(Route.MAIN, R.drawable.mainpageicon, "Main")
+  val SWIPE = TopLevelDestination(Route.SWIPE, R.drawable.mainpageicon, "Swipe")
   val FRIDGE = TopLevelDestination(Route.FRIDGE, R.drawable.fridgeicon, "Fridge")
   val SEARCH = TopLevelDestination(Route.SEARCH, R.drawable.searchicon, "Search")
-  val ADD_RECIPE = TopLevelDestination(Route.ADD_RECIPE, R.drawable.addicon, "Add Recipe")
-  val ACCOUNT = TopLevelDestination(Route.ACCOUNT, R.drawable.downloadicon, "Account")
+  val ADD_RECIPE = TopLevelDestination(Route.CREATE_RECIPE, R.drawable.addicon, "Add Recipe")
+  val ACCOUNT = TopLevelDestination(Route.ACCOUNT, R.drawable.account, "Account")
 }
 
 val LIST_TOP_LEVEL_DESTINATIONS =
     listOf(
-        TopLevelDestinations.MAIN,
+        TopLevelDestinations.SWIPE,
         TopLevelDestinations.SEARCH,
         TopLevelDestinations.ADD_RECIPE,
         TopLevelDestinations.FRIDGE,
