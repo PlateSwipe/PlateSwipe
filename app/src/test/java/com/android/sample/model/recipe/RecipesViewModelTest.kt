@@ -26,7 +26,7 @@ import org.mockito.kotlin.any
 
 /** Unit tests for RecipesViewModel. */
 class RecipesViewModelTest {
-  private lateinit var recipeRepository: RecipeRepository
+  private lateinit var recipeRepository: RecipesRepository
   private lateinit var recipesViewModel: RecipesViewModel
 
   // Dummy recipes for testing
@@ -60,7 +60,7 @@ class RecipesViewModelTest {
     Dispatchers.setMain(testDispatcher)
 
     // Mock the RecipeRepository
-    recipeRepository = mock(RecipeRepository::class.java)
+    recipeRepository = mock(RecipesRepository::class.java)
     // Initialize the RecipesViewModel with the mocked repository
     recipesViewModel = RecipesViewModel(recipeRepository)
   }

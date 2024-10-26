@@ -15,7 +15,7 @@ import okhttp3.OkHttpClient
  *
  * @property repository The repository used to fetch recipe data.
  */
-class RecipesViewModel(private val repository: RecipeRepository) : ViewModel() {
+class RecipesViewModel(private val repository: RecipesRepository) : ViewModel() {
 
   // StateFlow to monitor the list of recipes
   private val _recipes = MutableStateFlow<List<Recipe>>(emptyList())
