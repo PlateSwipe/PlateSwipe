@@ -177,6 +177,7 @@ fun RecipeDisplay(
                   contentDescription = "filterIcon",
                   modifier =
                       Modifier.testTag("filter").size(24.dp).clickable {
+                        navigationActions.navigateTo(Screen.FILTER)
                         showFilter = !showFilter
                       }, // Use fixed size for the icon
                   tint = starColor)
