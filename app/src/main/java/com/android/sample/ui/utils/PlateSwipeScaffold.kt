@@ -19,7 +19,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.android.sample.R
 import com.android.sample.ui.navigation.BottomNavigationMenu
 import com.android.sample.ui.navigation.LIST_TOP_LEVEL_DESTINATIONS
 import com.android.sample.ui.navigation.NavigationActions
@@ -79,7 +81,7 @@ private fun PlateSwipeTopBar(navigationActions: NavigationActions, showBackArrow
         }
 
         Text(
-            text = "PlateSwipe",
+            text = stringResource(R.string.plate_swipe_title),
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.testTag("topBarTitle"),
             color = MaterialTheme.colorScheme.onPrimary)
