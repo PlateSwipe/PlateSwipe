@@ -1,6 +1,6 @@
 package com.android.sample.model.recipe
 
-import kotlin.text.Typography.times
+import com.android.sample.model.filter.Difficulty
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -12,6 +12,7 @@ import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertThrows
 import org.junit.Before
@@ -26,7 +27,7 @@ import org.mockito.kotlin.any
 
 /** Unit tests for RecipesViewModel. */
 class RecipesViewModelTest {
-  private lateinit var recipeRepository: RecipesRepository
+  private lateinit var mockRecipeRepository: RecipesRepository
   private lateinit var recipesViewModel: RecipesViewModel
 
   // Dummy recipes for testing
@@ -53,6 +54,7 @@ class RecipesViewModelTest {
               ingredientsAndMeasurements =
                   listOf(Pair("Chicken", "1 pound"), Pair("Curry powder", "2 tbsp"))))
 
+  @OptIn(ExperimentalCoroutinesApi::class)
   @Before
   fun setUp() {
     // Set the main dispatcher for tests
@@ -60,11 +62,12 @@ class RecipesViewModelTest {
     Dispatchers.setMain(testDispatcher)
 
     // Mock the RecipeRepository
-    recipeRepository = mock(RecipesRepository::class.java)
+    mockRecipeRepository = mock(RecipesRepository::class.java)
     // Initialize the RecipesViewModel with the mocked repository
-    recipesViewModel = RecipesViewModel(recipeRepository)
+    recipesViewModel = RecipesViewModel(mockRecipeRepository)
   }
 
+  @OptIn(ExperimentalCoroutinesApi::class)
   @After
   fun tearDown() {
     // Reset the main dispatcher after tests
@@ -74,7 +77,7 @@ class RecipesViewModelTest {
   @Test
   fun initialStateIsCorrect() {
     // Assert initial state is correct
-    assertThat(recipesViewModel.recipes.value, `is`(emptyList<Recipe>()))
+    assertThat(recipesViewModel.recipes.value, `is`(emptyList()))
     assertThat(recipesViewModel.loading.value, `is`(false))
   }
 
@@ -82,13 +85,15 @@ class RecipesViewModelTest {
   @Test
   fun initFetchesInitialRecipeAndUpdatesCurrentRecipe() = runTest {
     // Arrange: Mock the repository to return dummy recipes
-    `when`(recipeRepository.random(any(), any(), any())).thenAnswer { invocation ->
-      val onSuccess = invocation.arguments[1] as (List<Recipe>) -> Unit
-      onSuccess(dummyRecipes) // Return the dummy recipes
-    }
 
+    // Setup the mock to trigger onSuccess
+    `when`(mockRecipeRepository.random(any(), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.getArgument<(List<Recipe>) -> Unit>(1)
+      onSuccess(dummyRecipes)
+      null
+    }
     // Act: Initialize the ViewModel
-    recipesViewModel = RecipesViewModel(recipeRepository)
+    recipesViewModel = RecipesViewModel(mockRecipeRepository)
 
     // Wait for the coroutine to complete
     advanceUntilIdle()
@@ -103,9 +108,10 @@ class RecipesViewModelTest {
   @Test
   fun fetchRandomRecipesUpdatesState() {
     // Simulate the behavior of the repository
-    `when`(recipeRepository.random(any(), any(), any())).thenAnswer { invocation ->
-      val onSuccess = invocation.arguments[1] as (List<Recipe>) -> Unit
-      onSuccess(dummyRecipes) // Return the dummy recipes
+    `when`(mockRecipeRepository.random(any(), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.getArgument<(List<Recipe>) -> Unit>(1)
+      onSuccess(dummyRecipes)
+      null
     }
 
     // Act
@@ -127,7 +133,7 @@ class RecipesViewModelTest {
     recipesViewModel.fetchRandomRecipes(numberOfRecipes)
 
     // Assert
-    verify(recipeRepository)
+    verify(mockRecipeRepository)
         .random(
             eq(numberOfRecipes),
             any(),
@@ -137,9 +143,10 @@ class RecipesViewModelTest {
   @Test
   fun fetchRandomRecipesHandlesFailure() {
     // Simulate the failure of the repository
-    `when`(recipeRepository.random(any(), any(), any())).thenAnswer { invocation ->
-      val onFailure = invocation.arguments[2] as (Exception) -> Unit
+    `when`(mockRecipeRepository.random(any(), any(), any())).thenAnswer { invocation ->
+      val onFailure = invocation.getArgument<(Throwable) -> Unit>(2)
       onFailure(Exception("Network error")) // Simulate a failure
+      null
     }
 
     // Act
@@ -148,8 +155,7 @@ class RecipesViewModelTest {
     // Assert
     assertThat(recipesViewModel.loading.value, `is`(false)) // Check loading is false after fetch
     assertThat(
-        recipesViewModel.recipes.value,
-        `is`(emptyList<Recipe>())) // Ensure no recipes are set on failure
+        recipesViewModel.recipes.value, `is`(emptyList())) // Ensure no recipes are set on failure
   }
 
   @Test
@@ -168,9 +174,10 @@ class RecipesViewModelTest {
   @Test
   fun fetchRandomRecipesAppendsToExistingList() {
     // Arrange: Mock the repository to return dummy recipes
-    `when`(recipeRepository.random(any(), any(), any())).thenAnswer { invocation ->
-      val onSuccess = invocation.arguments[1] as (List<Recipe>) -> Unit
-      onSuccess(dummyRecipes) // Return the dummy recipes
+    `when`(mockRecipeRepository.random(any(), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.getArgument<(List<Recipe>) -> Unit>(1)
+      onSuccess(dummyRecipes)
+      null
     }
 
     // Act: Initially fetch 2 dummy recipes
@@ -234,13 +241,14 @@ class RecipesViewModelTest {
   @Test
   fun nextRecipeStateFlowUpdatesCorrectly() = runTest {
     // Arrange: Mock the repository to return dummy recipes
-    `when`(recipeRepository.random(any(), any(), any())).thenAnswer { invocation ->
-      val onSuccess = invocation.arguments[1] as (List<Recipe>) -> Unit
-      onSuccess(dummyRecipes) // Return the dummy recipes
+    `when`(mockRecipeRepository.random(any(), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.getArgument<(List<Recipe>) -> Unit>(1)
+      onSuccess(dummyRecipes)
+      null
     }
 
     // Act: Initialize the ViewModel and fetch recipes
-    recipesViewModel = RecipesViewModel(recipeRepository)
+    recipesViewModel = RecipesViewModel(mockRecipeRepository)
     advanceUntilIdle()
 
     // Assert: Verify that the next recipe is set correctly
@@ -254,13 +262,14 @@ class RecipesViewModelTest {
   @Test
   fun updateCurrentRecipeUpdatesNextRecipe() = runTest {
     // Arrange: Mock the repository to return dummy recipes
-    `when`(recipeRepository.random(any(), any(), any())).thenAnswer { invocation ->
-      val onSuccess = invocation.arguments[1] as (List<Recipe>) -> Unit
-      onSuccess(dummyRecipes) // Return the dummy recipes
+    `when`(mockRecipeRepository.random(any(), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.getArgument<(List<Recipe>) -> Unit>(1)
+      onSuccess(dummyRecipes)
+      null
     }
 
     // Act: Initialize the ViewModel and fetch recipes
-    recipesViewModel = RecipesViewModel(recipeRepository)
+    recipesViewModel = RecipesViewModel(mockRecipeRepository)
     advanceUntilIdle()
 
     // Act: Update the current recipe
@@ -290,13 +299,13 @@ class RecipesViewModelTest {
                 ingredientsAndMeasurements =
                     listOf(Pair("Beef", "1 pound"), Pair("Sour cream", "1 cup")))
 
-    `when`(recipeRepository.random(any(), any(), any())).thenAnswer { invocation ->
-      val onSuccess = invocation.arguments[1] as (List<Recipe>) -> Unit
-      onSuccess(extendedDummyRecipes) // Return the extended dummy recipes
+    `when`(mockRecipeRepository.random(any(), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.getArgument<(List<Recipe>) -> Unit>(1)
+      onSuccess(extendedDummyRecipes)
     }
 
     // Act: Initialize the ViewModel and fetch recipes
-    recipesViewModel = RecipesViewModel(recipeRepository)
+    recipesViewModel = RecipesViewModel(mockRecipeRepository)
     advanceUntilIdle()
 
     // Print the list of recipes
@@ -321,13 +330,14 @@ class RecipesViewModelTest {
   @Test
   fun nextRecipeFetchesNewRecipesWhenThreeLeft() = runTest {
     // Arrange: Mock the repository to return dummy recipes
-    `when`(recipeRepository.random(any(), any(), any())).thenAnswer { invocation ->
-      val onSuccess = invocation.arguments[1] as (List<Recipe>) -> Unit
-      onSuccess(dummyRecipes) // Return the dummy recipes
+    `when`(mockRecipeRepository.random(any(), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.getArgument<(List<Recipe>) -> Unit>(1)
+      onSuccess(dummyRecipes)
+      null
     }
 
     // Spy on the RecipesViewModel
-    val spyViewModel = spy(RecipesViewModel(recipeRepository))
+    val spyViewModel = spy(RecipesViewModel(mockRecipeRepository))
 
     // Set the first recipe as the current recipe
     spyViewModel.updateCurrentRecipe(dummyRecipes[0])
@@ -370,13 +380,14 @@ class RecipesViewModelTest {
                     ingredientsAndMeasurements =
                         listOf(Pair("Chicken", "1 kg"), Pair("Curry powder", "2 tbsp"))))
 
-    `when`(recipeRepository.random(any(), any(), any())).thenAnswer { invocation ->
-      val onSuccess = invocation.arguments[1] as (List<Recipe>) -> Unit
-      onSuccess(extendedDummyRecipes) // Return the extended dummy recipes
+    `when`(mockRecipeRepository.random(any(), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.getArgument<(List<Recipe>) -> Unit>(1)
+      onSuccess(dummyRecipes)
+      null
     }
 
     // Spy on the RecipesViewModel
-    val spyViewModel = spy(RecipesViewModel(recipeRepository))
+    val spyViewModel = spy(RecipesViewModel(mockRecipeRepository))
 
     // Set the first recipe as the current recipe
     spyViewModel.updateCurrentRecipe(extendedDummyRecipes[0])
@@ -390,14 +401,14 @@ class RecipesViewModelTest {
     verify(spyViewModel, times(1)).fetchRandomRecipes(any())
   }
 
-  @OptIn(ExperimentalCoroutinesApi::class)
   @Test
   fun searchFunctionCallsRepositoryAndHandlesSuccess() = runTest {
     // Arrange: Mock the repository to return a dummy recipe
     val dummyRecipe = dummyRecipes[0]
-    `when`(recipeRepository.search(any(), any(), any())).thenAnswer { invocation ->
-      val onSuccess = invocation.arguments[1] as (Recipe) -> Unit
-      onSuccess(dummyRecipe) // Return the dummy recipe
+    `when`(mockRecipeRepository.search(any(), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.getArgument<(Recipe) -> Unit>(1)
+      onSuccess(dummyRecipe)
+      null
     }
 
     // Act: Call the search method
@@ -409,14 +420,14 @@ class RecipesViewModelTest {
     assertThat(result, `is`(dummyRecipe))
   }
 
-  @OptIn(ExperimentalCoroutinesApi::class)
   @Test
   fun searchFunctionCallsRepositoryAndHandlesFailure() = runTest {
     // Arrange: Mock the repository to simulate a failure
     val exception = Exception("Network error")
-    `when`(recipeRepository.search(any(), any(), any())).thenAnswer { invocation ->
-      val onFailure = invocation.arguments[2] as (Exception) -> Unit
-      onFailure(exception) // Simulate a failure
+    `when`(mockRecipeRepository.search(any(), any(), any())).thenAnswer { invocation ->
+      val onFailure = invocation.getArgument<(Throwable) -> Unit>(2)
+      onFailure(exception)
+      null
     }
 
     // Act: Call the search method
@@ -426,5 +437,45 @@ class RecipesViewModelTest {
     // Assert: Verify that the onFailure callback is invoked with the correct exception
     assertNotNull(error)
     assertThat(error?.message, `is`("Network error"))
+  }
+
+  /** Tests for the filter difficulty functionality. */
+  @Test
+  fun `test updateDifficulty updates the difficulty correctly`() {
+    val newDifficulty = Difficulty.Medium
+    recipesViewModel.updateDifficulty(newDifficulty)
+
+    assertEquals(newDifficulty, recipesViewModel.filter.value.difficulty)
+  }
+
+  /** Tests for the filter price range functionality. */
+  @Test
+  fun `test updatePriceRange updates the price range correctly`() {
+    val newMin = 10f
+    val newMax = 50f
+    recipesViewModel.updatePriceRange(newMin, newMax)
+
+    assertEquals(newMin, recipesViewModel.filter.value.priceRange.min, 0.001f)
+    assertEquals(newMax, recipesViewModel.filter.value.priceRange.max, 0.001f)
+  }
+
+  /** Tests for the filter time range functionality. */
+  @Test
+  fun `test updateTimeRange updates the time range correctly`() {
+    val newMin = 1f
+    val newMax = 5f
+    recipesViewModel.updateTimeRange(newMin, newMax)
+
+    assertEquals(newMin, recipesViewModel.filter.value.timeRange.min, 0.001f)
+    assertEquals(newMax, recipesViewModel.filter.value.timeRange.max, 0.001f)
+  }
+
+  /** Tests for the filter category functionality. */
+  @Test
+  fun `test updateCategory updates the category correctly`() {
+    val newCategory = "Dessert"
+    recipesViewModel.updateCategory(newCategory)
+
+    assertEquals(newCategory, recipesViewModel.filter.value.category)
   }
 }

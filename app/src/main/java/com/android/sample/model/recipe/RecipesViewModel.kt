@@ -3,6 +3,8 @@ package com.android.sample.model.recipe
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.android.sample.model.filter.Difficulty
+import com.android.sample.model.filter.Filter
 import com.android.sample.resources.C.Tag.MINIMUM_RECIPES_BEFORE_FETCH
 import com.android.sample.resources.C.Tag.NUMBER_RECIPES_TO_FETCH
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,6 +38,10 @@ class RecipesViewModel(private val repository: RecipesRepository) : ViewModel() 
   val nextRecipe: StateFlow<Recipe?>
     get() = _nextRecipe
 
+  private val _filter = MutableStateFlow(Filter())
+  val filter: StateFlow<Filter>
+    get() = _filter
+
   init {
     viewModelScope.launch {
       fetchRandomRecipes(NUMBER_RECIPES_TO_FETCH)
@@ -47,6 +53,44 @@ class RecipesViewModel(private val repository: RecipesRepository) : ViewModel() 
         }
       }
     }
+  }
+
+  /**
+   * Updates the difficulty filter.
+   *
+   * @param difficulty The difficulty to filter by.
+   */
+  fun updateDifficulty(difficulty: Difficulty) {
+    _filter.value.difficulty = difficulty
+  }
+
+  /**
+   * Updates the price range filter.
+   *
+   * @param min The minimum price.
+   * @param max The maximum price.
+   */
+  fun updatePriceRange(min: Float, max: Float) {
+    _filter.value.priceRange.update(min, max)
+  }
+
+  /**
+   * Updates the time range filter.
+   *
+   * @param min The minimum time.
+   * @param max The maximum time.
+   */
+  fun updateTimeRange(min: Float, max: Float) {
+    _filter.value.timeRange.update(min, max)
+  }
+
+  /**
+   * Updates the category filter.
+   *
+   * @param category The category to filter by.
+   */
+  fun updateCategory(category: String) {
+    _filter.value.category = category
   }
 
   /**
