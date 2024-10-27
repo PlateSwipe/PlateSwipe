@@ -64,7 +64,7 @@ class EndToEndTest {
     verify(navigationActions).navigateTo(TopLevelDestinations.FRIDGE)
 
     // Click on Create Recipe Icon
-    composeTestRule.onNodeWithTag("tabAdd Recipe").assertExists().performClick()
+    composeTestRule.onNodeWithTag("tabAddRecipe").assertExists().performClick()
     verify(navigationActions).navigateTo(TopLevelDestinations.ADD_RECIPE)
 
     // Click on Search Icon
@@ -94,7 +94,7 @@ class EndToEndTest {
     composeTestRule.onNodeWithTag("tabSearch").assertExists().performClick()
     composeTestRule.onNodeWithText("Search Recipe Screen").assertExists()
 
-    composeTestRule.onNodeWithTag("tabAdd Recipe").assertExists().performClick()
+    composeTestRule.onNodeWithTag("tabAddRecipe").assertExists().performClick()
     composeTestRule.onNodeWithText("Create Recipe Screen").assertExists()
   }
 }
