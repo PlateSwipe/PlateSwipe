@@ -10,4 +10,16 @@
     <dimen name="paddingBasic">16dp</dimen>
     <dimen name="star_size">150dp</dimen>
 
+    //RecipeNameScreen
+    <string name="create_your_recipe">Create your recipe</string>
+    <string name="create_recipe_description">Create a recipe that others can discover and enjoy. Start by giving your dish a name!</string>
+    <string name="recipe_name_label">Name of the recipe</string>
+    <string name="recipe_name_hint">Choose a catchy title that reflects your dish</string>
+    <string name="recipe_name_error">Please enter a recipe name</string>
+    <string name="next_step">Next Step</string>
+
+    //ChefImage
+    <string name="chef_standing_description">Chef standing</string>
+
+
 </resources>

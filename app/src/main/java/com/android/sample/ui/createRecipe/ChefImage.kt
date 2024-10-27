@@ -13,6 +13,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.android.sample.R
+import com.android.sample.resources.C.Tag.CHEF_IMAGE_CORNER_RADIUS
+import com.android.sample.resources.C.Tag.CHEF_IMAGE_HEIGHT
+import com.android.sample.resources.C.Tag.CHEF_IMAGE_WIDTH
 
 @Composable
 fun ChefImage(modifier: Modifier = Modifier, offsetX: Dp = 0.dp, offsetY: Dp = 0.dp) {
@@ -21,9 +24,9 @@ fun ChefImage(modifier: Modifier = Modifier, offsetX: Dp = 0.dp, offsetY: Dp = 0
       contentDescription = "Chef standing",
       modifier =
           modifier
-              .width(250.dp)
-              .height(300.dp)
+              .width(CHEF_IMAGE_WIDTH)
+              .height(CHEF_IMAGE_HEIGHT)
               .offset(x = offsetX, y = offsetY)
-              .clip(RoundedCornerShape(16.dp)),
+              .clip(RoundedCornerShape(CHEF_IMAGE_CORNER_RADIUS)),
       contentScale = ContentScale.FillBounds)
 }

@@ -20,19 +20,14 @@ class RecipeNameScreenTest {
       RecipeNameScreen(navigationActions = mockNavigationActions, currentStep = 0)
     }
 
-    // Wait for the screen to load fully
     composeTestRule.waitForIdle()
 
-    // Assert the main title is displayed
     composeTestRule.onNodeWithTag("RecipeTitle").assertExists().assertIsDisplayed()
 
-    // Assert the subtitle is displayed
     composeTestRule.onNodeWithTag("RecipeSubtitle").assertExists().assertIsDisplayed()
 
-    // Assert the text field is displayed
     composeTestRule.onNodeWithTag("recipeNameTextField").assertExists().assertIsDisplayed()
 
-    // Add time to ensure "Next Step" button is fully loaded, then assert it is displayed
     composeTestRule.mainClock.advanceTimeBy(2000)
     composeTestRule.onNodeWithTag("NextStepButton").assertExists().assertIsDisplayed()
   }
