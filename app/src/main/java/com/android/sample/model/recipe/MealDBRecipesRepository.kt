@@ -3,6 +3,7 @@ package com.android.sample.model.recipe
 import com.android.sample.resources.C.Tag.MAXIMUM_RECIPES_TO_FETCH_MEAL_DB
 import com.android.sample.resources.C.Tag.MAX_NB_OF_INGREDIENTS_IN_A_RECIPE_MEAL_DB
 import com.android.sample.resources.C.Tag.MEAL_DB_ARRAY_NAME
+import com.android.sample.resources.C.Tag.MEAL_DB_CATEGORY_ARRAY
 import com.android.sample.resources.C.Tag.MEAL_DB_MEAL_AREA
 import com.android.sample.resources.C.Tag.MEAL_DB_MEAL_CATEGORY
 import com.android.sample.resources.C.Tag.MEAL_DB_MEAL_ID
@@ -78,7 +79,7 @@ class MealDBRecipesRepository(private val client: OkHttpClient) : RecipesReposit
    */
   private fun parseMealDBJsonToCategory(json: JSONObject): List<String> {
     val parsedListOfCategories = mutableListOf<String>()
-    val listOfCategories = json.getJSONArray(MEAL_DB_ARRAY_NAME)
+    val listOfCategories = json.getJSONArray(MEAL_DB_CATEGORY_ARRAY)
     for (i in 0 until listOfCategories.length()) {
       val category = listOfCategories.getJSONObject(i)
       val strCategory = category.getString(MEAL_DB_MEAL_CATEGORY)
@@ -190,7 +191,7 @@ class MealDBRecipesRepository(private val client: OkHttpClient) : RecipesReposit
   }
 
   override fun listCategories(onSuccess: (List<String>) -> Unit, onFailure: (Exception) -> Unit) {
-    val url = "$MEAL_DB_URL/categories.php"
+    val url = "https://www.themealdb.com/api/json/v1/1/categories.php"
     val request =
         Request.Builder().url(url).header(MEAL_DB_USER_AGENT, MEAL_DB_USER_AGENT_VALUE).build()
     client

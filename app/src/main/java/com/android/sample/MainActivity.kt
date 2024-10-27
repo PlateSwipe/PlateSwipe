@@ -67,7 +67,7 @@ fun PlateSwipeApp() {
     ) {
       composable(Screen.SWIPE) { SwipePage(navigationActions, recipesViewModel) }
       composable(Screen.OVERVIEW_RECIPE) { RecipeOverview(navigationActions, recipesViewModel) }
-      composable(Screen.FILTER) { FilterPage(navigationActions) }
+      composable(Screen.FILTER) { FilterPage(navigationActions, recipesViewModel) }
     }
     navigation(
         startDestination = Screen.FRIDGE,

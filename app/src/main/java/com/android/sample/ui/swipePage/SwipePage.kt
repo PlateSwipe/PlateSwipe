@@ -7,6 +7,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -60,6 +61,7 @@ import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import com.android.sample.R
+import com.android.sample.model.filter.Difficulty
 import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C.Tag.END_ANIMATION
@@ -139,6 +141,8 @@ fun RecipeDisplay(
   // Collect the current and next recipe from the ViewModel
   val currentRecipe by recipesViewModel.currentRecipe.collectAsState()
   val nextRecipe by recipesViewModel.nextRecipe.collectAsState()
+  val filter by recipesViewModel.filter.collectAsState()
+
   // Snap back to center when animation is finished
   coroutineScope.launch {
     if (offsetX.value.absoluteValue > END_ANIMATION - 200) {
@@ -182,19 +186,96 @@ fun RecipeDisplay(
                       }, // Use fixed size for the icon
                   tint = starColor)
             }
-        if (showFilter) {
-          var selected by remember { mutableStateOf(false) }
-          InputChip(
-              selected = selected,
-              onClick = { selected = !selected },
-              label = { Text("Dessert") },
-              trailingIcon = {
-                Icon(
-                    Icons.Filled.Close,
-                    contentDescription = "Localized description",
-                    modifier = Modifier.size(InputChipDefaults.IconSize).clickable {})
-              })
-        }
+
+        Row(
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth().weight(1f).horizontalScroll(rememberScrollState())) {
+              // Star Icon (fixed size, no weight needed)
+              var displayTimeRange by remember { mutableStateOf(!filter.timeRange.isLimited()) }
+              var displayPriceRange by remember { mutableStateOf(!filter.priceRange.isLimited()) }
+              var displayDifficulty by remember {
+                mutableStateOf(filter.difficulty != Difficulty.Undefined)
+              }
+              var displayCategory by remember { mutableStateOf(filter.category != null) }
+
+              if (displayTimeRange) {
+                // Display the time range chip
+                InputChip(
+                    selected = false,
+                    onClick = {},
+                    label = {
+                      Text("Time Range: [${filter.timeRange.min}, ${filter.timeRange.max}] min")
+                    },
+                    trailingIcon = {
+                      Icon(
+                          Icons.Filled.Close,
+                          contentDescription = "Time Range",
+                          modifier =
+                              Modifier.size(InputChipDefaults.IconSize).clickable {
+                                displayTimeRange = false
+                              })
+                    })
+
+                Spacer(modifier = Modifier.width(8.dp))
+              }
+              if (displayPriceRange) {
+                // Display the time range chip
+                InputChip(
+                    selected = false,
+                    onClick = {},
+                    label = {
+                      Text("Price Range: [${filter.priceRange.min}, ${filter.priceRange.max}] $")
+                    },
+                    trailingIcon = {
+                      Icon(
+                          Icons.Filled.Close,
+                          contentDescription = "Price Range",
+                          modifier =
+                              Modifier.size(InputChipDefaults.IconSize).clickable {
+                                displayPriceRange = false
+                              })
+                    })
+
+                Spacer(modifier = Modifier.width(8.dp))
+              }
+
+              if (displayDifficulty) {
+                // Display the time range chip
+                InputChip(
+                    selected = false,
+                    onClick = {},
+                    label = { Text("${filter.difficulty}") },
+                    trailingIcon = {
+                      Icon(
+                          Icons.Filled.Close,
+                          contentDescription = "Difficulty",
+                          modifier =
+                              Modifier.size(InputChipDefaults.IconSize).clickable {
+                                displayDifficulty = false
+                              })
+                    })
+
+                Spacer(modifier = Modifier.width(8.dp))
+              }
+
+              if (displayCategory) {
+                // Display the time range chip
+                InputChip(
+                    selected = false,
+                    onClick = {},
+                    label = { Text("${filter.category}") },
+                    trailingIcon = {
+                      Icon(
+                          Icons.Filled.Close,
+                          contentDescription = "Category",
+                          modifier =
+                              Modifier.size(InputChipDefaults.IconSize).clickable {
+                                displayCategory = false
+                              })
+                    })
+              }
+            }
 
         // First Recipe card with image
         Box(modifier = Modifier.weight(15f)) {

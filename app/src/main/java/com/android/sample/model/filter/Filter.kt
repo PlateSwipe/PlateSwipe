@@ -9,7 +9,7 @@ open class Filter(
 )
 
 /** Class to store a range of float values. */
-data class FloatRange(var min: Float, var max: Float) {
+data class FloatRange(var min: Float, var max: Float, var minBorn: Float, var maxBorn: Float) {
   init {
     require(min <= max) { "min should not be greater than max" }
   }
@@ -18,16 +18,21 @@ data class FloatRange(var min: Float, var max: Float) {
     require(0 <= newMin) { "newMin should not be negative" }
     require(0 <= newMax) { "newMax should not be negative" }
     require(newMin <= newMax) { "newMin should not exceed max" }
+    if (minBorn == -1f && maxBorn == -1f) {
+      minBorn = newMin
+      maxBorn = newMax
+    }
+    require(newMin >= minBorn && newMax <= maxBorn) { "newMin and newMax should be within range" }
     min = newMin
     max = newMax
   }
 
   companion object {
-    val TIME_RANGE = FloatRange(-1f, -1f)
-    val PRICE_RANGE = FloatRange(-1f, -1f)
+    val TIME_RANGE = FloatRange(-1f, -1f, -1f, -1f)
+    val PRICE_RANGE = FloatRange(-1f, -1f, -1f, -1f)
   }
 
-  fun isUnbounded() = min.toInt() == -1 && max.toInt() == -1
+  fun isLimited() = min == minBorn && max == maxBorn
 }
 
 /** Enum class to store the difficulty of a recipe. */

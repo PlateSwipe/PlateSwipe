@@ -3,10 +3,8 @@ package com.android.sample.resources
 // Like R, but C
 object C {
   object Tag {
-    const val greeting_robo = "second_screen_greeting"
 
     const val main_screen_container = "main_screen_container"
-    const val second_screen_container = "second_screen_container"
 
     // SwipePage
     const val END_ANIMATION = 1500f
@@ -32,5 +30,6 @@ object C {
     const val MEAL_DB_MEAL_INSTRUCTIONS = "strInstructions"
     const val MEAL_DB_MEAL_INGREDIENT = "strIngredient"
     const val MEAL_DB_MEAL_MEASURE = "strMeasure"
+    const val MEAL_DB_CATEGORY_ARRAY = "categories"
   }
 }

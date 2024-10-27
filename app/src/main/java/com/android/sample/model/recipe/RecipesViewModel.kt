@@ -1,5 +1,6 @@
 package com.android.sample.model.recipe
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -42,8 +43,13 @@ class RecipesViewModel(private val repository: RecipesRepository) : ViewModel() 
   val filter: StateFlow<Filter>
     get() = _filter
 
+  private val _categories = MutableStateFlow<List<String>>(emptyList())
+  val categories: StateFlow<List<String>>
+    get() = _categories
+
   init {
     viewModelScope.launch {
+      getCategoryList()
       fetchRandomRecipes(NUMBER_RECIPES_TO_FETCH)
 
       _loading.collect { isLoading ->
@@ -53,6 +59,14 @@ class RecipesViewModel(private val repository: RecipesRepository) : ViewModel() 
         }
       }
     }
+  }
+
+  private fun getCategoryList() {
+    repository.listCategories(
+        onSuccess = { categories -> _categories.value = categories },
+        onFailure = { exception ->
+          Log.e("RecipesViewModel", "Error fetching categories", exception)
+        })
   }
 
   /**
@@ -90,7 +104,16 @@ class RecipesViewModel(private val repository: RecipesRepository) : ViewModel() 
    * @param category The category to filter by.
    */
   fun updateCategory(category: String) {
-    _filter.value.category = category
+    viewModelScope.launch {
+      _filter.value.category = category
+      fetchRandomRecipes(NUMBER_RECIPES_TO_FETCH)
+      _loading.collect { isLoading ->
+        if (!isLoading) {
+          updateCurrentRecipe(_recipes.value.first())
+          return@collect
+        }
+      }
+    }
   }
 
   /**
@@ -101,6 +124,15 @@ class RecipesViewModel(private val repository: RecipesRepository) : ViewModel() 
   fun fetchRandomRecipes(numberOfRecipes: Int) {
     require(numberOfRecipes >= 1) { "Number of fetched recipes must be at least 1" }
     _loading.value = true // Set loading to true while fetching
+    /*if (_filter.value.category != null) {
+       repository.searchByCategory(_filter.value.category!!, onSuccess = { recipes ->
+           _recipes.value = recipes
+           _loading.value = false
+       }, onFailure = { exception ->
+           _loading.value = false
+           Log.e("RecipesViewModel", "Error fetching recipes", exception)
+       })
+    }*/
     repository.random(
         nbOfElements = numberOfRecipes,
         onSuccess = { randomRecipes ->
@@ -109,7 +141,7 @@ class RecipesViewModel(private val repository: RecipesRepository) : ViewModel() 
         },
         onFailure = { exception ->
           _loading.value = false // Set loading to false on failure
-          // Handle error (e.g., log it or show a message)
+          Log.e("RecipesViewModel", "Error fetching recipes", exception)
         })
   }
 
@@ -162,7 +194,7 @@ class RecipesViewModel(private val repository: RecipesRepository) : ViewModel() 
    * This method assumes that _currentRecipe is already set and valid. It should be called after
    * nextRecipe() to ensure the next recipe is updated correctly.
    */
-  fun updateNextRecipe() {
+  private fun updateNextRecipe() {
     val currentRecipes = _recipes.value
     if (currentRecipes.isNotEmpty()) {
       val nextRecipeIndex = (currentRecipes.indexOf(_currentRecipe.value) + 1) % currentRecipes.size
