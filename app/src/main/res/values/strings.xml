@@ -9,6 +9,8 @@
 
     <string name="plate_swipe_title">Plate Swipe</string>
 
+    <string name="search_bar_place_holder">Search</string>
+
     <dimen name="paddingBasic">16dp</dimen>
     <dimen name="star_size">150dp</dimen>
 

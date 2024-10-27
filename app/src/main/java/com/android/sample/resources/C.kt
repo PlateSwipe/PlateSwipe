@@ -19,5 +19,9 @@ object C {
 
     // RecipeList
     const val RECIPE_LIST_CORNER_RADIUS = 12
+
+    // SearchBar
+    const val SEARCH_BAR_PLACE_HOLDER = "Search"
+    const val SEARCH_BAR_CORNER_RADIUS = 16
   }
 }

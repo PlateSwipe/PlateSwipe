@@ -17,9 +17,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.android.sample.R
+import com.android.sample.resources.C.Tag.SEARCH_BAR_CORNER_RADIUS
 
 /**
  * A search bar that allows users to search for recipes.
@@ -32,8 +34,6 @@ import androidx.compose.ui.unit.dp
 fun SearchBar(modifier: Modifier = Modifier, onValueChange: (String) -> Unit = {}) {
   var searchText by remember { mutableStateOf("") }
 
-  val cornerEdgeRadius: Dp = 16.dp
-
   TextField(
       value = searchText,
       onValueChange = {
@@ -45,18 +45,18 @@ fun SearchBar(modifier: Modifier = Modifier, onValueChange: (String) -> Unit = {
               .testTag("searchBar")
               .shadow(
                   elevation = 8.dp,
-                  shape = RoundedCornerShape(cornerEdgeRadius),
+                  shape = RoundedCornerShape(SEARCH_BAR_CORNER_RADIUS.dp),
               ),
-      shape = RoundedCornerShape(cornerEdgeRadius),
+      shape = RoundedCornerShape(SEARCH_BAR_CORNER_RADIUS.dp),
       leadingIcon = {
         Icon(
             imageVector = Icons.Filled.Search,
-            contentDescription = "search",
+            contentDescription = "searchIcon",
             tint = MaterialTheme.colorScheme.onPrimary)
       },
       placeholder = {
         Text(
-            text = "Search",
+            text = stringResource(R.string.search_bar_place_holder),
             color = MaterialTheme.colorScheme.onPrimary,
             style = MaterialTheme.typography.bodyMedium)
       },
