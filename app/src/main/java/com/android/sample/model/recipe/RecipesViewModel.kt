@@ -15,7 +15,7 @@ import okhttp3.OkHttpClient
  *
  * @property repository The repository used to fetch recipe data.
  */
-class RecipesViewModel(private val repository: RecipeRepository) : ViewModel() {
+class RecipesViewModel(private val repository: RecipesRepository) : ViewModel() {
 
   // StateFlow to monitor the list of recipes
   private val _recipes = MutableStateFlow<List<Recipe>>(emptyList())
@@ -128,13 +128,27 @@ class RecipesViewModel(private val repository: RecipeRepository) : ViewModel() {
     }
   }
 
+  /**
+   * Searches for a recipe by its meal ID.
+   *
+   * @param mealID The ID of the meal to search for.
+   * @param onSuccess Callback to be invoked when the search is successful.
+   * @param onFailure Callback to be invoked when the search fails.
+   */
+  fun search(mealID: String, onSuccess: (Recipe) -> Unit, onFailure: (Exception) -> Unit) {
+    repository.search(
+        mealID = mealID,
+        onSuccess = { recipe -> onSuccess(recipe) },
+        onFailure = { exception -> onFailure(exception) })
+  }
+
   companion object {
     val Factory: ViewModelProvider.Factory =
         object : ViewModelProvider.Factory {
           @Suppress("UNCHECKED_CAST")
           override fun <T : ViewModel> create(modelClass: Class<T>): T {
             val okHttpClient = OkHttpClient()
-            val repository = MealDBRecipeRepository(okHttpClient)
+            val repository = MealDBRecipesRepository(okHttpClient)
             return RecipesViewModel(repository) as T
           }
         }
