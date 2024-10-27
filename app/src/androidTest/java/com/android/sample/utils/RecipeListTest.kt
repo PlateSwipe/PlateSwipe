@@ -1,14 +1,17 @@
 package com.android.sample.utils
 
-import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.utils.RecipeList
+import com.android.sample.ui.utils.TopCornerLikeButton
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -88,19 +91,26 @@ class RecipeListTest {
 
   @Test
   fun testCorrectlyShowsList() {
-    composeTestRule.setContent { RecipeList(recipesList, {}) }
-
-    for (recipe in recipesList) {
-      composeTestRule
-          .onNodeWithTag("recipeCard${recipe.idMeal}", useUnmergedTree = true)
-          .assertIsDisplayed()
-      composeTestRule
-          .onNodeWithTag("recipeTitle${recipe.idMeal}", useUnmergedTree = true)
-          .assertTextEquals(recipe.strMeal)
-      composeTestRule
-          .onNodeWithTag("recipeImage${recipe.idMeal}", useUnmergedTree = true)
-          .assertIsDisplayed()
+    composeTestRule.setContent {
+      RecipeList(
+          modifier = Modifier.fillMaxSize(),
+          list = recipesList,
+          onRecipeSelected = {},
+          topCornerButton = { recipe -> TopCornerLikeButton(recipe = recipe) })
     }
+
+    composeTestRule
+        .onAllNodesWithTag("recipeCard", useUnmergedTree = true)
+        .assertCountEquals(recipesList.count())
+    composeTestRule
+        .onAllNodesWithTag("recipeTitle", useUnmergedTree = true)
+        .assertCountEquals(recipesList.count())
+    composeTestRule
+        .onAllNodesWithTag("recipeImage", useUnmergedTree = true)
+        .assertCountEquals(recipesList.count())
+    composeTestRule
+        .onAllNodesWithTag("recipeFavoriteIcon", useUnmergedTree = true)
+        .assertCountEquals(recipesList.count())
   }
 
   @Test
@@ -112,11 +122,11 @@ class RecipeListTest {
       selected = true
     }
 
-    composeTestRule.setContent { RecipeList(listOf(testRecipe), onRecipeSelected) }
+    composeTestRule.setContent {
+      RecipeList(listOf(testRecipe), onRecipeSelected = onRecipeSelected)
+    }
 
-    composeTestRule
-        .onNodeWithTag("recipeCard${testRecipe.idMeal}", useUnmergedTree = true)
-        .performClick()
+    composeTestRule.onNodeWithTag("recipeCard", useUnmergedTree = true).performClick()
     composeTestRule.waitForIdle()
     assert(selected)
   }

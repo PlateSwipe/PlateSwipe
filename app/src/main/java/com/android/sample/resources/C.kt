@@ -16,5 +16,8 @@ object C {
     // RecipesViewModel
     const val MINIMUM_RECIPES_BEFORE_FETCH = 3
     const val NUMBER_RECIPES_TO_FETCH = 2
+
+    // RecipeList
+    const val RECIPE_LIST_CORNER_RADIUS = 12
   }
 }

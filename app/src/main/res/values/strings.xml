@@ -7,6 +7,8 @@
     <string name="rate">4.5</string>
     <string name="star_rate_description">Star rate</string>
 
+    <string name="plate_swipe_title">Plate Swipe</string>
+
     <dimen name="paddingBasic">16dp</dimen>
     <dimen name="star_size">150dp</dimen>
 
