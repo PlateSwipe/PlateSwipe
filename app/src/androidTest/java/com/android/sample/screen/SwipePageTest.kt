@@ -10,7 +10,7 @@ import androidx.compose.ui.test.swipeRight
 import androidx.test.espresso.intent.Intents
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.sample.model.recipe.Recipe
-import com.android.sample.model.recipe.RecipeRepository
+import com.android.sample.model.recipe.RecipesRepository
 import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
@@ -35,7 +35,7 @@ import org.mockito.kotlin.any
 @RunWith(AndroidJUnit4::class)
 class SwipePageTest : TestCase() {
   private lateinit var mockNavigationActions: NavigationActions
-  private lateinit var mockRepository: RecipeRepository
+  private lateinit var mockRepository: RecipesRepository
   private lateinit var recipesViewModel: RecipesViewModel
 
   private val recipe1 =
@@ -65,7 +65,7 @@ class SwipePageTest : TestCase() {
   @Before
   fun setUp() = runTest {
     mockNavigationActions = mock(NavigationActions::class.java)
-    mockRepository = mock(RecipeRepository::class.java)
+    mockRepository = mock(RecipesRepository::class.java)
 
     // Setup the mock to trigger onSuccess
     `when`(mockRepository.random(any(), any(), any())).thenAnswer { invocation ->
