@@ -52,7 +52,8 @@ fun RecipeNameScreen(
                           color = Color.Black,
                           letterSpacing = 0.32.sp,
                       ),
-                  modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp),
+                  modifier =
+                      Modifier.fillMaxWidth().padding(horizontal = 32.dp).testTag("RecipeTitle"),
                   textAlign = TextAlign.Center)
 
               Spacer(modifier = Modifier.height(10.dp))
@@ -70,7 +71,11 @@ fun RecipeNameScreen(
                           color = Color.Black,
                           letterSpacing = 0.14.sp,
                       ),
-                  modifier = Modifier.padding(horizontal = 32.dp).width(260.dp).height(63.dp),
+                  modifier =
+                      Modifier.padding(horizontal = 32.dp)
+                          .width(260.dp)
+                          .height(63.dp)
+                          .testTag("RecipeSubtitle"),
                   textAlign = TextAlign.Center)
 
               Spacer(modifier = Modifier.height(30.dp))
@@ -116,7 +121,7 @@ fun RecipeNameScreen(
                             .height(60.dp)
                             .padding(horizontal = 16.dp)
                             .background(lightCream, shape = RoundedCornerShape(8.dp))
-                            .testTag("recipeNameTextField"), // Add this line
+                            .testTag("recipeNameTextField"),
                     colors =
                         TextFieldDefaults.outlinedTextFieldColors(
                             unfocusedBorderColor = Color.Transparent,
@@ -155,7 +160,8 @@ fun RecipeNameScreen(
                                 .height(46.dp)
                                 .background(
                                     color = lightCream, shape = RoundedCornerShape(size = 4.dp))
-                                .align(Alignment.BottomCenter)) {
+                                .align(Alignment.BottomCenter)
+                                .testTag("NextStepButton")) {
                           Text("Next Step")
                         }
                   }
