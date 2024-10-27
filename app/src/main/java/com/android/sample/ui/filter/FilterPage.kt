@@ -52,35 +52,33 @@ fun FilterPage(
     navigationActions: NavigationActions,
     recipesViewModel: RecipesViewModel = viewModel(factory = RecipesViewModel.Factory)
 ) {
-    val selectedItem = navigationActions.currentRoute()
-    Scaffold(
-        modifier = Modifier.fillMaxWidth(),
-        topBar = {
-            TopAppBar(
-                title = { Text("PlateSwipe") },
-                colors =
+  val selectedItem = navigationActions.currentRoute()
+  Scaffold(
+      modifier = Modifier.fillMaxWidth(),
+      topBar = {
+        TopAppBar(
+            title = { Text("PlateSwipe") },
+            colors =
                 TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background,
                 ),
-                modifier = Modifier.testTag("topBar"),
-                navigationIcon = {
-                    IconButton(onClick = { navigationActions.goBack() }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Return button"
-                        )
-                    }
-                })
-        },
-        bottomBar = {
-            BottomNavigationMenu(
-                onTabSelect = { tab -> navigationActions.navigateTo(tab) },
-                tabList = LIST_TOP_LEVEL_DESTINATIONS,
-                selectedItem = selectedItem
-            )
-        }) { paddingValues ->
+            modifier = Modifier.testTag("topBar"),
+            navigationIcon = {
+              IconButton(onClick = { navigationActions.goBack() }) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Return button")
+              }
+            })
+      },
+      bottomBar = {
+        BottomNavigationMenu(
+            onTabSelect = { tab -> navigationActions.navigateTo(tab) },
+            tabList = LIST_TOP_LEVEL_DESTINATIONS,
+            selectedItem = selectedItem)
+      }) { paddingValues ->
         FilterBox(paddingValues, recipesViewModel)
-    }
+      }
 }
 
 /**
@@ -92,14 +90,10 @@ fun FilterPage(
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun FilterBox(paddingValues: PaddingValues, recipesViewModel: RecipesViewModel) {
-    val filter by recipesViewModel.filter.collectAsState()
-    Column(
-        modifier =
-        Modifier
-            .padding(paddingValues)
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-    ) {
+  val filter by recipesViewModel.filter.collectAsState()
+  Column(
+      modifier =
+          Modifier.padding(paddingValues).fillMaxSize().verticalScroll(rememberScrollState())) {
         ValueRangeSlider(
             modifier = Modifier.testTag("timeRangeSlider"),
             name = "Time",
@@ -118,7 +112,7 @@ fun FilterBox(paddingValues: PaddingValues, recipesViewModel: RecipesViewModel) 
             updateRange = { newMin, newMax -> recipesViewModel.updatePriceRange(newMin, newMax) })
         CheckboxDifficulty(recipesViewModel = recipesViewModel)
         CheckboxCategories(recipesViewModel = recipesViewModel)
-    }
+      }
 }
 
 /**
@@ -141,55 +135,50 @@ fun ValueRangeSlider(
     range: FloatRange,
     updateRange: (Float, Float) -> Unit,
 ) {
-    // Update the range to the [min, max] if it is unbounded
-    if (range.isLimited()) {
-        range.update(min, max)
+  // Update the range to the [min, max] if it is unbounded
+  if (range.isLimited()) {
+    range.update(min, max)
+  }
+  // Mutable state to store the slider position
+
+  var sliderPosition by remember { mutableStateOf(range.min..range.max) }
+  Column(modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+    Text(
+        text = name,
+        style = MaterialTheme.typography.titleMedium,
+        modifier = Modifier.align(Alignment.Start))
+
+    Spacer(modifier = Modifier.height(8.dp))
+
+    // Display selected min and max values
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+      Text(
+          "${sliderPosition.start.toInt()} " + unit,
+          style = MaterialTheme.typography.bodyMedium,
+          color = MaterialTheme.colorScheme.onPrimary)
+      Text(
+          "${sliderPosition.endInclusive.toInt()} " + unit,
+          style = MaterialTheme.typography.bodyMedium,
+          color = MaterialTheme.colorScheme.onPrimary)
     }
-    // Mutable state to store the slider position
 
-    var sliderPosition by remember { mutableStateOf(range.min..range.max) }
-    Column(modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            text = name,
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.align(Alignment.Start)
-        )
+    Spacer(modifier = Modifier.height(8.dp))
 
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Display selected min and max values
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text(
-                "${sliderPosition.start.toInt()} " + unit,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onPrimary
-            )
-            Text(
-                "${sliderPosition.endInclusive.toInt()} " + unit,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onPrimary
-            )
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Range slider with minimum 0 and maximum 120 minutes
-        RangeSlider(
-            modifier = modifier.fillMaxWidth(),
-            value = sliderPosition,
-            onValueChange = {
-                sliderPosition = it
-                updateRange(it.start, it.endInclusive)
-            },
-            valueRange = min..max,
-            colors =
+    // Range slider with minimum 0 and maximum 120 minutes
+    RangeSlider(
+        modifier = modifier.fillMaxWidth(),
+        value = sliderPosition,
+        onValueChange = {
+          sliderPosition = it
+          updateRange(it.start, it.endInclusive)
+        },
+        valueRange = min..max,
+        colors =
             SliderDefaults.colors(
                 thumbColor = MaterialTheme.colorScheme.primary,
                 activeTrackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
-                inactiveTrackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
-            )
-        )
-    }
+                inactiveTrackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)))
+  }
 }
 
 /**
@@ -201,119 +190,116 @@ fun ValueRangeSlider(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun CheckboxDifficulty(recipesViewModel: RecipesViewModel) {
-    // List of difficulty names
+  // List of difficulty names
 
-    val difficultyLevels = remember {
-        mutableStateMapOf(
-            Difficulty.Easy to false, Difficulty.Medium to false, Difficulty.Hard to false
-        )
-    }
-    if (recipesViewModel.filter.value.difficulty != Difficulty.Undefined) {
-        difficultyLevels[recipesViewModel.filter.value.difficulty] = true
-    }
+  val difficultyLevels = remember {
+    mutableStateMapOf(
+        Difficulty.Easy to false, Difficulty.Medium to false, Difficulty.Hard to false)
+  }
+  if (recipesViewModel.filter.value.difficulty != Difficulty.Undefined) {
+    difficultyLevels[recipesViewModel.filter.value.difficulty] = true
+  }
 
-    Column(modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            text = "Difficulty",
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.align(Alignment.Start)
-        )
+  Column(modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+    Text(
+        text = "Difficulty",
+        style = MaterialTheme.typography.titleMedium,
+        modifier = Modifier.align(Alignment.Start))
 
-        // Display each checkbox with the corresponding difficulty name
-        FlowRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
-            verticalArrangement = Arrangement.Center,
-            maxItemsInEachRow = 3
-        ) {
-            difficultyLevels.forEach { (difficulty, checked) ->
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Spacer(modifier = Modifier.height(4.dp))
+    // Display each checkbox with the corresponding difficulty name
+    FlowRow(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Center,
+        maxItemsInEachRow = 3) {
+          difficultyLevels.forEach { (difficulty, checked) ->
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+              Spacer(modifier = Modifier.height(4.dp))
 
-                    Text(
-                        text = difficulty.toString(),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    ) // Display the difficulty name
-                    Checkbox(
-                        modifier = Modifier.testTag("difficultyCheckbox${difficulty}"),
-                        checked = checked,
-                        onCheckedChange = { isChecked ->
-                            // Update the individual state in boxStates
-                            difficultyLevels.forEach { (i, _) ->
-                                if (i != difficulty) {
-                                    difficultyLevels[i] = false
-                                }
-                            }
-                            difficultyLevels[difficulty] = isChecked
-                            recipesViewModel.updateDifficulty(difficulty)
-                        })
-                    Spacer(modifier = Modifier.height(4.dp))
-                }
+              Text(
+                  text = difficulty.toString(),
+                  style = MaterialTheme.typography.bodyMedium,
+                  color = MaterialTheme.colorScheme.onPrimary) // Display the difficulty name
+              Checkbox(
+                  modifier = Modifier.testTag("difficultyCheckbox${difficulty}"),
+                  checked = checked,
+                  onCheckedChange = { isChecked ->
+                    // Update the individual state in boxStates
+                    difficultyLevels.forEach { (i, _) ->
+                      if (i != difficulty) {
+                        difficultyLevels[i] = false
+                      }
+                    }
+                    difficultyLevels[difficulty] = isChecked
+                    recipesViewModel.updateDifficulty(difficulty)
+                  })
+              Spacer(modifier = Modifier.height(4.dp))
             }
+          }
         }
-    }
+  }
 }
 
+/**
+ * Composable function to display checkboxes for categories.
+ *
+ * @param recipesViewModel The view model to manage recipes.
+ */
 @SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun CheckboxCategories(recipesViewModel: RecipesViewModel) {
 
-    Column(modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            text = "Category",
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.align(Alignment.Start)
-        )
+  Column(modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+    Text(
+        text = "Category",
+        style = MaterialTheme.typography.titleMedium,
+        modifier = Modifier.align(Alignment.Start))
 
-        // List of category names
-        val categoriesMapping = remember {
-            mutableStateMapOf(
-                *recipesViewModel.categories.value.associateWith { false }.toList().toTypedArray()
-            )
-        }
-
-        if (recipesViewModel.filter.value.category != null) {
-            categoriesMapping[recipesViewModel.filter.value.category!!] = true
-        }
-
-        // Display each checkbox with the corresponding difficulty name
-        FlowRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
-            verticalArrangement = Arrangement.Center,
-            maxItemsInEachRow = 3
-        ) {
-            categoriesMapping.forEach { (category, checked) ->
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Spacer(modifier = Modifier.height(4.dp))
-
-                    Text(
-                        text = category,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    ) // Display the difficulty name
-                    Checkbox(
-                        modifier = Modifier.testTag("difficultyCheckbox${category}"),
-                        checked = checked,
-                        onCheckedChange = { isChecked ->
-                            // Update the individual state in boxStates
-                            categoriesMapping.forEach { (i, _) ->
-                                if (i != category) {
-                                    categoriesMapping[i] = false
-                                }
-                            }
-                            categoriesMapping[category] = isChecked
-                            recipesViewModel.updateCategory(category)
-                        })
-                    Spacer(modifier = Modifier.height(4.dp))
-                }
-            }
-        }
+    // List of category names
+    val categoriesMapping = remember {
+      mutableStateMapOf(
+          *recipesViewModel.categories.value.associateWith { false }.toList().toTypedArray())
     }
+
+    if (recipesViewModel.filter.value.category != null) {
+      categoriesMapping[recipesViewModel.filter.value.category!!] = true
+    }
+
+    // Display each checkbox with the corresponding difficulty name
+    FlowRow(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Center,
+        maxItemsInEachRow = 3) {
+          categoriesMapping.forEach { (category, checked) ->
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+              Spacer(modifier = Modifier.height(4.dp))
+
+              Text(
+                  text = category,
+                  style = MaterialTheme.typography.bodyMedium,
+                  color = MaterialTheme.colorScheme.onPrimary) // Display the difficulty name
+              Checkbox(
+                  modifier = Modifier.testTag("difficultyCheckbox${category}"),
+                  checked = checked,
+                  onCheckedChange = { isChecked ->
+                    // Update the individual state in boxStates
+                    categoriesMapping.forEach { (i, _) ->
+                      if (i != category) {
+                        categoriesMapping[i] = false
+                      }
+                    }
+                    categoriesMapping[category] = isChecked
+                    recipesViewModel.updateCategory(category)
+                  })
+              Spacer(modifier = Modifier.height(4.dp))
+            }
+          }
+        }
+  }
 }

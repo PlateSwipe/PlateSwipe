@@ -61,6 +61,7 @@ class RecipesViewModel(private val repository: RecipesRepository) : ViewModel() 
     }
   }
 
+  /** Fetches the list of categories from the repository. */
   private fun getCategoryList() {
     repository.listCategories(
         onSuccess = { categories -> _categories.value = categories },
