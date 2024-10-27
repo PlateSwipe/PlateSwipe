@@ -44,17 +44,15 @@ class MealDBRecipesRepository(private val client: OkHttpClient) : RecipesReposit
       val strMeal = meal.getString(MEAL_DB_MEAL_NAME)
       val strCategory = meal.getString(MEAL_DB_MEAL_CATEGORY)
       val strArea = meal.getString(MEAL_DB_MEAL_AREA)
-      val strInstructions = meal.getString(
-          MEAL_DB_MEAL_INSTRUCTIONS)
+      val strInstructions = meal.getString(MEAL_DB_MEAL_INSTRUCTIONS)
       val strMealThumbUrl = meal.getString(MEAL_DB_MEAL_THUMB)
       val ingredientsAndMeasurements = mutableListOf<Pair<String, String>>()
       var j = 1
       while ((j <= MAX_NB_OF_INGREDIENTS_IN_A_RECIPE_MEAL_DB) &&
-          meal.optString( MEAL_DB_MEAL_INGREDIENT + j
-              , "").isNotEmpty()) {
+          meal.optString(MEAL_DB_MEAL_INGREDIENT + j, "").isNotEmpty()) {
 
-        val ingredient = meal.optString(MEAL_DB_MEAL_INGREDIENT+j, "")
-        val measurement = meal.optString(MEAL_DB_MEAL_MEASURE +j, "")
+        val ingredient = meal.optString(MEAL_DB_MEAL_INGREDIENT + j, "")
+        val measurement = meal.optString(MEAL_DB_MEAL_MEASURE + j, "")
         if (ingredient.isNotEmpty() && measurement.isNotEmpty()) {
           ingredientsAndMeasurements.add(Pair(ingredient, measurement))
         }
