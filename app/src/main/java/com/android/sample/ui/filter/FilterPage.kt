@@ -1,5 +1,6 @@
 package com.android.sample.ui.filter
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -27,8 +28,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -36,15 +38,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.android.sample.model.filter.Difficulty
+import com.android.sample.model.filter.FloatRange
+import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.ui.navigation.BottomNavigationMenu
 import com.android.sample.ui.navigation.LIST_TOP_LEVEL_DESTINATIONS
 import com.android.sample.ui.navigation.NavigationActions
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FilterPage(navigationActions: NavigationActions) {
+fun FilterPage(
+    navigationActions: NavigationActions,
+    recipesViewModel: RecipesViewModel = viewModel(factory = RecipesViewModel.Factory)
+) {
   val selectedItem = navigationActions.currentRoute()
-
   Scaffold(
       modifier = Modifier.fillMaxWidth(),
       topBar = {
@@ -69,25 +77,70 @@ fun FilterPage(navigationActions: NavigationActions) {
             tabList = LIST_TOP_LEVEL_DESTINATIONS,
             selectedItem = selectedItem)
       }) { paddingValues ->
-        FilterBox(paddingValues)
+        FilterBox(paddingValues, recipesViewModel)
       }
 }
 
+/**
+ * Composable function to display the filter options.
+ *
+ * @param paddingValues Padding values to apply to the composable.
+ * @param recipesViewModel The view model to manage recipes.
+ */
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun FilterBox(paddingValues: PaddingValues) {
+fun FilterBox(paddingValues: PaddingValues, recipesViewModel: RecipesViewModel) {
+  val filter by recipesViewModel.filter.collectAsState()
   Column(
       modifier =
           Modifier.padding(paddingValues).fillMaxSize().verticalScroll(rememberScrollState())) {
-        TimeRangeSlider("Time", 0f, 120f, "min")
-        TimeRangeSlider("Price", 0f, 500f, "$")
-        CheckboxDifficulty("Difficulty")
+        ValueRangeSlider(
+            modifier = Modifier.testTag("timeRangeSlider"),
+            name = "Time",
+            min = 0f,
+            max = 120f,
+            unit = "min",
+            range = recipesViewModel.filter.value.timeRange,
+            updateRange = { newMin, newMax -> recipesViewModel.updateTimeRange(newMin, newMax) })
+        ValueRangeSlider(
+            modifier = Modifier.testTag("priceRangeSlider"),
+            name = "Price",
+            min = 0f,
+            max = 500f,
+            unit = "$",
+            range = filter.priceRange,
+            updateRange = { newMin, newMax -> recipesViewModel.updatePriceRange(newMin, newMax) })
+        CheckboxDifficulty(name = "Difficulty", recipesViewModel = recipesViewModel)
       }
 }
 
+/**
+ * Composable function to display a range slider.
+ *
+ * @param name The name of the slider.
+ * @param min The minimum value of the slider.
+ * @param max The maximum value of the slider.
+ * @param unit The unit of the slider.
+ * @param range The range of the slider.
+ * @param updateRange The function to update the range.
+ */
 @Composable
-fun TimeRangeSlider(name: String, min: Float, max: Float, unit: String) {
-  // State variables to store the selected range
-  var sliderPosition by remember { mutableStateOf(min..max) }
+fun ValueRangeSlider(
+    modifier: Modifier,
+    name: String,
+    min: Float,
+    max: Float,
+    unit: String,
+    range: FloatRange,
+    updateRange: (Float, Float) -> Unit,
+) {
+  // Update the range to the [min, max] if it is unbounded
+  if (range.isUnbounded()) {
+    range.update(min, max)
+  }
+  // Mutable state to store the slider position
+
+  var sliderPosition by remember { mutableStateOf(range.min..range.max) }
   Column(modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
     Text(
         text = name,
@@ -112,9 +165,12 @@ fun TimeRangeSlider(name: String, min: Float, max: Float, unit: String) {
 
     // Range slider with minimum 0 and maximum 120 minutes
     RangeSlider(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         value = sliderPosition,
-        onValueChange = { sliderPosition = it },
+        onValueChange = {
+          sliderPosition = it
+          updateRange(it.start, it.endInclusive)
+        },
         valueRange = min..max,
         colors =
             SliderDefaults.colors(
@@ -124,14 +180,22 @@ fun TimeRangeSlider(name: String, min: Float, max: Float, unit: String) {
   }
 }
 
+/**
+ * Composable function to display checkboxes for difficulty levels.
+ *
+ * @param name The name of the checkbox.
+ * @param recipesViewModel The view model to manage recipes.
+ */
+@SuppressLint("MutableCollectionMutableState")
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun CheckboxDifficulty(name: String) {
+fun CheckboxDifficulty(name: String, recipesViewModel: RecipesViewModel) {
   // List of difficulty names
-  val difficultyLevels = listOf("Easy", "Medium", "Hard", "Expert", "Undefined")
 
-  // Initialize boxStates with false values for each difficulty level
-  val boxStates = remember { mutableStateListOf(*Array(difficultyLevels.size) { false }) }
+  val difficultyLevels = remember {
+    mutableStateMapOf(
+        Difficulty.Easy to false, Difficulty.Medium to false, Difficulty.Hard to false)
+  }
 
   Column(modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
     Text(
@@ -145,21 +209,28 @@ fun CheckboxDifficulty(name: String) {
         horizontalArrangement = Arrangement.Center,
         verticalArrangement = Arrangement.Center,
         maxItemsInEachRow = 3) {
-          boxStates.forEachIndexed { index, checked ->
+          difficultyLevels.forEach { (difficulty, checked) ->
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
               Spacer(modifier = Modifier.height(4.dp))
 
               Text(
-                  text = difficultyLevels[index],
+                  text = difficulty.toString(),
                   style = MaterialTheme.typography.bodyMedium,
                   color = MaterialTheme.colorScheme.onPrimary) // Display the difficulty name
               Checkbox(
+                  modifier = Modifier.testTag("difficultyCheckbox${difficulty}"),
                   checked = checked,
                   onCheckedChange = { isChecked ->
                     // Update the individual state in boxStates
-                    boxStates[index] = isChecked
+                    difficultyLevels.forEach { (i, _) ->
+                      if (i != difficulty) {
+                        difficultyLevels[i] = false
+                      }
+                    }
+                    difficultyLevels[difficulty] = isChecked
+                    recipesViewModel.updateDifficulty(difficulty)
                   })
               Spacer(modifier = Modifier.height(4.dp))
             }
