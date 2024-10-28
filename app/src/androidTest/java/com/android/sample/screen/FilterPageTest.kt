@@ -97,6 +97,7 @@ class FilterPageTest {
     composeTestRule.setContent {
       FilterPage(mockNavigationActions, recipesViewModel) // Set up the SignInScreen directly
     }
+    advanceUntilIdle()
     Intents.init()
   }
 
@@ -256,21 +257,28 @@ class FilterPageTest {
     // Select the "Dessert" checkbox
     composeTestRule.onNodeWithTag("categoryCheckboxDessert").performClick()
 
+    advanceUntilIdle()
+
     // Verify that the ViewModel's category is updated to "Dessert"
     assertEquals("Dessert", recipesViewModel.filter.value.category)
 
     // Select the "Main Course" checkbox
     composeTestRule.onNodeWithTag("categoryCheckboxVegetarian").performClick()
 
+    advanceUntilIdle()
+
     // Verify that the ViewModel's category is updated to "Main Course" and "Dessert" is unselected
     assertEquals("Vegetarian", recipesViewModel.filter.value.category)
     composeTestRule.onNodeWithTag("categoryCheckboxDessert").assertIsOff()
   }
 
+  @OptIn(ExperimentalCoroutinesApi::class)
   @Test
-  fun onlyOneCheckboxCanBeSelectedAtATime() {
+  fun onlyOneCheckboxCanBeSelectedAtATime() = runTest {
     // Select "Dessert" checkbox
     composeTestRule.onNodeWithTag("categoryCheckboxDessert").performClick()
+
+    advanceUntilIdle()
 
     // Ensure "Dessert" is checked and others are not
     composeTestRule.onNodeWithTag("categoryCheckboxDessert").assertIsOn()
@@ -278,6 +286,8 @@ class FilterPageTest {
 
     // Select "Appetizer" checkbox
     composeTestRule.onNodeWithTag("categoryCheckboxVegetarian").performClick()
+
+    advanceUntilIdle()
 
     // Ensure "Appetizer" is checked and "Dessert" is unchecked
     composeTestRule.onNodeWithTag("categoryCheckboxVegetarian").assertIsOn()

@@ -28,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
@@ -42,6 +43,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.sample.model.filter.Difficulty
 import com.android.sample.model.filter.FloatRange
 import com.android.sample.model.recipe.RecipesViewModel
+import com.android.sample.resources.C.Tag.CATEGORY_NAME
+import com.android.sample.resources.C.Tag.DIFFICULTY_NAME
+import com.android.sample.resources.C.Tag.MAX_ITEM_IN_ROW
 import com.android.sample.resources.C.Tag.PLATE_SWIPE
 import com.android.sample.resources.C.Tag.PRICE_RANGE_MAX
 import com.android.sample.resources.C.Tag.PRICE_RANGE_MIN
@@ -120,8 +124,30 @@ fun FilterBox(paddingValues: PaddingValues, recipesViewModel: RecipesViewModel) 
             unit = PRICE_RANGE_UNIT,
             range = filter.priceRange,
             updateRange = { newMin, newMax -> recipesViewModel.updatePriceRange(newMin, newMax) })
-        CheckboxDifficulty(recipesViewModel = recipesViewModel)
-        CheckboxCategories(recipesViewModel = recipesViewModel)
+
+        val difficultyLevels = listOf(Difficulty.Easy, Difficulty.Medium, Difficulty.Hard)
+        val selectedDifficulty = filter.difficulty
+        val emptyDifficulty = Difficulty.Undefined
+
+        CheckboxGroup(
+            title = DIFFICULTY_NAME,
+            items = difficultyLevels,
+            selectedItem = selectedDifficulty,
+            onItemSelect = { newDifficulty -> recipesViewModel.updateDifficulty(newDifficulty) },
+            testTagPrefix = "difficulty",
+            emptyValue = emptyDifficulty)
+
+        val categories = recipesViewModel.categories.value
+        val selectedCategory = filter.category
+        val emptyCategory: String? = null
+
+        CheckboxGroup(
+            title = CATEGORY_NAME,
+            items = categories,
+            selectedItem = selectedCategory,
+            onItemSelect = { newCategory -> recipesViewModel.updateCategory(newCategory) },
+            testTagPrefix = "category",
+            emptyValue = emptyCategory)
       }
 }
 
@@ -192,122 +218,66 @@ fun ValueRangeSlider(
 }
 
 /**
- * Composable function to display checkboxes for difficulty levels.
+ * Composable function to display a group of checkboxes.
  *
- * @param recipesViewModel The view model to manage recipes.
+ * @param title The title of the group.
+ * @param items The list of items to display.
+ * @param selectedItem The selected item.
+ * @param onItemSelect The function to call when an item is selected.
+ * @param testTagPrefix The prefix for the test tag.
+ * @param emptyValue The value representing an empty selection.
  */
 @SuppressLint("MutableCollectionMutableState", "StateFlowValueCalledInComposition")
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun CheckboxDifficulty(recipesViewModel: RecipesViewModel) {
-  // List of difficulty names
-
-  val difficultyLevels = remember {
-    mutableStateMapOf(
-        Difficulty.Easy to false, Difficulty.Medium to false, Difficulty.Hard to false)
+fun <T> CheckboxGroup(
+    title: String,
+    items: List<T>,
+    selectedItem: T?,
+    onItemSelect: (T) -> Unit,
+    testTagPrefix: String,
+    emptyValue: T?
+) {
+  // Map items to checkbox states, observed in LaunchedEffect to sync with selectedItem
+  val itemStates = remember {
+    mutableStateMapOf(*items.associateWith { false }.toList().toTypedArray())
   }
-  val orderedDifficulties = listOf(Difficulty.Easy, Difficulty.Medium, Difficulty.Hard)
 
-  if (recipesViewModel.filter.value.difficulty != Difficulty.Undefined) {
-    difficultyLevels[recipesViewModel.filter.value.difficulty] = true
+  // Synchronize item states with selectedItem on updates
+  LaunchedEffect(selectedItem) {
+    itemStates.keys.forEach { itemStates[it] = false }
+    if (selectedItem != emptyValue) {
+      itemStates[selectedItem!!] = true
+    }
   }
 
   Column(modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
     Text(
-        text = "Difficulty",
+        text = title,
         style = MaterialTheme.typography.titleMedium,
         modifier = Modifier.align(Alignment.Start))
 
-    // Display each checkbox with the corresponding difficulty name
     FlowRow(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
         verticalArrangement = Arrangement.Center,
-        maxItemsInEachRow = 3) {
-          orderedDifficulties.forEach { difficulty ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
+        maxItemsInEachRow = MAX_ITEM_IN_ROW) {
+          itemStates.forEach { (item, checked) ->
+            Row(verticalAlignment = Alignment.CenterVertically) {
               Spacer(modifier = Modifier.height(4.dp))
 
               Text(
-                  text = difficulty.toString(),
+                  text = item.toString(),
                   style = MaterialTheme.typography.bodyMedium,
-                  color = MaterialTheme.colorScheme.onPrimary) // Display the difficulty name
+                  color = MaterialTheme.colorScheme.onPrimary)
               Checkbox(
-                  modifier = Modifier.testTag("difficultyCheckbox${difficulty}"),
-                  checked = difficultyLevels[difficulty]!!,
-                  onCheckedChange = { isChecked ->
-                    // Update the individual state in boxStates
-                    difficultyLevels.forEach { (i, _) ->
-                      if (i != difficulty) {
-                        difficultyLevels[i] = false
-                      }
-                    }
-                    difficultyLevels[difficulty] = isChecked
-                    recipesViewModel.updateDifficulty(difficulty)
-                  })
-              Spacer(modifier = Modifier.height(4.dp))
-            }
-          }
-        }
-  }
-}
-
-/**
- * Composable function to display checkboxes for categories.
- *
- * @param recipesViewModel The view model to manage recipes.
- */
-@SuppressLint("StateFlowValueCalledInComposition")
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-fun CheckboxCategories(recipesViewModel: RecipesViewModel) {
-
-  Column(modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-    Text(
-        text = "Category",
-        style = MaterialTheme.typography.titleMedium,
-        modifier = Modifier.align(Alignment.Start))
-
-    // List of category names
-    val categoriesMapping = remember {
-      mutableStateMapOf(
-          *recipesViewModel.categories.value.associateWith { false }.toList().toTypedArray())
-    }
-
-    if (recipesViewModel.filter.value.category != null) {
-      categoriesMapping[recipesViewModel.filter.value.category!!] = true
-    }
-
-    // Display each checkbox with the corresponding difficulty name
-    FlowRow(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center,
-        verticalArrangement = Arrangement.Center,
-        maxItemsInEachRow = 3) {
-          categoriesMapping.forEach { (category, checked) ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-              Spacer(modifier = Modifier.height(4.dp))
-
-              Text(
-                  text = category,
-                  style = MaterialTheme.typography.bodyMedium,
-                  color = MaterialTheme.colorScheme.onPrimary) // Display the difficulty name
-              Checkbox(
-                  modifier = Modifier.testTag("categoryCheckbox${category}"),
+                  modifier = Modifier.testTag("${testTagPrefix}Checkbox$item"),
                   checked = checked,
                   onCheckedChange = { isChecked ->
-                    // Update the individual state in boxStates
-                    categoriesMapping.forEach { (i, _) ->
-                      if (i != category) {
-                        categoriesMapping[i] = false
-                      }
-                    }
-                    categoriesMapping[category] = isChecked
-                    recipesViewModel.updateCategory(category)
+                    // Uncheck all other items and select the new item
+                    itemStates.keys.forEach { itemStates[it] = false }
+                    itemStates[item] = isChecked
+                    onItemSelect(item)
                   })
               Spacer(modifier = Modifier.height(4.dp))
             }

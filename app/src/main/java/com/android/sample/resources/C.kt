@@ -24,6 +24,7 @@ object C {
     const val NEW_MIN_SHOULD_NOT_BE_NEGATIVE = "newMin should not be negative"
     const val NEW_MIN_AND_NEW_MAX_SHOULD_BE_WITHIN_RANGE =
         "newMin and newMax should be within range"
+    const val UNINITIALIZED_BORN_VALUE = -1f
 
     // Filter Page
     const val RETURN_BUTTON_DESCRIPTION = "Return button"
@@ -35,6 +36,9 @@ object C {
     const val PRICE_RANGE_MIN = 0f
     const val PRICE_RANGE_MAX = 100f
     const val PRICE_RANGE_UNIT = "$"
+    const val DIFFICULTY_NAME = "Difficulty"
+    const val CATEGORY_NAME = "Category"
+    const val MAX_ITEM_IN_ROW = 3 // Choose to optimize with medium and small phone
 
     // RecipesViewModel
     const val MINIMUM_RECIPES_BEFORE_FETCH = 3
