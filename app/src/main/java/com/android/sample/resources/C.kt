@@ -16,6 +16,13 @@ object C {
     // RecipesViewModel
     const val MINIMUM_RECIPES_BEFORE_FETCH = 3
     const val NUMBER_RECIPES_TO_FETCH = 2
+
+    // RecipeList
+    const val RECIPE_LIST_CORNER_RADIUS = 12
+
+    // SearchBar
+    const val SEARCH_BAR_PLACE_HOLDER = "Search"
+    const val SEARCH_BAR_CORNER_RADIUS = 16
     const val MAXIMUM_RECIPES_TO_FETCH_MEAL_DB = 5
     const val MAX_NB_OF_INGREDIENTS_IN_A_RECIPE_MEAL_DB = 20
     const val MEAL_DB_USER_AGENT = "User-Agent"
