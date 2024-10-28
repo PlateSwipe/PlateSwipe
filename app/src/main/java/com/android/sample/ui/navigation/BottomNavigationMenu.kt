@@ -28,11 +28,11 @@ fun BottomNavigationMenu(
                 Icon(
                     painter = painterResource(tab.iconId),
                     contentDescription = null,
-                    modifier = Modifier.testTag(tab.textId))
+                    modifier = Modifier.testTag("icon" + tab.textId))
               },
               selected = tab.route == selectedItem,
               onClick = { onTabSelect(tab) },
-              modifier = Modifier.clip(RoundedCornerShape(50.dp)).testTag(tab.textId))
+              modifier = Modifier.clip(RoundedCornerShape(50.dp)).testTag("tab" + tab.textId))
         }
       },
   )

@@ -25,7 +25,7 @@ import org.mockito.kotlin.any
 
 /** Unit tests for RecipesViewModel. */
 class RecipesViewModelTest {
-  private lateinit var recipeRepository: RecipeRepository
+  private lateinit var recipeRepository: RecipesRepository
   private lateinit var recipesViewModel: RecipesViewModel
 
   // Dummy recipes for testing
@@ -59,7 +59,7 @@ class RecipesViewModelTest {
     Dispatchers.setMain(testDispatcher)
 
     // Mock the RecipeRepository
-    recipeRepository = mock(RecipeRepository::class.java)
+    recipeRepository = mock(RecipesRepository::class.java)
     // Initialize the RecipesViewModel with the mocked repository
     recipesViewModel = RecipesViewModel(recipeRepository)
   }
@@ -387,5 +387,43 @@ class RecipesViewModelTest {
 
     // Assert: Verify that fetchRandomRecipes is called only once (during init)
     verify(spyViewModel, times(1)).fetchRandomRecipes(any())
+  }
+
+  @OptIn(ExperimentalCoroutinesApi::class)
+  @Test
+  fun searchFunctionCallsRepositoryAndHandlesSuccess() = runTest {
+    // Arrange: Mock the repository to return a dummy recipe
+    val dummyRecipe = dummyRecipes[0]
+    `when`(recipeRepository.search(any(), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.arguments[1] as (Recipe) -> Unit
+      onSuccess(dummyRecipe) // Return the dummy recipe
+    }
+
+    // Act: Call the search method
+    var result: Recipe? = null
+    recipesViewModel.search("1", onSuccess = { recipe -> result = recipe }, onFailure = {})
+
+    // Assert: Verify that the onSuccess callback is invoked with the correct recipe
+    assertNotNull(result)
+    assertThat(result, `is`(dummyRecipe))
+  }
+
+  @OptIn(ExperimentalCoroutinesApi::class)
+  @Test
+  fun searchFunctionCallsRepositoryAndHandlesFailure() = runTest {
+    // Arrange: Mock the repository to simulate a failure
+    val exception = Exception("Network error")
+    `when`(recipeRepository.search(any(), any(), any())).thenAnswer { invocation ->
+      val onFailure = invocation.arguments[2] as (Exception) -> Unit
+      onFailure(exception) // Simulate a failure
+    }
+
+    // Act: Call the search method
+    var error: Exception? = null
+    recipesViewModel.search("1", onSuccess = {}, onFailure = { e -> error = e })
+
+    // Assert: Verify that the onFailure callback is invoked with the correct exception
+    assertNotNull(error)
+    assertThat(error?.message, `is`("Network error"))
   }
 }

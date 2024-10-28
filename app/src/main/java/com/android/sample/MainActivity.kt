@@ -28,6 +28,7 @@ import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.recipe.CreateRecipeScreen
 import com.android.sample.ui.recipe.SearchRecipeScreen
+import com.android.sample.ui.recipeOverview.RecipeOverview
 import com.android.sample.ui.swipePage.SwipePage
 import com.android.sample.ui.theme.SampleAppTheme
 
@@ -67,6 +68,7 @@ fun PlateSwipeApp() {
         route = Route.SWIPE,
     ) {
       composable(Screen.SWIPE) { SwipePage(navigationActions, recipesViewModel) }
+      composable(Screen.OVERVIEW_RECIPE) { RecipeOverview(navigationActions, recipesViewModel) }
     }
     navigation(
         startDestination = Screen.FRIDGE,
