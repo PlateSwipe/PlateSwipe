@@ -3,7 +3,7 @@ package com.android.sample.model.recipe
 import com.android.sample.resources.C.Tag.FIRESTORE_COLLECTION_NAME
 import com.google.firebase.firestore.FirebaseFirestore
 
-class FirestoreRecipeRepository(private val db: FirebaseFirestore) : RecipesRepository {
+class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRepository {
 
   val recipeDB = db.collection(FIRESTORE_COLLECTION_NAME)
 
