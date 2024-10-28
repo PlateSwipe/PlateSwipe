@@ -35,5 +35,16 @@ object C {
 
     // FirestoreRecipeRepository
     const val FIRESTORE_COLLECTION_NAME = "recipes"
+    // Values for storage
+    const val FIRESTORE_RECIPE_NAME = "name"
+    const val FIRESTORE_RECIPE_CATEGORY = "category"
+    const val FIRESTORE_RECIPE_AREA = "area"
+    const val FIRESTORE_RECIPE_PICTURE_ID = "pictureID"
+    const val FIRESTORE_RECIPE_INSTRUCTIONS = "instructions"
+    const val FIRESTORE_RECIPE_INGREDIENTS = "ingredients"
+    const val FIRESTORE_RECIPE_MEASUREMENTS = "measurements"
+    const val FIRESTORE_RECIPE_TIME = "time"
+    const val FIRESTORE_RECIPE_DIFFICULTY = "difficulty"
+    const val FIRESTORE_RECIPE_PRICE = "price"
   }
 }

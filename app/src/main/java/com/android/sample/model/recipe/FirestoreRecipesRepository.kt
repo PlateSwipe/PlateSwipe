@@ -2,6 +2,16 @@ package com.android.sample.model.recipe
 
 import android.util.Log
 import com.android.sample.resources.C.Tag.FIRESTORE_COLLECTION_NAME
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_AREA
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_CATEGORY
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_DIFFICULTY
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_INGREDIENTS
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_INSTRUCTIONS
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_MEASUREMENTS
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_NAME
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_PICTURE_ID
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_PRICE
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_TIME
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
@@ -48,16 +58,16 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
     private fun documentToRecipe(document: DocumentSnapshot): Recipe? {
         return try {
             val id = document.id
-            val name = document.getString("name")?: return null
-            val category = document.getString("category")
-            val area = document.getString("area")
-            val instructions = document.getString("instructions")?: return null
-            val pictureID = document.getString("pictureID")?: return null
-            val ingredientsData = document.get("ingredients") as List<*>? ?: return null
-            val measurementsData = document.get("measurements") as List<*>? ?: return null
-            val time = document.getString("time")
-            val difficulty = document.getString("difficulty")
-            val price = document.getString("price")
+            val name = document.getString(FIRESTORE_RECIPE_NAME)?: return null
+            val category = document.getString(FIRESTORE_RECIPE_CATEGORY)
+            val area = document.getString(FIRESTORE_RECIPE_AREA)
+            val instructions = document.getString(FIRESTORE_RECIPE_INSTRUCTIONS)?: return null
+            val pictureID = document.getString(FIRESTORE_RECIPE_PICTURE_ID)?: return null
+            val ingredientsData = document.get(FIRESTORE_RECIPE_INGREDIENTS) as List<*>? ?: return null
+            val measurementsData = document.get(FIRESTORE_RECIPE_MEASUREMENTS) as List<*>? ?: return null
+            val time = document.getString(FIRESTORE_RECIPE_TIME)
+            val difficulty = document.getString(FIRESTORE_RECIPE_DIFFICULTY)
+            val price = document.getString(FIRESTORE_RECIPE_PRICE)
 
             val ingredients = ingredientsData.mapNotNull { it as? String }
             val measurements = measurementsData.mapNotNull { it as? String }
