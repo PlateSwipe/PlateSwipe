@@ -104,8 +104,11 @@ class RecipesViewModel(private val repository: RecipesRepository) : ViewModel() 
    *
    * @param category The category to filter by.
    */
-  fun updateCategory(category: String) {
+  fun updateCategory(category: String?) {
     viewModelScope.launch {
+      if (category == null) {
+        _recipes.value = emptyList()
+      }
       _filter.value.category = category
       fetchRandomRecipes(NUMBER_RECIPES_TO_FETCH)
       _loading.collect { isLoading ->
@@ -125,15 +128,18 @@ class RecipesViewModel(private val repository: RecipesRepository) : ViewModel() 
   fun fetchRandomRecipes(numberOfRecipes: Int) {
     require(numberOfRecipes >= 1) { "Number of fetched recipes must be at least 1" }
     _loading.value = true // Set loading to true while fetching
-    /*if (_filter.value.category != null) {
-       repository.searchByCategory(_filter.value.category!!, onSuccess = { recipes ->
-           _recipes.value = recipes
-           _loading.value = false
-       }, onFailure = { exception ->
-           _loading.value = false
-           Log.e("RecipesViewModel", "Error fetching recipes", exception)
-       })
-    }*/
+    if (_filter.value.category != null) {
+      repository.searchByCategory(
+          _filter.value.category!!,
+          onSuccess = { recipes ->
+            _recipes.value = recipes
+            _loading.value = false
+          },
+          onFailure = { exception ->
+            _loading.value = false
+            Log.e("RecipesViewModel", "Error fetching recipes", exception)
+          })
+    }
     repository.random(
         nbOfElements = numberOfRecipes,
         onSuccess = { randomRecipes ->
