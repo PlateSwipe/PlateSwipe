@@ -88,14 +88,14 @@ class EndToEndTest {
       FakeNavHost(navController, userViewModel)
     }
 
-    composeTestRule.onNodeWithTag("Fridge").assertExists().performClick()
-    composeTestRule.onNodeWithText("Fridge Screen").assertExists()
-
     composeTestRule.onNodeWithTag("Search").assertExists().performClick()
     composeTestRule.onNodeWithText("Search Recipe Screen").assertExists()
 
     composeTestRule.onNodeWithTag("Add Recipe").assertExists().performClick()
     composeTestRule.onNodeWithText("Create Recipe Screen").assertExists()
+
+    composeTestRule.onNodeWithTag("Fridge").assertExists().performClick()
+    composeTestRule.onNodeWithText("Fridge Screen").assertExists()
   }
 }
 

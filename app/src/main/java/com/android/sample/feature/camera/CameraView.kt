@@ -13,6 +13,18 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.viewinterop.AndroidView
 
+/**
+ * @param imageCapture
+ * @param imageAnalyzer
+ * @return Unit
+ *
+ * Function to display camera view
+ *
+ * @see CameraView
+ * @see startCamera
+ * @see
+ *   "https://developer.android.com/develop/ui/compose/migrate/interoperability-apis/views-in-compose"
+ */
 @Composable
 fun CameraView(imageCapture: ImageCapture, imageAnalyzer: ImageAnalysis.Analyzer? = null) {
 
@@ -21,6 +33,7 @@ fun CameraView(imageCapture: ImageCapture, imageAnalyzer: ImageAnalysis.Analyzer
   val previewView = remember { PreviewView(context) }
 
   Box(modifier = Modifier.fillMaxSize()) {
+    // AndroidView :  to use UI elements that are not yet available in Compose
     AndroidView(
         factory = { previewView }, modifier = Modifier.fillMaxSize().testTag("camera_preview")) {
           startCamera(lifecycleOwner, context, imageCapture, previewView, imageAnalyzer)

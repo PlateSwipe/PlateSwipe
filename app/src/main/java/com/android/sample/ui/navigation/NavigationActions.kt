@@ -25,6 +25,8 @@ object Screen {
   const val CREATE_RECIPE = "AddRecipe Screen"
 
   const val ACCOUNT = "Account Screen"
+
+  const val CAMERA_SCAN_CODE_BAR = "Camera Scan Code Bar Screen"
 }
 
 data class TopLevelDestination(val route: String, val iconId: Int, val textId: String)
