@@ -32,10 +32,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.InputChip
 import androidx.compose.material3.InputChipDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -70,16 +67,14 @@ import com.android.sample.resources.C.Tag.DIFFICULTY_INPUT_DESCRIPTION
 import com.android.sample.resources.C.Tag.END_ANIMATION
 import com.android.sample.resources.C.Tag.FILTER_ICON_DESCRIPTION
 import com.android.sample.resources.C.Tag.LOADING
-import com.android.sample.resources.C.Tag.PLATE_SWIPE
 import com.android.sample.resources.C.Tag.PRICE_RANGE_INPUT_DESCRIPTION
 import com.android.sample.resources.C.Tag.TIME_RANGE_INPUT_DESCRIPTION
-import com.android.sample.ui.navigation.BottomNavigationMenu
-import com.android.sample.ui.navigation.LIST_TOP_LEVEL_DESTINATIONS
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.graySlate
 import com.android.sample.ui.theme.starColor
 import com.android.sample.ui.theme.tagBackground
+import com.android.sample.ui.utils.PlateSwipeScaffold
 import kotlin.math.absoluteValue
 import kotlinx.coroutines.launch
 
@@ -100,25 +95,13 @@ fun SwipePage(
 ) {
   val selectedItem = navigationActions.currentRoute()
 
-  Scaffold(
-      modifier = Modifier.fillMaxWidth(),
-      topBar = {
-        TopAppBar(
-            title = { Text(PLATE_SWIPE) },
-            colors =
-                TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background,
-                ),
-            modifier = Modifier.testTag("topBar"))
-      },
-      bottomBar = {
-        BottomNavigationMenu(
-            onTabSelect = { tab -> navigationActions.navigateTo(tab) },
-            tabList = LIST_TOP_LEVEL_DESTINATIONS,
-            selectedItem = selectedItem)
-      }) { paddingValues ->
+  PlateSwipeScaffold(
+      navigationActions = navigationActions,
+      selectedItem = selectedItem,
+      showBackArrow = false,
+      content = { paddingValues ->
         RecipeDisplay(navigationActions, paddingValues, recipesViewModel, userViewModel)
-      }
+      })
 }
 
 /**

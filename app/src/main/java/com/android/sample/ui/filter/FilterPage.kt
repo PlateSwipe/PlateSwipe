@@ -14,19 +14,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RangeSlider
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -46,53 +38,28 @@ import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.resources.C.Tag.CATEGORY_NAME
 import com.android.sample.resources.C.Tag.DIFFICULTY_NAME
 import com.android.sample.resources.C.Tag.MAX_ITEM_IN_ROW
-import com.android.sample.resources.C.Tag.PLATE_SWIPE
 import com.android.sample.resources.C.Tag.PRICE_RANGE_MAX
 import com.android.sample.resources.C.Tag.PRICE_RANGE_MIN
 import com.android.sample.resources.C.Tag.PRICE_RANGE_NAME
 import com.android.sample.resources.C.Tag.PRICE_RANGE_UNIT
-import com.android.sample.resources.C.Tag.RETURN_BUTTON_DESCRIPTION
 import com.android.sample.resources.C.Tag.TIME_RANGE_MAX
 import com.android.sample.resources.C.Tag.TIME_RANGE_MIN
 import com.android.sample.resources.C.Tag.TIME_RANGE_NAME
 import com.android.sample.resources.C.Tag.TIME_RANGE_UNIT
-import com.android.sample.ui.navigation.BottomNavigationMenu
-import com.android.sample.ui.navigation.LIST_TOP_LEVEL_DESTINATIONS
 import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.utils.PlateSwipeScaffold
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FilterPage(
     navigationActions: NavigationActions,
     recipesViewModel: RecipesViewModel = viewModel(factory = RecipesViewModel.Factory)
 ) {
   val selectedItem = navigationActions.currentRoute()
-  Scaffold(
-      modifier = Modifier.fillMaxWidth(),
-      topBar = {
-        TopAppBar(
-            title = { Text(PLATE_SWIPE) },
-            colors =
-                TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background,
-                ),
-            modifier = Modifier.testTag("topBar"),
-            navigationIcon = {
-              IconButton(onClick = { navigationActions.goBack() }) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = RETURN_BUTTON_DESCRIPTION)
-              }
-            })
-      },
-      bottomBar = {
-        BottomNavigationMenu(
-            onTabSelect = { tab -> navigationActions.navigateTo(tab) },
-            tabList = LIST_TOP_LEVEL_DESTINATIONS,
-            selectedItem = selectedItem)
-      }) { paddingValues ->
-        FilterBox(paddingValues, recipesViewModel)
-      }
+  PlateSwipeScaffold(
+      navigationActions = navigationActions,
+      selectedItem = selectedItem,
+      showBackArrow = true,
+      content = { paddingValues -> FilterBox(paddingValues, recipesViewModel) })
 }
 
 /**

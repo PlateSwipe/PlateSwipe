@@ -27,7 +27,6 @@ object C {
     const val UNINITIALIZED_BORN_VALUE = -1f
 
     // Filter Page
-    const val RETURN_BUTTON_DESCRIPTION = "Return button"
     const val TIME_RANGE_NAME = "Time"
     const val TIME_RANGE_MIN = 0f
     const val TIME_RANGE_MAX = 200f
