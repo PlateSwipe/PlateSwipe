@@ -27,7 +27,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.InputChip
 import androidx.compose.material3.InputChipDefaults
@@ -86,7 +85,6 @@ import kotlinx.coroutines.launch
  * @param userViewModel - User View Model
  */
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SwipePage(
     navigationActions: NavigationActions,
@@ -193,129 +191,51 @@ fun RecipeDisplay(
               }
               var displayCategory by remember { mutableStateOf(filter.category != null) }
 
-              if (displayTimeRange) {
-                // Display the time range chip
-                InputChip(
-                    modifier = Modifier.testTag("timeRangeChip"),
-                    selected = false,
-                    onClick = {},
-                    label = {
-                      Text(
-                          text =
-                              "${filter.timeRange.min.toInt()} - ${filter.timeRange.max.toInt()} min",
-                          style = MaterialTheme.typography.bodySmall,
-                          color = MaterialTheme.colorScheme.onSecondary,
-                      )
-                    },
-                    trailingIcon = {
-                      Icon(
-                          Icons.Filled.Close,
-                          contentDescription = TIME_RANGE_INPUT_DESCRIPTION,
-                          modifier =
-                              Modifier.testTag("timeFilterDelete")
-                                  .size(InputChipDefaults.IconSize)
-                                  .clickable {
-                                    displayTimeRange = false
-                                    recipesViewModel.updateTimeRange(
-                                        recipesViewModel.filter.value.timeRange.minBorn,
-                                        recipesViewModel.filter.value.timeRange.maxBorn)
-                                  },
-                          tint = MaterialTheme.colorScheme.onSecondary)
-                    })
+              FilterChip(
+                  displayState = displayTimeRange,
+                  onDelete = {
+                    displayTimeRange = false
+                    recipesViewModel.updateTimeRange(
+                        recipesViewModel.filter.value.timeRange.minBorn,
+                        recipesViewModel.filter.value.timeRange.maxBorn)
+                  },
+                  label = "${filter.timeRange.min.toInt()} - ${filter.timeRange.max.toInt()} min",
+                  testTag = "timeRangeChip",
+                  contentDescription = TIME_RANGE_INPUT_DESCRIPTION)
 
-                Spacer(modifier = Modifier.width(8.dp))
-              }
-              if (displayPriceRange) {
-                // Display the time range chip
-                InputChip(
-                    modifier = Modifier.testTag("priceRangeChip"),
-                    selected = false,
-                    onClick = {},
-                    label = {
-                      Text(
-                          text =
-                              "${filter.priceRange.min.toInt()} - ${filter.priceRange.max.toInt()} $",
-                          style = MaterialTheme.typography.bodySmall,
-                          color = MaterialTheme.colorScheme.onSecondary,
-                      )
-                    },
-                    trailingIcon = {
-                      Icon(
-                          Icons.Filled.Close,
-                          contentDescription = PRICE_RANGE_INPUT_DESCRIPTION,
-                          modifier =
-                              Modifier.testTag("priceFilterDelete")
-                                  .size(InputChipDefaults.IconSize)
-                                  .clickable {
-                                    recipesViewModel.updatePriceRange(
-                                        recipesViewModel.filter.value.priceRange.minBorn,
-                                        recipesViewModel.filter.value.priceRange.maxBorn)
-                                    displayPriceRange = false
-                                  },
-                          tint = MaterialTheme.colorScheme.onSecondary)
-                    })
+              FilterChip(
+                  displayState = displayPriceRange,
+                  onDelete = {
+                    displayPriceRange = false
+                    recipesViewModel.updatePriceRange(
+                        recipesViewModel.filter.value.priceRange.minBorn,
+                        recipesViewModel.filter.value.priceRange.maxBorn)
+                  },
+                  label = "${filter.priceRange.min.toInt()} - ${filter.priceRange.max.toInt()} $",
+                  testTag = "priceRangeChip",
+                  contentDescription = PRICE_RANGE_INPUT_DESCRIPTION)
 
-                Spacer(modifier = Modifier.width(8.dp))
-              }
+              FilterChip(
+                  displayState = displayDifficulty,
+                  onDelete = {
+                    displayDifficulty = false
+                    recipesViewModel.updateDifficulty(Difficulty.Undefined)
+                  },
+                  label = filter.difficulty.toString(),
+                  testTag = "difficultyChip",
+                  contentDescription = DIFFICULTY_INPUT_DESCRIPTION)
 
-              if (displayDifficulty) {
-                // Display the time range chip
-                InputChip(
-                    modifier = Modifier.testTag("difficultyChip"),
-                    selected = false,
-                    onClick = {},
-                    label = {
-                      Text(
-                          text = "${filter.difficulty}",
-                          style = MaterialTheme.typography.bodySmall,
-                          color = MaterialTheme.colorScheme.onSecondary,
-                      )
-                    },
-                    trailingIcon = {
-                      Icon(
-                          Icons.Filled.Close,
-                          contentDescription = DIFFICULTY_INPUT_DESCRIPTION,
-                          modifier =
-                              Modifier.testTag("difficultyFilterDelete")
-                                  .size(InputChipDefaults.IconSize)
-                                  .clickable {
-                                    recipesViewModel.updateDifficulty(Difficulty.Undefined)
-                                    displayDifficulty = false
-                                  },
-                          tint = MaterialTheme.colorScheme.onSecondary)
-                    })
-
-                Spacer(modifier = Modifier.width(8.dp))
-              }
-
-              if (displayCategory) {
-                // Display the time range chip
-                InputChip(
-                    modifier = Modifier.testTag("categoryChip"),
-                    selected = false,
-                    onClick = {},
-                    label = {
-                      Text(
-                          text = "${filter.category}",
-                          style = MaterialTheme.typography.bodySmall,
-                          color = MaterialTheme.colorScheme.onSecondary,
-                      )
-                    },
-                    trailingIcon = {
-                      Icon(
-                          Icons.Filled.Close,
-                          contentDescription = CATEGORY_INPUT_DESCRIPTION,
-                          modifier =
-                              Modifier.testTag("categoryFilterDelete")
-                                  .size(InputChipDefaults.IconSize)
-                                  .clickable {
-                                    recipesViewModel.updateCategory(null)
-                                    displayCategory = false
-                                  },
-                          tint = MaterialTheme.colorScheme.onSecondary)
-                    })
-              }
+              FilterChip(
+                  displayState = displayCategory,
+                  onDelete = {
+                    displayCategory = false
+                    recipesViewModel.updateCategory(null)
+                  },
+                  label = filter.category.orEmpty(),
+                  testTag = "categoryChip",
+                  contentDescription = CATEGORY_INPUT_DESCRIPTION)
             }
+
         // Space between the filter chips and the recipe cards
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -490,4 +410,47 @@ private fun Tag(tag: String) {
             text = tag, fontSize = 14.sp, color = Color.White // Text color
             )
       }
+}
+
+/**
+ * Composable for the Filter Chip
+ *
+ * @param displayState - Display State of the Chip
+ * @param onDelete - On Delete Function
+ * @param label - Label for the Chip
+ * @param testTag - Test Tag for the Chip
+ * @param contentDescription - Content Description for the Chip
+ */
+@Composable
+fun FilterChip(
+    displayState: Boolean,
+    onDelete: () -> Unit,
+    label: String,
+    testTag: String,
+    contentDescription: String,
+) {
+  if (displayState) {
+    InputChip(
+        modifier = Modifier.testTag(testTag),
+        selected = false,
+        onClick = {},
+        label = {
+          Text(
+              text = label,
+              style = MaterialTheme.typography.bodySmall,
+              color = MaterialTheme.colorScheme.onSecondary,
+          )
+        },
+        trailingIcon = {
+          Icon(
+              Icons.Filled.Close,
+              contentDescription = contentDescription,
+              modifier =
+                  Modifier.testTag("${testTag}Delete").size(InputChipDefaults.IconSize).clickable {
+                    onDelete()
+                  },
+              tint = MaterialTheme.colorScheme.onSecondary)
+        })
+    Spacer(modifier = Modifier.width(8.dp))
+  }
 }

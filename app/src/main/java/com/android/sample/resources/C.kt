@@ -8,7 +8,6 @@ object C {
 
     // SwipePage
     const val END_ANIMATION = 1500f
-    const val PLATE_SWIPE = "PlateSwipe"
     const val FILTER_ICON_DESCRIPTION = "filterIcon"
     const val TIME_RANGE_INPUT_DESCRIPTION = "Time Range"
     const val PRICE_RANGE_INPUT_DESCRIPTION = "Price Range"
