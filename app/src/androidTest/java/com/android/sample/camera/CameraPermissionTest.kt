@@ -26,41 +26,7 @@ class CameraPermissionTest {
     composeTestRule.setContent {
       val permissionState = remember { FakePermissionState(isGranted = true, willBeGranted = true) }
       RequestCameraPermission(
-          cameraPermissionState = permissionState,
-          onPermissionGranted = { TestContent("Granted") },
-          onPermissionDenied = { TestContent("Denied") })
-    }
-
-    composeTestRule.onNodeWithText("Granted").assertExists()
-  }
-
-  @OptIn(ExperimentalPermissionsApi::class)
-  @Test
-  fun testCameraPermissionWasNotPermittedThenDenied() {
-    composeTestRule.setContent {
-      val permissionState = remember {
-        FakePermissionState(isGranted = false, willBeGranted = false)
-      }
-      RequestCameraPermission(
-          cameraPermissionState = permissionState,
-          onPermissionGranted = { TestContent("Granted") },
-          onPermissionDenied = { TestContent("Denied") })
-    }
-
-    composeTestRule.onNodeWithText("Denied").assertExists()
-  }
-
-  @OptIn(ExperimentalPermissionsApi::class)
-  @Test
-  fun testCameraPermissionWasNotPermittedThenAccepted() {
-    composeTestRule.setContent {
-      val permissionState = remember {
-        FakePermissionState(isGranted = false, willBeGranted = true)
-      }
-      RequestCameraPermission(
-          cameraPermissionState = permissionState,
-          onPermissionGranted = { TestContent("Granted") },
-          onPermissionDenied = { TestContent("Denied") })
+          permissionState = permissionState, onPermissionGranted = { TestContent("Granted") })
     }
 
     composeTestRule.onNodeWithText("Granted").assertExists()
@@ -72,12 +38,25 @@ class CameraPermissionTest {
     composeTestRule.setContent {
       val permissionState = remember { FakePermissionState(isGranted = true, willBeGranted = true) }
       RequestCameraPermission(
-          cameraPermissionState = permissionState,
-          onPermissionGranted = { TestContent("Permission is Granted") },
-          onPermissionDenied = { TestContent("Permission is Denied") })
+          permissionState = permissionState,
+          onPermissionGranted = { TestContent("Permission is Granted") })
     }
 
     composeTestRule.onNodeWithText("Permission is Granted").assertExists()
+  }
+
+  @OptIn(ExperimentalPermissionsApi::class)
+  @Test
+  fun testCameraPermissionDenied() {
+    composeTestRule.setContent {
+      val permissionState = remember {
+        FakePermissionState(isGranted = false, willBeGranted = false)
+      }
+      RequestCameraPermission(
+          permissionState = permissionState, onPermissionGranted = { TestContent("Granted") })
+    }
+
+    composeTestRule.onNodeWithText("Request permission").assertExists()
   }
 
   @Composable
