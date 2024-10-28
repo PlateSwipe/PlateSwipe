@@ -39,5 +39,14 @@ object C {
     const val MEAL_DB_MEAL_INSTRUCTIONS = "strInstructions"
     const val MEAL_DB_MEAL_INGREDIENT = "strIngredient"
     const val MEAL_DB_MEAL_MEASURE = "strMeasure"
+
+    // CameraScanCodeBarScreen
+    const val INVALID_BARCODE_MSG = "Invalid barcode"
+    const val LOG_TAG_CameraScanCodeBarScreen = "CameraScanCodeBarScreen"
+    const val SCAN_THRESHOLD = 3
+
+    // CameraActions
+    const val LOG_TAG_CameraActions = "CameraActions"
+    const val UNBINDING_ERR = "Failed unbing"
   }
 }
