@@ -23,7 +23,6 @@ import com.android.sample.ui.recipe.CreateRecipeScreen
 import com.android.sample.ui.recipe.SearchRecipeScreen
 import com.android.sample.ui.swipePage.SwipePage
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -38,7 +37,6 @@ class EndToEndTest {
   private lateinit var navigationActions: NavigationActions
   private lateinit var mockUserRepository: UserRepository
   private lateinit var mockFirebaseAuth: FirebaseAuth
-  private lateinit var mockCurrentUser: FirebaseUser
 
   private lateinit var userViewModel: UserViewModel
 

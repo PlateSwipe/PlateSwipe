@@ -9,10 +9,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
-
-private const val LOG_TAG = "CAMERA_ACTIONS"
-private const val UNBINDING_ERR = "Failed unbing"
-private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
+import com.android.sample.resources.C
 
 /**
  * @param lifecycleOwner
@@ -55,7 +52,7 @@ fun startCamera(
             cameraProvider.bindToLifecycle(lifecycleOwner, cameraSelector, preview, imageCapture)
           }
         } catch (exc: Exception) {
-          Log.e(LOG_TAG, UNBINDING_ERR, exc)
+          Log.e(C.Tag.LOG_TAG_CameraActions, C.Tag.UNBINDING_ERR, exc)
         }
       },
       ContextCompat.getMainExecutor(context))
