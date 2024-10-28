@@ -33,7 +33,6 @@ object C {
     const val MEAL_DB_MEAL_INGREDIENT = "strIngredient"
     const val MEAL_DB_MEAL_MEASURE = "strMeasure"
 
-
     // FirestoreRecipeRepository
     const val FIRESTORE_COLLECTION_NAME = "recipes"
   }

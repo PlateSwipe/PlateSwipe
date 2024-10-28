@@ -5,7 +5,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class FirestoreRecipeRepository(private val db: FirebaseFirestore) : RecipesRepository {
 
-    val recipeDB = db.collection(FIRESTORE_COLLECTION_NAME)
+  val recipeDB = db.collection(FIRESTORE_COLLECTION_NAME)
 
   override fun random(
       nbOfElements: Int,
@@ -16,7 +16,7 @@ class FirestoreRecipeRepository(private val db: FirebaseFirestore) : RecipesRepo
   }
 
   override fun search(mealID: String, onSuccess: (Recipe) -> Unit, onFailure: (Exception) -> Unit) {
-      // TODO("Not yet implemented")
+    // TODO("Not yet implemented")
   }
 
   override fun searchByCategory(
@@ -40,6 +40,6 @@ class FirestoreRecipeRepository(private val db: FirebaseFirestore) : RecipesRepo
   }
 
   fun modifyRecipe(recipe: Recipe) {
-    // TODO("Not yet implemented")
+    db.collection(FIRESTORE_COLLECTION_NAME).document(recipe.idMeal).set(recipe)
   }
 }
