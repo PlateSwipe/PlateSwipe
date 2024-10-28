@@ -179,14 +179,16 @@ fun RecipeTime(recipe: Recipe) {
   Text(
       modifier = Modifier.padding(4.dp).testTag("recipeTime${recipe.idMeal}"),
       text =
-          "${arrayOf(
-      10,
-      15,
-      20,
-      30,
-      45,
-      50
-    ).random()} min",
+          "${
+            arrayOf(
+                10,
+                15,
+                20,
+                30,
+                45,
+                50
+            ).random()
+        } min",
       style = MaterialTheme.typography.bodyMedium)
 }
 

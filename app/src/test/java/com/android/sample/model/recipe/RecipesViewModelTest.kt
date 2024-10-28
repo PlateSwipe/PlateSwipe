@@ -1,6 +1,5 @@
 package com.android.sample.model.recipe
 
-import kotlin.text.Typography.times
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
