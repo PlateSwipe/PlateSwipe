@@ -191,7 +191,11 @@ fun RecipeDisplay(
         Row(
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth().weight(1f).horizontalScroll(rememberScrollState())) {
+            modifier =
+                Modifier.testTag("filterRow")
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .horizontalScroll(rememberScrollState())) {
               // Star Icon (fixed size, no weight needed)
               var displayTimeRange by remember { mutableStateOf(!filter.timeRange.isLimited()) }
               var displayPriceRange by remember { mutableStateOf(!filter.priceRange.isLimited()) }
@@ -203,6 +207,7 @@ fun RecipeDisplay(
               if (displayTimeRange) {
                 // Display the time range chip
                 InputChip(
+                    modifier = Modifier.testTag("timeRangeChip"),
                     selected = false,
                     onClick = {},
                     label = {
@@ -218,12 +223,14 @@ fun RecipeDisplay(
                           Icons.Filled.Close,
                           contentDescription = "Time Range",
                           modifier =
-                              Modifier.size(InputChipDefaults.IconSize).clickable {
-                                displayTimeRange = false
-                                recipesViewModel.updateTimeRange(
-                                    recipesViewModel.filter.value.timeRange.minBorn,
-                                    recipesViewModel.filter.value.timeRange.maxBorn)
-                              },
+                              Modifier.testTag("timeFilterDelete")
+                                  .size(InputChipDefaults.IconSize)
+                                  .clickable {
+                                    displayTimeRange = false
+                                    recipesViewModel.updateTimeRange(
+                                        recipesViewModel.filter.value.timeRange.minBorn,
+                                        recipesViewModel.filter.value.timeRange.maxBorn)
+                                  },
                           tint = MaterialTheme.colorScheme.onSecondary)
                     })
 
@@ -232,6 +239,7 @@ fun RecipeDisplay(
               if (displayPriceRange) {
                 // Display the time range chip
                 InputChip(
+                    modifier = Modifier.testTag("priceRangeChip"),
                     selected = false,
                     onClick = {},
                     label = {
@@ -247,12 +255,14 @@ fun RecipeDisplay(
                           Icons.Filled.Close,
                           contentDescription = "Price Range",
                           modifier =
-                              Modifier.size(InputChipDefaults.IconSize).clickable {
-                                recipesViewModel.updatePriceRange(
-                                    recipesViewModel.filter.value.priceRange.minBorn,
-                                    recipesViewModel.filter.value.priceRange.maxBorn)
-                                displayPriceRange = false
-                              },
+                              Modifier.testTag("priceFilterDelete")
+                                  .size(InputChipDefaults.IconSize)
+                                  .clickable {
+                                    recipesViewModel.updatePriceRange(
+                                        recipesViewModel.filter.value.priceRange.minBorn,
+                                        recipesViewModel.filter.value.priceRange.maxBorn)
+                                    displayPriceRange = false
+                                  },
                           tint = MaterialTheme.colorScheme.onSecondary)
                     })
 
@@ -262,6 +272,7 @@ fun RecipeDisplay(
               if (displayDifficulty) {
                 // Display the time range chip
                 InputChip(
+                    modifier = Modifier.testTag("difficultyChip"),
                     selected = false,
                     onClick = {},
                     label = {
@@ -276,10 +287,12 @@ fun RecipeDisplay(
                           Icons.Filled.Close,
                           contentDescription = "Difficulty",
                           modifier =
-                              Modifier.size(InputChipDefaults.IconSize).clickable {
-                                recipesViewModel.updateDifficulty(Difficulty.Undefined)
-                                displayDifficulty = false
-                              },
+                              Modifier.testTag("difficultyFilterDelete")
+                                  .size(InputChipDefaults.IconSize)
+                                  .clickable {
+                                    recipesViewModel.updateDifficulty(Difficulty.Undefined)
+                                    displayDifficulty = false
+                                  },
                           tint = MaterialTheme.colorScheme.onSecondary)
                     })
 
@@ -289,6 +302,7 @@ fun RecipeDisplay(
               if (displayCategory) {
                 // Display the time range chip
                 InputChip(
+                    modifier = Modifier.testTag("categoryChip"),
                     selected = false,
                     onClick = {},
                     label = {
@@ -303,10 +317,12 @@ fun RecipeDisplay(
                           Icons.Filled.Close,
                           contentDescription = "Category",
                           modifier =
-                              Modifier.size(InputChipDefaults.IconSize).clickable {
-                                recipesViewModel.updateCategory(null)
-                                displayCategory = false
-                              },
+                              Modifier.testTag("categoryFilterDelete")
+                                  .size(InputChipDefaults.IconSize)
+                                  .clickable {
+                                    recipesViewModel.updateCategory(null)
+                                    displayCategory = false
+                                  },
                           tint = MaterialTheme.colorScheme.onSecondary)
                     })
               }

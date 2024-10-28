@@ -62,6 +62,8 @@ class FilterPageTest {
           listOf(Pair("Ingredient 2", "Ingredient 2")))
   private val mockedRecipesList = listOf(recipe1, recipe2)
 
+  private val mockedCategoriesList = listOf("Dessert", "Vegetarian")
+
   @get:Rule val composeTestRule = createComposeRule()
 
   /** This method runs before the test execution. */
@@ -78,11 +80,20 @@ class FilterPageTest {
       null
     }
 
+    `when`(mockRepository.listCategories(any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.getArgument<(List<String>) -> Unit>(0)
+      onSuccess(mockedCategoriesList)
+      null
+    }
+
     recipesViewModel = RecipesViewModel(mockRepository)
     advanceUntilIdle()
 
     `when`(mockNavigationActions.currentRoute()).thenReturn(Route.SWIPE)
     `when`(mockNavigationActions.navigateTo(Route.AUTH)).then {}
+
+    recipesViewModel.updateCategory(mockedCategoriesList[0])
+    recipesViewModel.updateCategory(mockedCategoriesList[1])
     composeTestRule.setContent {
       FilterPage(mockNavigationActions, recipesViewModel) // Set up the SignInScreen directly
     }
@@ -224,5 +235,52 @@ class FilterPageTest {
 
     // Verify the ViewModel's updateDifficulty method was called with Difficulty.Hard
     assertEquals(Difficulty.Hard, recipesViewModel.filter.value.difficulty)
+  }
+
+  @Test
+  fun categoriesCheckboxesAreDisplayedCorrectly() {
+
+    // Verify that each category checkbox is displayed
+    assertEquals(recipesViewModel.categories.value.size, mockedCategoriesList.size)
+    recipesViewModel.categories.value.forEach { category ->
+      composeTestRule.onNodeWithTag("difficultyCheckbox$category").assertExists()
+      composeTestRule.onNodeWithTag("difficultyCheckbox$category").assertIsDisplayed()
+    }
+  }
+
+  @OptIn(ExperimentalCoroutinesApi::class)
+  @Test
+  fun selectingCheckboxUpdatesViewModel() = runTest {
+    advanceUntilIdle()
+
+    // Select the "Dessert" checkbox
+    composeTestRule.onNodeWithTag("difficultyCheckboxDessert").performClick()
+
+    // Verify that the ViewModel's category is updated to "Dessert"
+    assertEquals("Dessert", recipesViewModel.filter.value.category)
+
+    // Select the "Main Course" checkbox
+    composeTestRule.onNodeWithTag("difficultyCheckboxVegetarian").performClick()
+
+    // Verify that the ViewModel's category is updated to "Main Course" and "Dessert" is unselected
+    assertEquals("Vegetarian", recipesViewModel.filter.value.category)
+    composeTestRule.onNodeWithTag("difficultyCheckboxDessert").assertIsOff()
+  }
+
+  @Test
+  fun onlyOneCheckboxCanBeSelectedAtATime() {
+    // Select "Dessert" checkbox
+    composeTestRule.onNodeWithTag("difficultyCheckboxDessert").performClick()
+
+    // Ensure "Dessert" is checked and others are not
+    composeTestRule.onNodeWithTag("difficultyCheckboxDessert").assertIsOn()
+    composeTestRule.onNodeWithTag("difficultyCheckboxVegetarian").assertIsOff()
+
+    // Select "Appetizer" checkbox
+    composeTestRule.onNodeWithTag("difficultyCheckboxVegetarian").performClick()
+
+    // Ensure "Appetizer" is checked and "Dessert" is unchecked
+    composeTestRule.onNodeWithTag("difficultyCheckboxVegetarian").assertIsOn()
+    composeTestRule.onNodeWithTag("difficultyCheckboxDessert").assertIsOff()
   }
 }
