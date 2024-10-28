@@ -93,26 +93,15 @@ class MealDBRecipesRepository(private val client: OkHttpClient) : RecipesReposit
    *
    * @param json The JSON object to parse.
    */
-  private fun parseMealDBJsonToThumbnails(json: JSONObject, category: String): List<Recipe> {
-    val parsedListOfThumbnails = mutableListOf<Recipe>()
+  private fun parseMealDBJsonToThumbnails(json: JSONObject): List<List<String>> {
+    val parsedListOfThumbnails = mutableListOf<List<String>>()
     val listOfThumbnails = json.getJSONArray(MEAL_DB_ARRAY_NAME)
     for (i in 0 until listOfThumbnails.length()) {
       val thumbnail = listOfThumbnails.getJSONObject(i)
       val strMeal = thumbnail.getString(MEAL_DB_MEAL_NAME)
       val idMeal = thumbnail.getString(MEAL_DB_MEAL_ID)
       val strMealThumb = thumbnail.getString(MEAL_DB_MEAL_THUMB)
-
-      parsedListOfThumbnails.add(
-          Recipe(
-              idMeal = idMeal,
-              strMeal = strMeal,
-              strInstructions = "Example Instructions",
-              strMealThumbUrl = strMealThumb,
-              strArea = null,
-              strCategory = category,
-              // give some hardcoded ingredients
-              ingredientsAndMeasurements =
-                  listOf(Pair("Example Ingredient", "Example Measurement"))))
+      parsedListOfThumbnails.add(listOf(strMeal, idMeal, strMealThumb))
     }
     return parsedListOfThumbnails
   }
@@ -187,8 +176,13 @@ class MealDBRecipesRepository(private val client: OkHttpClient) : RecipesReposit
 
               override fun onResponse(call: Call, response: Response) {
                 try {
-                  onSuccess(
-                      parseMealDBJsonToThumbnails(JSONObject(response.body!!.string()), category))
+
+                  val listOfRecipes = mutableListOf<Recipe>()
+                  val recipes = parseMealDBJsonToThumbnails(JSONObject(response.body!!.string()))
+                  for (recipe in recipes) {
+                    search(recipe[1], { rec -> listOfRecipes.add(rec) }, onFailure)
+                  }
+                  onSuccess(listOfRecipes)
                 } catch (e: JSONException) {
                   onFailure(e)
                 }
@@ -197,7 +191,7 @@ class MealDBRecipesRepository(private val client: OkHttpClient) : RecipesReposit
   }
 
   override fun listCategories(onSuccess: (List<String>) -> Unit, onFailure: (Exception) -> Unit) {
-    val url = "$MEAL_DB_URL/categories.php"
+    val url = "https://www.themealdb.com/api/json/v1/1/categories.php"
     val request =
         Request.Builder().url(url).header(MEAL_DB_USER_AGENT, MEAL_DB_USER_AGENT_VALUE).build()
     client

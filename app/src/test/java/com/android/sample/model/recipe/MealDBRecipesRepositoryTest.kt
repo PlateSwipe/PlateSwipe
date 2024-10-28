@@ -523,7 +523,7 @@ class MealDBRecipesRepositoryTest {
     `when`(mockResponseBody.string())
         .thenReturn(
             """{
-                "meals": [
+                "categories": [
                     {
                         "strCategory": "Beef"
                     },

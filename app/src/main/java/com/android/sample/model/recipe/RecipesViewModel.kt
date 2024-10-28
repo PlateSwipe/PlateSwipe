@@ -128,7 +128,8 @@ class RecipesViewModel(private val repository: RecipesRepository) : ViewModel() 
   fun fetchRandomRecipes(numberOfRecipes: Int) {
     require(numberOfRecipes >= 1) { "Number of fetched recipes must be at least 1" }
     _loading.value = true // Set loading to true while fetching
-    if (_filter.value.category != null) {
+    // uncomment when backend is ready. Tested with hardcoded mealDB data
+    /*if (_filter.value.category != null) {
       repository.searchByCategory(
           _filter.value.category!!,
           onSuccess = { recipes ->
@@ -139,7 +140,7 @@ class RecipesViewModel(private val repository: RecipesRepository) : ViewModel() 
             _loading.value = false
             Log.e("RecipesViewModel", "Error fetching recipes", exception)
           })
-    }
+    }*/
     repository.random(
         nbOfElements = numberOfRecipes,
         onSuccess = { randomRecipes ->

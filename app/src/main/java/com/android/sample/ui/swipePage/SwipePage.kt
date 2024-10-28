@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -70,6 +71,7 @@ import com.android.sample.ui.navigation.BottomNavigationMenu
 import com.android.sample.ui.navigation.LIST_TOP_LEVEL_DESTINATIONS
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
+import com.android.sample.ui.theme.graySlate
 import com.android.sample.ui.theme.starColor
 import com.android.sample.ui.theme.tagBackground
 import kotlin.math.absoluteValue
@@ -129,7 +131,6 @@ fun RecipeDisplay(
   var retrieveNextRecipe by remember { mutableStateOf(false) }
   var displayCard1 by remember { mutableStateOf(true) }
   var displayCard2 by remember { mutableStateOf(false) }
-  var showFilter by remember { mutableStateOf(false) }
 
   // Offset for the swipe animation
   val offsetX = remember { Animatable(0f) }
@@ -180,13 +181,13 @@ fun RecipeDisplay(
                   painter = painterResource(R.drawable.filter),
                   contentDescription = "filterIcon",
                   modifier =
-                      Modifier.testTag("filter").size(24.dp).clickable {
+                      Modifier.testTag("filter").size(30.dp).clickable {
                         navigationActions.navigateTo(Screen.FILTER)
-                        showFilter = !showFilter
                       }, // Use fixed size for the icon
-                  tint = starColor)
+                  tint = graySlate)
             }
-
+        // Space between the filter icon and the filter chips
+        Spacer(modifier = Modifier.height(8.dp))
         Row(
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically,
@@ -205,7 +206,12 @@ fun RecipeDisplay(
                     selected = false,
                     onClick = {},
                     label = {
-                      Text("Time Range: [${filter.timeRange.min}, ${filter.timeRange.max}] min")
+                      Text(
+                          text =
+                              "${filter.timeRange.min.toInt()} - ${filter.timeRange.max.toInt()} min",
+                          style = MaterialTheme.typography.bodySmall,
+                          color = MaterialTheme.colorScheme.onSecondary,
+                      )
                     },
                     trailingIcon = {
                       Icon(
@@ -214,7 +220,11 @@ fun RecipeDisplay(
                           modifier =
                               Modifier.size(InputChipDefaults.IconSize).clickable {
                                 displayTimeRange = false
-                              })
+                                recipesViewModel.updateTimeRange(
+                                    recipesViewModel.filter.value.timeRange.minBorn,
+                                    recipesViewModel.filter.value.timeRange.maxBorn)
+                              },
+                          tint = MaterialTheme.colorScheme.onSecondary)
                     })
 
                 Spacer(modifier = Modifier.width(8.dp))
@@ -225,7 +235,12 @@ fun RecipeDisplay(
                     selected = false,
                     onClick = {},
                     label = {
-                      Text("Price Range: [${filter.priceRange.min}, ${filter.priceRange.max}] $")
+                      Text(
+                          text =
+                              "${filter.priceRange.min.toInt()} - ${filter.priceRange.max.toInt()} $",
+                          style = MaterialTheme.typography.bodySmall,
+                          color = MaterialTheme.colorScheme.onSecondary,
+                      )
                     },
                     trailingIcon = {
                       Icon(
@@ -233,8 +248,12 @@ fun RecipeDisplay(
                           contentDescription = "Price Range",
                           modifier =
                               Modifier.size(InputChipDefaults.IconSize).clickable {
+                                recipesViewModel.updatePriceRange(
+                                    recipesViewModel.filter.value.priceRange.minBorn,
+                                    recipesViewModel.filter.value.priceRange.maxBorn)
                                 displayPriceRange = false
-                              })
+                              },
+                          tint = MaterialTheme.colorScheme.onSecondary)
                     })
 
                 Spacer(modifier = Modifier.width(8.dp))
@@ -245,15 +264,23 @@ fun RecipeDisplay(
                 InputChip(
                     selected = false,
                     onClick = {},
-                    label = { Text("${filter.difficulty}") },
+                    label = {
+                      Text(
+                          text = "${filter.difficulty}",
+                          style = MaterialTheme.typography.bodySmall,
+                          color = MaterialTheme.colorScheme.onSecondary,
+                      )
+                    },
                     trailingIcon = {
                       Icon(
                           Icons.Filled.Close,
                           contentDescription = "Difficulty",
                           modifier =
                               Modifier.size(InputChipDefaults.IconSize).clickable {
+                                recipesViewModel.updateDifficulty(Difficulty.Undefined)
                                 displayDifficulty = false
-                              })
+                              },
+                          tint = MaterialTheme.colorScheme.onSecondary)
                     })
 
                 Spacer(modifier = Modifier.width(8.dp))
@@ -264,18 +291,28 @@ fun RecipeDisplay(
                 InputChip(
                     selected = false,
                     onClick = {},
-                    label = { Text("${filter.category}") },
+                    label = {
+                      Text(
+                          text = "${filter.category}",
+                          style = MaterialTheme.typography.bodySmall,
+                          color = MaterialTheme.colorScheme.onSecondary,
+                      )
+                    },
                     trailingIcon = {
                       Icon(
                           Icons.Filled.Close,
                           contentDescription = "Category",
                           modifier =
                               Modifier.size(InputChipDefaults.IconSize).clickable {
+                                recipesViewModel.updateCategory(null)
                                 displayCategory = false
-                              })
+                              },
+                          tint = MaterialTheme.colorScheme.onSecondary)
                     })
               }
             }
+        // Space between the filter chips and the recipe cards
+        Spacer(modifier = Modifier.height(8.dp))
 
         // First Recipe card with image
         Box(modifier = Modifier.weight(15f)) {

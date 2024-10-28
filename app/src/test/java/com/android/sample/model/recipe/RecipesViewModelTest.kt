@@ -471,11 +471,12 @@ class RecipesViewModelTest {
   }
 
   /** Tests for the filter category functionality. */
+  @OptIn(ExperimentalCoroutinesApi::class)
   @Test
-  fun `test updateCategory updates the category correctly`() {
+  fun `test updateCategory updates the category correctly`() = runTest {
     val newCategory = "Dessert"
     recipesViewModel.updateCategory(newCategory)
-
+    advanceUntilIdle()
     assertEquals(newCategory, recipesViewModel.filter.value.category)
   }
 }

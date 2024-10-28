@@ -19,12 +19,12 @@ data class FloatRange(var min: Float, var max: Float, var minBorn: Float, var ma
     require(0 <= newMax) { "newMax should not be negative" }
     require(newMin <= newMax) { "newMin should not exceed max" }
     if (minBorn == -1f && maxBorn == -1f) {
-      minBorn = newMin
-      maxBorn = newMax
+      minBorn = newMin.toInt().toFloat()
+      maxBorn = newMax.toInt().toFloat()
     }
     require(newMin >= minBorn && newMax <= maxBorn) { "newMin and newMax should be within range" }
-    min = newMin
-    max = newMax
+    min = newMin.toInt().toFloat()
+    max = newMax.toInt().toFloat()
   }
 
   companion object {

@@ -98,7 +98,7 @@ fun FilterBox(paddingValues: PaddingValues, recipesViewModel: RecipesViewModel) 
             modifier = Modifier.testTag("timeRangeSlider"),
             name = "Time",
             min = 0f,
-            max = 120f,
+            max = 200f,
             unit = "min",
             range = recipesViewModel.filter.value.timeRange,
             updateRange = { newMin, newMax -> recipesViewModel.updateTimeRange(newMin, newMax) })
@@ -106,7 +106,7 @@ fun FilterBox(paddingValues: PaddingValues, recipesViewModel: RecipesViewModel) 
             modifier = Modifier.testTag("priceRangeSlider"),
             name = "Price",
             min = 0f,
-            max = 500f,
+            max = 100f,
             unit = "$",
             range = filter.priceRange,
             updateRange = { newMin, newMax -> recipesViewModel.updatePriceRange(newMin, newMax) })
@@ -196,6 +196,8 @@ fun CheckboxDifficulty(recipesViewModel: RecipesViewModel) {
     mutableStateMapOf(
         Difficulty.Easy to false, Difficulty.Medium to false, Difficulty.Hard to false)
   }
+  val orderedDifficulties = listOf(Difficulty.Easy, Difficulty.Medium, Difficulty.Hard)
+
   if (recipesViewModel.filter.value.difficulty != Difficulty.Undefined) {
     difficultyLevels[recipesViewModel.filter.value.difficulty] = true
   }
@@ -212,7 +214,7 @@ fun CheckboxDifficulty(recipesViewModel: RecipesViewModel) {
         horizontalArrangement = Arrangement.Center,
         verticalArrangement = Arrangement.Center,
         maxItemsInEachRow = 3) {
-          difficultyLevels.forEach { (difficulty, checked) ->
+          orderedDifficulties.forEach { difficulty ->
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -224,7 +226,7 @@ fun CheckboxDifficulty(recipesViewModel: RecipesViewModel) {
                   color = MaterialTheme.colorScheme.onPrimary) // Display the difficulty name
               Checkbox(
                   modifier = Modifier.testTag("difficultyCheckbox${difficulty}"),
-                  checked = checked,
+                  checked = difficultyLevels[difficulty]!!,
                   onCheckedChange = { isChecked ->
                     // Update the individual state in boxStates
                     difficultyLevels.forEach { (i, _) ->
