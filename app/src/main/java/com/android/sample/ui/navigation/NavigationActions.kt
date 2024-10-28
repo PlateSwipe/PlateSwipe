@@ -25,6 +25,7 @@ object Screen {
   const val CREATE_RECIPE = "AddRecipe Screen"
 
   const val ACCOUNT = "Account Screen"
+  const val OVERVIEW_RECIPE = "Overview Recipe Screen"
 }
 
 data class TopLevelDestination(val route: String, val iconId: Int, val textId: String)

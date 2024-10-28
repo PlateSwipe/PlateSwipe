@@ -8,7 +8,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeRight
 import androidx.test.espresso.intent.Intents
-import com.android.sample.model.recipe.RecipeRepository
+import com.android.sample.model.recipe.RecipesRepository
 import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
@@ -24,7 +24,7 @@ import org.mockito.kotlin.anyOrNull
 
 class RecipeOverviewTest {
   private lateinit var navigationActions: NavigationActions
-  private lateinit var repository: RecipeRepository
+  private lateinit var repository: RecipesRepository
   private lateinit var recipesViewModel: RecipesViewModel
 
   @get:Rule val composeTestRule = createComposeRule()
@@ -32,7 +32,7 @@ class RecipeOverviewTest {
   @Before
   fun setUp() {
     navigationActions = mock(NavigationActions::class.java)
-    repository = mock(RecipeRepository::class.java)
+    repository = mock(RecipesRepository::class.java)
     recipesViewModel = RecipesViewModel(repository)
     `when`(navigationActions.currentRoute()).thenReturn(Route.SEARCH)
     `when`(repository.random(eq(1), anyOrNull(), anyOrNull())).then {}
