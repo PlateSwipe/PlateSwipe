@@ -22,6 +22,12 @@ object C {
     const val NEW_MIN_SHOULD_NOT_EXCEED_MAX = "newMin should not exceed max"
     const val NEW_MAX_SHOULD_NOT_BE_NEGATIVE = "newMax should not be negative"
     const val NEW_MIN_SHOULD_NOT_BE_NEGATIVE = "newMin should not be negative"
+    const val MIN_SHOULD_NOT_BE_NEGATIVE = "Min should not be negative or different from -1"
+    const val MAX_SHOULD_NOT_BE_NEGATIVE = "Max should not be negative or different from -1"
+    const val MIN_BORN_SHOULD_NOT_BE_NEGATIVE =
+        "Born min should not be negative or different from -1"
+    const val MAX_BORN_SHOULD_NOT_BE_NEGATIVE =
+        "Born max should not be negative or different from -1"
     const val NEW_MIN_AND_NEW_MAX_SHOULD_BE_WITHIN_RANGE =
         "newMin and newMax should be within range"
     const val UNINITIALIZED_BORN_VALUE = -1f

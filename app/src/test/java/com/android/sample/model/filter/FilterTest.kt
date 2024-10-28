@@ -39,6 +39,30 @@ class FilterTest {
   }
 
   @Test
+  fun `test init with incorrect Min`() {
+    // Expect an IllegalArgumentException
+    assertThrows(IllegalArgumentException::class.java) { FloatRange(-50f, 0f, 0f, 0f) }
+  }
+
+  @Test
+  fun `test init with incorrect Max`() {
+    // Expect an IllegalArgumentException
+    assertThrows(IllegalArgumentException::class.java) { FloatRange(0f, -50f, 0f, 0f) }
+  }
+
+  @Test
+  fun `test init with incorrect minBorn`() {
+    // Expect an IllegalArgumentException
+    assertThrows(IllegalArgumentException::class.java) { FloatRange(0f, 0f, -50f, 0f) }
+  }
+
+  @Test
+  fun `test init with incorrect maxBorn`() {
+    // Expect an IllegalArgumentException
+    assertThrows(IllegalArgumentException::class.java) { FloatRange(0f, 0f, 0f, -50f) }
+  }
+
+  @Test
   fun `test FloatRange valid update`() {
     val range = FloatRange(0f, 10f, 0f, 10f)
     range.update(5f, 8f)

@@ -1,6 +1,10 @@
 package com.android.sample.model.filter
 
+import com.android.sample.resources.C.Tag.MAX_BORN_SHOULD_NOT_BE_NEGATIVE
+import com.android.sample.resources.C.Tag.MAX_SHOULD_NOT_BE_NEGATIVE
+import com.android.sample.resources.C.Tag.MIN_BORN_SHOULD_NOT_BE_NEGATIVE
 import com.android.sample.resources.C.Tag.MIN_SHOULD_NOT_BE_GREATER_THAN_MAX
+import com.android.sample.resources.C.Tag.MIN_SHOULD_NOT_BE_NEGATIVE
 import com.android.sample.resources.C.Tag.NEW_MAX_SHOULD_NOT_BE_NEGATIVE
 import com.android.sample.resources.C.Tag.NEW_MIN_AND_NEW_MAX_SHOULD_BE_WITHIN_RANGE
 import com.android.sample.resources.C.Tag.NEW_MIN_SHOULD_NOT_BE_NEGATIVE
@@ -19,6 +23,10 @@ open class Filter(
 /** Class to store a range of float values. */
 data class FloatRange(var min: Float, var max: Float, var minBorn: Float, var maxBorn: Float) {
   init {
+    require(min >= 0 || min == UNINITIALIZED_BORN_VALUE) { MIN_SHOULD_NOT_BE_NEGATIVE }
+    require(max >= 0 || max == UNINITIALIZED_BORN_VALUE) { MAX_SHOULD_NOT_BE_NEGATIVE }
+    require(minBorn >= 0 || minBorn == UNINITIALIZED_BORN_VALUE) { MIN_BORN_SHOULD_NOT_BE_NEGATIVE }
+    require(maxBorn >= 0 || maxBorn == UNINITIALIZED_BORN_VALUE) { MAX_BORN_SHOULD_NOT_BE_NEGATIVE }
     require(min <= max) { MIN_SHOULD_NOT_BE_GREATER_THAN_MAX }
   }
 
