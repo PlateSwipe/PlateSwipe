@@ -28,7 +28,7 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
         }
     }
 
-  val recipeDB = db.collection(FIRESTORE_COLLECTION_NAME)
+
 
     /*********************************************/
 
@@ -38,22 +38,22 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
      * @return A new unique identifier for a recipe.
      */
     fun getNewUid(): String{
-        return recipeDB.document().id
+        return db.collection(FIRESTORE_COLLECTION_NAME).document().id
     }
 
     fun addRecipe(recipe: Recipe, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
         performFirestoreOperation(
-            recipeDB.document(recipe.idMeal).set(recipe), onSuccess, onFailure)
+          db.collection(FIRESTORE_COLLECTION_NAME).document(recipe.idMeal).set(recipe), onSuccess, onFailure)
     }
 
     fun updateRecipe(recipe: Recipe, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
         performFirestoreOperation(
-            recipeDB.document(recipe.idMeal).set(recipe), onSuccess, onFailure)
+          db.collection(FIRESTORE_COLLECTION_NAME).document(recipe.idMeal).set(recipe), onSuccess, onFailure)
     }
 
     fun deleteRecipe(idMeal: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
         performFirestoreOperation(
-            recipeDB.document(idMeal).delete(), onSuccess, onFailure)
+          db.collection(FIRESTORE_COLLECTION_NAME).document(idMeal).delete(), onSuccess, onFailure)
     }
 
 
@@ -65,7 +65,7 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
      * @param document The Firestore document to convert.
      * @return The ToDo object.
      */
-    private fun documentToRecipe(document: DocumentSnapshot): Recipe? {
+    fun documentToRecipe(document: DocumentSnapshot): Recipe? {
         return try {
             val id = document.id
             val name = document.getString(FIRESTORE_RECIPE_NAME)?: return null
@@ -137,7 +137,7 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
 
   override fun search(mealID: String, onSuccess: (Recipe) -> Unit, onFailure: (Exception) -> Unit) {
       Log.d("FirestoreRecipesRepository", "search")
-      recipeDB.document(mealID).get().addOnCompleteListener{
+    db.collection(FIRESTORE_COLLECTION_NAME).document(mealID).get().addOnCompleteListener{
           task->
           if(task.isSuccessful){
                 val recipe = documentToRecipe(task.result!!)
