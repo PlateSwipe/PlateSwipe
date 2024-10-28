@@ -116,8 +116,25 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
   }
 
   override fun search(mealID: String, onSuccess: (Recipe) -> Unit, onFailure: (Exception) -> Unit) {
-    // TODO("Not yet implemented")
-  }
+      Log.d("FirestoreRecipesRepository", "search")
+      recipeDB.document(mealID).get().addOnCompleteListener{
+          task->
+          if(task.isSuccessful){
+                val recipe = documentToRecipe(task.result!!)
+                if(recipe != null) {
+                    onSuccess(recipe)
+                }else
+                    onFailure(Exception("Recipe not found"))
+                }else{
+                    task.exception?.let{
+                        e->
+                        Log.e("FirestoreRecipesRepository", "Error getting documents", e)
+                        onFailure(e)
+                    }
+
+                }
+          }
+      }
 
   override fun searchByCategory(
       category: String,
