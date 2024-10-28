@@ -65,8 +65,14 @@ import com.android.sample.R
 import com.android.sample.model.filter.Difficulty
 import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.model.user.UserViewModel
+import com.android.sample.resources.C.Tag.CATEGORY_INPUT_DESCRIPTION
+import com.android.sample.resources.C.Tag.DIFFICULTY_INPUT_DESCRIPTION
 import com.android.sample.resources.C.Tag.END_ANIMATION
+import com.android.sample.resources.C.Tag.FILTER_ICON_DESCRIPTION
 import com.android.sample.resources.C.Tag.LOADING
+import com.android.sample.resources.C.Tag.PLATE_SWIPE
+import com.android.sample.resources.C.Tag.PRICE_RANGE_INPUT_DESCRIPTION
+import com.android.sample.resources.C.Tag.TIME_RANGE_INPUT_DESCRIPTION
 import com.android.sample.ui.navigation.BottomNavigationMenu
 import com.android.sample.ui.navigation.LIST_TOP_LEVEL_DESTINATIONS
 import com.android.sample.ui.navigation.NavigationActions
@@ -98,7 +104,7 @@ fun SwipePage(
       modifier = Modifier.fillMaxWidth(),
       topBar = {
         TopAppBar(
-            title = { Text("PlateSwipe") },
+            title = { Text(PLATE_SWIPE) },
             colors =
                 TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background,
@@ -179,7 +185,7 @@ fun RecipeDisplay(
               // Star Icon (fixed size, no weight needed)
               Icon(
                   painter = painterResource(R.drawable.filter),
-                  contentDescription = "filterIcon",
+                  contentDescription = FILTER_ICON_DESCRIPTION,
                   modifier =
                       Modifier.testTag("filter").size(30.dp).clickable {
                         navigationActions.navigateTo(Screen.FILTER)
@@ -221,7 +227,7 @@ fun RecipeDisplay(
                     trailingIcon = {
                       Icon(
                           Icons.Filled.Close,
-                          contentDescription = "Time Range",
+                          contentDescription = TIME_RANGE_INPUT_DESCRIPTION,
                           modifier =
                               Modifier.testTag("timeFilterDelete")
                                   .size(InputChipDefaults.IconSize)
@@ -253,7 +259,7 @@ fun RecipeDisplay(
                     trailingIcon = {
                       Icon(
                           Icons.Filled.Close,
-                          contentDescription = "Price Range",
+                          contentDescription = PRICE_RANGE_INPUT_DESCRIPTION,
                           modifier =
                               Modifier.testTag("priceFilterDelete")
                                   .size(InputChipDefaults.IconSize)
@@ -285,7 +291,7 @@ fun RecipeDisplay(
                     trailingIcon = {
                       Icon(
                           Icons.Filled.Close,
-                          contentDescription = "Difficulty",
+                          contentDescription = DIFFICULTY_INPUT_DESCRIPTION,
                           modifier =
                               Modifier.testTag("difficultyFilterDelete")
                                   .size(InputChipDefaults.IconSize)
@@ -315,7 +321,7 @@ fun RecipeDisplay(
                     trailingIcon = {
                       Icon(
                           Icons.Filled.Close,
-                          contentDescription = "Category",
+                          contentDescription = CATEGORY_INPUT_DESCRIPTION,
                           modifier =
                               Modifier.testTag("categoryFilterDelete")
                                   .size(InputChipDefaults.IconSize)

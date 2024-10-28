@@ -243,8 +243,8 @@ class FilterPageTest {
     // Verify that each category checkbox is displayed
     assertEquals(recipesViewModel.categories.value.size, mockedCategoriesList.size)
     recipesViewModel.categories.value.forEach { category ->
-      composeTestRule.onNodeWithTag("difficultyCheckbox$category").assertExists()
-      composeTestRule.onNodeWithTag("difficultyCheckbox$category").assertIsDisplayed()
+      composeTestRule.onNodeWithTag("categoryCheckbox$category").assertExists()
+      composeTestRule.onNodeWithTag("categoryCheckbox$category").assertIsDisplayed()
     }
   }
 
@@ -254,33 +254,33 @@ class FilterPageTest {
     advanceUntilIdle()
 
     // Select the "Dessert" checkbox
-    composeTestRule.onNodeWithTag("difficultyCheckboxDessert").performClick()
+    composeTestRule.onNodeWithTag("categoryCheckboxDessert").performClick()
 
     // Verify that the ViewModel's category is updated to "Dessert"
     assertEquals("Dessert", recipesViewModel.filter.value.category)
 
     // Select the "Main Course" checkbox
-    composeTestRule.onNodeWithTag("difficultyCheckboxVegetarian").performClick()
+    composeTestRule.onNodeWithTag("categoryCheckboxVegetarian").performClick()
 
     // Verify that the ViewModel's category is updated to "Main Course" and "Dessert" is unselected
     assertEquals("Vegetarian", recipesViewModel.filter.value.category)
-    composeTestRule.onNodeWithTag("difficultyCheckboxDessert").assertIsOff()
+    composeTestRule.onNodeWithTag("categoryCheckboxDessert").assertIsOff()
   }
 
   @Test
   fun onlyOneCheckboxCanBeSelectedAtATime() {
     // Select "Dessert" checkbox
-    composeTestRule.onNodeWithTag("difficultyCheckboxDessert").performClick()
+    composeTestRule.onNodeWithTag("categoryCheckboxDessert").performClick()
 
     // Ensure "Dessert" is checked and others are not
-    composeTestRule.onNodeWithTag("difficultyCheckboxDessert").assertIsOn()
-    composeTestRule.onNodeWithTag("difficultyCheckboxVegetarian").assertIsOff()
+    composeTestRule.onNodeWithTag("categoryCheckboxDessert").assertIsOn()
+    composeTestRule.onNodeWithTag("categoryCheckboxVegetarian").assertIsOff()
 
     // Select "Appetizer" checkbox
-    composeTestRule.onNodeWithTag("difficultyCheckboxVegetarian").performClick()
+    composeTestRule.onNodeWithTag("categoryCheckboxVegetarian").performClick()
 
     // Ensure "Appetizer" is checked and "Dessert" is unchecked
-    composeTestRule.onNodeWithTag("difficultyCheckboxVegetarian").assertIsOn()
-    composeTestRule.onNodeWithTag("difficultyCheckboxDessert").assertIsOff()
+    composeTestRule.onNodeWithTag("categoryCheckboxVegetarian").assertIsOn()
+    composeTestRule.onNodeWithTag("categoryCheckboxDessert").assertIsOff()
   }
 }

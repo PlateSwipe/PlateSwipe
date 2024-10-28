@@ -8,8 +8,33 @@ object C {
 
     // SwipePage
     const val END_ANIMATION = 1500f
+    const val PLATE_SWIPE = "PlateSwipe"
+    const val FILTER_ICON_DESCRIPTION = "filterIcon"
+    const val TIME_RANGE_INPUT_DESCRIPTION = "Time Range"
+    const val PRICE_RANGE_INPUT_DESCRIPTION = "Price Range"
+    const val DIFFICULTY_INPUT_DESCRIPTION = "Difficulty"
+    const val CATEGORY_INPUT_DESCRIPTION = "Category"
 
     const val LOADING = "Loading..."
+
+    // Filter
+    const val MIN_SHOULD_NOT_BE_GREATER_THAN_MAX = "min should not be greater than max"
+    const val NEW_MIN_SHOULD_NOT_EXCEED_MAX = "newMin should not exceed max"
+    const val NEW_MAX_SHOULD_NOT_BE_NEGATIVE = "newMax should not be negative"
+    const val NEW_MIN_SHOULD_NOT_BE_NEGATIVE = "newMin should not be negative"
+    const val NEW_MIN_AND_NEW_MAX_SHOULD_BE_WITHIN_RANGE =
+        "newMin and newMax should be within range"
+
+    // Filter Page
+    const val RETURN_BUTTON_DESCRIPTION = "Return button"
+    const val TIME_RANGE_NAME = "Time"
+    const val TIME_RANGE_MIN = 0f
+    const val TIME_RANGE_MAX = 200f
+    const val TIME_RANGE_UNIT = "min"
+    const val PRICE_RANGE_NAME = "Price"
+    const val PRICE_RANGE_MIN = 0f
+    const val PRICE_RANGE_MAX = 100f
+    const val PRICE_RANGE_UNIT = "$"
 
     // RecipesViewModel
     const val MINIMUM_RECIPES_BEFORE_FETCH = 3

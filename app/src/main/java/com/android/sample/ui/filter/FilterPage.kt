@@ -42,6 +42,16 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.sample.model.filter.Difficulty
 import com.android.sample.model.filter.FloatRange
 import com.android.sample.model.recipe.RecipesViewModel
+import com.android.sample.resources.C.Tag.PLATE_SWIPE
+import com.android.sample.resources.C.Tag.PRICE_RANGE_MAX
+import com.android.sample.resources.C.Tag.PRICE_RANGE_MIN
+import com.android.sample.resources.C.Tag.PRICE_RANGE_NAME
+import com.android.sample.resources.C.Tag.PRICE_RANGE_UNIT
+import com.android.sample.resources.C.Tag.RETURN_BUTTON_DESCRIPTION
+import com.android.sample.resources.C.Tag.TIME_RANGE_MAX
+import com.android.sample.resources.C.Tag.TIME_RANGE_MIN
+import com.android.sample.resources.C.Tag.TIME_RANGE_NAME
+import com.android.sample.resources.C.Tag.TIME_RANGE_UNIT
 import com.android.sample.ui.navigation.BottomNavigationMenu
 import com.android.sample.ui.navigation.LIST_TOP_LEVEL_DESTINATIONS
 import com.android.sample.ui.navigation.NavigationActions
@@ -57,7 +67,7 @@ fun FilterPage(
       modifier = Modifier.fillMaxWidth(),
       topBar = {
         TopAppBar(
-            title = { Text("PlateSwipe") },
+            title = { Text(PLATE_SWIPE) },
             colors =
                 TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background,
@@ -67,7 +77,7 @@ fun FilterPage(
               IconButton(onClick = { navigationActions.goBack() }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Return button")
+                    contentDescription = RETURN_BUTTON_DESCRIPTION)
               }
             })
       },
@@ -96,18 +106,18 @@ fun FilterBox(paddingValues: PaddingValues, recipesViewModel: RecipesViewModel) 
           Modifier.padding(paddingValues).fillMaxSize().verticalScroll(rememberScrollState())) {
         ValueRangeSlider(
             modifier = Modifier.testTag("timeRangeSlider"),
-            name = "Time",
-            min = 0f,
-            max = 200f,
-            unit = "min",
+            name = TIME_RANGE_NAME,
+            min = TIME_RANGE_MIN,
+            max = TIME_RANGE_MAX,
+            unit = TIME_RANGE_UNIT,
             range = recipesViewModel.filter.value.timeRange,
             updateRange = { newMin, newMax -> recipesViewModel.updateTimeRange(newMin, newMax) })
         ValueRangeSlider(
             modifier = Modifier.testTag("priceRangeSlider"),
-            name = "Price",
-            min = 0f,
-            max = 100f,
-            unit = "$",
+            name = PRICE_RANGE_NAME,
+            min = PRICE_RANGE_MIN,
+            max = PRICE_RANGE_MAX,
+            unit = PRICE_RANGE_UNIT,
             range = filter.priceRange,
             updateRange = { newMin, newMax -> recipesViewModel.updatePriceRange(newMin, newMax) })
         CheckboxDifficulty(recipesViewModel = recipesViewModel)
@@ -287,7 +297,7 @@ fun CheckboxCategories(recipesViewModel: RecipesViewModel) {
                   style = MaterialTheme.typography.bodyMedium,
                   color = MaterialTheme.colorScheme.onPrimary) // Display the difficulty name
               Checkbox(
-                  modifier = Modifier.testTag("difficultyCheckbox${category}"),
+                  modifier = Modifier.testTag("categoryCheckbox${category}"),
                   checked = checked,
                   onCheckedChange = { isChecked ->
                     // Update the individual state in boxStates
