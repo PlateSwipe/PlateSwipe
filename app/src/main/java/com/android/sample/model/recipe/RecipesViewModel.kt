@@ -1,8 +1,11 @@
 package com.android.sample.model.recipe
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.android.sample.model.filter.Difficulty
+import com.android.sample.model.filter.Filter
 import com.android.sample.resources.C.Tag.MINIMUM_RECIPES_BEFORE_FETCH
 import com.android.sample.resources.C.Tag.NUMBER_RECIPES_TO_FETCH
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,10 +39,78 @@ class RecipesViewModel(private val repository: RecipesRepository) : ViewModel() 
   val nextRecipe: StateFlow<Recipe?>
     get() = _nextRecipe
 
+  private val _filter = MutableStateFlow(Filter())
+  val filter: StateFlow<Filter>
+    get() = _filter
+
+  private val _categories = MutableStateFlow<List<String>>(emptyList())
+  val categories: StateFlow<List<String>>
+    get() = _categories
+
   init {
     viewModelScope.launch {
+      getCategoryList()
       fetchRandomRecipes(NUMBER_RECIPES_TO_FETCH)
 
+      _loading.collect { isLoading ->
+        if (!isLoading) {
+          updateCurrentRecipe(_recipes.value.first())
+          return@collect
+        }
+      }
+    }
+  }
+
+  /** Fetches the list of categories from the repository. */
+  private fun getCategoryList() {
+    repository.listCategories(
+        onSuccess = { categories -> _categories.value = categories },
+        onFailure = { exception ->
+          Log.e("RecipesViewModel", "Error fetching categories", exception)
+        })
+  }
+
+  /**
+   * Updates the difficulty filter.
+   *
+   * @param difficulty The difficulty to filter by.
+   */
+  fun updateDifficulty(difficulty: Difficulty) {
+    _filter.value.difficulty = difficulty
+  }
+
+  /**
+   * Updates the price range filter.
+   *
+   * @param min The minimum price.
+   * @param max The maximum price.
+   */
+  fun updatePriceRange(min: Float, max: Float) {
+    _filter.value.priceRange.update(min, max)
+  }
+
+  /**
+   * Updates the time range filter.
+   *
+   * @param min The minimum time.
+   * @param max The maximum time.
+   */
+  fun updateTimeRange(min: Float, max: Float) {
+    _filter.value.timeRange.update(min, max)
+  }
+
+  /**
+   * Updates the category filter.
+   *
+   * @param category The category to filter by.
+   */
+  fun updateCategory(category: String?) {
+    viewModelScope.launch {
+      if (category == null) {
+        _recipes.value = emptyList()
+      }
+      _filter.value.category = category
+      fetchRandomRecipes(NUMBER_RECIPES_TO_FETCH)
       _loading.collect { isLoading ->
         if (!isLoading) {
           updateCurrentRecipe(_recipes.value.first())
@@ -57,6 +128,19 @@ class RecipesViewModel(private val repository: RecipesRepository) : ViewModel() 
   fun fetchRandomRecipes(numberOfRecipes: Int) {
     require(numberOfRecipes >= 1) { "Number of fetched recipes must be at least 1" }
     _loading.value = true // Set loading to true while fetching
+    // uncomment when backend is ready. Tested with hardcoded mealDB data
+    /*if (_filter.value.category != null) {
+      repository.searchByCategory(
+          _filter.value.category!!,
+          onSuccess = { recipes ->
+            _recipes.value = recipes
+            _loading.value = false
+          },
+          onFailure = { exception ->
+            _loading.value = false
+            Log.e("RecipesViewModel", "Error fetching recipes", exception)
+          })
+    }*/
     repository.random(
         nbOfElements = numberOfRecipes,
         onSuccess = { randomRecipes ->
@@ -65,7 +149,7 @@ class RecipesViewModel(private val repository: RecipesRepository) : ViewModel() 
         },
         onFailure = { exception ->
           _loading.value = false // Set loading to false on failure
-          // Handle error (e.g., log it or show a message)
+          Log.e("RecipesViewModel", "Error fetching recipes", exception)
         })
   }
 
@@ -118,7 +202,7 @@ class RecipesViewModel(private val repository: RecipesRepository) : ViewModel() 
    * This method assumes that _currentRecipe is already set and valid. It should be called after
    * nextRecipe() to ensure the next recipe is updated correctly.
    */
-  fun updateNextRecipe() {
+  private fun updateNextRecipe() {
     val currentRecipes = _recipes.value
     if (currentRecipes.isNotEmpty()) {
       val nextRecipeIndex = (currentRecipes.indexOf(_currentRecipe.value) + 1) % currentRecipes.size

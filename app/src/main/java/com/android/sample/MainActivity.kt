@@ -20,6 +20,7 @@ import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C
 import com.android.sample.ui.account.AccountScreen
 import com.android.sample.ui.authentication.SignInScreen
+import com.android.sample.ui.filter.FilterPage
 import com.android.sample.ui.fridge.FridgeScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
@@ -66,6 +67,7 @@ fun PlateSwipeApp() {
     ) {
       composable(Screen.SWIPE) { SwipePage(navigationActions, recipesViewModel) }
       composable(Screen.OVERVIEW_RECIPE) { RecipeOverview(navigationActions, recipesViewModel) }
+      composable(Screen.FILTER) { FilterPage(navigationActions, recipesViewModel) }
     }
     navigation(
         startDestination = Screen.FRIDGE,
