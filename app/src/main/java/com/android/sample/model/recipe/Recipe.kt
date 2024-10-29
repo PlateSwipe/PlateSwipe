@@ -19,9 +19,9 @@ data class Recipe(
     val strInstructions: String,
     val strMealThumbUrl: String,
     val ingredientsAndMeasurements: List<Pair<String, String>>,
-    val time : String? = null,
-    val difficulty : String? = null,
-    val price : String? = null
+    val time: String? = null,
+    val difficulty: String? = null,
+    val price: String? = null
 ) {
   init {
     require(ingredientsAndMeasurements.isNotEmpty()) {
