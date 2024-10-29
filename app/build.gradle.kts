@@ -148,6 +148,10 @@ dependencies {
     implementation(composeBom)
     globalTestImplementation(composeBom)
 
+    // ecrire aussi sur lib version pour meileur format
+    implementation("io.coil-kt:coil-compose:2.0.0")
+    implementation("androidx.compose.material:material-icons-extended:1.5.0")
+
     implementation(libs.compose.ui)
     implementation(libs.compose.ui.graphics)
     implementation(libs.compose.material3)
@@ -187,6 +191,8 @@ dependencies {
     implementation(libs.firebase.ui.auth)
     implementation(libs.firebase.auth.ktx)
     implementation(libs.firebase.auth)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.storage)
 
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.kotlinx.serialization.json)
@@ -218,6 +224,9 @@ dependencies {
     implementation(libs.camerax.extensions)
     implementation(libs.guava)
     implementation(libs.accompanist.permissions)
+
+    // Image
+    implementation(libs.coil.compose)
 }
 
 tasks.withType<Test> {
