@@ -55,7 +55,7 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
    * Converts a Firestore document to a Recipe object.
    *
    * @param document The Firestore document to convert.
-   * @return The ToDo object.
+   * @return recipe object.
    */
   fun documentToRecipe(document: DocumentSnapshot): Recipe? {
     return try {
