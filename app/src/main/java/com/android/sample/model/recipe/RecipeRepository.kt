@@ -3,41 +3,39 @@ package com.android.sample.model.recipe
 /** Interface for retrieving recipe data. */
 interface RecipesRepository {
 
+  /**
+   * Generates a new unique identifier for a recipe.
+   *
+   * @return A new unique identifier for a recipe.
+   */
+  fun getNewUid(): String
 
-    /**
-     * Generates a new unique identifier for a recipe.
-     *
-     * @return A new unique identifier for a recipe.
-     */
-    fun getNewUid(): String
+  /**
+   * Adds a recipe to the repository.
+   *
+   * @param recipe The recipe to add.
+   * @param onSuccess Callback that is called when the recipe is added.
+   * @param onFailure Callback that is called when an error occurs.
+   */
+  fun addRecipe(recipe: Recipe, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
 
-    /**
-     * Adds a recipe to the repository.
-     *
-     * @param recipe The recipe to add.
-     * @param onSuccess Callback that is called when the recipe is added.
-     * @param onFailure Callback that is called when an error occurs.
-     */
-    fun addRecipe(recipe: Recipe, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
+  /**
+   * Updates a recipe in the repository.
+   *
+   * @param recipe The recipe to update.
+   * @param onSuccess Callback that is called when the recipe is updated.
+   * @param onFailure Callback that is called when an error occurs.
+   */
+  fun updateRecipe(recipe: Recipe, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
 
-    /**
-     * Updates a recipe in the repository.
-     *
-     * @param recipe The recipe to update.
-     * @param onSuccess Callback that is called when the recipe is updated.
-     * @param onFailure Callback that is called when an error occurs.
-     */
-    fun updateRecipe(recipe: Recipe, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
-
-    /**
-     * Deletes a recipe from the repository.
-     *
-     * @param idMeal The ID of the recipe to delete.
-     * @param onSuccess Callback that is called when the recipe is deleted.
-     * @param onFailure Callback that is called when an error occurs.
-     */
-    fun deleteRecipe(idMeal: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
-
+  /**
+   * Deletes a recipe from the repository.
+   *
+   * @param idMeal The ID of the recipe to delete.
+   * @param onSuccess Callback that is called when the recipe is deleted.
+   * @param onFailure Callback that is called when an error occurs.
+   */
+  fun deleteRecipe(idMeal: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
 
   /**
    * Fetches a specified number of random recipes.
