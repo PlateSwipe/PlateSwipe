@@ -43,19 +43,18 @@ data class Recipe(
     }
   }
 
-    // Method to convert Recipe to a Firestore-compatible map with custom field names
-    fun toFirestoreMap(): Map<String, Any?> {
-        return mapOf(
-            FIRESTORE_RECIPE_NAME to strMeal,
-            FIRESTORE_RECIPE_CATEGORY to strCategory,
-            FIRESTORE_RECIPE_AREA to strArea,
-            FIRESTORE_RECIPE_PICTURE_ID to strMealThumbUrl,
-            FIRESTORE_RECIPE_INSTRUCTIONS to strInstructions,
-            FIRESTORE_RECIPE_INGREDIENTS to ingredientsAndMeasurements.map { it.first },
-            FIRESTORE_RECIPE_MEASUREMENTS to ingredientsAndMeasurements.map { it.second },
-            FIRESTORE_RECIPE_TIME to time,
-            FIRESTORE_RECIPE_DIFFICULTY to difficulty,
-            FIRESTORE_RECIPE_PRICE to price
-        )
-    }
+  // Method to convert Recipe to a Firestore-compatible map with custom field names
+  fun toFirestoreMap(): Map<String, Any?> {
+    return mapOf(
+        FIRESTORE_RECIPE_NAME to strMeal,
+        FIRESTORE_RECIPE_CATEGORY to strCategory,
+        FIRESTORE_RECIPE_AREA to strArea,
+        FIRESTORE_RECIPE_PICTURE_ID to strMealThumbUrl,
+        FIRESTORE_RECIPE_INSTRUCTIONS to strInstructions,
+        FIRESTORE_RECIPE_INGREDIENTS to ingredientsAndMeasurements.map { it.first },
+        FIRESTORE_RECIPE_MEASUREMENTS to ingredientsAndMeasurements.map { it.second },
+        FIRESTORE_RECIPE_TIME to time,
+        FIRESTORE_RECIPE_DIFFICULTY to difficulty,
+        FIRESTORE_RECIPE_PRICE to price)
+  }
 }

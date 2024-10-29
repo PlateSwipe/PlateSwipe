@@ -104,7 +104,7 @@ class RecipeTest {
     assertThat(exception.message, `is`("Ingredients and measurements must not be empty"))
   }
 
-    fun `convert Recipe to Firestore-compatible map`() {
+  fun `convert Recipe to Firestore-compatible map`() {
     // Arrange
     val idMeal = "1"
     val strMeal = "Spicy Arrabiata Penne"
@@ -139,11 +139,14 @@ class RecipeTest {
     assertThat(firestoreMap[FIRESTORE_RECIPE_AREA], `is`(strArea))
     assertThat(firestoreMap[FIRESTORE_RECIPE_PICTURE_ID], `is`(strMealThumbUrl))
     assertThat(firestoreMap[FIRESTORE_RECIPE_INSTRUCTIONS], `is`(strInstructions))
-    assertThat(firestoreMap[FIRESTORE_RECIPE_INGREDIENTS], `is`(ingredientsAndMeasurements.map { it.first }))
-    assertThat(firestoreMap[FIRESTORE_RECIPE_MEASUREMENTS], `is`(ingredientsAndMeasurements.map { it.second }))
+    assertThat(
+        firestoreMap[FIRESTORE_RECIPE_INGREDIENTS],
+        `is`(ingredientsAndMeasurements.map { it.first }))
+    assertThat(
+        firestoreMap[FIRESTORE_RECIPE_MEASUREMENTS],
+        `is`(ingredientsAndMeasurements.map { it.second }))
     assertThat(firestoreMap[FIRESTORE_RECIPE_TIME], `is`(time))
     assertThat(firestoreMap[FIRESTORE_RECIPE_DIFFICULTY], `is`(difficulty))
     assertThat(firestoreMap[FIRESTORE_RECIPE_PRICE], `is`(price))
-
-    }
+  }
 }
