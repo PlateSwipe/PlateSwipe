@@ -31,6 +31,23 @@ import org.json.JSONObject
  */
 class MealDBRecipesRepository(private val client: OkHttpClient) : RecipesRepository {
 
+    override fun getNewUid(): String {
+        throw UnsupportedOperationException("Operation not supported")
+    }
+
+    override fun addRecipe(recipe: Recipe, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        throw UnsupportedOperationException("Operation not supported")
+    }
+
+    override fun updateRecipe(recipe: Recipe, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        throw UnsupportedOperationException("Operation not supported")
+    }
+
+    override fun deleteRecipe(idMeal: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        throw UnsupportedOperationException("Operation not supported")
+    }
+
+
   /**
    * Fetches a specified number of random recipes from the MealDB API.
    *

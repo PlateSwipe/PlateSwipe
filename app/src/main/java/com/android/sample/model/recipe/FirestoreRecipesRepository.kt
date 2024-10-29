@@ -35,25 +35,25 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
    *
    * @return A new unique identifier for a recipe.
    */
-  fun getNewUid(): String {
+  override fun getNewUid(): String {
     return db.collection(FIRESTORE_COLLECTION_NAME).document().id
   }
 
-  fun addRecipe(recipe: Recipe, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+  override fun addRecipe(recipe: Recipe, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     performFirestoreOperation(
         db.collection(FIRESTORE_COLLECTION_NAME).document(recipe.idMeal).set(recipe),
         onSuccess,
         onFailure)
   }
 
-  fun updateRecipe(recipe: Recipe, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+  override fun updateRecipe(recipe: Recipe, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     performFirestoreOperation(
         db.collection(FIRESTORE_COLLECTION_NAME).document(recipe.idMeal).set(recipe),
         onSuccess,
         onFailure)
   }
 
-  fun deleteRecipe(idMeal: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+  override fun deleteRecipe(idMeal: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     performFirestoreOperation(
         db.collection(FIRESTORE_COLLECTION_NAME).document(idMeal).delete(), onSuccess, onFailure)
   }
