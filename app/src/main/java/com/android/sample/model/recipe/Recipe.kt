@@ -1,5 +1,16 @@
 package com.android.sample.model.recipe
 
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_AREA
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_CATEGORY
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_DIFFICULTY
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_INGREDIENTS
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_INSTRUCTIONS
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_MEASUREMENTS
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_NAME
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_PICTURE_ID
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_PRICE
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_TIME
+
 /**
  * Data class representing a recipe.
  *
@@ -31,4 +42,20 @@ data class Recipe(
       "Ingredients and measurements must not be empty"
     }
   }
+
+    // Method to convert Recipe to a Firestore-compatible map with custom field names
+    fun toFirestoreMap(): Map<String, Any?> {
+        return mapOf(
+            FIRESTORE_RECIPE_NAME to strMeal,
+            FIRESTORE_RECIPE_CATEGORY to strCategory,
+            FIRESTORE_RECIPE_AREA to strArea,
+            FIRESTORE_RECIPE_PICTURE_ID to strMealThumbUrl,
+            FIRESTORE_RECIPE_INSTRUCTIONS to strInstructions,
+            FIRESTORE_RECIPE_INGREDIENTS to ingredientsAndMeasurements.map { it.first },
+            FIRESTORE_RECIPE_MEASUREMENTS to ingredientsAndMeasurements.map { it.second },
+            FIRESTORE_RECIPE_TIME to time,
+            FIRESTORE_RECIPE_DIFFICULTY to difficulty,
+            FIRESTORE_RECIPE_PRICE to price
+        )
+    }
 }
