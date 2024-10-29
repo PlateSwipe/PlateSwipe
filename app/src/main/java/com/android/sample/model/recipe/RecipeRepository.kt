@@ -25,11 +25,15 @@ interface RecipesRepository {
    * Fetches a list of recipes by category.
    *
    * @param category The category of the recipes to fetch.
+   * @param onSuccess Callback that returns the list of fetched recipes.
+   * @param onFailure Callback that is called when an error occurs.
+   * @param limit The maximum number of recipes to fetch.
    */
   fun searchByCategory(
       category: String,
       onSuccess: (List<Recipe>) -> Unit,
-      onFailure: (Exception) -> Unit
+      onFailure: (Exception) -> Unit,
+      limit: Int = 5
   )
 
   /** Lists all the categories in the API. */

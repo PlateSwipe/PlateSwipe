@@ -159,7 +159,8 @@ class MealDBRecipesRepository(private val client: OkHttpClient) : RecipesReposit
   override fun searchByCategory(
       category: String,
       onSuccess: (List<Recipe>) -> Unit,
-      onFailure: (Exception) -> Unit
+      onFailure: (Exception) -> Unit,
+      limit: Int
   ) {
 
     val url = "$MEAL_DB_URL/filter.php?c=$category"

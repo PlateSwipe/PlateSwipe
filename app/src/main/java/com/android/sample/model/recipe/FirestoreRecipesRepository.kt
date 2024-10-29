@@ -128,6 +128,7 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
       onSuccess: (List<Recipe>) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
+    require(nbOfElements > 0) { "Number of elements must be greater than 0" }
     // TODO("Not yet implemented")
   }
 
@@ -151,7 +152,8 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
   override fun searchByCategory(
       category: String,
       onSuccess: (List<Recipe>) -> Unit,
-      onFailure: (Exception) -> Unit
+      onFailure: (Exception) -> Unit,
+      limit: Int
   ) {
     // TODO("Not yet implemented")
   }
