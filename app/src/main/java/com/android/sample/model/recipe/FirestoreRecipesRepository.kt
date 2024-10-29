@@ -155,10 +155,23 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
       onFailure: (Exception) -> Unit,
       limit: Int
   ) {
-    // TODO("Not yet implemented")
+    require(limit > 0) { "Limit must be greater than 0" }
+    val recipes = mutableListOf<Recipe>()
+    db.collection(FIRESTORE_COLLECTION_NAME)
+        .whereEqualTo(FIRESTORE_RECIPE_CATEGORY, category)
+        .limit(limit.toLong())
+        .get()
+        .addOnSuccessListener { result ->
+          result.documents?.forEach { document ->
+            val recipe = documentToRecipe(document)
+            if (recipe != null) {
+              recipes.add(recipe)
+            }
+          }
+          onSuccess(recipes)
+        }
+        .addOnFailureListener { e -> onFailure(e) }
   }
 
-  override fun listCategories(onSuccess: (List<String>) -> Unit, onFailure: (Exception) -> Unit) {
-    // TODO("Not yet implemented")
-  }
+  override fun listCategories(onSuccess: (List<String>) -> Unit, onFailure: (Exception) -> Unit) {}
 }
