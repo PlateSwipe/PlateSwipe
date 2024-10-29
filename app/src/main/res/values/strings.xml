@@ -21,5 +21,17 @@
     //ChefImage
     <string name="chef_standing_description">Chef standing</string>
 
+    //AddInstructionStepScreen
+    <string name="step_label">Step</string>
+    <string name="time_label">Time</string>
+    <string name="instruction_label">Instruction</string>
+    <string name="save_label">Save</string>
+    <string name="add_step">Add Step</string>
+    <string name="category_label">Category</string>
+    <string name="error_message_empty_instruction">Please enter an instruction</string>
+
+    //IconDropDownMenu
+    <string name="add_icon">Add Icon</string>
+
 
 </resources>

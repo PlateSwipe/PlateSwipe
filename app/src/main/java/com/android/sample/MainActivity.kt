@@ -20,6 +20,7 @@ import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C
 import com.android.sample.ui.account.AccountScreen
 import com.android.sample.ui.authentication.SignInScreen
+import com.android.sample.ui.createRecipe.AddInstructionStepScreen
 import com.android.sample.ui.createRecipe.CreateRecipeScreen
 import com.android.sample.ui.createRecipe.RecipeIngredientsScreen
 import com.android.sample.ui.createRecipe.RecipeInstructionsScreen
@@ -89,6 +90,9 @@ fun PlateSwipeApp() {
       } // Really not sure about adding this line
       composable(Screen.CREATE_RECIPE_INSTRUCTIONS) {
         RecipeInstructionsScreen(navigationActions, 2)
+      }
+      composable(Screen.CREATE_RECIPE_ADD_INSTRUCTION) {
+        AddInstructionStepScreen(navigationActions)
       }
     }
     navigation(

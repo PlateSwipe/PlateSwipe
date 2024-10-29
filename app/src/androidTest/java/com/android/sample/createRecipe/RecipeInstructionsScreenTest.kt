@@ -6,10 +6,11 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.navigation.Screen
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito.mock
-import org.mockito.Mockito.verifyNoInteractions
+import org.mockito.Mockito.verify
 
 class RecipeInstructionsScreenTest {
 
@@ -33,12 +34,12 @@ class RecipeInstructionsScreenTest {
   }
 
   @Test
-  fun testAddStepButtonDoesNotTriggerNavigation() {
+  fun testAddStepButtonTriggersNavigation() {
     composeTestRule.setContent {
       RecipeInstructionsScreen(navigationActions = mockNavigationActions, currentStep = 2)
     }
 
     composeTestRule.onNodeWithText(buttonText).assertExists().performClick()
-    verifyNoInteractions(mockNavigationActions)
+    verify(mockNavigationActions).navigateTo(Screen.CREATE_RECIPE_ADD_INSTRUCTION)
   }
 }
