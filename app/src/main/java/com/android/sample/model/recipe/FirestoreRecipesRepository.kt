@@ -155,7 +155,7 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
         .limit(limit.toLong())
         .get()
         .addOnSuccessListener { result ->
-          result.documents?.forEach { document ->
+          result.documents.forEach { document ->
             val recipe = documentToRecipe(document)
             if (recipe != null) {
               recipes.add(recipe)
