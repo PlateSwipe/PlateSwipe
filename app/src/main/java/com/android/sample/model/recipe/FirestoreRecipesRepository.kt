@@ -166,5 +166,7 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
         .addOnFailureListener { e -> onFailure(e) }
   }
 
-  override fun listCategories(onSuccess: (List<String>) -> Unit, onFailure: (Exception) -> Unit) {}
+  override fun listCategories(onSuccess: (List<String>) -> Unit, onFailure: (Exception) -> Unit) {
+      throw UnsupportedOperationException("This will be moved out of here")
+  }
 }
