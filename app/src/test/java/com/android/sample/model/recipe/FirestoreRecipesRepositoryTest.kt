@@ -335,4 +335,66 @@ class FirestoreRecipesRepositoryTest {
           { fail("Failure callback should not be called") })
     }
   }
+
+  @Test
+  fun search_withValidMealId_returnsRecipe() {
+    // Mock a valid document snapshot to simulate a found recipe
+    `when`(mockDocumentReference.get()).thenReturn(Tasks.forResult(mockDocumentSnapshot))
+    `when`(mockDocumentSnapshot.id).thenReturn("1")
+    `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_NAME)).thenReturn("Chicken")
+    `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_INSTRUCTIONS)).thenReturn("Instructions")
+    `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_PICTURE_ID))
+        .thenReturn("https://image.url")
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INGREDIENTS))
+        .thenReturn(listOf("Chicken", "Salt"))
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_MEASUREMENTS)).thenReturn(listOf("1", "1 tsp"))
+
+    firestoreFirebaseRepository.search(
+        mealID = "1",
+        onSuccess = { recipe ->
+          assertNotNull(recipe)
+          assertEquals("Chicken", recipe.strMeal)
+          assertEquals("Instructions", recipe.strInstructions)
+          assertEquals("https://image.url", recipe.strMealThumbUrl)
+          assertEquals(
+              listOf("Chicken" to "1", "Salt" to "1 tsp"), recipe.ingredientsAndMeasurements)
+        },
+        onFailure = { fail("Failure callback should not be called") })
+
+    shadowOf(Looper.getMainLooper()).idle()
+  }
+
+  @Test
+  fun search_withInvalidMealId_callsOnFailure() {
+    // Simulate a failed document retrieval
+    `when`(mockDocumentReference.get())
+        .thenReturn(Tasks.forException(Exception("Recipe not found")))
+
+    firestoreFirebaseRepository.search(
+        mealID = "invalid_id",
+        onSuccess = { fail("Success callback should not be called") },
+        onFailure = { exception ->
+          assertNotNull(exception)
+          assertEquals("Recipe not found", exception.message)
+        })
+
+    shadowOf(Looper.getMainLooper()).idle()
+  }
+
+  @Test
+  fun search_withMissingRecipeDetails_callsOnFailure() {
+    // Mock a document missing crucial recipe details
+    `when`(mockDocumentReference.get()).thenReturn(Tasks.forResult(mockDocumentSnapshot))
+    `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_NAME)).thenReturn(null) // Missing name
+
+    firestoreFirebaseRepository.search(
+        mealID = "1",
+        onSuccess = { fail("Success callback should not be called") },
+        onFailure = { exception ->
+          assertNotNull(exception)
+          assertEquals("Recipe not found", exception.message)
+        })
+
+    shadowOf(Looper.getMainLooper()).idle()
+  }
 }
