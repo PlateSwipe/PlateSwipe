@@ -10,6 +10,9 @@ package com.android.sample.model.recipe
  * @property strInstructions Instructions on how to prepare the meal.
  * @property strMealThumbUrl URL of the thumbnail image of the meal.
  * @property ingredientsAndMeasurements A list of ingredient and measurement pairs for the recipe.
+ * @property time The time required to prepare the meal. Nullable.
+ * @property difficulty The difficulty level of the meal. Nullable.
+ * @property price The price of the meal. Nullable.
  */
 data class Recipe(
     val idMeal: String,
