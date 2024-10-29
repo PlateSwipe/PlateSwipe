@@ -131,7 +131,7 @@ class FirestoreRecipesRepositoryTest {
 
   @Test
   fun search_callsDocuments() {
-    // Ensure that mockToDoQuerySnapshot is properly initialized and mocked
+    // Ensure that mockQuerySnapshot is properly initialized and mocked
     `when`(mockCollectionReference.document(recipe.idMeal)).thenReturn(mockDocumentReference)
 
     // Ensure the QuerySnapshot returns a list of mock DocumentSnapshots
