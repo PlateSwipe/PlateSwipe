@@ -12,6 +12,8 @@ import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_NAME
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_PICTURE_ID
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_PRICE
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_TIME
+import com.android.sample.resources.C.Tag.LIMIT_MUST_BE_POSITIVE_MESSAGE
+import com.android.sample.resources.C.Tag.UNSUPPORTED_MESSAGE
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
@@ -121,7 +123,7 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
       onSuccess: (List<Recipe>) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    require(nbOfElements > 0) { "Number of elements must be greater than 0" }
+    require(nbOfElements > 0) { LIMIT_MUST_BE_POSITIVE_MESSAGE }
     // TODO("Not yet implemented")
   }
 
@@ -148,7 +150,7 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
       onFailure: (Exception) -> Unit,
       limit: Int
   ) {
-    require(limit > 0) { "Limit must be greater than 0" }
+    require(limit > 0) { LIMIT_MUST_BE_POSITIVE_MESSAGE }
     val recipes = mutableListOf<Recipe>()
     db.collection(FIRESTORE_COLLECTION_NAME)
         .whereEqualTo(FIRESTORE_RECIPE_CATEGORY, category)
@@ -167,6 +169,6 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
   }
 
   override fun listCategories(onSuccess: (List<String>) -> Unit, onFailure: (Exception) -> Unit) {
-    throw UnsupportedOperationException("This will be moved out of here")
+    throw UnsupportedOperationException(UNSUPPORTED_MESSAGE)
   }
 }

@@ -15,6 +15,7 @@ import com.android.sample.resources.C.Tag.MEAL_DB_MEAL_THUMB
 import com.android.sample.resources.C.Tag.MEAL_DB_URL
 import com.android.sample.resources.C.Tag.MEAL_DB_USER_AGENT
 import com.android.sample.resources.C.Tag.MEAL_DB_USER_AGENT_VALUE
+import com.android.sample.resources.C.Tag.UNSUPPORTED_MESSAGE
 import java.io.IOException
 import okhttp3.Call
 import okhttp3.Callback
@@ -32,19 +33,19 @@ import org.json.JSONObject
 class MealDBRecipesRepository(private val client: OkHttpClient) : RecipesRepository {
 
   override fun getNewUid(): String {
-    throw UnsupportedOperationException("Operation not supported")
+    throw UnsupportedOperationException(UNSUPPORTED_MESSAGE)
   }
 
   override fun addRecipe(recipe: Recipe, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-    throw UnsupportedOperationException("Operation not supported")
+    throw UnsupportedOperationException(UNSUPPORTED_MESSAGE)
   }
 
   override fun updateRecipe(recipe: Recipe, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-    throw UnsupportedOperationException("Operation not supported")
+    throw UnsupportedOperationException(UNSUPPORTED_MESSAGE)
   }
 
   override fun deleteRecipe(idMeal: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-    throw UnsupportedOperationException("Operation not supported")
+    throw UnsupportedOperationException(UNSUPPORTED_MESSAGE)
   }
 
   /**

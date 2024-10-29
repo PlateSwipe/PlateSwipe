@@ -85,5 +85,9 @@ object C {
     const val FIRESTORE_RECIPE_TIME = "time"
     const val FIRESTORE_RECIPE_DIFFICULTY = "difficulty"
     const val FIRESTORE_RECIPE_PRICE = "price"
+
+    // EXCEPTION MESSAGES
+    const val LIMIT_MUST_BE_POSITIVE_MESSAGE = "Limit must be greater than 0"
+    const val UNSUPPORTED_MESSAGE ="Operation not supported"
   }
 }
