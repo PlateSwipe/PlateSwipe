@@ -23,6 +23,7 @@ import com.google.firebase.firestore.util.Assert.fail
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertNull
+import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -242,5 +243,96 @@ class FirestoreRecipesRepositoryTest {
     val recipe = firestoreFirebaseRepository.documentToRecipe(document)
 
     assertNull(recipe)
+  }
+
+  @Test
+  fun searchByCategory_throwsException() {
+    assertThrows(IllegalArgumentException::class.java) {
+      firestoreFirebaseRepository.searchByCategory(
+          "Category",
+          { fail("Success callback should not be called") },
+          { fail("Failure callback should not be called") },
+          -1)
+    }
+  }
+
+  @Test
+  fun searchByCategory_withValidCategory_returnsRecipes() {
+    // Create and configure mock objects
+    val mockQuerySnapshot = mock(QuerySnapshot::class.java)
+    val mockDocumentSnapshot = mock(DocumentSnapshot::class.java)
+
+    // Mock the Firestore documents to return a valid recipe
+    `when`(mockQuerySnapshot.documents).thenReturn(listOf(mockDocumentSnapshot))
+    `when`(mockDocumentSnapshot.id).thenReturn("1")
+    `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_NAME)).thenReturn("Test Recipe")
+    `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_CATEGORY)).thenReturn("Category")
+    `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_INSTRUCTIONS)).thenReturn("Instructions")
+    `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_PICTURE_ID)).thenReturn("ThumbUrl")
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INGREDIENTS))
+        .thenReturn(listOf("Ingredient1", "Ingredient2"))
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_MEASUREMENTS))
+        .thenReturn(listOf("Measurement1", "Measurement2"))
+
+    // Mock Firestore query to return the mock QuerySnapshot
+    `when`(mockCollectionReference.whereEqualTo(FIRESTORE_RECIPE_CATEGORY, "Category"))
+        .thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.limit(10)).thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
+
+    // Execute the searchByCategory method
+    firestoreFirebaseRepository.searchByCategory(
+        "Category",
+        { recipes ->
+          assertNotNull(recipes)
+          assertEquals(1, recipes.size)
+          assertEquals("Test Recipe", recipes[0].strMeal)
+        },
+        { fail("Failure callback should not be called") },
+        10)
+
+    // Complete all asynchronous operations
+    shadowOf(Looper.getMainLooper()).idle()
+  }
+
+  @Test
+  fun searchByCategory_withLimitZero_throwsException() {
+    assertThrows(IllegalArgumentException::class.java) {
+      firestoreFirebaseRepository.searchByCategory(
+          "Category",
+          { fail("Success callback should not be called") },
+          { fail("Failure callback should not be called") },
+          0)
+    }
+  }
+
+  @Test
+  fun searchByCategory_withFirestoreFailure_callsOnFailure() {
+    val exception = Exception("Firestore error")
+    `when`(mockCollectionReference.whereEqualTo(FIRESTORE_RECIPE_CATEGORY, "Category"))
+        .thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.limit(10)).thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.get()).thenReturn(Tasks.forException(exception))
+
+    firestoreFirebaseRepository.searchByCategory(
+        "Category",
+        { fail("Success callback should not be called") },
+        { e ->
+          assertNotNull(e)
+          assertEquals("Firestore error", e.message)
+        },
+        10)
+
+    shadowOf(Looper.getMainLooper()).idle()
+  }
+
+  @Test
+  fun random_throws_exception() {
+    assertThrows(IllegalArgumentException::class.java) {
+      firestoreFirebaseRepository.random(
+          0,
+          { fail("Success callback should not be called") },
+          { fail("Failure callback should not be called") })
+    }
   }
 }
