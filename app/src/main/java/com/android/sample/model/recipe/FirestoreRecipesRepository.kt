@@ -30,14 +30,14 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
 
   override fun addRecipe(recipe: Recipe, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     performFirestoreOperation(
-        db.collection(FIRESTORE_COLLECTION_NAME).document(recipe.idMeal).set(recipe),
+        db.collection(FIRESTORE_COLLECTION_NAME).document(recipe.idMeal).set(recipe.toFirestoreMap()),
         onSuccess,
         onFailure)
   }
 
   override fun updateRecipe(recipe: Recipe, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     performFirestoreOperation(
-        db.collection(FIRESTORE_COLLECTION_NAME).document(recipe.idMeal).set(recipe),
+        db.collection(FIRESTORE_COLLECTION_NAME).document(recipe.idMeal).set(recipe.toFirestoreMap()),
         onSuccess,
         onFailure)
   }
