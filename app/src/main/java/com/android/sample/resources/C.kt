@@ -41,5 +41,13 @@ object C {
 
     val BUTTON_WIDTH = 200.dp
     val BUTTON_HEIGHT = 50.dp
+
+    // AddInstructionStepScreen
+    const val HORIZONTAL_PADDING = 16
+    const val SAVE_BUTTON_WIDTH = 150
+    const val SAVE_BUTTON_HEIGHT = 48
+    const val DELETE_BUTTON_TAG = "deleteButton"
+    const val SAVE_BUTTON_TAG = "saveButton"
+    const val STEP_DESCRIPTION_HEIGHT = 150
   }
 }
