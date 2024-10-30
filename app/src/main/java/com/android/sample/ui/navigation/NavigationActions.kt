@@ -14,6 +14,8 @@ object Route {
 }
 
 object Screen {
+  const val FILTER = "Filter Screen"
+
   const val AUTH = "Auth Screen"
 
   const val SWIPE = "Swipe Screen"
@@ -31,6 +33,8 @@ object Screen {
   const val CREATE_RECIPE_ADD_INSTRUCTION = "Add One Recipe Instruction"
 
   const val ACCOUNT = "Account Screen"
+
+  const val OVERVIEW_RECIPE = "Overview Recipe Screen"
 }
 
 data class TopLevelDestination(val route: String, val iconId: Int, val textId: String)
@@ -40,7 +44,7 @@ object TopLevelDestinations {
   val SWIPE = TopLevelDestination(Route.SWIPE, R.drawable.mainpageicon, "Swipe")
   val FRIDGE = TopLevelDestination(Route.FRIDGE, R.drawable.fridgeicon, "Fridge")
   val SEARCH = TopLevelDestination(Route.SEARCH, R.drawable.searchicon, "Search")
-  val ADD_RECIPE = TopLevelDestination(Route.CREATE_RECIPE, R.drawable.addicon, "Add Recipe")
+  val ADD_RECIPE = TopLevelDestination(Route.CREATE_RECIPE, R.drawable.addicon, "AddRecipe")
   val ACCOUNT = TopLevelDestination(Route.ACCOUNT, R.drawable.account, "Account")
 }
 
