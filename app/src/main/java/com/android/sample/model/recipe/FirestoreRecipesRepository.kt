@@ -88,7 +88,7 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
           difficulty = difficulty,
           price = price)
     } catch (e: Exception) {
-      Log.e("FirestoreRecipesRepository", "Error converting document to Recipe", e)
+      Log.e("FirestoreRecipesRepository", "Error converting document to Recipe : idMeal "+document.id, e)
       null
     }
   }
@@ -137,7 +137,7 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
         } else onFailure(Exception("Recipe not found"))
       } else {
         task.exception?.let { e ->
-          Log.e("FirestoreRecipesRepository", "Error getting documents", e)
+          Log.e("FirestoreRecipesRepository",  "Error search document : idMeal "+mealID, e)
           onFailure(e)
         }
       }
