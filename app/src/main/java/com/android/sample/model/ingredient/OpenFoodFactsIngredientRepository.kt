@@ -11,96 +11,114 @@ import org.json.JSONObject
 
 class OpenFoodFactsIngredientRepository(private val client: OkHttpClient) : IngredientRepository {
 
-  private val openFoodFactsUrl = "https://world.openfoodfacts.net"
+    private val openFoodFactsUrl = "https://world.openfoodfacts.net"
 
-  private fun parseOpenFoodFactsJsonToIngredient(json: JSONObject): Ingredient {
+    private fun parseOpenFoodFactsJsonToIngredient(json: JSONObject): Ingredient {
 
-    val ingredientName = json.getString("product_name")
+        val ingredientName = json.getString("product_name")
+        val selectedImagesJson = json.optJSONObject("selected_images")
+        val frontImagesJson = selectedImagesJson?.optJSONObject("front")
+        val brands = json.getString("brands")
 
-    return Ingredient(barCode = json.getLong("_id"), name = ingredientName)
-  }
+        val selectedImages = frontImagesJson?.let {
+            SelectedImages(
+                front = ImageUrls(
+                    display = it.optJSONObject("display")?.optString("fr"),
+                    small = it.optJSONObject("small")?.optString("fr"),
+                    thumb = it.optJSONObject("thumb")?.optString("fr")
+                )
+            )
+        }
 
-  override fun get(
-      barCode: Long,
-      onSuccess: (Ingredient?) -> Unit,
-      onFailure: (Exception) -> Unit
-  ) {
-    val url = "$openFoodFactsUrl/api/v2/product/$barCode"
+        return Ingredient(
+            barCode = json.getLong("_id"),
+            name = ingredientName,
+            selectedImages = selectedImages,
+            brands = brands
+        )
+    }
 
-    val request =
-        Request.Builder()
-            .url(url)
-            .header("User-Agent", "PlateSwipe/1.0 (plateswipe@gmail.com)")
-            .build()
+    override fun get(
+        barCode: Long,
+        onSuccess: (Ingredient?) -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        val url = "$openFoodFactsUrl/api/v2/product/$barCode"
 
-    client
-        .newCall(request)
-        .enqueue(
-            object : Callback {
-              override fun onFailure(call: Call, e: IOException) {
-                onFailure(e)
-              }
+        val request =
+            Request.Builder()
+                .url(url)
+                .header("User-Agent", "PlateSwipe/1.0 (plateswipe@gmail.com)")
+                .build()
 
-              override fun onResponse(call: Call, response: Response) {
-                try {
-                  val body = JSONObject(response.body!!.string())
+        client
+            .newCall(request)
+            .enqueue(
+                object : Callback {
+                    override fun onFailure(call: Call, e: IOException) {
+                        onFailure(e)
+                    }
 
-                  val status = body.getInt("status")
+                    override fun onResponse(call: Call, response: Response) {
+                        try {
+                            val body = JSONObject(response.body!!.string())
 
-                  if (status != 1) {
-                    onSuccess(null)
-                  } else {
-                    val productJson = body.getJSONObject("product")
+                            val status = body.getInt("status")
 
-                    onSuccess(parseOpenFoodFactsJsonToIngredient(productJson))
-                  }
-                } catch (e: JSONException) {
-                  onFailure(e)
-                }
-              }
-            })
-  }
+                            if (status != 1) {
+                                onSuccess(null)
+                            } else {
+                                val productJson = body.getJSONObject("product")
 
-  override fun search(
-      name: String,
-      onSuccess: (List<Ingredient>) -> Unit,
-      onFailure: (Exception) -> Unit,
-      count: Int
-  ) {
-    val url = "$openFoodFactsUrl/cgi/search.pl?search_terms=$name&json=1&page_size=$count"
+                                onSuccess(parseOpenFoodFactsJsonToIngredient(productJson))
+                            }
+                        } catch (e: JSONException) {
+                            onFailure(e)
+                        }
+                    }
+                })
+    }
 
-    val request =
-        Request.Builder()
-            .url(url)
-            // TODO: Add a proper User-Agent
-            .header("User-Agent", "PlateSwipe/1.0 (plateswipe@gmail.com)")
-            .build()
+    override fun search(
+        name: String,
+        onSuccess: (List<Ingredient>) -> Unit,
+        onFailure: (Exception) -> Unit,
+        count: Int
+    ) {
+        val url = "$openFoodFactsUrl/cgi/search.pl?search_terms=$name&json=1&page_size=$count"
 
-    client
-        .newCall(request)
-        .enqueue(
-            object : Callback {
-              override fun onFailure(call: Call, e: IOException) {
-                onFailure(e)
-              }
+        val request =
+            Request.Builder()
+                .url(url)
+                // TODO: Add a proper User-Agent
+                .header("User-Agent", "PlateSwipe/1.0 (plateswipe@gmail.com)")
+                .build()
 
-              override fun onResponse(call: Call, response: Response) {
-                try {
-                  val products = JSONObject(response.body!!.string()).getJSONArray("products")
+        client
+            .newCall(request)
+            .enqueue(
+                object : Callback {
+                    override fun onFailure(call: Call, e: IOException) {
+                        onFailure(e)
+                    }
 
-                  val ingredients: List<Ingredient> =
-                      (0 until products.length()).mapNotNull { i ->
-                        val ingredient =
-                            parseOpenFoodFactsJsonToIngredient(products.getJSONObject(i))
+                    override fun onResponse(call: Call, response: Response) {
+                        try {
+                            val products = JSONObject(response.body!!.string()).getJSONArray("products")
 
-                        ingredient
-                      }
+                            val ingredients: List<Ingredient> =
+                                (0 until products.length()).mapNotNull { i ->
+                                    val ingredient =
+                                        parseOpenFoodFactsJsonToIngredient(products.getJSONObject(i))
 
-                  onSuccess(ingredients.take(count))
-                } catch (e: JSONException) {
-                  onFailure(e)
-                }
-              }
-            })
-  }
+                                    ingredient
+                                }
+
+                            onSuccess(ingredients.take(count))
+                        } catch (e: JSONException) {
+                            onFailure(e)
+                        }
+                    }
+                })
+    }
 }
