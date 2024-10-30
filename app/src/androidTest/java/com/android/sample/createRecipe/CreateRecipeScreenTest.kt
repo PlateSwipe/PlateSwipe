@@ -57,7 +57,7 @@ class CreateRecipeScreenTest {
     }
 
     for (tab in LIST_TOP_LEVEL_DESTINATIONS) {
-      composeTestRule.onNodeWithTag(tab.textId).assertExists().performClick()
+      composeTestRule.onNodeWithTag("tab" + tab.textId).assertExists().performClick()
       verify(mockNavigationActions).navigateTo(tab)
       reset(mockNavigationActions)
     }

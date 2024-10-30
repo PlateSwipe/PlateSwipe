@@ -32,7 +32,7 @@ fun BottomNavigationMenu(
               },
               selected = tab.route == selectedItem,
               onClick = { onTabSelect(tab) },
-              modifier = Modifier.clip(RoundedCornerShape(50.dp)).testTag(tab.textId))
+              modifier = Modifier.clip(RoundedCornerShape(50.dp)).testTag("tab" + tab.textId))
         }
       },
   )
