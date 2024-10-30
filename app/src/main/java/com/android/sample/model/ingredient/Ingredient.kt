@@ -7,9 +7,7 @@ data class Ingredient(
     val brands: String? = null
 )
 
-data class SelectedImages(
-    val front: ImageUrls? = null
-)
+data class SelectedImages(val front: ImageUrls? = null)
 
 data class ImageUrls(
     val display: String? = null,
