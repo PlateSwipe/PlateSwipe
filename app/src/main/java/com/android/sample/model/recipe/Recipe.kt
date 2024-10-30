@@ -28,8 +28,8 @@ import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_TIME
 data class Recipe(
     val idMeal: String,
     val strMeal: String,
-    val strCategory: String?,
-    val strArea: String?,
+    val strCategory: String? = null,
+    val strArea: String? = null,
     val strInstructions: String,
     val strMealThumbUrl: String,
     val ingredientsAndMeasurements: List<Pair<String, String>>,
