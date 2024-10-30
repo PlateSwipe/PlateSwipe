@@ -168,7 +168,7 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
         .addOnFailureListener { e -> onFailure(e) }
   }
 
-    /** This method will not be in the interface anymore in the future **/
+  /** This method will not be in the interface anymore in the future * */
   override fun listCategories(onSuccess: (List<String>) -> Unit, onFailure: (Exception) -> Unit) {
     throw UnsupportedOperationException(UNSUPPORTED_MESSAGE)
   }

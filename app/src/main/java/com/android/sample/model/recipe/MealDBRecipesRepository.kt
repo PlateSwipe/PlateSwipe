@@ -32,7 +32,7 @@ import org.json.JSONObject
  */
 class MealDBRecipesRepository(private val client: OkHttpClient) : RecipesRepository {
 
-    /** These API calls are not supported by the MealDB database. */
+  /** These API calls are not supported by the MealDB database. */
   override fun getNewUid(): String {
     throw UnsupportedOperationException(UNSUPPORTED_MESSAGE)
   }
