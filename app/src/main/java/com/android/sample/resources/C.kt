@@ -85,6 +85,7 @@ object C {
     const val FIRESTORE_RECIPE_TIME = "time"
     const val FIRESTORE_RECIPE_DIFFICULTY = "difficulty"
     const val FIRESTORE_RECIPE_PRICE = "price"
+    const val CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
 
     // EXCEPTION MESSAGES
     const val LIMIT_MUST_BE_POSITIVE_MESSAGE = "Limit must be greater than 0"
