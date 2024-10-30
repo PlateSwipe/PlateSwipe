@@ -71,5 +71,23 @@ object C {
     const val MEAL_DB_MEAL_INGREDIENT = "strIngredient"
     const val MEAL_DB_MEAL_MEASURE = "strMeasure"
     const val MEAL_DB_CATEGORY_ARRAY = "categories"
+
+    // FirestoreRecipeRepository
+    const val FIRESTORE_COLLECTION_NAME = "recipes"
+    // Values for storage
+    const val FIRESTORE_RECIPE_NAME = "name"
+    const val FIRESTORE_RECIPE_CATEGORY = "category"
+    const val FIRESTORE_RECIPE_AREA = "area"
+    const val FIRESTORE_RECIPE_PICTURE_ID = "pictureID"
+    const val FIRESTORE_RECIPE_INSTRUCTIONS = "instructions"
+    const val FIRESTORE_RECIPE_INGREDIENTS = "ingredients"
+    const val FIRESTORE_RECIPE_MEASUREMENTS = "measurements"
+    const val FIRESTORE_RECIPE_TIME = "time"
+    const val FIRESTORE_RECIPE_DIFFICULTY = "difficulty"
+    const val FIRESTORE_RECIPE_PRICE = "price"
+
+    // EXCEPTION MESSAGES
+    const val LIMIT_MUST_BE_POSITIVE_MESSAGE = "Limit must be greater than 0"
+    const val UNSUPPORTED_MESSAGE = "Operation not supported"
   }
 }

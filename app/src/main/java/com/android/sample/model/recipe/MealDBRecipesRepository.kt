@@ -15,6 +15,7 @@ import com.android.sample.resources.C.Tag.MEAL_DB_MEAL_THUMB
 import com.android.sample.resources.C.Tag.MEAL_DB_URL
 import com.android.sample.resources.C.Tag.MEAL_DB_USER_AGENT
 import com.android.sample.resources.C.Tag.MEAL_DB_USER_AGENT_VALUE
+import com.android.sample.resources.C.Tag.UNSUPPORTED_MESSAGE
 import java.io.IOException
 import okhttp3.Call
 import okhttp3.Callback
@@ -30,6 +31,23 @@ import org.json.JSONObject
  * @property client The OkHttpClient used to make network requests.
  */
 class MealDBRecipesRepository(private val client: OkHttpClient) : RecipesRepository {
+
+  /** These API calls are not supported by the MealDB database. */
+  override fun getNewUid(): String {
+    throw UnsupportedOperationException(UNSUPPORTED_MESSAGE)
+  }
+
+  override fun addRecipe(recipe: Recipe, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+    throw UnsupportedOperationException(UNSUPPORTED_MESSAGE)
+  }
+
+  override fun updateRecipe(recipe: Recipe, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+    throw UnsupportedOperationException(UNSUPPORTED_MESSAGE)
+  }
+
+  override fun deleteRecipe(idMeal: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+    throw UnsupportedOperationException(UNSUPPORTED_MESSAGE)
+  }
 
   /**
    * Fetches a specified number of random recipes from the MealDB API.
@@ -159,7 +177,8 @@ class MealDBRecipesRepository(private val client: OkHttpClient) : RecipesReposit
   override fun searchByCategory(
       category: String,
       onSuccess: (List<Recipe>) -> Unit,
-      onFailure: (Exception) -> Unit
+      onFailure: (Exception) -> Unit,
+      limit: Int
   ) {
 
     val url = "$MEAL_DB_URL/filter.php?c=$category"

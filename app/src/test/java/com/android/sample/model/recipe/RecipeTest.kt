@@ -1,5 +1,15 @@
 package com.android.sample.model.recipe
 
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_AREA
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_CATEGORY
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_DIFFICULTY
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_INGREDIENTS
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_INSTRUCTIONS
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_MEASUREMENTS
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_NAME
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_PICTURE_ID
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_PRICE
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_TIME
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
@@ -92,5 +102,51 @@ class RecipeTest {
               ingredientsAndMeasurements = emptyList())
         }
     assertThat(exception.message, `is`("Ingredients and measurements must not be empty"))
+  }
+
+  fun `convert Recipe to Firestore-compatible map`() {
+    // Arrange
+    val idMeal = "1"
+    val strMeal = "Spicy Arrabiata Penne"
+    val strCategory = "Vegetarian"
+    val strArea = "Italian"
+    val strInstructions = "Instructions here..."
+    val strMealThumbUrl = "https://www.recipetineats.com/penne-all-arrabbiata-spicy-tomato-pasta/"
+    val ingredientsAndMeasurements = listOf(Pair("Penne", "1 pound"), Pair("Olive oil", "1/4 cup"))
+    val time = "30 minutes"
+    val difficulty = "Medium"
+    val price = "$10"
+
+    val recipe =
+        Recipe(
+            idMeal = idMeal,
+            strMeal = strMeal,
+            strCategory = strCategory,
+            strArea = strArea,
+            strInstructions = strInstructions,
+            strMealThumbUrl = strMealThumbUrl,
+            ingredientsAndMeasurements = ingredientsAndMeasurements,
+            time = time,
+            difficulty = difficulty,
+            price = price)
+
+    // Act
+    val firestoreMap = recipe.toFirestoreMap()
+
+    // Assert
+    assertThat(firestoreMap[FIRESTORE_RECIPE_NAME], `is`(strMeal))
+    assertThat(firestoreMap[FIRESTORE_RECIPE_CATEGORY], `is`(strCategory))
+    assertThat(firestoreMap[FIRESTORE_RECIPE_AREA], `is`(strArea))
+    assertThat(firestoreMap[FIRESTORE_RECIPE_PICTURE_ID], `is`(strMealThumbUrl))
+    assertThat(firestoreMap[FIRESTORE_RECIPE_INSTRUCTIONS], `is`(strInstructions))
+    assertThat(
+        firestoreMap[FIRESTORE_RECIPE_INGREDIENTS],
+        `is`(ingredientsAndMeasurements.map { it.first }))
+    assertThat(
+        firestoreMap[FIRESTORE_RECIPE_MEASUREMENTS],
+        `is`(ingredientsAndMeasurements.map { it.second }))
+    assertThat(firestoreMap[FIRESTORE_RECIPE_TIME], `is`(time))
+    assertThat(firestoreMap[FIRESTORE_RECIPE_DIFFICULTY], `is`(difficulty))
+    assertThat(firestoreMap[FIRESTORE_RECIPE_PRICE], `is`(price))
   }
 }
