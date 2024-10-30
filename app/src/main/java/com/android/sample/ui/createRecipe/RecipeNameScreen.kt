@@ -15,6 +15,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.android.sample.R
+import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.resources.C.Tag.RECIPE_NAME_BASE_PADDING
 import com.android.sample.resources.C.Tag.RECIPE_NAME_BUTTON_HEIGHT
 import com.android.sample.resources.C.Tag.RECIPE_NAME_BUTTON_WIDTH
@@ -30,7 +31,8 @@ import com.android.sample.ui.theme.*
 fun RecipeNameScreen(
     modifier: Modifier = Modifier,
     currentStep: Int,
-    navigationActions: NavigationActions
+    navigationActions: NavigationActions,
+    createRecipeViewModel: CreateRecipeViewModel
 ) {
   var recipeName by remember { mutableStateOf(TextFieldValue("")) }
   var showError by remember { mutableStateOf(false) }
@@ -129,6 +131,7 @@ fun RecipeNameScreen(
                     if (recipeName.text.isEmpty()) {
                       showError = true
                     } else {
+                      createRecipeViewModel.updateRecipeName(recipeName.text)
                       navigationActions.navigateTo(Screen.CREATE_RECIPE_INGREDIENTS)
                     }
                   },

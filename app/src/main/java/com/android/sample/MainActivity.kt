@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
@@ -15,6 +16,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
+import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C
@@ -22,6 +24,7 @@ import com.android.sample.ui.account.AccountScreen
 import com.android.sample.ui.authentication.SignInScreen
 import com.android.sample.ui.createRecipe.AddInstructionStepScreen
 import com.android.sample.ui.createRecipe.CreateRecipeScreen
+import com.android.sample.ui.createRecipe.PublishRecipeScreen
 import com.android.sample.ui.createRecipe.RecipeIngredientsScreen
 import com.android.sample.ui.createRecipe.RecipeInstructionsScreen
 import com.android.sample.ui.fridge.FridgeScreen
@@ -29,7 +32,6 @@ import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.recipe.SearchRecipeScreen
-import com.android.sample.ui.recipeOverview.RecipeOverview
 import com.android.sample.ui.swipePage.SwipePage
 import com.android.sample.ui.theme.SampleAppTheme
 
@@ -85,17 +87,50 @@ fun PlateSwipeApp() {
         startDestination = Screen.CREATE_RECIPE,
         route = Route.CREATE_RECIPE,
     ) {
-      composable(Screen.CREATE_RECIPE) { CreateRecipeScreen(navigationActions) }
-      composable(Screen.CREATE_RECIPE_INGREDIENTS) {
-        RecipeIngredientsScreen(navigationActions, 1)
-      } // Really not sure about adding this line
-      composable(Screen.CREATE_RECIPE_INSTRUCTIONS) {
-        RecipeInstructionsScreen(navigationActions, 2)
+      composable(Screen.CREATE_RECIPE) { backStackEntry ->
+        val parentEntry =
+            remember(backStackEntry) { navController.getBackStackEntry(Route.CREATE_RECIPE) }
+        val createRecipeViewModel: CreateRecipeViewModel =
+            viewModel(parentEntry, factory = CreateRecipeViewModel.Factory)
+
+        CreateRecipeScreen(
+            navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
       }
-      composable(Screen.CREATE_RECIPE_ADD_INSTRUCTION) {
-        AddInstructionStepScreen(navigationActions)
+      composable(Screen.CREATE_RECIPE_INGREDIENTS) { backStackEntry ->
+        val parentEntry =
+            remember(backStackEntry) { navController.getBackStackEntry(Route.CREATE_RECIPE) }
+        val createRecipeViewModel: CreateRecipeViewModel = viewModel(parentEntry)
+
+        RecipeIngredientsScreen(
+            navigationActions = navigationActions,
+            createRecipeViewModel = createRecipeViewModel,
+            currentStep = 1)
+      }
+      composable(Screen.CREATE_RECIPE_INSTRUCTIONS) { backStackEntry ->
+        val parentEntry =
+            remember(backStackEntry) { navController.getBackStackEntry(Route.CREATE_RECIPE) }
+
+        RecipeInstructionsScreen(navigationActions = navigationActions, currentStep = 2)
+      }
+      composable(Screen.CREATE_RECIPE_ADD_INSTRUCTION) { backStackEntry ->
+        val parentEntry =
+            remember(backStackEntry) { navController.getBackStackEntry(Route.CREATE_RECIPE) }
+        val createRecipeViewModel: CreateRecipeViewModel = viewModel(parentEntry)
+
+        AddInstructionStepScreen(
+            navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
+      }
+      composable(Screen.PUBLISH_CREATED_RECIPE) { backStackEntry ->
+        val parentEntry =
+            remember(backStackEntry) { navController.getBackStackEntry(Route.CREATE_RECIPE) }
+        val createRecipeViewModel: CreateRecipeViewModel = viewModel(parentEntry)
+
+        PublishRecipeScreen(
+            navigationActions = navigationActions,
+        )
       }
     }
+
     navigation(
         startDestination = Screen.ACCOUNT,
         route = Route.ACCOUNT,

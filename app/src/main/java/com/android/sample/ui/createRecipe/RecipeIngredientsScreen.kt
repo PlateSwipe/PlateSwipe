@@ -2,12 +2,14 @@ package com.android.sample.ui.createRecipe
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 
 @Composable
 fun RecipeIngredientsScreen(
     navigationActions: NavigationActions,
+    createRecipeViewModel: CreateRecipeViewModel,
     currentStep: Int,
     modifier: Modifier = Modifier
 ) {
@@ -15,7 +17,10 @@ fun RecipeIngredientsScreen(
       title = "No Ingredients",
       subtitle = "List the ingredients needed for your recipe. Add as many as you need.",
       buttonText = "Add Ingredients",
-      onButtonClick = { navigationActions.navigateTo(Screen.CREATE_RECIPE_INSTRUCTIONS) },
+      onButtonClick = {
+        createRecipeViewModel.addIngredient("Banana", "3")
+        navigationActions.navigateTo(Screen.CREATE_RECIPE_INSTRUCTIONS)
+      },
       navigationActions = navigationActions,
       currentStep = currentStep,
       modifier = modifier)

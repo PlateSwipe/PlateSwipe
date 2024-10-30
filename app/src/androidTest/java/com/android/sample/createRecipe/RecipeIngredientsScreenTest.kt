@@ -2,8 +2,10 @@ package com.android.sample.ui.createRecipe
 
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
+import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
+import io.mockk.mockk
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito.mock
@@ -14,6 +16,7 @@ class RecipeIngredientsScreenTest {
   @get:Rule val composeTestRule = createComposeRule()
 
   private val mockNavigationActions = mock(NavigationActions::class.java)
+  private val mockCreateRecipeViewModel = mockk<CreateRecipeViewModel>(relaxed = true)
   private val titleText = "No Ingredients"
   private val subtitleText = "List the ingredients needed for your recipe. Add as many as you need."
   private val buttonText = "Add Ingredients"
@@ -21,7 +24,10 @@ class RecipeIngredientsScreenTest {
   @Test
   fun testRecipeIngredientsScreenComponentsAreDisplayed() {
     composeTestRule.setContent {
-      RecipeIngredientsScreen(navigationActions = mockNavigationActions, currentStep = 1)
+      RecipeIngredientsScreen(
+          navigationActions = mockNavigationActions,
+          createRecipeViewModel = mockCreateRecipeViewModel,
+          currentStep = 1)
     }
 
     composeTestRule.onNodeWithText(titleText).assertExists().assertIsDisplayed()
@@ -33,7 +39,10 @@ class RecipeIngredientsScreenTest {
   @Test
   fun testAddIngredientsButtonNavigatesToNextScreen() {
     composeTestRule.setContent {
-      RecipeIngredientsScreen(navigationActions = mockNavigationActions, currentStep = 1)
+      RecipeIngredientsScreen(
+          navigationActions = mockNavigationActions,
+          createRecipeViewModel = mockCreateRecipeViewModel,
+          currentStep = 1)
     }
 
     composeTestRule.onNodeWithText(buttonText).assertExists().performClick()

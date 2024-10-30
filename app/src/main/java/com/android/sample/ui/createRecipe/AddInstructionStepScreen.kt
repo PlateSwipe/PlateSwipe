@@ -15,20 +15,28 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.android.sample.R
+import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.resources.C.Tag.HORIZONTAL_PADDING
 import com.android.sample.resources.C.Tag.SAVE_BUTTON_TAG
 import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.Typography
 import com.android.sample.ui.theme.lightCream
 import com.android.sample.ui.topbar.MyAppBar
 
 @Composable
-fun AddInstructionStepScreen(navigationActions: NavigationActions) {
+fun AddInstructionStepScreen(
+    navigationActions: NavigationActions,
+    createRecipeViewModel: CreateRecipeViewModel
+) {
   Scaffold(
       modifier = Modifier.fillMaxWidth(),
       topBar = { MyAppBar(onBackClick = { navigationActions.goBack() }) },
   ) { paddingValues ->
-    AddInstructionStepContent(paddingValues)
+    AddInstructionStepContent(
+        paddingValues = paddingValues,
+        createRecipeViewModel = createRecipeViewModel,
+        navigationActions = navigationActions)
   }
 }
 
@@ -36,14 +44,9 @@ fun AddInstructionStepScreen(navigationActions: NavigationActions) {
 @Composable
 fun AddInstructionStepContent(
     paddingValues: PaddingValues,
-    onSave:
-        (
-            stepDescription: String,
-            stepTime: String,
-            stepCategory: String,
-            selectedIcon: IconType) -> Unit =
-        { _, _, _, _ ->
-        }
+    createRecipeViewModel: CreateRecipeViewModel,
+    navigationActions: NavigationActions,
+    modifier: Modifier = Modifier
 ) {
   var stepDescription by remember { mutableStateOf("") }
   var stepTime by remember { mutableStateOf("") }
@@ -53,7 +56,7 @@ fun AddInstructionStepContent(
 
   Column(
       modifier =
-          Modifier.fillMaxSize().padding(paddingValues).padding(horizontal = HORIZONTAL_PADDING.dp),
+          modifier.fillMaxSize().padding(paddingValues).padding(horizontal = HORIZONTAL_PADDING.dp),
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.Top) {
         Text(
@@ -122,9 +125,7 @@ fun AddInstructionStepContent(
                             .heightIn(min = 200.dp)
                             .padding(vertical = 8.dp)
                             .testTag("InstructionInput"),
-                    isError =
-                        showError && stepDescription.isEmpty() // Show error state if applicable
-                    )
+                    isError = showError && stepDescription.isEmpty())
 
                 if (showError && stepDescription.isEmpty()) {
                   Text(
@@ -142,7 +143,11 @@ fun AddInstructionStepContent(
             onClick = {
               showError = stepDescription.isEmpty() // Set error if instructions are empty
               if (stepDescription.isNotEmpty()) {
-                onSave(stepDescription, stepTime, stepCategory, selectedIcon ?: IconType.Axe)
+                createRecipeViewModel.updateRecipeInstructions(stepDescription)
+                createRecipeViewModel.updateRecipeTime(stepTime)
+                createRecipeViewModel.updateRecipeCategory(stepCategory)
+
+                navigationActions.navigateTo(Screen.PUBLISH_CREATED_RECIPE)
               }
             },
             modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp).testTag(SAVE_BUTTON_TAG),
@@ -156,11 +161,3 @@ fun AddInstructionStepContent(
         }
       }
 }
-
-/*
-@Preview(showBackground = true)
-@Composable
-fun AddInstructionStepContentPreview() {
-    AddInstructionStepContent(paddingValues = PaddingValues(16.dp))
-}
-*/

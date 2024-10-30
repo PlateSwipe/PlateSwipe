@@ -1,34 +1,54 @@
 package com.android.sample.createRecipe
 
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.*
-import androidx.compose.ui.test.SemanticsMatcher.Companion.keyIsDefined
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.unit.dp
+import androidx.test.espresso.intent.Intents
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.android.sample.model.recipe.CreateRecipeViewModel
+import com.android.sample.model.recipe.FirestoreRecipesRepository
 import com.android.sample.resources.C.Tag.SAVE_BUTTON_TAG
-import com.android.sample.ui.createRecipe.AddInstructionStepContent
-import com.android.sample.ui.createRecipe.IconType
+import com.android.sample.ui.createRecipe.AddInstructionStepScreen
+import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.navigation.Screen
+import com.google.firebase.firestore.FirebaseFirestore
+import io.mockk.*
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runTest
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
 
-// General tests using default setup content
-class AddInstructionStepContentGeneralTest {
+@RunWith(AndroidJUnit4::class)
+class AddInstructionStepScreenTest {
+
+  private lateinit var navigationActions: NavigationActions
+  private lateinit var createRecipeViewModel: CreateRecipeViewModel
+  private val firestore = mockk<FirebaseFirestore>(relaxed = true)
+  private val repository = mockk<FirestoreRecipesRepository>(relaxed = true)
 
   @get:Rule val composeTestRule = createComposeRule()
 
   @Before
   fun setUp() {
-    composeTestRule.setContent {
-      AddInstructionStepContent(
-          paddingValues = PaddingValues(16.dp), onSave = { _, _, _, _ -> } // Default empty onSave
-          )
-    }
+    navigationActions = mockk(relaxed = true)
+    createRecipeViewModel = CreateRecipeViewModel(repository)
+    Intents.init()
   }
 
+  @After
+  fun tearDown() {
+    Intents.release()
+  }
+
+  /** Verifies that all UI elements are displayed on the AddInstructionStepScreen. */
   @Test
-  fun addInstructionStepContent_allFieldsDisplayed() {
+  fun addInstructionStepScreen_allFieldsDisplayed() {
+    composeTestRule.setContent {
+      AddInstructionStepScreen(
+          navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
+    }
     composeTestRule.onNodeWithTag("StepLabel").assertIsDisplayed()
     composeTestRule.onNodeWithTag("TimeInput").assertIsDisplayed()
     composeTestRule.onNodeWithTag("CategoryInput").assertIsDisplayed()
@@ -37,72 +57,60 @@ class AddInstructionStepContentGeneralTest {
     composeTestRule.onNodeWithTag(SAVE_BUTTON_TAG).assertIsDisplayed()
   }
 
+  /** Verifies that entering data updates the respective fields on the AddInstructionStepScreen. */
   @Test
-  fun addInstructionStepContent_enteringDataUpdatesFields() {
+  fun addInstructionStepScreen_enteringDataUpdatesFields() {
+    composeTestRule.setContent {
+      AddInstructionStepScreen(
+          navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
+    }
     composeTestRule.onNodeWithTag("TimeInput").performTextInput("10")
     composeTestRule.onNodeWithTag("CategoryInput").performTextInput("Main Course")
     composeTestRule.onNodeWithTag("InstructionInput").performTextInput("Preheat oven to 180°C...")
-
     composeTestRule.onNodeWithText("10").assertIsDisplayed()
     composeTestRule.onNodeWithText("Main Course").assertIsDisplayed()
     composeTestRule.onNodeWithText("Preheat oven to 180°C...").assertIsDisplayed()
   }
 
+  /** Verifies that selecting an icon updates the display in the IconDropdown. */
   @Test
-  fun addInstructionStepContent_dropdownSelectionUpdatesIcon() {
+  fun addInstructionStepScreen_iconSelectionUpdatesDisplay() {
+    composeTestRule.setContent {
+      AddInstructionStepScreen(
+          navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
+    }
     composeTestRule.onNodeWithTag("IconDropdown").performClick()
     composeTestRule.waitForIdle()
-
-    composeTestRule
-        .onNode(hasText("Fire").and(hasAnyAncestor(keyIsDefined(SemanticsProperties.IsPopup))))
-        .performClick()
-
+    composeTestRule.onNodeWithText("Fire").performClick()
     composeTestRule.onNodeWithContentDescription("Fire").assertIsDisplayed()
   }
 
+  /**
+   * Verifies that clicking the save button triggers data saving and navigation to the next screen.
+   */
   @Test
-  fun addInstructionStepContent_saveButtonEnabledWhenFieldsFilled() {
+  fun addInstructionStepScreen_saveButtonSavesDataAndNavigates() = runTest {
+    composeTestRule.setContent {
+      AddInstructionStepScreen(
+          navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
+    }
     composeTestRule.onNodeWithTag("TimeInput").performTextInput("10")
     composeTestRule.onNodeWithTag("CategoryInput").performTextInput("Main Course")
     composeTestRule.onNodeWithTag("InstructionInput").performTextInput("Preheat oven to 180°C...")
-
-    composeTestRule.onNodeWithTag("IconDropdown").performClick()
-    composeTestRule.waitForIdle()
-    composeTestRule
-        .onNode(hasText("Fire").and(hasAnyAncestor(keyIsDefined(SemanticsProperties.IsPopup))))
-        .performClick()
-    composeTestRule.waitForIdle()
-
-    composeTestRule.onNodeWithTag(SAVE_BUTTON_TAG).assertIsEnabled().performClick()
-  }
-
-  @Test
-  fun addInstructionStepContent_saveButtonShowsErrorIfInstructionEmpty() {
     composeTestRule.onNodeWithTag(SAVE_BUTTON_TAG).performClick()
-    composeTestRule.waitForIdle()
-
-    composeTestRule.onNodeWithTag("InstructionError").assertIsDisplayed()
+    advanceUntilIdle()
+    verify { navigationActions.navigateTo(Screen.PUBLISH_CREATED_RECIPE) }
   }
-}
 
-// Custom tests requiring specific content setup
-class AddInstructionStepContentCustomTest {
-
-  @get:Rule val composeTestRule = createComposeRule()
-
+  /** Verifies that an error message is displayed when attempting to save without instructions. */
   @Test
-  fun addInstructionStepContent_iconDefaultsToAxeIfNoneSelected() {
-    var savedIcon: IconType? = null
-
+  fun addInstructionStepScreen_saveButtonShowsErrorIfInstructionEmpty() {
     composeTestRule.setContent {
-      AddInstructionStepContent(
-          paddingValues = PaddingValues(16.dp), onSave = { _, _, _, icon -> savedIcon = icon })
+      AddInstructionStepScreen(
+          navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
     }
-
-    composeTestRule.onNodeWithTag("InstructionInput").performTextInput("Preheat oven to 180°C...")
     composeTestRule.onNodeWithTag(SAVE_BUTTON_TAG).performClick()
     composeTestRule.waitForIdle()
-
-    assert(savedIcon is IconType.Axe) { "Expected default icon to be Axe, but was $savedIcon" }
+    composeTestRule.onNodeWithTag("InstructionError").assertIsDisplayed()
   }
 }
