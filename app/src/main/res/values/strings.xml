@@ -37,5 +37,8 @@
     //IconDropDownMenu
     <string name="add_icon">Add Icon</string>
 
+    //PublishRecipeScreen
+    <string name="done_text">Done !</string>
+    <string name="publish_recipe_button">Publish Recipe</string>
 
 </resources>

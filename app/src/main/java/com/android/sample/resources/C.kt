@@ -1,6 +1,5 @@
 package com.android.sample.resources
 
-
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -77,7 +76,7 @@ object C {
     const val MEAL_DB_CATEGORY_ARRAY = "categories"
 
     // FirestoreRecipeRepository
-    const val FIRESTORE_COLLECTION_NAME = "recipes"
+    const val FIRESTORE_COLLECTION_NAME = "created recipe"
     // Values for storage
     const val FIRESTORE_RECIPE_NAME = "name"
     const val FIRESTORE_RECIPE_CATEGORY = "category"
@@ -123,5 +122,8 @@ object C {
     const val DELETE_BUTTON_TAG = "deleteButton"
     const val SAVE_BUTTON_TAG = "saveButton"
     const val STEP_DESCRIPTION_HEIGHT = 150
+
+    // PublishRecipeScreen
+    val CHEF_IMAGE_DESCRIPTION = "Chef illustration inside an egg"
   }
 }
