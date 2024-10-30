@@ -16,5 +16,11 @@ object C {
     // RecipesViewModel
     const val MINIMUM_RECIPES_BEFORE_FETCH = 3
     const val NUMBER_RECIPES_TO_FETCH = 2
+
+    // ImageRepositoryFirebase
+    const val PROFILE_IMAGE_DIR = "images/profile/"
+    const val RECIPE_IMAGE_DIR = "images/recipe/"
+    const val INGREDIENTS_IMAGE_DIR = "images/ingredient/"
+    const val DEFAULT_IMAGE_NAME = "default.jpg"
   }
 }
