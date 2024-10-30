@@ -63,15 +63,15 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
     return try {
       val id = document.id
       val name = document.getString(FIRESTORE_RECIPE_NAME) ?: return null
-      val category = document.getString(FIRESTORE_RECIPE_CATEGORY)
-      val area = document.getString(FIRESTORE_RECIPE_AREA)
+      val category = document.getString(FIRESTORE_RECIPE_CATEGORY) ?: return null
+      val area = document.getString(FIRESTORE_RECIPE_AREA) ?: return null
       val instructions = document.getString(FIRESTORE_RECIPE_INSTRUCTIONS) ?: return null
       val pictureID = document.getString(FIRESTORE_RECIPE_PICTURE_ID) ?: return null
       val ingredientsData = document.get(FIRESTORE_RECIPE_INGREDIENTS) as List<*>? ?: return null
       val measurementsData = document.get(FIRESTORE_RECIPE_MEASUREMENTS) as List<*>? ?: return null
-      val time = document.getString(FIRESTORE_RECIPE_TIME)
-      val difficulty = document.getString(FIRESTORE_RECIPE_DIFFICULTY)
-      val price = document.getString(FIRESTORE_RECIPE_PRICE)
+      val time = document.getString(FIRESTORE_RECIPE_TIME) ?: return null
+      val difficulty = document.getString(FIRESTORE_RECIPE_DIFFICULTY) ?: return null
+      val price = document.getString(FIRESTORE_RECIPE_PRICE) ?: return null
 
       val ingredients = ingredientsData.mapNotNull { it as? String }
       val measurements = measurementsData.mapNotNull { it as? String }
