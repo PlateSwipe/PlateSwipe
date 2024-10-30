@@ -15,10 +15,10 @@ class OpenFoodFactsIngredientRepository(private val client: OkHttpClient) : Ingr
 
   private fun parseOpenFoodFactsJsonToIngredient(json: JSONObject): Ingredient {
 
-    val ingredientName = json.getString("product_name")
+    val ingredientName = json.getString("product_name") ?: null
     val selectedImagesJson = json.optJSONObject("selected_images")
     val frontImagesJson = selectedImagesJson?.optJSONObject("front")
-    val brands = json.getString("brands")
+    val brands = json.getString("brands") ?: null
 
     val selectedImages =
         frontImagesJson?.let {
