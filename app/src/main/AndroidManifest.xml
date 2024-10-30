@@ -4,6 +4,7 @@
 
     <!-- Camera permission to allow access to the camera -->
     <uses-permission android:name="android.permission.CAMERA" /> <!-- Sensitive -->
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- Sensitive -->
 
     <!-- Camera hardware feature declaration -->
     <uses-feature android:name="android.hardware.camera.any" />
