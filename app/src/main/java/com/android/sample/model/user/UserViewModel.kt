@@ -11,7 +11,7 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-open class UserViewModel(
+class UserViewModel(
     private val userRepository: UserRepository,
     private val firebaseAuth: FirebaseAuth = Firebase.auth
 ) : ViewModel() {
