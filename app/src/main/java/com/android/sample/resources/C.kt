@@ -103,10 +103,9 @@ object C {
     const val SCAN_THRESHOLD = 3
     const val LOG_TAG_CAMERA_UTILS = "CameraUtils"
     const val INVALID_BARCODE_MSG = "Invalid barcode"
-    
+
     // CreateRecipeViewModel
     const val RECIPE_PUBLISHED_SUCCESS_MESSAGE = "Recipe published successfully!"
     const val RECIPE_PUBLISH_ERROR_MESSAGE = "Failed to publish recipe: %1\$s"
-    
   }
 }
