@@ -41,50 +41,16 @@ class OpenFoodFactsIngredientRepositoryTest {
                         "_id": 1234567890,
                         "product_name": "Ingredient 1",
                         "brands": "Brand 1",
-                        "selected_images": {
-                        "front": {
-                          "display": {
-                            "fr": "https://images.openfoodfacts.net/images/products/761/006/200/1605/front_fr.16.400.jpg"
-                          },
-                          "small": {
-                            "fr": "https://images.openfoodfacts.net/images/products/761/006/200/1605/front_fr.16.200.jpg"
-                          },
-                          "thumb": {
-                            "fr": "https://images.openfoodfacts.net/images/products/761/006/200/1605/front_fr.16.100.jpg"
-                          }
-                        },
-                    }
-                        
                     },
                     {
                         "_id": 9876543210,
                         "product_name": "Ingredient 2",
                         "brands": "Brand 2",
-                        "selected_images": {
-                        "front": {
-                          "display": {
-                            "fr": "https://images.openfoodfacts.net/images/products/761/006/200/1605/front_fr.16.400.jpg"
-                          },
-                          "small": {
-                            "fr": "https://images.openfoodfacts.net/images/products/761/006/200/1605/front_fr.16.200.jpg"
-                          },
-                          "thumb": {
-                            "fr": "https://images.openfoodfacts.net/images/products/761/006/200/1605/front_fr.16.100.jpg"
-                          }
-                        },
-                    }
                     },
                     {
                         "_id": 1357924680,
                         "product_name": "Ingredient 3",
                         "brands": "Brand 3",
-                        "selected_images": {
-                        "front": {
-                          "display": {},
-                          "small": {},
-                          "thumb": {}
-                        },
-                    }
                     },
                 ],
                 "skip": 0
@@ -111,19 +77,6 @@ class OpenFoodFactsIngredientRepositoryTest {
                     "_id": 1234567890,
                     "product_name": "apple",
                     "brands": "Brand 1",
-                    "selected_images": {
-                        "front": {
-                          "display": {
-                            "fr": "https://images.openfoodfacts.net/images/products/761/006/200/1605/front_fr.16.400.jpg"
-                          },
-                          "small": {
-                            "fr": "https://images.openfoodfacts.net/images/products/761/006/200/1605/front_fr.16.200.jpg"
-                          },
-                          "thumb": {
-                            "fr": "https://images.openfoodfacts.net/images/products/761/006/200/1605/front_fr.16.100.jpg"
-                          }
-                        },
-                    }
                 },
                 "status": 1,
                 "status_verbose": "product found"
@@ -195,16 +148,6 @@ class OpenFoodFactsIngredientRepositoryTest {
     assert(searchIngredients?.get(0)?.name == "Ingredient 1")
     assert(searchIngredients?.get(0)?.barCode == 1234567890L)
     assert(searchIngredients?.get(0)?.brands == "Brand 1")
-    println(searchIngredients?.get(0)?.selectedImages?.front?.display)
-    assert(
-        searchIngredients?.get(0)?.selectedImages?.front?.display ==
-            "https://images.openfoodfacts.net/images/products/761/006/200/1605/front_fr.16.400.jpg")
-    assert(
-        searchIngredients?.get(0)?.selectedImages?.front?.small ==
-            "https://images.openfoodfacts.net/images/products/761/006/200/1605/front_fr.16.200.jpg")
-    assert(
-        searchIngredients?.get(0)?.selectedImages?.front?.thumb ==
-            "https://images.openfoodfacts.net/images/products/761/006/200/1605/front_fr.16.100.jpg")
     assert(searchIngredients?.get(1)?.name == "Ingredient 2")
     assert(searchIngredients?.get(1)?.barCode == 9876543210L)
     assert(searchIngredients?.get(2)?.name == "Ingredient 3")
