@@ -52,7 +52,7 @@ fun startCamera(
             cameraProvider.bindToLifecycle(lifecycleOwner, cameraSelector, preview, imageCapture)
           }
         } catch (exc: Exception) {
-          Log.e(C.Tag.LOG_TAG_CameraActions, C.Tag.UNBINDING_ERR, exc)
+          Log.e(C.Tag.LOG_TAG_CAMERA_ACTIONS, C.Tag.UNBINDING_ERR, exc)
         }
       },
       ContextCompat.getMainExecutor(context))

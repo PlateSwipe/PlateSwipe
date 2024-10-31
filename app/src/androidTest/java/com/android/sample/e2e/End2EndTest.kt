@@ -57,10 +57,6 @@ class EndToEndTest {
     // Set the initial content to the MainScreen
     composeTestRule.setContent { SwipePage(navigationActions = navigationActions) }
 
-    // Click on Fridge Icon
-    composeTestRule.onNodeWithTag("tabFridge").assertExists().performClick()
-    verify(navigationActions).navigateTo(TopLevelDestinations.FRIDGE)
-
     // Click on Create Recipe Icon
     composeTestRule.onNodeWithTag("tabAddRecipe").assertExists().performClick()
     verify(navigationActions).navigateTo(TopLevelDestinations.ADD_RECIPE)
@@ -76,6 +72,10 @@ class EndToEndTest {
     // Click on Swipe Icon
     composeTestRule.onNodeWithTag("tabSwipe").assertExists().performClick()
     verify(navigationActions).navigateTo(TopLevelDestinations.SWIPE)
+
+    // Click on Fridge Icon
+    composeTestRule.onNodeWithTag("tabFridge").assertExists().performClick()
+    verify(navigationActions).navigateTo(TopLevelDestinations.FRIDGE)
   }
 
   @Test

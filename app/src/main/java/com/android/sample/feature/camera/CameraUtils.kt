@@ -35,6 +35,6 @@ fun handleBarcodeDetection(
       recentBarcodes.clear()
     }
   } else {
-    Log.e(C.Tag.LOG_TAG_CameraScanCodeBarScreen, C.Tag.INVALID_BARCODE_MSG)
+    Log.e(C.Tag.LOG_TAG_CAMERA_UTILS, C.Tag.INVALID_BARCODE_MSG)
   }
 }

@@ -89,5 +89,14 @@ object C {
     // EXCEPTION MESSAGES
     const val LIMIT_MUST_BE_POSITIVE_MESSAGE = "Limit must be greater than 0"
     const val UNSUPPORTED_MESSAGE = "Operation not supported"
+
+    // Camera Actions
+    const val LOG_TAG_CAMERA_ACTIONS = "CameraActions"
+    const val UNBINDING_ERR = "Error in unbinding all use cases"
+
+    // Camera Utils
+    const val SCAN_THRESHOLD = 3
+    const val LOG_TAG_CAMERA_UTILS = "CameraUtils"
+    const val INVALID_BARCODE_MSG = "Invalid barcode"
   }
 }
