@@ -24,11 +24,12 @@ fun handleBarcodeDetection(
     barcodeValue: Long?,
     recentBarcodes: MutableList<Long>,
     lastScannedBarcode: Long?,
-    onBarcodeDetected: (Long) -> Unit
+    onBarcodeDetected: (Long) -> Unit,
+    scanThreshold: Int
 ) {
   if (barcodeValue != null) {
     recentBarcodes.add(barcodeValue)
-    if (recentBarcodes.count { it == barcodeValue } >= C.Tag.SCAN_THRESHOLD) {
+    if (recentBarcodes.count { it == barcodeValue } >= scanThreshold) {
       if (barcodeValue != lastScannedBarcode) {
         onBarcodeDetected(barcodeValue)
       }
