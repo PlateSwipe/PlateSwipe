@@ -3,6 +3,7 @@ package com.android.sample.model.recipe
 import com.android.sample.resources.C.Tag.MAXIMUM_RECIPES_TO_FETCH_MEAL_DB
 import com.android.sample.resources.C.Tag.MAX_NB_OF_INGREDIENTS_IN_A_RECIPE_MEAL_DB
 import com.android.sample.resources.C.Tag.MEAL_DB_ARRAY_NAME
+import com.android.sample.resources.C.Tag.MEAL_DB_CATEGORY_ARRAY
 import com.android.sample.resources.C.Tag.MEAL_DB_MEAL_AREA
 import com.android.sample.resources.C.Tag.MEAL_DB_MEAL_CATEGORY
 import com.android.sample.resources.C.Tag.MEAL_DB_MEAL_ID
@@ -14,6 +15,7 @@ import com.android.sample.resources.C.Tag.MEAL_DB_MEAL_THUMB
 import com.android.sample.resources.C.Tag.MEAL_DB_URL
 import com.android.sample.resources.C.Tag.MEAL_DB_USER_AGENT
 import com.android.sample.resources.C.Tag.MEAL_DB_USER_AGENT_VALUE
+import com.android.sample.resources.C.Tag.UNSUPPORTED_MESSAGE
 import java.io.IOException
 import okhttp3.Call
 import okhttp3.Callback
@@ -29,6 +31,23 @@ import org.json.JSONObject
  * @property client The OkHttpClient used to make network requests.
  */
 class MealDBRecipesRepository(private val client: OkHttpClient) : RecipesRepository {
+
+  /** These API calls are not supported by the MealDB database. */
+  override fun getNewUid(): String {
+    throw UnsupportedOperationException(UNSUPPORTED_MESSAGE)
+  }
+
+  override fun addRecipe(recipe: Recipe, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+    throw UnsupportedOperationException(UNSUPPORTED_MESSAGE)
+  }
+
+  override fun updateRecipe(recipe: Recipe, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+    throw UnsupportedOperationException(UNSUPPORTED_MESSAGE)
+  }
+
+  override fun deleteRecipe(idMeal: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+    throw UnsupportedOperationException(UNSUPPORTED_MESSAGE)
+  }
 
   /**
    * Fetches a specified number of random recipes from the MealDB API.
@@ -78,7 +97,7 @@ class MealDBRecipesRepository(private val client: OkHttpClient) : RecipesReposit
    */
   private fun parseMealDBJsonToCategory(json: JSONObject): List<String> {
     val parsedListOfCategories = mutableListOf<String>()
-    val listOfCategories = json.getJSONArray(MEAL_DB_ARRAY_NAME)
+    val listOfCategories = json.getJSONArray(MEAL_DB_CATEGORY_ARRAY)
     for (i in 0 until listOfCategories.length()) {
       val category = listOfCategories.getJSONObject(i)
       val strCategory = category.getString(MEAL_DB_MEAL_CATEGORY)
@@ -158,7 +177,8 @@ class MealDBRecipesRepository(private val client: OkHttpClient) : RecipesReposit
   override fun searchByCategory(
       category: String,
       onSuccess: (List<Recipe>) -> Unit,
-      onFailure: (Exception) -> Unit
+      onFailure: (Exception) -> Unit,
+      limit: Int
   ) {
 
     val url = "$MEAL_DB_URL/filter.php?c=$category"
@@ -190,7 +210,7 @@ class MealDBRecipesRepository(private val client: OkHttpClient) : RecipesReposit
   }
 
   override fun listCategories(onSuccess: (List<String>) -> Unit, onFailure: (Exception) -> Unit) {
-    val url = "$MEAL_DB_URL/categories.php"
+    val url = MEAL_DB_URL + "categories.php"
     val request =
         Request.Builder().url(url).header(MEAL_DB_USER_AGENT, MEAL_DB_USER_AGENT_VALUE).build()
     client

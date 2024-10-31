@@ -7,6 +7,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,21 +16,22 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.InputChip
+import androidx.compose.material3.InputChipDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -56,16 +58,22 @@ import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import com.android.sample.R
+import com.android.sample.model.filter.Difficulty
 import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.model.user.UserViewModel
+import com.android.sample.resources.C.Tag.CATEGORY_INPUT_DESCRIPTION
+import com.android.sample.resources.C.Tag.DIFFICULTY_INPUT_DESCRIPTION
 import com.android.sample.resources.C.Tag.END_ANIMATION
+import com.android.sample.resources.C.Tag.FILTER_ICON_DESCRIPTION
 import com.android.sample.resources.C.Tag.LOADING
-import com.android.sample.ui.navigation.BottomNavigationMenu
-import com.android.sample.ui.navigation.LIST_TOP_LEVEL_DESTINATIONS
+import com.android.sample.resources.C.Tag.PRICE_RANGE_INPUT_DESCRIPTION
+import com.android.sample.resources.C.Tag.TIME_RANGE_INPUT_DESCRIPTION
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
+import com.android.sample.ui.theme.graySlate
 import com.android.sample.ui.theme.starColor
 import com.android.sample.ui.theme.tagBackground
+import com.android.sample.ui.utils.PlateSwipeScaffold
 import kotlin.math.absoluteValue
 import kotlinx.coroutines.launch
 
@@ -77,7 +85,6 @@ import kotlinx.coroutines.launch
  * @param userViewModel - User View Model
  */
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SwipePage(
     navigationActions: NavigationActions,
@@ -86,25 +93,13 @@ fun SwipePage(
 ) {
   val selectedItem = navigationActions.currentRoute()
 
-  Scaffold(
-      modifier = Modifier.fillMaxWidth(),
-      topBar = {
-        TopAppBar(
-            title = { Text("PlateSwipe") },
-            colors =
-                TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background,
-                ),
-            modifier = Modifier.testTag("topBar"))
-      },
-      bottomBar = {
-        BottomNavigationMenu(
-            onTabSelect = { tab -> navigationActions.navigateTo(tab) },
-            tabList = LIST_TOP_LEVEL_DESTINATIONS,
-            selectedItem = selectedItem)
-      }) { paddingValues ->
+  PlateSwipeScaffold(
+      navigationActions = navigationActions,
+      selectedItem = selectedItem,
+      showBackArrow = false,
+      content = { paddingValues ->
         RecipeDisplay(navigationActions, paddingValues, recipesViewModel, userViewModel)
-      }
+      })
 }
 
 /**
@@ -123,6 +118,7 @@ fun RecipeDisplay(
   var retrieveNextRecipe by remember { mutableStateOf(false) }
   var displayCard1 by remember { mutableStateOf(true) }
   var displayCard2 by remember { mutableStateOf(false) }
+
   // Offset for the swipe animation
   val offsetX = remember { Animatable(0f) }
 
@@ -133,6 +129,8 @@ fun RecipeDisplay(
   // Collect the current and next recipe from the ViewModel
   val currentRecipe by recipesViewModel.currentRecipe.collectAsState()
   val nextRecipe by recipesViewModel.nextRecipe.collectAsState()
+  val filter by recipesViewModel.filter.collectAsState()
+
   // Snap back to center when animation is finished
   coroutineScope.launch {
     if (offsetX.value.absoluteValue > END_ANIMATION - 200) {
@@ -141,6 +139,7 @@ fun RecipeDisplay(
       displayCard2 = !displayCard2
     }
   }
+
   Column(
       modifier =
           Modifier.fillMaxSize()
@@ -160,6 +159,85 @@ fun RecipeDisplay(
                       coroutineScope.launch { offsetX.snapTo(offsetX.value + dragAmount) }
                     })
               }) {
+        Row(
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth().weight(1f)) {
+              // Star Icon (fixed size, no weight needed)
+              Icon(
+                  painter = painterResource(R.drawable.filter),
+                  contentDescription = FILTER_ICON_DESCRIPTION,
+                  modifier =
+                      Modifier.testTag("filter").size(30.dp).clickable {
+                        navigationActions.navigateTo(Screen.FILTER)
+                      }, // Use fixed size for the icon
+                  tint = graySlate)
+            }
+        // Space between the filter icon and the filter chips
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier =
+                Modifier.testTag("filterRow")
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .horizontalScroll(rememberScrollState())) {
+              // Star Icon (fixed size, no weight needed)
+              var displayTimeRange by remember { mutableStateOf(!filter.timeRange.isLimited()) }
+              var displayPriceRange by remember { mutableStateOf(!filter.priceRange.isLimited()) }
+              var displayDifficulty by remember {
+                mutableStateOf(filter.difficulty != Difficulty.Undefined)
+              }
+              var displayCategory by remember { mutableStateOf(filter.category != null) }
+
+              FilterChip(
+                  displayState = displayTimeRange,
+                  onDelete = {
+                    displayTimeRange = false
+                    recipesViewModel.updateTimeRange(
+                        recipesViewModel.filter.value.timeRange.minBorn,
+                        recipesViewModel.filter.value.timeRange.maxBorn)
+                  },
+                  label = "${filter.timeRange.min.toInt()} - ${filter.timeRange.max.toInt()} min",
+                  testTag = "timeRangeChip",
+                  contentDescription = TIME_RANGE_INPUT_DESCRIPTION)
+
+              FilterChip(
+                  displayState = displayPriceRange,
+                  onDelete = {
+                    displayPriceRange = false
+                    recipesViewModel.updatePriceRange(
+                        recipesViewModel.filter.value.priceRange.minBorn,
+                        recipesViewModel.filter.value.priceRange.maxBorn)
+                  },
+                  label = "${filter.priceRange.min.toInt()} - ${filter.priceRange.max.toInt()} $",
+                  testTag = "priceRangeChip",
+                  contentDescription = PRICE_RANGE_INPUT_DESCRIPTION)
+
+              FilterChip(
+                  displayState = displayDifficulty,
+                  onDelete = {
+                    displayDifficulty = false
+                    recipesViewModel.updateDifficulty(Difficulty.Undefined)
+                  },
+                  label = filter.difficulty.toString(),
+                  testTag = "difficultyChip",
+                  contentDescription = DIFFICULTY_INPUT_DESCRIPTION)
+
+              FilterChip(
+                  displayState = displayCategory,
+                  onDelete = {
+                    displayCategory = false
+                    recipesViewModel.updateCategory(null)
+                  },
+                  label = filter.category.orEmpty(),
+                  testTag = "categoryChip",
+                  contentDescription = CATEGORY_INPUT_DESCRIPTION)
+            }
+
+        // Space between the filter chips and the recipe cards
+        Spacer(modifier = Modifier.height(8.dp))
 
         // First Recipe card with image
         Box(modifier = Modifier.weight(15f)) {
@@ -332,4 +410,47 @@ private fun Tag(tag: String) {
             text = tag, fontSize = 14.sp, color = Color.White // Text color
             )
       }
+}
+
+/**
+ * Composable for the Filter Chip
+ *
+ * @param displayState - Display State of the Chip
+ * @param onDelete - On Delete Function
+ * @param label - Label for the Chip
+ * @param testTag - Test Tag for the Chip
+ * @param contentDescription - Content Description for the Chip
+ */
+@Composable
+fun FilterChip(
+    displayState: Boolean,
+    onDelete: () -> Unit,
+    label: String,
+    testTag: String,
+    contentDescription: String,
+) {
+  if (displayState) {
+    InputChip(
+        modifier = Modifier.testTag(testTag),
+        selected = false,
+        onClick = {},
+        label = {
+          Text(
+              text = label,
+              style = MaterialTheme.typography.bodySmall,
+              color = MaterialTheme.colorScheme.onSecondary,
+          )
+        },
+        trailingIcon = {
+          Icon(
+              Icons.Filled.Close,
+              contentDescription = contentDescription,
+              modifier =
+                  Modifier.testTag("${testTag}Delete").size(InputChipDefaults.IconSize).clickable {
+                    onDelete()
+                  },
+              tint = MaterialTheme.colorScheme.onSecondary)
+        })
+    Spacer(modifier = Modifier.width(8.dp))
+  }
 }
