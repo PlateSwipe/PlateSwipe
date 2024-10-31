@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.android.sample.model.filter.Difficulty
 import com.android.sample.model.filter.Filter
 import com.android.sample.model.filter.FilterPageViewModel
 import com.android.sample.resources.C.Tag.MINIMUM_RECIPES_BEFORE_FETCH
@@ -69,6 +70,35 @@ class RecipesViewModel(private val repository: RecipesRepository) :
         onFailure = { exception ->
           Log.e("RecipesViewModel", "Error fetching categories", exception)
         })
+  }
+
+  /**
+   * Updates the difficulty filter.
+   *
+   * @param difficulty The difficulty to filter by.
+   */
+  override fun updateDifficulty(difficulty: Difficulty) {
+    filter.value.difficulty = difficulty
+  }
+
+  /**
+   * Updates the price range filter.
+   *
+   * @param min The minimum price.
+   * @param max The maximum price.
+   */
+  override fun updatePriceRange(min: Float, max: Float) {
+    filter.value.priceRange.update(min, max)
+  }
+
+  /**
+   * Updates the time range filter.
+   *
+   * @param min The minimum time.
+   * @param max The maximum time.
+   */
+  override fun updateTimeRange(min: Float, max: Float) {
+    filter.value.timeRange.update(min, max)
   }
 
   /**

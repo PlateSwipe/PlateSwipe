@@ -14,9 +14,7 @@ interface FilterPageViewModel {
    *
    * @param difficulty The difficulty to filter by.
    */
-  fun updateDifficulty(difficulty: Difficulty) {
-    filter.value.difficulty = difficulty
-  }
+  fun updateDifficulty(difficulty: Difficulty)
 
   /**
    * Updates the price range filter.
@@ -24,9 +22,7 @@ interface FilterPageViewModel {
    * @param min The minimum price.
    * @param max The maximum price.
    */
-  fun updatePriceRange(min: Float, max: Float) {
-    filter.value.priceRange.update(min, max)
-  }
+  fun updatePriceRange(min: Float, max: Float)
 
   /**
    * Updates the time range filter.
@@ -34,16 +30,12 @@ interface FilterPageViewModel {
    * @param min The minimum time.
    * @param max The maximum time.
    */
-  fun updateTimeRange(min: Float, max: Float) {
-    filter.value.timeRange.update(min, max)
-  }
+  fun updateTimeRange(min: Float, max: Float)
 
   /**
    * Updates the category filter.
    *
    * @param category The category to filter by.
    */
-  fun updateCategory(category: String?) {
-    filter.value.category = category
-  }
+  fun updateCategory(category: String?)
 }
