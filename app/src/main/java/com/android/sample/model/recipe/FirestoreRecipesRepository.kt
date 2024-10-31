@@ -138,7 +138,7 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
   ) {
     require(nbOfElements > 0) { LIMIT_MUST_BE_POSITIVE_MESSAGE }
 
-      // Generate a random UID
+    // Generate a random UID
     val randomUID = generateRandomUID()
     Log.d("TestRecipeRepo", "generateRandomUID :" + randomUID)
 
