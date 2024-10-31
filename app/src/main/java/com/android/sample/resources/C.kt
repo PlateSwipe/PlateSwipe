@@ -108,4 +108,45 @@ object C {
     const val RECIPE_PUBLISHED_SUCCESS_MESSAGE = "Recipe published successfully!"
     const val RECIPE_PUBLISH_ERROR_MESSAGE = "Failed to publish recipe: %1\$s"
   }
+
+  object Dimension {
+
+    // CameraScanCodeBarScreen
+    object CameraScanCodeBarScreen {
+
+      // BARCODE FRAME
+      const val BARCODE_FRAME_WIDTH = 1f
+      const val BARCODE_FRAME_HEIGHT = 0.4f
+      const val BARCODE_FRAME_PADDING = 32
+      const val BARCODE_FRAME_BORDER_WIDTH = 1
+      const val BARCODE_FRAME_BORDER_RADIUS = 8
+
+      // INGREDIENT OVERLAY
+      const val INGREDIENT_OVERLAY_HEIGHT = 0.4f
+
+      // INGREDIENT DISPLAY
+      const val INGREDIENT_DISPLAY_BORDER_RADIUS = 10
+      const val INGREDIENT_DISPLAY_PADDING = 8
+      const val INGREDIENT_DISPLAY_IMAGE_WEIGHT = 0.3f
+      const val INGREDIENT_DISPLAY_IMAGE_PADDING = 8
+      const val INGREDIENT_DISPLAY_IMAGE_WIDTH = 100
+      const val INGREDIENT_DISPLAY_IMAGE_HEIGHT = 100
+      const val INGREDIENT_DISPLAY_IMAGE_BORDER_RADIUS = 8
+      const val INGREDIENT_DISPLAY_IMAGE_BORDER_WIDTH = 1
+      const val INGREDIENT_DISPLAY_TEXT_WEIGHT = 0.7f
+      const val INGREDIENT_DISPLAY_TEXT_PADDING = 8
+      const val INGREDIENT_DISPLAY_TEXT_NAME_PADDING_V = 4
+      const val INGREDIENT_DISPLAY_TEXT_NAME_PADDING_H = 8
+      const val INGREDIENT_DISPLAY_TEXT_BRAND_PADDING_V = 4
+      const val INGREDIENT_DISPLAY_TEXT_BRAND_PADDING_H = 8
+      const val INGREDIENT_DISPLAY_TEXT_BUTTON_PADDING_V = 4
+      const val INGREDIENT_DISPLAY_TEXT_BUTTON_PADDING_H = 8
+    }
+  }
+
+  object TestTag {
+    object CameraScanCodeBarScreen {
+      const val BARCODE_FRAME = "Barcode frame"
+    }
+  }
 }

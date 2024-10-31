@@ -38,6 +38,7 @@ import com.android.sample.feature.camera.handleBarcodeDetection
 import com.android.sample.feature.camera.scan.CodeBarAnalyzer
 import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.ingredient.IngredientViewModel
+import com.android.sample.resources.C
 import com.android.sample.ui.navigation.NavigationActions
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
@@ -81,7 +82,8 @@ fun CameraSection(ingredientViewModel: IngredientViewModel) {
               onBarcodeDetected = { barcodeValue ->
                 ingredientViewModel.fetchIngredient(barcodeValue)
                 lastScannedBarcode = barcodeValue
-              })
+              },
+              scanThreshold = C.Tag.SCAN_THRESHOLD)
         })
     BarCodeFrame()
   }
@@ -93,11 +95,22 @@ fun CameraSection(ingredientViewModel: IngredientViewModel) {
 fun BarCodeFrame() {
   Box(
       modifier =
-          Modifier.padding(32.dp)
-              .width((1f * LocalConfiguration.current.screenWidthDp).dp)
-              .height((0.4f * LocalConfiguration.current.screenHeightDp).dp)
-              .border(width = 1.dp, color = Color.White, shape = RoundedCornerShape(8.dp))
-              .testTag("Barcode frame"),
+          Modifier.padding(C.Dimension.CameraScanCodeBarScreen.BARCODE_FRAME_PADDING.dp)
+              .width(
+                  (C.Dimension.CameraScanCodeBarScreen.BARCODE_FRAME_WIDTH *
+                          LocalConfiguration.current.screenWidthDp)
+                      .dp)
+              .height(
+                  (C.Dimension.CameraScanCodeBarScreen.BARCODE_FRAME_HEIGHT *
+                          LocalConfiguration.current.screenHeightDp)
+                      .dp)
+              .border(
+                  width = C.Dimension.CameraScanCodeBarScreen.BARCODE_FRAME_BORDER_WIDTH.dp,
+                  color = Color.White,
+                  shape =
+                      RoundedCornerShape(
+                          C.Dimension.CameraScanCodeBarScreen.BARCODE_FRAME_BORDER_RADIUS.dp))
+              .testTag(C.TestTag.CameraScanCodeBarScreen.BARCODE_FRAME),
       contentAlignment = Alignment.Center) {}
 }
 /** Display the ingredient overlay */
@@ -109,7 +122,10 @@ fun IngredientOverlay(viewModel: IngredientViewModel) {
       Box(
           modifier =
               Modifier.fillMaxWidth()
-                  .height((0.4f * LocalConfiguration.current.screenWidthDp).dp)
+                  .height(
+                      (C.Dimension.CameraScanCodeBarScreen.INGREDIENT_OVERLAY_HEIGHT *
+                              LocalConfiguration.current.screenWidthDp)
+                          .dp)
                   .wrapContentHeight()) {
             // Display the ingredient details
             IngredientDisplay(ingredient = ingredient!!)
@@ -130,38 +146,87 @@ fun IngredientDisplay(ingredient: Ingredient?) {
           Modifier.fillMaxSize()
               .background(
                   color = Color.White,
-                  shape = RoundedCornerShape(topEndPercent = 10, topStartPercent = 10))
-              .padding(8.dp),
+                  shape =
+                      RoundedCornerShape(
+                          topEndPercent =
+                              C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_BORDER_RADIUS,
+                          topStartPercent =
+                              C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_BORDER_RADIUS))
+              .padding(C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_PADDING.dp),
   ) {
     if (ingredient != null) {
       Column(
-          modifier = Modifier.weight(0.3f).fillMaxHeight().padding(8.dp),
+          modifier =
+              Modifier.weight(C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_IMAGE_WEIGHT)
+                  .fillMaxHeight()
+                  .padding(8.dp),
           verticalArrangement = Arrangement.Center,
           horizontalAlignment = Alignment.CenterHorizontally,
       ) {
         Box(
             modifier =
-                Modifier.width(100.dp)
-                    .height(100.dp)
-                    .border(width = 1.dp, color = Color.Black, shape = RoundedCornerShape(8.dp))
+                Modifier.width(
+                        C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_IMAGE_WIDTH.dp)
+                    .height(C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_IMAGE_HEIGHT.dp)
+                    .border(
+                        width =
+                            C.Dimension.CameraScanCodeBarScreen
+                                .INGREDIENT_DISPLAY_IMAGE_BORDER_WIDTH
+                                .dp,
+                        color = Color.Black,
+                        shape =
+                            RoundedCornerShape(
+                                C.Dimension.CameraScanCodeBarScreen
+                                    .INGREDIENT_DISPLAY_IMAGE_BORDER_RADIUS
+                                    .dp))
                     .background(Color.Gray),
         ) {}
       }
 
       Column(
-          modifier = Modifier.weight(0.7f).fillMaxSize().padding(8.dp),
+          modifier =
+              Modifier.weight(C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_TEXT_WEIGHT)
+                  .fillMaxSize()
+                  .padding(C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_TEXT_PADDING.dp),
           verticalArrangement = Arrangement.Center) {
             Text(
                 text = ingredient.name,
                 style = MaterialTheme.typography.h6,
-                modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp))
+                modifier =
+                    Modifier.padding(
+                        vertical =
+                            C.Dimension.CameraScanCodeBarScreen
+                                .INGREDIENT_DISPLAY_TEXT_NAME_PADDING_V
+                                .dp,
+                        horizontal =
+                            C.Dimension.CameraScanCodeBarScreen
+                                .INGREDIENT_DISPLAY_TEXT_NAME_PADDING_H
+                                .dp))
             Text(
                 text = ingredient.brands ?: "",
                 style = MaterialTheme.typography.body2,
-                modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp))
+                modifier =
+                    Modifier.padding(
+                        vertical =
+                            C.Dimension.CameraScanCodeBarScreen
+                                .INGREDIENT_DISPLAY_TEXT_BRAND_PADDING_V
+                                .dp,
+                        horizontal =
+                            C.Dimension.CameraScanCodeBarScreen
+                                .INGREDIENT_DISPLAY_TEXT_BRAND_PADDING_H
+                                .dp))
             Button(
                 onClick = { /*TODO*/},
-                modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp)) {
+                modifier =
+                    Modifier.padding(
+                        vertical =
+                            C.Dimension.CameraScanCodeBarScreen
+                                .INGREDIENT_DISPLAY_TEXT_BUTTON_PADDING_V
+                                .dp,
+                        horizontal =
+                            C.Dimension.CameraScanCodeBarScreen
+                                .INGREDIENT_DISPLAY_TEXT_BUTTON_PADDING_H
+                                .dp)) {
                   Text(text = stringResource(R.string.add_to_fridge))
                 }
           }
