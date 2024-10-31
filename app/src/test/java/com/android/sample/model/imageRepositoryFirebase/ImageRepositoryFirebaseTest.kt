@@ -3,8 +3,8 @@ package com.android.sample.model.imageRepositoryFirebase
 import android.graphics.BitmapFactory
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
-import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.image.ImageDirectoryType
+import com.android.sample.model.image.ImageRepositoryFirebase
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.storage.FileDownloadTask
@@ -71,7 +71,12 @@ class ImageRepositoryFirebase {
     `when`(mockUpload.isSuccessful).thenReturn(true)
 
     imageStorage.uploadImageFromDevice(
-      testImageDirectoryUID, testName ,ImageDirectoryType.INGREDIENT, testFilePath, onSuccess = {}, onFailure = {})
+        testImageDirectoryUID,
+        testName,
+        ImageDirectoryType.INGREDIENT,
+        testFilePath,
+        onSuccess = {},
+        onFailure = {})
 
     verify(mockUpload).addOnCompleteListener(onCompleteUploadTaskListenerCaptor.capture())
 
@@ -88,8 +93,8 @@ class ImageRepositoryFirebase {
     `when`(mockUpload.exception).thenReturn(Exception(exceptionMessage))
 
     imageStorage.uploadImageFromDevice(
-      testImageDirectoryUID,
-      testName,
+        testImageDirectoryUID,
+        testName,
         ImageDirectoryType.INGREDIENT,
         testFilePath,
         onSuccess = {},
@@ -108,7 +113,13 @@ class ImageRepositoryFirebase {
     `when`(mockImageRef.putStream(any())).thenReturn(mockUpload)
     `when`(mockUpload.isSuccessful).thenReturn(true)
 
-    imageStorage.uploadImage(testImageDirectoryUID, testName, ImageDirectoryType.RECIPE, imageBitmap, onSuccess = {}, onFailure = {})
+    imageStorage.uploadImage(
+        testImageDirectoryUID,
+        testName,
+        ImageDirectoryType.RECIPE,
+        imageBitmap,
+        onSuccess = {},
+        onFailure = {})
 
     verify(mockUpload).addOnCompleteListener(onCompleteUploadTaskListenerCaptor.capture())
 
@@ -125,8 +136,8 @@ class ImageRepositoryFirebase {
     `when`(mockUpload.exception).thenReturn(Exception(exceptionMessage))
 
     imageStorage.uploadImage(
-      testImageDirectoryUID,
-      testName,
+        testImageDirectoryUID,
+        testName,
         ImageDirectoryType.RECIPE,
         imageBitmap,
         onSuccess = {},
@@ -145,7 +156,12 @@ class ImageRepositoryFirebase {
     `when`(mockImageRef.delete()).thenReturn(mockTaskVoid)
     `when`(mockTaskVoid.isSuccessful).thenReturn(true)
 
-    imageStorage.deleteImage(testImageDirectoryUID, testName, ImageDirectoryType.INGREDIENT, onSuccess = {}, onFailure = {})
+    imageStorage.deleteImage(
+        testImageDirectoryUID,
+        testName,
+        ImageDirectoryType.INGREDIENT,
+        onSuccess = {},
+        onFailure = {})
 
     verify(mockTaskVoid).addOnCompleteListener(onCompleteVoidListenerCaptor.capture())
 
@@ -162,8 +178,8 @@ class ImageRepositoryFirebase {
     `when`(mockTaskVoid.exception).thenReturn(Exception(exceptionMessage))
 
     imageStorage.deleteImage(
-      testImageDirectoryUID,
-      testName,
+        testImageDirectoryUID,
+        testName,
         ImageDirectoryType.INGREDIENT,
         onSuccess = {},
         onFailure = { e ->
@@ -181,7 +197,8 @@ class ImageRepositoryFirebase {
     `when`(mockImageRef.getFile(any(File::class.java))).thenReturn(mockDownload)
     `when`(mockDownload.isSuccessful).thenReturn(true)
 
-    imageStorage.getImage(testImageDirectoryUID, testName, ImageDirectoryType.USER, onSuccess = {}, onFailure = {})
+    imageStorage.getImage(
+        testImageDirectoryUID, testName, ImageDirectoryType.USER, onSuccess = {}, onFailure = {})
 
     verify(mockDownload).addOnCompleteListener(onCompleteFileDownloadTaskListenerCaptor.capture())
 
@@ -198,8 +215,8 @@ class ImageRepositoryFirebase {
     `when`(mockDownload.exception).thenReturn(Exception(exceptionMessage))
 
     imageStorage.getImage(
-      testImageDirectoryUID,
-      testName,
+        testImageDirectoryUID,
+        testName,
         ImageDirectoryType.USER,
         onSuccess = { imageBitmap -> assertNotNull(imageBitmap) },
         onFailure = { e ->

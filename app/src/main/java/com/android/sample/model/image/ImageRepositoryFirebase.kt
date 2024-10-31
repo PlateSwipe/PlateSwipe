@@ -98,25 +98,26 @@ class ImageRepositoryFirebase(storage: FirebaseStorage) : ImageRepository {
   }
 
   /**
-   * Function that creates the Image Reference in the Firebase Storage using the [ImageDirectoryType]
+   * Function that creates the Image Reference in the Firebase Storage using the
+   * [ImageDirectoryType]
    *
-   * @param imageDirectoryUID uid of the image that corresponds to the uid of either the user, ingredient or
-   *   recipe
+   * @param imageDirectoryUID uid of the image that corresponds to the uid of either the user,
+   *   ingredient or recipe
    * @param imageName name of the image that we will be displayed in the Storage
    * @param imageDirectoryType see [ImageDirectoryType] for more details
    * @return a string that represents the Image Reference in the Firebase Storage
    */
-  private fun imageRefCreation(imageDirectoryUID: String, imageName: String, imageDirectoryType: ImageDirectoryType): StorageReference {
+  private fun imageRefCreation(
+      imageDirectoryUID: String,
+      imageName: String,
+      imageDirectoryType: ImageDirectoryType
+  ): StorageReference {
     val dir =
         when (imageDirectoryType) {
           ImageDirectoryType.USER -> USER_IMAGE_DIR
           ImageDirectoryType.RECIPE -> RECIPE_IMAGE_DIR
           ImageDirectoryType.INGREDIENT -> INGREDIENTS_IMAGE_DIR
         }
-    return storageRef.child(
-        dir +
-                imageDirectoryUID +
-            "/$imageName" +
-                ".jpg")
+    return storageRef.child(dir + imageDirectoryUID + "/$imageName" + ".jpg")
   }
 }
