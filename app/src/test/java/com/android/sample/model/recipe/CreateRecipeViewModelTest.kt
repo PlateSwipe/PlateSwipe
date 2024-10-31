@@ -206,12 +206,14 @@ class CreateRecipeViewModelTest {
   fun `test clearPublishError resets publish error`() = runTest {
     `when`(mockRepository.getNewUid()).thenReturn("unique-id")
 
-    createRecipeViewModel.updateRecipeName("")
+    try {
+      createRecipeViewModel.updateRecipeName("")
+    } catch (e: IllegalArgumentException) {}
+
     createRecipeViewModel.publishRecipe()
     advanceUntilIdle()
 
     assertNotNull(createRecipeViewModel.publishError.value)
-
     createRecipeViewModel.clearPublishError()
     assertNull(createRecipeViewModel.publishError.value)
   }
@@ -228,5 +230,25 @@ class CreateRecipeViewModelTest {
             .get(createRecipeViewModel.recipeBuilder)
 
     assertEquals(newArea, updatedArea)
+  }
+
+  @Test(expected = IllegalArgumentException::class)
+  fun `test updateRecipeName throws exception for blank name`() {
+    createRecipeViewModel.updateRecipeName("")
+  }
+
+  @Test(expected = IllegalArgumentException::class)
+  fun `test addIngredient throws exception for blank ingredient`() {
+    createRecipeViewModel.addIngredient("", "1 cup")
+  }
+
+  @Test(expected = IllegalArgumentException::class)
+  fun `test addIngredient throws exception for blank measurement`() {
+    createRecipeViewModel.addIngredient("Sugar", "")
+  }
+
+  @Test(expected = IllegalArgumentException::class)
+  fun `test updateRecipeInstructions throws exception for blank instructions`() {
+    createRecipeViewModel.updateRecipeInstructions("")
   }
 }

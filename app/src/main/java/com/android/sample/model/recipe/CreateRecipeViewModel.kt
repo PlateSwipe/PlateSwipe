@@ -2,6 +2,8 @@ package com.android.sample.model.recipe
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.android.sample.resources.C.Tag.RECIPE_PUBLISHED_SUCCESS_MESSAGE
+import com.android.sample.resources.C.Tag.RECIPE_PUBLISH_ERROR_MESSAGE
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,6 +21,7 @@ class CreateRecipeViewModel(private val repository: FirestoreRecipesRepository) 
     get() = _publishError
 
   fun updateRecipeName(name: String) {
+    require(name.isNotBlank()) { "Recipe name must not be blank." }
     recipeBuilder.setName(name)
   }
 
@@ -31,6 +34,7 @@ class CreateRecipeViewModel(private val repository: FirestoreRecipesRepository) 
   }
 
   fun updateRecipeInstructions(instructions: String) {
+    require(instructions.isNotBlank()) { "Instructions must not be blank." }
     recipeBuilder.setInstructions(instructions)
   }
 
@@ -51,6 +55,8 @@ class CreateRecipeViewModel(private val repository: FirestoreRecipesRepository) 
   }
 
   fun addIngredient(ingredient: String, measurement: String) {
+    require(ingredient.isNotBlank()) { "Ingredient must not be blank." }
+    require(measurement.isNotBlank()) { "Measurement must not be blank." }
     recipeBuilder.addIngredientAndMeasurement(ingredient, measurement)
   }
 
@@ -59,15 +65,17 @@ class CreateRecipeViewModel(private val repository: FirestoreRecipesRepository) 
   }
 
   fun publishRecipe() {
-    recipeBuilder.setId(repository.getNewUid())
+    val newUid = repository.getNewUid()
+    require(newUid.isNotBlank()) { "Recipe ID must not be blank." }
+    recipeBuilder.setId(newUid)
 
     try {
       val recipe = recipeBuilder.build()
       repository.addRecipe(
           recipe,
-          onSuccess = { _publishError.value = "Recipe published successfully!" },
+          onSuccess = { _publishError.value = RECIPE_PUBLISHED_SUCCESS_MESSAGE },
           onFailure = { exception ->
-            _publishError.value = "Failed to publish recipe: ${exception.message}"
+            _publishError.value = RECIPE_PUBLISH_ERROR_MESSAGE.format(exception.message)
           })
     } catch (e: IllegalArgumentException) {
       _publishError.value = e.message
