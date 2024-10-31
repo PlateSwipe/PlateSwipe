@@ -48,6 +48,11 @@ object C {
     const val MINIMUM_RECIPES_BEFORE_FETCH = 3
     const val NUMBER_RECIPES_TO_FETCH = 2
 
+    // ImageRepositoryFirebase
+    const val USER_IMAGE_DIR = "images/user/"
+    const val RECIPE_IMAGE_DIR = "images/recipe/"
+    const val INGREDIENTS_IMAGE_DIR = "images/ingredient/"
+
     // RecipeList
     const val RECIPE_LIST_CORNER_RADIUS = 12
 
