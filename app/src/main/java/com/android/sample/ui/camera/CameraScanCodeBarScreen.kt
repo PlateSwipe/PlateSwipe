@@ -1,7 +1,6 @@
 package com.android.sample.ui.camera
 
 import android.Manifest
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -28,10 +27,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import com.android.sample.R
 import com.android.sample.feature.camera.CameraView
 import com.android.sample.feature.camera.RequestCameraPermission
@@ -52,91 +50,72 @@ fun CameraScanCodeBarScreen(
 ) {
   val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
 
-
-
   RequestCameraPermission(
       cameraPermissionState,
       onPermissionGranted = {
-          Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center,
-          ) {
-              CameraSection(ingredientViewModel)
-              IngredientOverlay(ingredientViewModel)
-          }
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center,
+        ) {
+          CameraSection(ingredientViewModel)
+          IngredientOverlay(ingredientViewModel)
+        }
       })
 }
 
-/**
- * Display the camera view and the barcode frame
- */
+/** Display the camera view and the barcode frame */
 @Composable
 fun CameraSection(ingredientViewModel: IngredientViewModel) {
 
-    val imageCapture = createImageCapture()
-    var lastScannedBarcode: Long? = null
-    val recentBarcodes = remember { mutableListOf<Long>() }
-    Box(contentAlignment = Alignment.Center) {
-        CameraView(
-            imageCapture,
-            CodeBarAnalyzer { barcode ->
-                handleBarcodeDetection(
-                    barcode.rawValue?.toLongOrNull(),
-                    recentBarcodes,
-                    lastScannedBarcode,
-                    onBarcodeDetected = { barcodeValue ->
-                        ingredientViewModel.fetchIngredient(barcodeValue)
-                        lastScannedBarcode = barcodeValue
-                    })
-            })
-        BarCodeFrame()
-
-    }
+  val imageCapture = createImageCapture()
+  var lastScannedBarcode: Long? = null
+  val recentBarcodes = remember { mutableListOf<Long>() }
+  Box(contentAlignment = Alignment.Center) {
+    CameraView(
+        imageCapture,
+        CodeBarAnalyzer { barcode ->
+          handleBarcodeDetection(
+              barcode.rawValue?.toLongOrNull(),
+              recentBarcodes,
+              lastScannedBarcode,
+              onBarcodeDetected = { barcodeValue ->
+                ingredientViewModel.fetchIngredient(barcodeValue)
+                lastScannedBarcode = barcodeValue
+              })
+        })
+    BarCodeFrame()
+  }
 }
 
-/**
- *  Display the camera view and the barcode frame
- */
+/** Display the camera view and the barcode frame */
 @Composable
 @Preview(showBackground = true, backgroundColor = 0x00000000)
 fun BarCodeFrame() {
-    Box(
-        modifier =
-        Modifier
-        .padding(32.dp)
-            .width((1f * LocalConfiguration.current.screenWidthDp).dp)
-            .height((0.4f * LocalConfiguration.current.screenHeightDp).dp)
-            .border(width = 1.dp, color = Color.White, shape = RoundedCornerShape(8.dp))
-            .testTag("Barcode frame"),
-        contentAlignment = Alignment.Center
-    ){
-
-    }
+  Box(
+      modifier =
+          Modifier.padding(32.dp)
+              .width((1f * LocalConfiguration.current.screenWidthDp).dp)
+              .height((0.4f * LocalConfiguration.current.screenHeightDp).dp)
+              .border(width = 1.dp, color = Color.White, shape = RoundedCornerShape(8.dp))
+              .testTag("Barcode frame"),
+      contentAlignment = Alignment.Center) {}
 }
-/**
- * Display the ingredient overlay
- */
+/** Display the ingredient overlay */
 @Composable
 fun IngredientOverlay(viewModel: IngredientViewModel) {
-    val ingredient by viewModel.ingredient.collectAsState()
-
-    if (ingredient != null) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize(),
-            contentAlignment = Alignment.BottomCenter
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height((0.4f * LocalConfiguration.current.screenWidthDp).dp)
-                    .wrapContentHeight()
-            ) {
-                // Display the ingredient details
-                IngredientDisplay(ingredient = ingredient!!)
-            }
-        }
+  val ingredient by viewModel.ingredient.collectAsState()
+  if (ingredient != null) {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
+      Box(
+          modifier =
+              Modifier.fillMaxWidth()
+                  .height((0.4f * LocalConfiguration.current.screenWidthDp).dp)
+                  .wrapContentHeight()) {
+            // Display the ingredient details
+            IngredientDisplay(ingredient = ingredient!!)
+          }
     }
+  }
 }
 
 /**
@@ -146,48 +125,46 @@ fun IngredientOverlay(viewModel: IngredientViewModel) {
  */
 @Composable
 fun IngredientDisplay(ingredient: Ingredient?) {
-    Log.d("IngredientDisplay", "IngredientDisplay: $ingredient")
   Row(
-      modifier = Modifier
-          .fillMaxSize()
-          .background(color = Color.White, shape = RoundedCornerShape(topEndPercent = 10, topStartPercent = 10))
-          .padding(8.dp),
-
+      modifier =
+          Modifier.fillMaxSize()
+              .background(
+                  color = Color.White,
+                  shape = RoundedCornerShape(topEndPercent = 10, topStartPercent = 10))
+              .padding(8.dp),
   ) {
     if (ingredient != null) {
-        Column(
-            modifier = Modifier.weight(0.3f).fillMaxHeight().padding(8.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ){
-            AsyncImage(
-                model = ingredient.selectedImages?.front?.display ?: "",
-                contentDescription = null,
-                placeholder = painterResource(id = R.drawable.account),
-                error = painterResource(id = R.drawable.account),
-                alignment = Alignment.CenterStart,
-            )
-        }
+      Column(
+          modifier = Modifier.weight(0.3f).fillMaxHeight().padding(8.dp),
+          verticalArrangement = Arrangement.Center,
+          horizontalAlignment = Alignment.CenterHorizontally,
+      ) {
+        Box(
+            modifier =
+                Modifier.width(100.dp)
+                    .height(100.dp)
+                    .border(width = 1.dp, color = Color.Black, shape = RoundedCornerShape(8.dp))
+                    .background(Color.Gray),
+        ) {}
+      }
 
       Column(
           modifier = Modifier.weight(0.7f).fillMaxSize().padding(8.dp),
           verticalArrangement = Arrangement.Center) {
-        Text(
-            text = ingredient.name ?: "Undefined name",
-            style = MaterialTheme.typography.h6,
-            modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp))
-        Text(
-            text = ingredient.brands ?: "",
-            style = MaterialTheme.typography.body2,
-            modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp))
-        Button(
-            onClick = { /*TODO*/},
-            modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp)) {
-              Text(text = "Add to Fridge")
-            }
-
-      }
+            Text(
+                text = ingredient.name,
+                style = MaterialTheme.typography.h6,
+                modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp))
+            Text(
+                text = ingredient.brands ?: "",
+                style = MaterialTheme.typography.body2,
+                modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp))
+            Button(
+                onClick = { /*TODO*/},
+                modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp)) {
+                  Text(text = stringResource(R.string.add_to_fridge))
+                }
+          }
     }
   }
 }
-

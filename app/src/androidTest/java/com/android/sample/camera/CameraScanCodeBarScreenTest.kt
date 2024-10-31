@@ -46,11 +46,11 @@ class CameraScanCodeBarScreenTest {
   @Test
   fun ingredientDisplayTest() {
 
-    val ingredient = Ingredient(122333, "Test Ingredient")
+    val ingredient = Ingredient(122333, "Test Ingredient", "Test Brand")
     composeTestRule.setContent { IngredientDisplay(ingredient) }
 
     composeTestRule.onNodeWithText("Test Ingredient").assertIsDisplayed()
-    composeTestRule.onNodeWithText("122333").assertIsDisplayed()
+    composeTestRule.onNodeWithText("Test Brand").assertIsDisplayed()
   }
 
   @Test

@@ -10,6 +10,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.android.sample.R
 import com.android.sample.model.ingredient.IngredientViewModel
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
@@ -18,7 +20,6 @@ import com.android.sample.ui.navigation.Screen
  * Fridge Screen
  *
  * @param navigationActions
- * @param ingredientViewModel
  * @return Unit
  *
  * Function to display the Fridge Screen
@@ -35,9 +36,11 @@ fun FridgeScreen(navigationActions: NavigationActions) {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Top) {
-          Text(text = "Fridge Screen", style = MaterialTheme.typography.bodySmall)
+          Text(
+              text = stringResource(R.string.fridge_screen),
+              style = MaterialTheme.typography.bodySmall)
           Button(onClick = { navigationActions.navigateTo(Screen.CAMERA_SCAN_CODE_BAR) }) {
-            Text(text = "Scan Barcode")
+            Text(text = stringResource(R.string.scan_barcode))
           }
         }
   }
