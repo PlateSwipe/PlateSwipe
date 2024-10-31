@@ -3,19 +3,38 @@ package com.android.sample.model.recipe
 
 /** Builder class for creating a Recipe instance. */
 class RecipeBuilder {
-    var idMeal: String = ""
-    var strMeal: String = ""
-    var strCategory: String? = null
-    var strArea: String? = null
-    var strInstructions: String = ""
-    var strMealThumbUrl: String = ""
-    val ingredientsAndMeasurements: MutableList<Pair<String, String>> = mutableListOf()
-    var time: String? = null
-    var difficulty: String? = null
-    var price: String? = null
+    private var idMeal: String = ""
+    private var strMeal: String = ""
+    private var strCategory: String? = null
+    private var strArea: String? = null
+    private var strInstructions: String = ""
+    private var strMealThumbUrl: String = ""
+    private val ingredientsAndMeasurements: MutableList<Pair<String, String>> = mutableListOf()
+    private var time: String? = null
+    private var difficulty: String? = null
+    private var price: String? = null
+
+
+    fun setId(idMeal: String) = apply { this.idMeal = idMeal }
+
+    fun setName(strMeal: String) = apply { this.strMeal = strMeal }
+
+    fun setCategory(strCategory: String) = apply { this.strCategory = strCategory }
+
+    fun setArea(strArea: String) = apply { this.strArea = strArea }
+
+    fun setInstructions(strInstructions: String) = apply { this.strInstructions = strInstructions }
+
+    fun setPictureID(strMealThumbUrl: String) = apply { this.strMealThumbUrl = strMealThumbUrl }
+
+    fun setTime(time: String) = apply { this.time = time }
+
+    fun setDifficulty(difficulty: String) = apply { this.difficulty = difficulty }
+
+    fun setPrice(price: String) = apply { this.price = price }
 
     /** Adds an ingredient and its measurement to the recipe. */
-    fun addIngredient(ingredient: String, measurement: String) = apply {
+    fun addIngredientAndMeasurement(ingredient: String, measurement: String) = apply {
         ingredientsAndMeasurements.add(ingredient to measurement)
     }
 
