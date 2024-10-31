@@ -18,9 +18,8 @@ object C {
     const val NUMBER_RECIPES_TO_FETCH = 2
 
     // ImageRepositoryFirebase
-    const val PROFILE_IMAGE_DIR = "images/profile/"
+    const val USER_IMAGE_DIR = "images/user/"
     const val RECIPE_IMAGE_DIR = "images/recipe/"
     const val INGREDIENTS_IMAGE_DIR = "images/ingredient/"
-    const val DEFAULT_IMAGE_NAME = "default.jpg"
   }
 }

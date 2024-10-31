@@ -4,7 +4,7 @@ import android.graphics.BitmapFactory
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import com.android.sample.model.image.ImageRepositoryFirebase
-import com.android.sample.model.image.ImageType
+import com.android.sample.model.image.ImageDirectoryType
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.storage.FileDownloadTask
@@ -45,7 +45,8 @@ class ImageRepositoryFirebase {
   @Captor
   private lateinit var onCompleteVoidListenerCaptor: ArgumentCaptor<OnCompleteListener<Void>>
 
-  private lateinit var testUID: String
+  private lateinit var testImageDirectoryUID: String
+  private lateinit var testName: String
   private lateinit var imageStorage: ImageRepositoryFirebase
   private lateinit var testFilePath: String
   private lateinit var imageBitmap: ImageBitmap
@@ -57,7 +58,8 @@ class ImageRepositoryFirebase {
     `when`(mockFirebaseStorage.reference).thenReturn(mockStorageRef)
     `when`(mockStorageRef.child(any())).thenReturn(mockImageRef)
 
-    testUID = "testUID"
+    testImageDirectoryUID = "testUID"
+    testName = "testName"
     imageStorage = ImageRepositoryFirebase(mockFirebaseStorage)
     testFilePath = "app/src/test/resources/images/Muscle mice sticker.jpg"
     imageBitmap = BitmapFactory.decodeFile(testFilePath).asImageBitmap()
@@ -69,7 +71,7 @@ class ImageRepositoryFirebase {
     `when`(mockUpload.isSuccessful).thenReturn(true)
 
     imageStorage.uploadImageFromDevice(
-        "0", ImageType.INGREDIENT, testFilePath, onSuccess = {}, onFailure = {})
+      testImageDirectoryUID, testName ,ImageDirectoryType.INGREDIENT, testFilePath, onSuccess = {}, onFailure = {})
 
     verify(mockUpload).addOnCompleteListener(onCompleteUploadTaskListenerCaptor.capture())
 
@@ -86,8 +88,9 @@ class ImageRepositoryFirebase {
     `when`(mockUpload.exception).thenReturn(Exception(exceptionMessage))
 
     imageStorage.uploadImageFromDevice(
-        testUID,
-        ImageType.INGREDIENT,
+      testImageDirectoryUID,
+      testName,
+        ImageDirectoryType.INGREDIENT,
         testFilePath,
         onSuccess = {},
         onFailure = { e ->
@@ -105,7 +108,7 @@ class ImageRepositoryFirebase {
     `when`(mockImageRef.putStream(any())).thenReturn(mockUpload)
     `when`(mockUpload.isSuccessful).thenReturn(true)
 
-    imageStorage.uploadImage(testUID, ImageType.RECIPE, imageBitmap, onSuccess = {}, onFailure = {})
+    imageStorage.uploadImage(testImageDirectoryUID, testName, ImageDirectoryType.RECIPE, imageBitmap, onSuccess = {}, onFailure = {})
 
     verify(mockUpload).addOnCompleteListener(onCompleteUploadTaskListenerCaptor.capture())
 
@@ -122,8 +125,9 @@ class ImageRepositoryFirebase {
     `when`(mockUpload.exception).thenReturn(Exception(exceptionMessage))
 
     imageStorage.uploadImage(
-        "0",
-        ImageType.RECIPE,
+      testImageDirectoryUID,
+      testName,
+        ImageDirectoryType.RECIPE,
         imageBitmap,
         onSuccess = {},
         onFailure = { e ->
@@ -141,7 +145,7 @@ class ImageRepositoryFirebase {
     `when`(mockImageRef.delete()).thenReturn(mockTaskVoid)
     `when`(mockTaskVoid.isSuccessful).thenReturn(true)
 
-    imageStorage.deleteImage(testUID, ImageType.INGREDIENT, onSuccess = {}, onFailure = {})
+    imageStorage.deleteImage(testImageDirectoryUID, testName, ImageDirectoryType.INGREDIENT, onSuccess = {}, onFailure = {})
 
     verify(mockTaskVoid).addOnCompleteListener(onCompleteVoidListenerCaptor.capture())
 
@@ -158,8 +162,9 @@ class ImageRepositoryFirebase {
     `when`(mockTaskVoid.exception).thenReturn(Exception(exceptionMessage))
 
     imageStorage.deleteImage(
-        testUID,
-        ImageType.INGREDIENT,
+      testImageDirectoryUID,
+      testName,
+        ImageDirectoryType.INGREDIENT,
         onSuccess = {},
         onFailure = { e ->
           assertNotNull(e)
@@ -176,7 +181,7 @@ class ImageRepositoryFirebase {
     `when`(mockImageRef.getFile(any(File::class.java))).thenReturn(mockDownload)
     `when`(mockDownload.isSuccessful).thenReturn(true)
 
-    imageStorage.getImage(testUID, ImageType.PROFILE, onSuccess = {}, onFailure = {})
+    imageStorage.getImage(testImageDirectoryUID, testName, ImageDirectoryType.USER, onSuccess = {}, onFailure = {})
 
     verify(mockDownload).addOnCompleteListener(onCompleteFileDownloadTaskListenerCaptor.capture())
 
@@ -193,8 +198,9 @@ class ImageRepositoryFirebase {
     `when`(mockDownload.exception).thenReturn(Exception(exceptionMessage))
 
     imageStorage.getImage(
-        testUID,
-        ImageType.PROFILE,
+      testImageDirectoryUID,
+      testName,
+        ImageDirectoryType.USER,
         onSuccess = { imageBitmap -> assertNotNull(imageBitmap) },
         onFailure = { e ->
           assertNotNull(e)
