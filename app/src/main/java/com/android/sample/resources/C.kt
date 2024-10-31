@@ -94,5 +94,9 @@ object C {
     // EXCEPTION MESSAGES
     const val LIMIT_MUST_BE_POSITIVE_MESSAGE = "Limit must be greater than 0"
     const val UNSUPPORTED_MESSAGE = "Operation not supported"
+
+    // CreateRecipeViewModel
+    const val RECIPE_PUBLISHED_SUCCESS_MESSAGE = "Recipe published successfully!"
+    const val RECIPE_PUBLISH_ERROR_MESSAGE = "Failed to publish recipe: %1\$s"
   }
 }
