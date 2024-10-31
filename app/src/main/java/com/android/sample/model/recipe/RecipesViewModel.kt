@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.android.sample.model.filter.Difficulty
 import com.android.sample.model.filter.Filter
+import com.android.sample.model.filter.FilterPageViewModel
 import com.android.sample.resources.C.Tag.MINIMUM_RECIPES_BEFORE_FETCH
 import com.android.sample.resources.C.Tag.NUMBER_RECIPES_TO_FETCH
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +19,8 @@ import okhttp3.OkHttpClient
  *
  * @property repository The repository used to fetch recipe data.
  */
-class RecipesViewModel(private val repository: RecipesRepository) : ViewModel() {
+class RecipesViewModel(private val repository: RecipesRepository) :
+    ViewModel(), FilterPageViewModel, RecipeOverviewViewModel {
 
   // StateFlow to monitor the list of recipes
   private val _recipes = MutableStateFlow<List<Recipe>>(emptyList())
@@ -32,7 +34,7 @@ class RecipesViewModel(private val repository: RecipesRepository) : ViewModel() 
 
   // StateFlow for the current selected recipe
   private val _currentRecipe = MutableStateFlow<Recipe?>(null)
-  val currentRecipe: StateFlow<Recipe?>
+  override val currentRecipe: StateFlow<Recipe?>
     get() = _currentRecipe
 
   private val _nextRecipe = MutableStateFlow<Recipe?>(null)
@@ -40,11 +42,11 @@ class RecipesViewModel(private val repository: RecipesRepository) : ViewModel() 
     get() = _nextRecipe
 
   private val _filter = MutableStateFlow(Filter())
-  val filter: StateFlow<Filter>
+  override val filter: StateFlow<Filter>
     get() = _filter
 
   private val _categories = MutableStateFlow<List<String>>(emptyList())
-  val categories: StateFlow<List<String>>
+  override val categories: StateFlow<List<String>>
     get() = _categories
 
   init {
@@ -62,7 +64,7 @@ class RecipesViewModel(private val repository: RecipesRepository) : ViewModel() 
   }
 
   /** Fetches the list of categories from the repository. */
-  private fun getCategoryList() {
+  override fun getCategoryList() {
     repository.listCategories(
         onSuccess = { categories -> _categories.value = categories },
         onFailure = { exception ->
@@ -75,8 +77,8 @@ class RecipesViewModel(private val repository: RecipesRepository) : ViewModel() 
    *
    * @param difficulty The difficulty to filter by.
    */
-  fun updateDifficulty(difficulty: Difficulty) {
-    _filter.value.difficulty = difficulty
+  override fun updateDifficulty(difficulty: Difficulty) {
+    filter.value.difficulty = difficulty
   }
 
   /**
@@ -85,8 +87,8 @@ class RecipesViewModel(private val repository: RecipesRepository) : ViewModel() 
    * @param min The minimum price.
    * @param max The maximum price.
    */
-  fun updatePriceRange(min: Float, max: Float) {
-    _filter.value.priceRange.update(min, max)
+  override fun updatePriceRange(min: Float, max: Float) {
+    filter.value.priceRange.update(min, max)
   }
 
   /**
@@ -95,8 +97,8 @@ class RecipesViewModel(private val repository: RecipesRepository) : ViewModel() 
    * @param min The minimum time.
    * @param max The maximum time.
    */
-  fun updateTimeRange(min: Float, max: Float) {
-    _filter.value.timeRange.update(min, max)
+  override fun updateTimeRange(min: Float, max: Float) {
+    filter.value.timeRange.update(min, max)
   }
 
   /**
@@ -104,7 +106,7 @@ class RecipesViewModel(private val repository: RecipesRepository) : ViewModel() 
    *
    * @param category The category to filter by.
    */
-  fun updateCategory(category: String?) {
+  override fun updateCategory(category: String?) {
     viewModelScope.launch {
       if (category == null) {
         _recipes.value = emptyList()

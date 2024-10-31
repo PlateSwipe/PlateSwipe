@@ -51,20 +51,29 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.android.sample.model.recipe.Recipe
-import com.android.sample.model.recipe.RecipesViewModel
+import com.android.sample.model.recipe.RecipeOverviewViewModel
 import com.android.sample.ui.navigation.BottomNavigationMenu
 import com.android.sample.ui.navigation.LIST_TOP_LEVEL_DESTINATIONS
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.theme.goldenBronze
 import com.android.sample.ui.theme.starColor
 
+/**
+ * Composable function to display the recipe overview.
+ *
+ * @param navigationActions The navigation actions.
+ * @param recipeOverviewViewModel The view model to manage the recipe overview.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RecipeOverview(navigationActions: NavigationActions, recipesViewModel: RecipesViewModel) {
+fun RecipeOverview(
+    navigationActions: NavigationActions,
+    recipeOverviewViewModel: RecipeOverviewViewModel
+) {
+  val currentRecipe by recipeOverviewViewModel.currentRecipe.collectAsState()
   val selectedItem = navigationActions.currentRoute()
   val height = LocalConfiguration.current.screenHeightDp.dp * 1 / 2
   val width = height * 3 / 4
-  val currentRecipe by recipesViewModel.currentRecipe.collectAsState()
   var ingredientsView by remember { mutableStateOf(false) }
   var servingsCount by remember { mutableIntStateOf(1) }
   val scrollState = rememberScrollState()

@@ -1,3 +1,3 @@
 package com.android.sample.model.ingredient
 
-class Ingredient(val barCode: Long, val name: String) {}
+data class Ingredient(val barCode: Long? = null, val name: String, val brands: String? = null)
