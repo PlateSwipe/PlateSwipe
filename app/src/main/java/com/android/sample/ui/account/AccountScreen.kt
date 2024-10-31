@@ -29,6 +29,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.android.sample.R
@@ -59,7 +60,7 @@ fun AccountScreen(navigationActions: NavigationActions, userViewModel: UserViewM
           ProfilePicture(profilePictureUrl.value, modifier = Modifier.weight(.4f))
 
           Text(
-              text = userName.value ?: "User Name",
+              text = userName.value ?: stringResource(R.string.account_screen_default_user_name),
               modifier = Modifier.weight(.1f).testTag("userName"),
               style = MaterialTheme.typography.titleLarge)
 
@@ -109,7 +110,7 @@ private fun ListSelection(userViewModel: UserViewModel, modifier: Modifier = Mod
             selectedList = likedRecipes
             selectedListIndex = 0
           },
-          title = "Liked Recipes",
+          title = stringResource(R.string.account_screen_liked_recipe_button_title),
           isSelected = selectedListIndex == 0)
       ListSelectionButton(
           modifier = Modifier.weight(1f).testTag("createdRecipesButton"),
@@ -117,7 +118,7 @@ private fun ListSelection(userViewModel: UserViewModel, modifier: Modifier = Mod
             selectedList = createdRecipes
             selectedListIndex = 1
           },
-          title = "Created Recipes",
+          title = stringResource(R.string.account_screen_created_recipe_button_title),
           isSelected = selectedListIndex == 1)
     }
 
