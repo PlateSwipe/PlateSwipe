@@ -18,10 +18,6 @@ class CreateRecipeViewModel(private val repository: FirestoreRecipesRepository) 
   val publishError: StateFlow<String?>
     get() = _publishError
 
-  fun updateRecipeId(id: String) {
-    recipeBuilder.setId(id)
-  }
-
   fun updateRecipeName(name: String) {
     recipeBuilder.setName(name)
   }

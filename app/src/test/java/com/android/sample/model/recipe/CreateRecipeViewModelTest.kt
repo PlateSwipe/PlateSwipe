@@ -34,6 +34,17 @@ class CreateRecipeViewModelTest {
     Dispatchers.resetMain()
   }
 
+  private fun createDefaultRecipe(): Recipe {
+    return Recipe(
+        idMeal = "unique-id",
+        strMeal = "Test Recipe",
+        strCategory = "Dessert",
+        strArea = "Italian",
+        strInstructions = "Some instructions",
+        strMealThumbUrl = "https://example.com/image.jpg",
+        ingredientsAndMeasurements = listOf(Pair("Banana", "3")))
+  }
+
   @Test
   fun `test updateRecipeName updates the name correctly`() {
     val newName = "New Recipe Name"
@@ -133,13 +144,13 @@ class CreateRecipeViewModelTest {
 
   @Test
   fun `test publishRecipe publishes the recipe successfully`() = runTest {
-    // Set up required fields
-    createRecipeViewModel.updateRecipeName("Test Recipe")
-    createRecipeViewModel.updateRecipeInstructions("Some instructions")
-    createRecipeViewModel.updateRecipeThumbnail("https://example.com/image.jpg")
+    val defaultRecipe = createDefaultRecipe()
+    createRecipeViewModel.updateRecipeName(defaultRecipe.strMeal)
+    createRecipeViewModel.updateRecipeInstructions(defaultRecipe.strInstructions)
+    createRecipeViewModel.updateRecipeThumbnail(defaultRecipe.strMealThumbUrl)
     createRecipeViewModel.addIngredient("Banana", "3")
 
-    `when`(mockRepository.getNewUid()).thenReturn("unique-id")
+    `when`(mockRepository.getNewUid()).thenReturn(defaultRecipe.idMeal)
 
     val recipeCaptor = argumentCaptor<Recipe>()
     val onSuccessCaptor = argumentCaptor<() -> Unit>()
@@ -151,11 +162,13 @@ class CreateRecipeViewModelTest {
     verify(mockRepository)
         .addRecipe(recipeCaptor.capture(), onSuccessCaptor.capture(), onFailureCaptor.capture())
 
-    assertEquals("unique-id", recipeCaptor.firstValue.idMeal)
-    assertEquals("Test Recipe", recipeCaptor.firstValue.strMeal)
-    assertEquals("Some instructions", recipeCaptor.firstValue.strInstructions)
-    assertEquals("https://example.com/image.jpg", recipeCaptor.firstValue.strMealThumbUrl)
-    assertEquals(listOf(Pair("Banana", "3")), recipeCaptor.firstValue.ingredientsAndMeasurements)
+    assertEquals(defaultRecipe.idMeal, recipeCaptor.firstValue.idMeal)
+    assertEquals(defaultRecipe.strMeal, recipeCaptor.firstValue.strMeal)
+    assertEquals(defaultRecipe.strInstructions, recipeCaptor.firstValue.strInstructions)
+    assertEquals(defaultRecipe.strMealThumbUrl, recipeCaptor.firstValue.strMealThumbUrl)
+    assertEquals(
+        defaultRecipe.ingredientsAndMeasurements,
+        recipeCaptor.firstValue.ingredientsAndMeasurements)
 
     onSuccessCaptor.firstValue.invoke()
 
@@ -201,5 +214,19 @@ class CreateRecipeViewModelTest {
 
     createRecipeViewModel.clearPublishError()
     assertNull(createRecipeViewModel.publishError.value)
+  }
+
+  @Test
+  fun `test updateRecipeArea updates the area correctly`() {
+    val newArea = "Italian"
+    createRecipeViewModel.updateRecipeArea(newArea)
+
+    val updatedArea =
+        createRecipeViewModel.recipeBuilder.javaClass
+            .getDeclaredField("strArea")
+            .apply { isAccessible = true }
+            .get(createRecipeViewModel.recipeBuilder)
+
+    assertEquals(newArea, updatedArea)
   }
 }
