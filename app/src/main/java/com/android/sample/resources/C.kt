@@ -48,6 +48,11 @@ object C {
     const val MINIMUM_RECIPES_BEFORE_FETCH = 3
     const val NUMBER_RECIPES_TO_FETCH = 2
 
+    // ImageRepositoryFirebase
+    const val USER_IMAGE_DIR = "images/user/"
+    const val RECIPE_IMAGE_DIR = "images/recipe/"
+    const val INGREDIENTS_IMAGE_DIR = "images/ingredient/"
+
     // RecipeList
     const val RECIPE_LIST_CORNER_RADIUS = 12
 
@@ -98,5 +103,10 @@ object C {
     const val SCAN_THRESHOLD = 3
     const val LOG_TAG_CAMERA_UTILS = "CameraUtils"
     const val INVALID_BARCODE_MSG = "Invalid barcode"
+    
+    // CreateRecipeViewModel
+    const val RECIPE_PUBLISHED_SUCCESS_MESSAGE = "Recipe published successfully!"
+    const val RECIPE_PUBLISH_ERROR_MESSAGE = "Failed to publish recipe: %1\$s"
+    
   }
 }
