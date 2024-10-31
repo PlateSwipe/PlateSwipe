@@ -7,7 +7,7 @@ gms = "4.4.2"
 ktfmt = "0.17.0"
 sonar = "4.4.1.3373"
 coilCompose = "2.2.2"
-
+compose-material-icons-extended = "1.5.0"
 
 # IU Compose
 composeActivity = "1.8.2"
@@ -164,6 +164,8 @@ guava = { group = "com.google.guava", name = "guava", version.ref = "guava" }  #
 # ML Kit Barcode Scanning
 mlkit-barcode-scanning = { group = "com.google.mlkit", name = "barcode-scanning", version.ref = "mlkit-barcode" }
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist-permissions" }
+
+compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "compose-material-icons-extended" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

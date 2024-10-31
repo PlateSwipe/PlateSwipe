@@ -157,9 +157,8 @@ dependencies {
     implementation(composeBom)
     globalTestImplementation(composeBom)
 
-    // ecrire aussi sur lib version pour meileur format
-    implementation("io.coil-kt:coil-compose:2.2.2")
-    implementation("androidx.compose.material:material-icons-extended:1.5.0")
+    implementation(libs.coil.compose)
+    implementation(libs.compose.material.icons.extended)
     implementation(libs.compose.ui)
     implementation(libs.compose.ui.graphics)
     implementation(libs.compose.material3)
