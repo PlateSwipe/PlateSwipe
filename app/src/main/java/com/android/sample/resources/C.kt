@@ -48,6 +48,11 @@ object C {
     const val MINIMUM_RECIPES_BEFORE_FETCH = 3
     const val NUMBER_RECIPES_TO_FETCH = 2
 
+    // ImageRepositoryFirebase
+    const val USER_IMAGE_DIR = "images/user/"
+    const val RECIPE_IMAGE_DIR = "images/recipe/"
+    const val INGREDIENTS_IMAGE_DIR = "images/ingredient/"
+
     // RecipeList
     const val RECIPE_LIST_CORNER_RADIUS = 12
 
@@ -85,9 +90,14 @@ object C {
     const val FIRESTORE_RECIPE_TIME = "time"
     const val FIRESTORE_RECIPE_DIFFICULTY = "difficulty"
     const val FIRESTORE_RECIPE_PRICE = "price"
+    const val CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
 
     // EXCEPTION MESSAGES
     const val LIMIT_MUST_BE_POSITIVE_MESSAGE = "Limit must be greater than 0"
     const val UNSUPPORTED_MESSAGE = "Operation not supported"
+
+    // CreateRecipeViewModel
+    const val RECIPE_PUBLISHED_SUCCESS_MESSAGE = "Recipe published successfully!"
+    const val RECIPE_PUBLISH_ERROR_MESSAGE = "Failed to publish recipe: %1\$s"
   }
 }
