@@ -9,8 +9,6 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.test.espresso.intent.Intents
-import androidx.test.espresso.intent.Intents.intending
-import androidx.test.espresso.intent.matcher.IntentMatchers.anyIntent
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.sample.ui.authentication.SignInScreen
 import com.android.sample.ui.navigation.NavigationActions
@@ -60,22 +58,13 @@ class SignInTest : TestCase() {
   @OptIn(ExperimentalCoroutinesApi::class)
   @Test
   fun googleSignInReturnsValidActivityResult() = runTest {
-
     // Perform click on Google Sign-In button
-    composeTestRule.onNodeWithTag("loginButton").performClick()
+    composeTestRule.onNodeWithTag("loginButton", useUnmergedTree = true).performClick()
 
     // Wait for idle
     composeTestRule.waitForIdle()
 
     advanceUntilIdle()
-    intending(anyIntent()) // Capture any intent to inspect its package
-
-    // Use intended with a looser matcher for troubleshooting purposes
-    /*intended(
-
-        toPackage("com.google.android.gms")
-    )*/
-
   }
 
   @Test
