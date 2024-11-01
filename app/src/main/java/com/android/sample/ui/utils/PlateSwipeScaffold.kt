@@ -83,20 +83,18 @@ private fun PlateSwipeTopBar(navigationActions: NavigationActions, showBackArrow
           }
         }
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.weight(3f)) {
-              Image(
-                  painter = painterResource(id = R.drawable.chef_s_hat),
-                  contentDescription = "Chef's hat",
-                  modifier = Modifier.size(35.dp).padding(end = 8.dp).testTag("chefHatIcon"),
-                  contentScale = ContentScale.Fit)
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(3f)) {
+          Image(
+              painter = painterResource(id = R.drawable.chef_s_hat),
+              contentDescription = "Chef's hat",
+              modifier = Modifier.size(35.dp).padding(end = 8.dp).testTag("chefHatIcon"),
+              contentScale = ContentScale.Fit)
 
-              Text(
-                  text = stringResource(id = R.string.plate_swipe_title),
-                  style = MaterialTheme.typography.titleLarge,
-                  modifier = Modifier.testTag("topBarTitle"))
-            }
+          Text(
+              text = stringResource(id = R.string.plate_swipe_title),
+              style = MaterialTheme.typography.titleLarge,
+              modifier = Modifier.testTag("topBarTitle"))
+        }
 
         Spacer(modifier = Modifier.weight(1f))
       }
