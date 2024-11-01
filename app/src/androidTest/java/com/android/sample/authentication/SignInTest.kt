@@ -1,6 +1,5 @@
 package com.android.sample.authentication
 
-import android.annotation.SuppressLint
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
@@ -47,18 +46,36 @@ class SignInTest : TestCase() {
 
   @Test
   fun titleAndButtonAreCorrectlyDisplayed() {
-    composeTestRule.onNodeWithTag("loginTitle").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("loginTitle").assertTextEquals("Welcome")
+    composeTestRule.onNodeWithTag("loginTitle", useUnmergedTree = true).assertIsDisplayed()
 
-    composeTestRule.onNodeWithTag("loginButton").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("loginButton").assertHasClickAction()
+    composeTestRule.onNodeWithTag("plateText", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag("plateText", useUnmergedTree = true).assertTextEquals("Plate")
+    composeTestRule.onNodeWithTag("swipeText", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag("swipeText", useUnmergedTree = true).assertTextEquals("Swipe")
+
+    composeTestRule.onNodeWithTag("loginButton", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag("loginButton", useUnmergedTree = true).assertHasClickAction()
   }
 
-  @SuppressLint("CheckResult")
+  @Test
+  fun imagesDisplayCorrectly() {
+    composeTestRule.onNodeWithTag("taco", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag("sushi", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag("avocado", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag("tomato", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag("pancakes", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag("broccoli", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag("pasta", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag("salad", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag("pepper", useUnmergedTree = true).assertIsDisplayed()
+  }
+
   @OptIn(ExperimentalCoroutinesApi::class)
   @Test
   fun googleSignInReturnsValidActivityResult() = runTest {
     // Perform click on Google Sign-In button
+    composeTestRule.onNodeWithTag("loginButton", useUnmergedTree = true).assertIsEnabled()
+
     composeTestRule.onNodeWithTag("loginButton", useUnmergedTree = true).performClick()
 
     // Wait for idle
@@ -68,12 +85,7 @@ class SignInTest : TestCase() {
   }
 
   @Test
-  fun googleSignInButtonIsEnabledWhenConditionsMet() {
-    composeTestRule.onNodeWithTag("loginButton").assertIsEnabled()
-  }
-
-  @Test
-  fun logoImageIsDisplayed() {
-    composeTestRule.onNodeWithTag("logoImage").assertIsDisplayed()
+  fun cookImageIsDisplayed() {
+    composeTestRule.onNodeWithTag("cookImage", useUnmergedTree = true).assertIsDisplayed()
   }
 }
