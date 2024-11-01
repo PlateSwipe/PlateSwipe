@@ -112,11 +112,3 @@ private fun PlateSwipeTopBar(navigationActions: NavigationActions, showBackArrow
                 Spacer(modifier = Modifier.weight(1f))
             }
 }
-
-@Preview
-@Composable
-private fun PreviewTopBar() {
-    SampleAppTheme {
-        PlateSwipeTopBar(navigationActions = NavigationActions(rememberNavController()))
-    }
-}
