@@ -67,7 +67,7 @@ fun PlateSwipeScaffold(
 @Composable
 private fun PlateSwipeTopBar(navigationActions: NavigationActions, showBackArrow: Boolean = true) {
   Row(
-      modifier = Modifier.fillMaxWidth().background(color = lightCream).testTag("topBarBox"),
+      modifier = Modifier.fillMaxWidth().background(color = lightCream).testTag("topBar"),
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.SpaceBetween) {
         Row(modifier = Modifier.weight(1f)) {
@@ -85,7 +85,7 @@ private fun PlateSwipeTopBar(navigationActions: NavigationActions, showBackArrow
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.weight(3f).testTag("topBarRow")) {
+            modifier = Modifier.weight(3f)) {
               Image(
                   painter = painterResource(id = R.drawable.chef_s_hat),
                   contentDescription = "Chef's hat",
