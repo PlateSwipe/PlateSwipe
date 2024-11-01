@@ -59,7 +59,7 @@ import androidx.credentials.GetCredentialRequest
 import com.android.sample.R
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
-import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
 import com.google.common.primitives.Floats.min
@@ -85,21 +85,16 @@ fun SignInScreen(navigationActions: NavigationActions) {
   val activityContext = LocalContext.current
   val token = stringResource(R.string.default_web_client_id)
 
-  /*val googleIdOption: GetGoogleIdOption =
-  GetGoogleIdOption.Builder()
-      .setFilterByAuthorizedAccounts(true)
-      .setServerClientId(token)
-      //.setAutoSelectEnabled(true)
-      .setNonce("nonce")
-      .build()*/
-  val signInWithGoogleOption: GetSignInWithGoogleOption =
-      GetSignInWithGoogleOption.Builder(token).setNonce("setupNonce").build()
+  val googleIdOption: GetGoogleIdOption =
+      GetGoogleIdOption.Builder()
+          .setFilterByAuthorizedAccounts(true)
+          .setServerClientId(token)
+          .setAutoSelectEnabled(true)
+          .setNonce("nonce")
+          .build()
 
   val request: GetCredentialRequest =
-      GetCredentialRequest.Builder()
-          // .addCredentialOption(googleIdOption)
-          .addCredentialOption(signInWithGoogleOption)
-          .build()
+      GetCredentialRequest.Builder().addCredentialOption(googleIdOption).build()
 
   // The main container for the screen
   Scaffold(
@@ -315,19 +310,23 @@ private fun SignInContent(padding: PaddingValues, onSignInClick: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center) {
           Spacer(modifier = Modifier.height(16.dp))
-          Text(
-              text = "Plate",
-              modifier = Modifier.testTag("plateText"),
-              style =
-                  TextStyle(
-                      fontSize = 60.sp,
-                      fontFamily = FontFamily(Font(R.font.montserrat_bold)),
-                      fontWeight = FontWeight(600),
-                      color = Color.Black,
-                      textAlign = TextAlign.Center,
-                  ),
-              textAlign = TextAlign.Center)
           Row(modifier = Modifier) {
+            Text(
+                text = "Plate",
+                modifier = Modifier.testTag("plateText"),
+                style =
+                    TextStyle(
+                        fontSize = 60.sp,
+                        fontFamily = FontFamily(Font(R.font.montserrat_bold)),
+                        fontWeight = FontWeight(600),
+                        color = Color.Black,
+                        textAlign = TextAlign.Center,
+                    ),
+                textAlign = TextAlign.Center)
+            Spacer(modifier = Modifier.width(50.dp))
+          }
+
+          Row {
             Spacer(modifier = Modifier.width(50.dp))
             Text(
                 text = "Swipe",
