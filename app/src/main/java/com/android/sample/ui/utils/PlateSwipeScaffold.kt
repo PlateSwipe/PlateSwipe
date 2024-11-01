@@ -1,9 +1,12 @@
 package com.android.sample.ui.utils
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,11 +31,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.rememberNavController
 import com.android.sample.R
 import com.android.sample.ui.navigation.BottomNavigationMenu
 import com.android.sample.ui.navigation.LIST_TOP_LEVEL_DESTINATIONS
 import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.theme.SampleAppTheme
 import com.android.sample.ui.theme.lightCream
 
 /**
@@ -65,17 +71,32 @@ fun PlateSwipeScaffold(
       }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PlateSwipeTopBar(navigationActions: NavigationActions, showBackArrow: Boolean = true) {
-  TopAppBar(
-      title = {
-        Box(
-            modifier = Modifier.fillMaxWidth().testTag("topBarBox"),
-            contentAlignment = Alignment.Center) {
+        Row(
+            modifier = Modifier.fillMaxWidth().background(
+                color = lightCream
+            ).testTag("topBarBox"),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween) {
+                Row(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    if (showBackArrow) {
+                        IconButton(
+                            onClick = { navigationActions.goBack() },
+                            modifier = Modifier.testTag("backArrowIcon")) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
+                                contentDescription = "Back",
+                                modifier = Modifier.width(30.dp).height(30.dp))
+                        }
+                    }
+                }
+
               Row(
                   verticalAlignment = Alignment.CenterVertically,
-                  modifier = Modifier.testTag("topBarRow")) {
+                  modifier = Modifier.weight(3f).testTag("topBarRow")) {
                     Image(
                         painter = painterResource(id = R.drawable.chef_s_hat),
                         contentDescription = "Chef's hat",
@@ -87,20 +108,15 @@ private fun PlateSwipeTopBar(navigationActions: NavigationActions, showBackArrow
                         style = MaterialTheme.typography.titleLarge,
                         modifier = Modifier.testTag("topBarTitle"))
                   }
+
+                Spacer(modifier = Modifier.weight(1f))
             }
-      },
-      navigationIcon = {
-        if (showBackArrow) {
-          IconButton(
-              onClick = { navigationActions.goBack() },
-              modifier = Modifier.testTag("backArrowIcon")) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                    contentDescription = "Back",
-                    modifier = Modifier.width(30.dp).height(30.dp))
-              }
-        }
-      },
-      colors = TopAppBarDefaults.topAppBarColors(containerColor = lightCream),
-      modifier = Modifier.fillMaxWidth().testTag("topBar"))
+}
+
+@Preview
+@Composable
+private fun PreviewTopBar() {
+    SampleAppTheme {
+        PlateSwipeTopBar(navigationActions = NavigationActions(rememberNavController()))
+    }
 }
