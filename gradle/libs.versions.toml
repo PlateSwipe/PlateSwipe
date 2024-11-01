@@ -76,6 +76,7 @@ guava = "31.0.1-android"
 
 # accompanist
 accompanist-permissions = "0.28.0"
+googleidVersion = "1.1.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -164,6 +165,7 @@ guava = { group = "com.google.guava", name = "guava", version.ref = "guava" }  #
 # ML Kit Barcode Scanning
 mlkit-barcode-scanning = { group = "com.google.mlkit", name = "barcode-scanning", version.ref = "mlkit-barcode" }
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist-permissions" }
+google-googleid = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleidVersion" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
