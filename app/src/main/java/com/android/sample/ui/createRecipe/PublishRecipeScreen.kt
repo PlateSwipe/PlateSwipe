@@ -1,27 +1,38 @@
 package com.android.sample.ui.createRecipe
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.sample.R
+import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.resources.C.Tag.CHEF_IMAGE_DESCRIPTION
 import com.android.sample.ui.navigation.BottomNavigationMenu
 import com.android.sample.ui.navigation.LIST_TOP_LEVEL_DESTINATIONS
 import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.navigation.Route
+import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.Typography
 import com.android.sample.ui.topbar.MyAppBar
 
 @Composable
-fun PublishRecipeScreen(navigationActions: NavigationActions, modifier: Modifier = Modifier) {
+fun PublishRecipeScreen(
+    navigationActions: NavigationActions,
+    createRecipeViewModel: CreateRecipeViewModel,
+    modifier: Modifier = Modifier
+) {
   Scaffold(
       topBar = { MyAppBar(onBackClick = { navigationActions.goBack() }, showBackButton = true) },
       bottomBar = {
@@ -31,12 +42,28 @@ fun PublishRecipeScreen(navigationActions: NavigationActions, modifier: Modifier
             selectedItem = navigationActions.currentRoute())
       },
       modifier = modifier.fillMaxSize()) { paddingValues ->
-        PublishRecipeContent(modifier = Modifier.padding(paddingValues).fillMaxSize())
+        PublishRecipeContent(
+            navigationActions,
+            createRecipeViewModel,
+            modifier = Modifier.padding(paddingValues).fillMaxSize())
       }
 }
 
 @Composable
-fun PublishRecipeContent(modifier: Modifier = Modifier, onPublishClick: () -> Unit = {}) {
+fun PublishRecipeContent(
+    navigationActions: NavigationActions,
+    createRecipeViewModel: CreateRecipeViewModel,
+    modifier: Modifier = Modifier
+) {
+  val context = LocalContext.current
+  val publishError = createRecipeViewModel.publishError.collectAsState(initial = null).value
+
+  publishError?.let {
+    Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+    createRecipeViewModel
+        .clearPublishError()
+  }
+
   Column(
       modifier = modifier,
       horizontalAlignment = Alignment.CenterHorizontally,
@@ -44,30 +71,34 @@ fun PublishRecipeContent(modifier: Modifier = Modifier, onPublishClick: () -> Un
         Text(
             text = stringResource(R.string.done_text),
             style = Typography.titleLarge.copy(fontSize = 70.sp, fontWeight = FontWeight.Bold),
-            modifier = Modifier.weight(0.4f).padding(bottom = 16.dp))
+            modifier = Modifier.weight(0.4f).padding(bottom = 16.dp).testTag("DoneText"))
 
-        // Larger, responsive Chef Image
         Image(
             painter = painterResource(id = R.drawable.chef_image_in_egg),
             contentDescription = CHEF_IMAGE_DESCRIPTION,
             modifier =
                 Modifier.weight(2f)
-                    .fillMaxWidth(1f) // Make the image take 80% of the width
-                    .aspectRatio(0.5f) // Keep the image square-shaped for responsiveness
-            )
+                    .fillMaxWidth(1f)
+                    .aspectRatio(0.5f)
+                    .testTag("ChefImage"))
 
         Spacer(modifier = Modifier.height(32.dp))
 
         Button(
-            onClick = onPublishClick,
+            onClick = {
+              createRecipeViewModel.publishRecipe()
+              navigationActions.navigateAndClearStack(
+                  screen = Screen.CREATE_RECIPE, clearUpToRoute = Route.CREATE_RECIPE)
+            },
             colors =
                 ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
             shape = RoundedCornerShape(8.dp),
             modifier =
                 Modifier.padding(horizontal = 16.dp)
-                    .fillMaxWidth(0.7f) // Make the button take more horizontal space
-                    .height(48.dp) // Adjust height for a thinner appearance
-                    .weight(0.3f)) {
+                    .fillMaxWidth(0.7f)
+                    .height(48.dp)
+                    .weight(0.3f)
+                    .testTag("PublishButton")) {
               Text(
                   text = stringResource(R.string.publish_recipe_button),
                   style = Typography.bodyMedium,

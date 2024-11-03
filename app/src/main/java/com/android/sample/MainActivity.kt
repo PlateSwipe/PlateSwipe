@@ -124,10 +124,8 @@ fun PlateSwipeApp() {
         val parentEntry =
             remember(backStackEntry) { navController.getBackStackEntry(Route.CREATE_RECIPE) }
         val createRecipeViewModel: CreateRecipeViewModel = viewModel(parentEntry)
-
         PublishRecipeScreen(
-            navigationActions = navigationActions,
-        )
+            navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
       }
     }
 
