@@ -60,8 +60,7 @@ fun PublishRecipeContent(
 
   publishError?.let {
     Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-    createRecipeViewModel
-        .clearPublishError()
+    createRecipeViewModel.clearPublishError()
   }
 
   Column(
@@ -76,11 +75,7 @@ fun PublishRecipeContent(
         Image(
             painter = painterResource(id = R.drawable.chef_image_in_egg),
             contentDescription = CHEF_IMAGE_DESCRIPTION,
-            modifier =
-                Modifier.weight(2f)
-                    .fillMaxWidth(1f)
-                    .aspectRatio(0.5f)
-                    .testTag("ChefImage"))
+            modifier = Modifier.weight(2f).fillMaxWidth(1f).aspectRatio(0.5f).testTag("ChefImage"))
 
         Spacer(modifier = Modifier.height(32.dp))
 
