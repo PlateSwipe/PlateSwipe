@@ -144,8 +144,12 @@ fun AddInstructionStepContent(
               showError = stepDescription.isEmpty() // Set error if instructions are empty
               if (stepDescription.isNotEmpty()) {
                 createRecipeViewModel.updateRecipeInstructions(stepDescription)
-                createRecipeViewModel.updateRecipeTime(stepTime)
-                createRecipeViewModel.updateRecipeCategory(stepCategory)
+                if (stepTime.isNotEmpty()) {
+                  createRecipeViewModel.updateRecipeTime(stepTime)
+                }
+                if (stepCategory.isNotEmpty()) {
+                  createRecipeViewModel.updateRecipeCategory(stepCategory)
+                }
 
                 navigationActions.navigateTo(Screen.PUBLISH_CREATED_RECIPE)
               }

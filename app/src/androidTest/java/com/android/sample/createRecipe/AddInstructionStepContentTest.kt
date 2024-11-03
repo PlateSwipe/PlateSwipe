@@ -33,7 +33,7 @@ class AddInstructionStepScreenTest {
   @Before
   fun setUp() {
     navigationActions = mockk(relaxed = true)
-    createRecipeViewModel = CreateRecipeViewModel(repository)
+    createRecipeViewModel = spyk(CreateRecipeViewModel(repository))
     Intents.init()
   }
 
@@ -112,5 +112,33 @@ class AddInstructionStepScreenTest {
     composeTestRule.onNodeWithTag(SAVE_BUTTON_TAG).performClick()
     composeTestRule.waitForIdle()
     composeTestRule.onNodeWithTag("InstructionError").assertIsDisplayed()
+  }
+
+  /** Verifies that `time` and `category` are only updated when they are not empty. */
+  @Test
+  fun addInstructionStepScreen_onlyUpdatesTimeAndCategoryWhenNotEmpty() = runTest {
+    composeTestRule.setContent {
+      AddInstructionStepScreen(
+          navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
+    }
+
+    // Enter only the instruction text and leave time and category empty
+    composeTestRule.onNodeWithTag("InstructionInput").performTextInput("Preheat oven to 180°C...")
+    composeTestRule.onNodeWithTag(SAVE_BUTTON_TAG).performClick()
+    advanceUntilIdle()
+
+    // Verify time and category were not updated
+    verify(exactly = 0) { createRecipeViewModel.updateRecipeTime(any()) }
+    verify(exactly = 0) { createRecipeViewModel.updateRecipeCategory(any()) }
+
+    // Now enter values for time and category and save again
+    composeTestRule.onNodeWithTag("TimeInput").performTextInput("10")
+    composeTestRule.onNodeWithTag("CategoryInput").performTextInput("Main Course")
+    composeTestRule.onNodeWithTag(SAVE_BUTTON_TAG).performClick()
+    advanceUntilIdle()
+
+    // Verify time and category were updated with the new values
+    verify { createRecipeViewModel.updateRecipeTime("10") }
+    verify { createRecipeViewModel.updateRecipeCategory("Main Course") }
   }
 }
