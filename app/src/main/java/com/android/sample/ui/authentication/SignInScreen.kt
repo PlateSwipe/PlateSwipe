@@ -15,7 +15,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,6 +30,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -59,6 +60,7 @@ import androidx.credentials.GetCredentialRequest
 import com.android.sample.R
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
+import com.android.sample.ui.utils.LoadingAnimation
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
@@ -80,6 +82,7 @@ import kotlinx.coroutines.tasks.await
 @Composable
 fun SignInScreen(navigationActions: NavigationActions) {
   val context = LocalContext.current
+  val registered = remember { mutableStateOf(false) }
 
   val coroutineScope = rememberCoroutineScope()
   val activityContext = LocalContext.current
@@ -100,26 +103,33 @@ fun SignInScreen(navigationActions: NavigationActions) {
   Scaffold(
       modifier = Modifier.fillMaxSize(),
       content = { padding ->
-        RecipesAnimation()
+        Box(modifier = Modifier.fillMaxSize().padding(padding)) {
+          // Show the loading animation if the user is registered
+          if (registered.value) {
+            LoadingAnimation(
+                onFinish = { navigationActions.navigateTo(Screen.SWIPE) }, duration = 4000)
+          } else {
+            RecipesAnimation()
 
-        SignInContent(
-            padding,
-            onSignInClick = {
-              coroutineScope.launch(Dispatchers.Main) {
-                googleSignInRequest(
-                    onAuthComplete = { result ->
-                      Log.d("SignInScreen", "User signed in: ${result.user?.displayName}")
-                      Toast.makeText(context, "Login successful!", Toast.LENGTH_SHORT).show()
-                      navigationActions.navigateTo(Screen.SWIPE)
-                    },
-                    onAuthError = {
-                      Log.e("SignInScreen", "Failed to sign in: ${it.message}")
-                      Toast.makeText(context, "Login Failed!", Toast.LENGTH_SHORT).show()
-                    },
-                    request = request,
-                    activityContext = activityContext)
-              }
-            })
+            SignInContent(
+                onSignInClick = {
+                  coroutineScope.launch(Dispatchers.Main) {
+                    googleSignInRequest(
+                        onAuthComplete = { result ->
+                          Log.d("SignInScreen", "User signed in: ${result.user?.displayName}")
+                          Toast.makeText(context, "Login successful!", Toast.LENGTH_SHORT).show()
+                          registered.value = true
+                        },
+                        onAuthError = {
+                          Log.e("SignInScreen", "Failed to sign in: ${it.message}")
+                          Toast.makeText(context, "Login Failed!", Toast.LENGTH_SHORT).show()
+                        },
+                        request = request,
+                        activityContext = activityContext)
+                  }
+                })
+          }
+        }
       })
 }
 
@@ -235,6 +245,9 @@ fun AnimatedImage(
   val ratioHeight = height / 755f
   val iconSize = 70.dp * (ratioWidth + ratioHeight) / 2
 
+  Log.d("width", width.toString())
+  Log.d("height", height.toString())
+
   val infiniteTransition = rememberInfiniteTransition(label = "transition")
 
   // Animate rotation
@@ -295,13 +308,12 @@ fun AnimatedImage(
 /**
  * Main content of the sign-in screen. Displays the app logo, the cook and sign-in button.
  *
- * @param padding: Padding values
  * @param onSignInClick: Callback function when the sign-in button is clicked
  */
 @Composable
-private fun SignInContent(padding: PaddingValues, onSignInClick: () -> Unit) {
+private fun SignInContent(onSignInClick: () -> Unit) {
   Column(
-      modifier = Modifier.fillMaxSize().padding(padding),
+      modifier = Modifier.fillMaxSize().padding(32.dp),
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.Center,
   ) {
@@ -395,7 +407,7 @@ private suspend fun googleSignInRequest(
  * @param onAuthComplete: Callback function when authentication is successful
  * @param onAuthError: Callback function when authentication fails
  */
-private suspend fun handleSignIn(
+suspend fun handleSignIn(
     credentialManager: CredentialManager,
     request: GetCredentialRequest,
     activityContext: Context,
