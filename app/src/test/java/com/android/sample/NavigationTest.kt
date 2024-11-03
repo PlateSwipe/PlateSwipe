@@ -17,14 +17,6 @@ import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 
-// ***************************************************************************** //
-// ***                                                                       *** //
-// *** THIS FILE WILL BE OVERWRITTEN DURING GRADING. IT SHOULD BE LOCATED IN *** //
-// *** `app/src/test/java/com/github/se/bootcamp/ui/navigation/`             *** //
-// *** DO **NOT** IMPLEMENT YOUR OWN TESTS IN THIS FILE                      *** //
-// ***                                                                       *** //
-// ***************************************************************************** //
-
 class NavigationActionsTest {
 
   private lateinit var navigationDestination: NavDestination
@@ -59,5 +51,14 @@ class NavigationActionsTest {
     `when`(navigationDestination.route).thenReturn(Route.SWIPE)
 
     assertThat(navigationActions.currentRoute(), `is`(Route.SWIPE))
+  }
+
+  @Test
+  fun navigateAndClearStackCallsController() {
+    val screen = Screen.SEARCH
+    val clearUpToRoute = Route.AUTH
+
+    navigationActions.navigateAndClearStack(screen, clearUpToRoute)
+    verify(navHostController).navigate(eq(screen), any<NavOptionsBuilder.() -> Unit>())
   }
 }
