@@ -28,6 +28,6 @@ class FridgeScreenTest {
   fun mainTextIsDisplayed() {
     composeTestRule.setContent { FridgeScreen(navigationActions = navigationActions) }
     composeTestRule.onNodeWithText("Fridge Screen").assertIsDisplayed()
-    composeTestRule.onNodeWithText("Work in progress... Stay tuned!").assertIsDisplayed()
+    composeTestRule.onNodeWithText("Scan Barcode").assertIsDisplayed()
   }
 }
