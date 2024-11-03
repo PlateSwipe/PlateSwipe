@@ -16,8 +16,11 @@ class OpenFoodFactsIngredientRepository(private val client: OkHttpClient) : Ingr
   private fun parseOpenFoodFactsJsonToIngredient(json: JSONObject): Ingredient {
 
     val ingredientName = json.getString("product_name")
+    // Null if there is no branding since it's an optional field
+    val brands = json.getString("brands") ?: null
+    val barcode = json.getLong("_id")
 
-    return Ingredient(barCode = json.getLong("_id"), name = ingredientName)
+    return Ingredient(barCode = barcode, name = ingredientName, brands = brands)
   }
 
   override fun get(

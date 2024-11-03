@@ -523,7 +523,7 @@ class MealDBRecipesRepositoryTest {
     `when`(mockResponseBody.string())
         .thenReturn(
             """{
-                "meals": [
+                "categories": [
                     {
                         "strCategory": "Beef"
                     },
@@ -614,5 +614,67 @@ class MealDBRecipesRepositoryTest {
     assert(
         searchRecipes?.get(0)?.strMealThumbUrl ==
             "https://www.themealdb.com/images/media/meals/ustsqw1468250014.jpg")
+  }
+
+  @Test
+  fun unsupportedMethodsThrowErrors() {
+    // check that it throws an error when called
+    try {
+      mealDBRecipesRepository.updateRecipe(
+          recipe =
+              Recipe(
+                  strMeal = "Spicy Arrabiata Penne",
+                  strCategory = "Vegetarian",
+                  strInstructions = "alal",
+                  strMealThumbUrl = "someurl",
+                  strArea = "Italian",
+                  idMeal = "52771",
+                  ingredientsAndMeasurements =
+                      listOf(
+                          Pair("penne rigate", "1 pound"),
+                          Pair("olive oil", "1/4 cup"),
+                          Pair("garlic", "3 cloves"),
+                          Pair("chopped tomatoes", "1 tin "),
+                          Pair("red chilli flakes", "1/2 teaspoon"),
+                          Pair("italian seasoning", "1/2 teaspoon"),
+                          Pair("basil", "6 leaves"),
+                          Pair("Parmigiano-Reggiano", "spinkling"))),
+          onSuccess = {},
+          onFailure = {})
+    } catch (e: Exception) {
+      assert(e is UnsupportedOperationException)
+    }
+
+    try {
+      mealDBRecipesRepository.deleteRecipe(idMeal = "1", onSuccess = {}, onFailure = {})
+    } catch (e: Exception) {
+      assert(e is UnsupportedOperationException)
+    }
+
+    try {
+      mealDBRecipesRepository.addRecipe(
+          recipe =
+              Recipe(
+                  strMeal = "Spicy Arrabiata Penne",
+                  strCategory = "Vegetarian",
+                  strInstructions = "alal",
+                  strMealThumbUrl = "someurl",
+                  strArea = "Italian",
+                  idMeal = "52771",
+                  ingredientsAndMeasurements =
+                      listOf(
+                          Pair("penne rigate", "1 pound"),
+                          Pair("olive oil", "1/4 cup"),
+                          Pair("garlic", "3 cloves"),
+                          Pair("chopped tomatoes", "1 tin "),
+                          Pair("red chilli flakes", "1/2 teaspoon"),
+                          Pair("italian seasoning", "1/2 teaspoon"),
+                          Pair("basil", "6 leaves"),
+                          Pair("Parmigiano-Reggiano", "spinkling"))),
+          onSuccess = {},
+          onFailure = {})
+    } catch (e: Exception) {
+      assert(e is UnsupportedOperationException)
+    }
   }
 }

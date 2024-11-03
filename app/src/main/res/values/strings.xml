@@ -10,6 +10,13 @@
     <string name="plate_swipe_title">Plate Swipe</string>
 
     <string name="search_bar_place_holder">Search</string>
+    <string name="scan_barcode">Scan Barcode</string>
+    <string name="fridge_screen">Fridge Screen</string>
+    <string name="add_to_fridge">Add to Fridge</string>
+
+    <string name="account_screen_default_user_name">User Name</string>
+    <string name="account_screen_liked_recipe_button_title">Liked Recipes</string>
+    <string name="account_screen_created_recipe_button_title">Created Recipes</string>
 
     <dimen name="paddingBasic">16dp</dimen>
     <dimen name="star_size">150dp</dimen>
