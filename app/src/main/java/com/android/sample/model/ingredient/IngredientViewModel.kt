@@ -2,6 +2,7 @@ package com.android.sample.model.ingredient
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import okhttp3.OkHttpClient
@@ -34,7 +35,12 @@ class IngredientViewModel(private val repository: IngredientRepository) : ViewMo
         object : ViewModelProvider.Factory {
           @Suppress("UNCHECKED_CAST")
           override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return IngredientViewModel(OpenFoodFactsIngredientRepository(OkHttpClient())) as T
+            return IngredientViewModel(
+                AggregatorIngredientRepository(
+                    FirestoreIngredientRepository(FirebaseFirestore.getInstance()),
+                    OpenFoodFactsIngredientRepository(OkHttpClient())
+                )
+            ) as T
           }
         }
   }
