@@ -20,26 +20,22 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.android.sample.R
+import com.android.sample.resources.C.Tag.DELAY_RESPAWN
+import com.android.sample.resources.C.Tag.DELAY_SPAWN
+import com.android.sample.resources.C.Tag.FRUIT_SIZE
+import com.android.sample.resources.C.Tag.GRAVITY
+import com.android.sample.resources.C.Tag.INITIAL_SPEED
+import com.android.sample.resources.C.Tag.MAX_ROTATION_START
+import com.android.sample.resources.C.Tag.NUMBER_FRUIT_MAX
+import com.android.sample.resources.C.Tag.ROTATION_DELTA
+import com.android.sample.resources.C.Tag.TIME_DELTA
+import com.android.sample.resources.C.Tag.TIME_INIT
+import com.android.sample.resources.C.Tag.UNIT
+import com.android.sample.resources.C.Tag.fruitImages
 import kotlin.random.Random
 import kotlinx.coroutines.delay
 
 // List of image resources for fruits in drawable
-val fruitImages =
-    listOf(
-        R.drawable.taco,
-        R.drawable.sushi,
-        R.drawable.avocado,
-        R.drawable.tomato,
-        R.drawable.pancakes,
-        R.drawable.broccoli,
-        R.drawable.pasta,
-        R.drawable.salad,
-        R.drawable.pepper)
-
-// Constants for gravity and initial speed
-const val GRAVITY = 9.8f // Gravity constant, scaled for UI
-const val INITIAL_SPEED = 100f // Increased initial speed
 
 /**
  * Data class to represent a falling fruit
@@ -58,7 +54,8 @@ class FallingFruit(
   var positionY by mutableFloatStateOf(initialPositionY)
   var positionX by mutableFloatStateOf(initialPositionX)
   private var velocity by mutableFloatStateOf(initialVelocity)
-  private val rotationDelta = Random.nextFloat() * 90 - 45 // Random rotation change
+  private val rotationDelta =
+      (Random.nextFloat() * MAX_ROTATION_START) - MAX_ROTATION_START / 2 // Random rotation change
   var rotation by mutableFloatStateOf(rotationDelta) // Random initial rotation
 
   /**
@@ -71,7 +68,7 @@ class FallingFruit(
       screenWidth: Float,
       fruitSize: Float,
   ) {
-    val xPos = (Random.nextFloat() * 2 - 1) * (screenWidth / 2 - fruitSize / 2)
+    val xPos = getXPos(screenWidth, fruitSize)
     imageRes = fruitImages.random()
     positionX = xPos
     positionY = -fruitSize
@@ -85,18 +82,19 @@ class FallingFruit(
    * @param onFinished: Callback to trigger when the fall is complete
    */
   suspend fun fall(screenHeight: Float, onFinished: () -> Unit) {
-    var time = 0f
+    var time = TIME_INIT
     while (positionY < screenHeight) {
-      delay(16) // Approximate 60fps
-      time += 0.016f
+      // Delay to simulate the time passing (simulate FPS)
+      delay((TIME_DELTA.toLong() * 1000L))
+      time += TIME_DELTA
       velocity += GRAVITY * time
-      positionY += velocity * 0.016f
-      rotation -= rotationDelta * 0.03f // Small random rotation change
+      positionY += velocity * TIME_DELTA
+      rotation -= rotationDelta * ROTATION_DELTA // Small random rotation change
     }
 
     // Delay to show the fruit at the bottom
-    delay(150)
-    onFinished() // Trigger the callback once the fall is complete
+    delay(DELAY_RESPAWN)
+    onFinished()
   }
 }
 
@@ -111,7 +109,7 @@ fun LoadingAnimation(onFinish: () -> Unit, duration: Long = Long.MIN_VALUE) {
   val configuration = LocalConfiguration.current
   val screenWidth = configuration.screenWidthDp.dp
   val screenHeight = configuration.screenHeightDp.dp
-  val fruitSize = 120.dp
+  val fruitSize = FRUIT_SIZE.dp
 
   val fallingFruits = remember { mutableStateListOf<FallingFruit>() }
 
@@ -125,10 +123,10 @@ fun LoadingAnimation(onFinish: () -> Unit, duration: Long = Long.MIN_VALUE) {
 
   // Coroutine to add new fruits
   LaunchedEffect(Unit) {
-    while (fallingFruits.size < 8) {
-      delay(300)
+    while (fallingFruits.size < NUMBER_FRUIT_MAX) {
+      delay(DELAY_SPAWN)
 
-      val xPos = (Random.nextFloat() * 2 - 1) * (screenWidth.value / 2 - fruitSize.value / 2)
+      val xPos = getXPos(screenWidth.value, fruitSize.value)
       val newFruit =
           FallingFruit(
               imageRes = fruitImages.random(),
@@ -162,3 +160,12 @@ fun LoadingAnimation(onFinish: () -> Unit, duration: Long = Long.MIN_VALUE) {
     }
   }
 }
+
+/**
+ * Get a random X position for the fruit
+ *
+ * @param screenWidth: Width of the screen
+ * @param fruitSize: Size of the fruit
+ */
+private fun getXPos(screenWidth: Float, fruitSize: Float) =
+    (Random.nextFloat() * (2 * UNIT) - UNIT) * (screenWidth / 2 - fruitSize / 2)

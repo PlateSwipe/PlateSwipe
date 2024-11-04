@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,19 +46,79 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
 import com.android.sample.R
+import com.android.sample.resources.C.Tag.ANIMATION_DURATION
+import com.android.sample.resources.C.Tag.AVOCADO_MVM_DURATION
+import com.android.sample.resources.C.Tag.AVOCADO_MVM_RANGE
+import com.android.sample.resources.C.Tag.AVOCADO_ROTATION
+import com.android.sample.resources.C.Tag.AVOCADO_X
+import com.android.sample.resources.C.Tag.AVOCADO_Y
+import com.android.sample.resources.C.Tag.BROCCOLI_MVM_DURATION
+import com.android.sample.resources.C.Tag.BROCCOLI_MVM_RANGE
+import com.android.sample.resources.C.Tag.BROCCOLI_ROTATION
+import com.android.sample.resources.C.Tag.BROCCOLI_X
+import com.android.sample.resources.C.Tag.BROCCOLI_Y
+import com.android.sample.resources.C.Tag.COOK_SIZE
+import com.android.sample.resources.C.Tag.CUBE_EASING_A
+import com.android.sample.resources.C.Tag.CUBE_EASING_B
+import com.android.sample.resources.C.Tag.CUBE_EASING_C
+import com.android.sample.resources.C.Tag.CUBE_EASING_D
+import com.android.sample.resources.C.Tag.DURATION_ROTATION_LOOP
+import com.android.sample.resources.C.Tag.GOOGLE_LOGO_SIZE
+import com.android.sample.resources.C.Tag.GOOGLE_SIGN_IN_BUTTON_HEIGHT
+import com.android.sample.resources.C.Tag.HEIGHT_BASE
+import com.android.sample.resources.C.Tag.LOGIN_FAILED
+import com.android.sample.resources.C.Tag.LOGIN_SUCCESSFUL
+import com.android.sample.resources.C.Tag.NONCE
+import com.android.sample.resources.C.Tag.ORIGINAL_ICON_SIZE
+import com.android.sample.resources.C.Tag.PANCAKES_MVM_DURATION
+import com.android.sample.resources.C.Tag.PANCAKES_MVM_RANGE
+import com.android.sample.resources.C.Tag.PANCAKES_ROTATION
+import com.android.sample.resources.C.Tag.PANCAKES_X
+import com.android.sample.resources.C.Tag.PANCAKES_Y
+import com.android.sample.resources.C.Tag.PASTA_MVM_DURATION
+import com.android.sample.resources.C.Tag.PASTA_MVM_RANGE
+import com.android.sample.resources.C.Tag.PASTA_ROTATION
+import com.android.sample.resources.C.Tag.PASTA_X
+import com.android.sample.resources.C.Tag.PASTA_Y
+import com.android.sample.resources.C.Tag.PEPPER_MVM_DURATION
+import com.android.sample.resources.C.Tag.PEPPER_MVM_RANGE
+import com.android.sample.resources.C.Tag.PEPPER_ROTATION
+import com.android.sample.resources.C.Tag.PEPPER_X
+import com.android.sample.resources.C.Tag.PEPPER_Y
+import com.android.sample.resources.C.Tag.PLATE
+import com.android.sample.resources.C.Tag.SALAD_MVM_DURATION
+import com.android.sample.resources.C.Tag.SALAD_MVM_RANGE
+import com.android.sample.resources.C.Tag.SALAD_ROTATION
+import com.android.sample.resources.C.Tag.SALAD_X
+import com.android.sample.resources.C.Tag.SALAD_Y
+import com.android.sample.resources.C.Tag.SHIFTING_SPACE_TITLE
+import com.android.sample.resources.C.Tag.SIGN_IN_WITH_GOOGLE
+import com.android.sample.resources.C.Tag.SPACE
+import com.android.sample.resources.C.Tag.SUSHI_MVM_DURATION
+import com.android.sample.resources.C.Tag.SUSHI_MVM_RANGE
+import com.android.sample.resources.C.Tag.SUSHI_ROTATION
+import com.android.sample.resources.C.Tag.SUSHI_X
+import com.android.sample.resources.C.Tag.SUSHI_Y
+import com.android.sample.resources.C.Tag.SWIPE
+import com.android.sample.resources.C.Tag.TACO_MVM_DURATION
+import com.android.sample.resources.C.Tag.TACO_MVM_RANGE
+import com.android.sample.resources.C.Tag.TACO_ROTATION
+import com.android.sample.resources.C.Tag.TACO_X
+import com.android.sample.resources.C.Tag.TACO_Y
+import com.android.sample.resources.C.Tag.TOMATO_MVM_DURATION
+import com.android.sample.resources.C.Tag.TOMATO_MVM_RANGE
+import com.android.sample.resources.C.Tag.TOMATO_ROTATION
+import com.android.sample.resources.C.Tag.TOMATO_X
+import com.android.sample.resources.C.Tag.TOMATO_Y
+import com.android.sample.resources.C.Tag.WIDTH_BASE
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.utils.LoadingAnimation
@@ -93,7 +154,7 @@ fun SignInScreen(navigationActions: NavigationActions) {
           .setFilterByAuthorizedAccounts(true)
           .setServerClientId(token)
           .setAutoSelectEnabled(true)
-          .setNonce("nonce")
+          .setNonce(NONCE)
           .build()
 
   val request: GetCredentialRequest =
@@ -107,7 +168,8 @@ fun SignInScreen(navigationActions: NavigationActions) {
           // Show the loading animation if the user is registered
           if (registered.value) {
             LoadingAnimation(
-                onFinish = { navigationActions.navigateTo(Screen.SWIPE) }, duration = 4000)
+                onFinish = { navigationActions.navigateTo(Screen.SWIPE) },
+                duration = ANIMATION_DURATION)
           } else {
             RecipesAnimation()
 
@@ -117,12 +179,12 @@ fun SignInScreen(navigationActions: NavigationActions) {
                     googleSignInRequest(
                         onAuthComplete = { result ->
                           Log.d("SignInScreen", "User signed in: ${result.user?.displayName}")
-                          Toast.makeText(context, "Login successful!", Toast.LENGTH_SHORT).show()
+                          Toast.makeText(context, LOGIN_SUCCESSFUL, Toast.LENGTH_SHORT).show()
                           registered.value = true
                         },
                         onAuthError = {
                           Log.e("SignInScreen", "Failed to sign in: ${it.message}")
-                          Toast.makeText(context, "Login Failed!", Toast.LENGTH_SHORT).show()
+                          Toast.makeText(context, LOGIN_FAILED, Toast.LENGTH_SHORT).show()
                         },
                         request = request,
                         activityContext = activityContext)
@@ -140,79 +202,79 @@ private fun RecipesAnimation() {
     // Animated tacos around the cook image
     AnimatedImage(
         imageRes = R.drawable.taco,
-        initialOffsetX = -(250).dp,
-        initialOffsetY = 400.dp,
-        rotationSpeed = 15,
-        movementDuration = 1500,
-        movementRange = 9f,
+        initialOffsetX = TACO_X.dp,
+        initialOffsetY = TACO_Y.dp,
+        rotationSpeed = TACO_ROTATION,
+        movementDuration = TACO_MVM_DURATION,
+        movementRange = TACO_MVM_RANGE,
         testTag = "taco")
     AnimatedImage(
         imageRes = R.drawable.sushi,
-        initialOffsetX = -(350).dp,
-        initialOffsetY = 150.dp,
-        rotationSpeed = 15,
-        movementDuration = 1000,
-        movementRange = 8f,
+        initialOffsetX = SUSHI_X.dp,
+        initialOffsetY = SUSHI_Y.dp,
+        rotationSpeed = SUSHI_ROTATION,
+        movementDuration = SUSHI_MVM_DURATION,
+        movementRange = SUSHI_MVM_RANGE,
         testTag = "sushi")
     AnimatedImage(
         imageRes = R.drawable.avocado,
-        initialOffsetX = -(350).dp,
-        initialOffsetY = -(200).dp,
-        rotationSpeed = 15,
-        movementDuration = 1250,
-        movementRange = 9f,
+        initialOffsetX = AVOCADO_X.dp,
+        initialOffsetY = AVOCADO_Y.dp,
+        rotationSpeed = AVOCADO_ROTATION,
+        movementDuration = AVOCADO_MVM_DURATION,
+        movementRange = AVOCADO_MVM_RANGE,
         testTag = "avocado")
     AnimatedImage(
         imageRes = R.drawable.tomato,
-        initialOffsetX = -(180).dp,
-        initialOffsetY = -(450).dp,
-        rotationSpeed = 20,
-        movementDuration = 1500,
-        movementRange = 10f,
+        initialOffsetX = TOMATO_X.dp,
+        initialOffsetY = TOMATO_Y.dp,
+        rotationSpeed = TOMATO_ROTATION,
+        movementDuration = TOMATO_MVM_DURATION,
+        movementRange = TOMATO_MVM_RANGE,
         testTag = "tomato")
     AnimatedImage(
         imageRes = R.drawable.pancakes,
-        initialOffsetX = 200.dp,
-        initialOffsetY = -(450).dp,
-        rotationSpeed = 15,
-        movementDuration = 800,
-        movementRange = 6f,
+        initialOffsetX = PANCAKES_X.dp,
+        initialOffsetY = PANCAKES_Y.dp,
+        rotationSpeed = PANCAKES_ROTATION,
+        movementDuration = PANCAKES_MVM_DURATION,
+        movementRange = PANCAKES_MVM_RANGE,
         testTag = "pancakes")
 
     AnimatedImage(
         imageRes = R.drawable.broccoli,
-        initialOffsetX = 330.dp,
-        initialOffsetY = -(250).dp,
-        rotationSpeed = 17,
-        movementDuration = 1500,
-        movementRange = 9f,
+        initialOffsetX = BROCCOLI_X.dp,
+        initialOffsetY = BROCCOLI_Y.dp,
+        rotationSpeed = BROCCOLI_ROTATION,
+        movementDuration = BROCCOLI_MVM_DURATION,
+        movementRange = BROCCOLI_MVM_RANGE,
         testTag = "broccoli")
 
     AnimatedImage(
         imageRes = R.drawable.pasta,
-        initialOffsetX = 345.dp,
-        initialOffsetY = 0.dp,
-        rotationSpeed = 10,
-        movementDuration = 1200,
-        movementRange = 12f,
+        initialOffsetX = PASTA_X.dp,
+        initialOffsetY = PASTA_Y.dp,
+        rotationSpeed = PASTA_ROTATION,
+        movementDuration = PASTA_MVM_DURATION,
+        movementRange = PASTA_MVM_RANGE,
         testTag = "pasta")
 
     AnimatedImage(
         imageRes = R.drawable.salad,
-        initialOffsetX = 300.dp,
-        initialOffsetY = 225.dp,
-        rotationSpeed = 17,
-        movementDuration = 900,
-        movementRange = 9f,
+        initialOffsetX = SALAD_X.dp,
+        initialOffsetY = SALAD_Y.dp,
+        rotationSpeed = SALAD_ROTATION,
+        movementDuration = SALAD_MVM_DURATION,
+        movementRange = SALAD_MVM_RANGE,
         testTag = "salad")
 
     AnimatedImage(
         imageRes = R.drawable.pepper,
-        initialOffsetX = 150.dp,
-        initialOffsetY = 400.dp,
-        rotationSpeed = 14,
-        movementDuration = 1500,
-        movementRange = 10f,
+        initialOffsetX = PEPPER_X.dp,
+        initialOffsetY = PEPPER_Y.dp,
+        rotationSpeed = PEPPER_ROTATION,
+        movementDuration = PEPPER_MVM_DURATION,
+        movementRange = PEPPER_MVM_RANGE,
         testTag = "pepper")
   }
 }
@@ -241,12 +303,9 @@ fun AnimatedImage(
   val width = LocalConfiguration.current.screenWidthDp.toFloat()
   val height = LocalConfiguration.current.screenHeightDp.toFloat()
 
-  val ratioWidth = width / 360f
-  val ratioHeight = height / 755f
-  val iconSize = 70.dp * (ratioWidth + ratioHeight) / 2
-
-  Log.d("width", width.toString())
-  Log.d("height", height.toString())
+  val ratioWidth = width / WIDTH_BASE
+  val ratioHeight = height / HEIGHT_BASE
+  val iconSize = ORIGINAL_ICON_SIZE.dp * (ratioWidth + ratioHeight) / 2
 
   val infiniteTransition = rememberInfiniteTransition(label = "transition")
 
@@ -258,7 +317,9 @@ fun AnimatedImage(
           animationSpec =
               infiniteRepeatable(
                   animation =
-                      tween(durationMillis = 30000 / rotationSpeed, easing = FastOutSlowInEasing),
+                      tween(
+                          durationMillis = DURATION_ROTATION_LOOP / rotationSpeed,
+                          easing = FastOutSlowInEasing),
                   repeatMode = RepeatMode.Reverse),
           label = "rotation")
 
@@ -275,7 +336,9 @@ fun AnimatedImage(
                   animation =
                       tween(
                           durationMillis = movementDuration,
-                          easing = CubicBezierEasing(0.25f, 0.1f, 0.25f, 1.0f)), // Smoother easing
+                          easing =
+                              CubicBezierEasing(
+                                  CUBE_EASING_A, CUBE_EASING_B, CUBE_EASING_C, CUBE_EASING_D)),
                   repeatMode = RepeatMode.Reverse),
           label = "xTranslation")
 
@@ -291,7 +354,12 @@ fun AnimatedImage(
                   animation =
                       tween(
                           durationMillis = movementDuration,
-                          easing = CubicBezierEasing(0.25f, 0.1f, 0.25f, 1.0f)), // Smoother easing
+                          easing =
+                              CubicBezierEasing(
+                                  CUBE_EASING_A,
+                                  CUBE_EASING_B,
+                                  CUBE_EASING_C,
+                                  CUBE_EASING_D)), // Smoother easing
                   repeatMode = RepeatMode.Reverse),
           label = "yTranslation")
 
@@ -317,49 +385,12 @@ private fun SignInContent(onSignInClick: () -> Unit) {
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.Center,
   ) {
-    Column(
-        modifier = Modifier.testTag("loginTitle").weight(2f),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center) {
-          Spacer(modifier = Modifier.height(16.dp))
-          Row(modifier = Modifier) {
-            Text(
-                text = "Plate",
-                modifier = Modifier.testTag("plateText"),
-                style =
-                    TextStyle(
-                        fontSize = 60.sp,
-                        fontFamily = FontFamily(Font(R.font.montserrat_bold)),
-                        fontWeight = FontWeight(600),
-                        color = Color.Black,
-                        textAlign = TextAlign.Center,
-                    ),
-                textAlign = TextAlign.Center)
-            Spacer(modifier = Modifier.width(50.dp))
-          }
+    PlateSwipeTitle(Modifier.weight(2f))
 
-          Row {
-            Spacer(modifier = Modifier.width(50.dp))
-            Text(
-                text = "Swipe",
-                modifier = Modifier.testTag("swipeText"),
-                style =
-                    TextStyle(
-                        fontSize = 60.sp,
-                        fontFamily = FontFamily(Font(R.font.montserrat_bold)),
-                        fontWeight = FontWeight(600),
-                        color = Color(0xFF000000),
-                        textAlign = TextAlign.Center,
-                    ),
-                textAlign = TextAlign.Center)
-          }
-        }
-
-    // App Logo with rounded corners
     Box(
         modifier =
             Modifier.fillMaxSize()
-                .size(300.dp) // Increase the size of the logo
+                .size(COOK_SIZE.dp)
                 .clip(RoundedCornerShape(16.dp))
                 .weight(5f), // Round the corners
     ) {
@@ -373,6 +404,40 @@ private fun SignInContent(onSignInClick: () -> Unit) {
     // Authenticate With Google Button
     GoogleSignInButton(onSignInClick = onSignInClick)
   }
+}
+
+/**
+ * Title for the sign-in screen
+ *
+ * @param modifier: Modifier to specify the weight
+ */
+@Composable
+private fun PlateSwipeTitle(modifier: Modifier = Modifier) {
+  Column(
+      modifier = modifier.fillMaxWidth().testTag("loginTitle"),
+      horizontalAlignment = Alignment.CenterHorizontally,
+      verticalArrangement = Arrangement.Center) {
+        Spacer(modifier = Modifier.height(SPACE.dp))
+        Row(modifier = Modifier) {
+          Text(
+              text = PLATE,
+              modifier = Modifier.testTag("plateText"),
+              style = MaterialTheme.typography.titleLarge,
+              color = MaterialTheme.colorScheme.onPrimary,
+              textAlign = TextAlign.Center)
+          Spacer(modifier = Modifier.width(SHIFTING_SPACE_TITLE.dp))
+        }
+
+        Row {
+          Spacer(modifier = Modifier.width(SHIFTING_SPACE_TITLE.dp))
+          Text(
+              text = SWIPE,
+              modifier = Modifier.testTag("swipeText"),
+              style = MaterialTheme.typography.titleLarge,
+              color = MaterialTheme.colorScheme.onPrimary,
+              textAlign = TextAlign.Center)
+        }
+      }
 }
 
 /**
@@ -453,10 +518,13 @@ fun GoogleSignInButton(onSignInClick: () -> Unit) {
 
   Button(
       onClick = onSignInClick,
-      colors = ButtonDefaults.buttonColors(containerColor = Color.White), // Button color
-      shape = RoundedCornerShape(100), // Circular edges for the button
+      colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.background),
+      shape = RoundedCornerShape(100),
       border = BorderStroke(1.dp, Color.LightGray),
-      modifier = Modifier.padding(16.dp).height(48.dp).testTag("loginButton")) {
+      modifier =
+          Modifier.padding(SPACE.dp)
+              .height(GOOGLE_SIGN_IN_BUTTON_HEIGHT.dp)
+              .testTag("loginButton")) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
@@ -465,15 +533,15 @@ fun GoogleSignInButton(onSignInClick: () -> Unit) {
               Image(
                   painter = painterResource(id = R.drawable.google_logo),
                   contentDescription = "Google Logo",
-                  modifier = Modifier.size(30.dp).padding(end = 8.dp))
+                  modifier = Modifier.size(GOOGLE_LOGO_SIZE.dp).padding(end = (SPACE / 2).dp))
 
               // Text for the button
               Text(
-                  text = "Sign in with Google",
-                  color = Color.Gray, // Text color
-                  fontSize = 16.sp, // Font size
-                  fontWeight = FontWeight.Medium)
+                  text = SIGN_IN_WITH_GOOGLE,
+                  style = MaterialTheme.typography.bodyMedium,
+                  color = MaterialTheme.colorScheme.onSecondary,
+              )
             }
       }
-  Spacer(modifier = Modifier.height(32.dp))
+  Spacer(modifier = Modifier.height((SPACE * 2).dp))
 }
