@@ -38,7 +38,7 @@ class FirestoreIngredientRepository(private val db: FirebaseFirestore) : Ingredi
       onFailure: (Exception) -> Unit
   ) {
     searchFiltered(
-        Filter.equalTo("barcode", barCode.toString()),
+        Filter.equalTo("barCode", barCode),
         onSuccess = { ingredients ->
           if (ingredients.isEmpty()) (onSuccess(null))
           else {
