@@ -124,7 +124,6 @@ import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.utils.LoadingAnimation
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
-import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
 import com.google.common.primitives.Floats.min
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
@@ -343,6 +342,7 @@ private fun AnimatedImage(
                   repeatMode = RepeatMode.Reverse),
           label = "xTranslation")
 
+  // manage vertical movement
   val offsetY by
       infiniteTransition.animateFloat(
           initialValue =
@@ -388,6 +388,7 @@ private fun SignInContent(onSignInClick: () -> Unit) {
   ) {
     PlateSwipeTitle(Modifier.weight(2f))
 
+    // Cook image display
     Box(
         modifier =
             Modifier.fillMaxSize()
@@ -458,29 +459,6 @@ private suspend fun googleSignInRequest(
 
   try {
     val credentialManager = CredentialManager.create(activityContext)
-    handleSignIn(credentialManager, request, activityContext, onAuthComplete, onAuthError)
-  } catch (e: androidx.credentials.exceptions.GetCredentialException) {
-    onAuthError(e)
-  }
-}
-
-/**
- * Function to handle the sign-in process. Request firebase credential and authenticate.
- *
- * @param credentialManager: CredentialManager object
- * @param request: GetCredentialRequest object
- * @param activityContext: Context of the activity
- * @param onAuthComplete: Callback function when authentication is successful
- * @param onAuthError: Callback function when authentication fails
- */
-private suspend fun handleSignIn(
-    credentialManager: CredentialManager,
-    request: GetCredentialRequest,
-    activityContext: Context,
-    onAuthComplete: (AuthResult) -> Unit,
-    onAuthError: (Exception) -> Unit
-) {
-  try {
     val result =
         credentialManager.getCredential(
             request = request,
@@ -507,8 +485,6 @@ private suspend fun handleSignIn(
         }
       }
     }
-  } catch (e: GoogleIdTokenParsingException) {
-    onAuthError(e)
   } catch (e: Exception) {
     onAuthError(e)
   }
