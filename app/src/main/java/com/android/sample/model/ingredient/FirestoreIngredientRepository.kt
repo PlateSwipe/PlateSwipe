@@ -1,19 +1,23 @@
 package com.android.sample.model.ingredient
 
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
 
-const val COLLECTION_PATH = "ingredients"
-
 class FirestoreIngredientRepository(private val db: FirebaseFirestore) : IngredientRepository {
+  private val collectionPath = "ingredients"
 
-  private fun documentSnapshotToIngredient(documentSnapshot: Any): Ingredient {
-    val document = documentSnapshot as Map<*, *>
+  private fun documentSnapshotToIngredient(documentSnapshot: DocumentSnapshot): Ingredient {
 
-    return Ingredient(
-        barCode = document["barCode"] as Long,
-        name = document["name"] as String,
-    )
+    val barCode = documentSnapshot.getLong("barCode")
+    val name = documentSnapshot.getString("name")
+    val brands = documentSnapshot.getString("brands")
+
+    if (name.isNullOrEmpty()) {
+      throw Exception("Name is required")
+    }
+
+    return Ingredient(uid = documentSnapshot.id, barCode = barCode, name = name, brands = brands)
   }
 
   override fun get(
@@ -21,15 +25,16 @@ class FirestoreIngredientRepository(private val db: FirebaseFirestore) : Ingredi
       onSuccess: (Ingredient?) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    db.collection(COLLECTION_PATH).document(barCode.toString()).get().addOnCompleteListener { result
-      ->
-      if (result.isSuccessful) {
-        val ingredient = documentSnapshotToIngredient(result.result!!)
-        onSuccess(ingredient)
-      } else {
-        onFailure(result.exception!!)
-      }
-    }
+    searchFiltered(
+        Filter.equalTo("barcode", barCode.toString()),
+        onSuccess = { ingredients ->
+          if (ingredients.isEmpty()) (onSuccess(null))
+          else {
+            onSuccess(ingredients[0])
+          }
+        },
+        onFailure = onFailure,
+        count = 1)
   }
 
   override fun search(
@@ -38,44 +43,44 @@ class FirestoreIngredientRepository(private val db: FirebaseFirestore) : Ingredi
       onFailure: (Exception) -> Unit,
       count: Int
   ) {
-    db.collection(COLLECTION_PATH)
-        .whereEqualTo("name", name)
-        .limit(count.toLong())
-        .get()
-        .addOnCompleteListener { result ->
-          if (result.isSuccessful) {
-            val ingredients = result.result!!.documents.map { d -> documentSnapshotToIngredient(d) }
-            onSuccess(ingredients)
-          } else {
-            onFailure(result.exception!!)
-          }
-        }
+    searchFiltered(Filter.equalTo("name", name), onSuccess, onFailure, count)
   }
 
   fun searchFiltered(
       filter: Filter,
       onSuccess: (List<Ingredient>) -> Unit,
       onFailure: (Exception) -> Unit,
-      count: Int
+      count: Int = 20
   ) {
-    db.collection(COLLECTION_PATH)
-        .where(filter)
-        .limit(count.toLong())
-        .get()
-        .addOnCompleteListener { result ->
-          if (result.isSuccessful) {
-            val ingredients = result.result!!.documents.map { d -> documentSnapshotToIngredient(d) }
-            onSuccess(ingredients)
-          } else {
-            onFailure(result.exception!!)
-          }
-        }
+    db.collection(collectionPath).where(filter).limit(count.toLong()).get().addOnCompleteListener {
+        result ->
+      if (result.isSuccessful) {
+        val ingredients =
+            result.result!!.documents.mapNotNull { d ->
+              try {
+                documentSnapshotToIngredient(d)
+              } catch (e: Exception) {
+                onFailure(e)
+                return@addOnCompleteListener
+              }
+            }
+        onSuccess(ingredients)
+      } else {
+        onFailure(result.exception!!)
+      }
+    }
   }
 
   fun add(ingredient: Ingredient, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-    db.collection(COLLECTION_PATH)
-        .document(ingredient.barCode.toString())
-        .set(ingredient)
+    var addedIngredient = ingredient
+
+    if (ingredient.uid.isNullOrEmpty()) {
+      addedIngredient = ingredient.copy(uid = db.collection(collectionPath).document().id)
+    }
+
+    db.collection(collectionPath)
+        .document(addedIngredient.uid!!)
+        .set(addedIngredient)
         .addOnCompleteListener { result ->
           if (result.isSuccessful) {
             onSuccess()
