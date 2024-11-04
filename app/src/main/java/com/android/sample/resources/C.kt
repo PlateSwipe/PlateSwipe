@@ -136,10 +136,11 @@ object C {
     const val UNIT = 1
     const val TIME_INIT = 0f
     const val TIME_DELTA = 0.016f
+    const val TIME_DELAY = 16L
     const val ROTATION_DELTA = 0.03f
     const val DELAY_RESPAWN = 150L
     const val DELAY_SPAWN = 300L
-    const val NUMBER_FRUIT_MAX = 300L
+    const val NUMBER_FRUIT_MAX = 8
     const val FRUIT_SIZE = 120
 
     // RecipesViewModel

@@ -28,6 +28,7 @@ import com.android.sample.resources.C.Tag.INITIAL_SPEED
 import com.android.sample.resources.C.Tag.MAX_ROTATION_START
 import com.android.sample.resources.C.Tag.NUMBER_FRUIT_MAX
 import com.android.sample.resources.C.Tag.ROTATION_DELTA
+import com.android.sample.resources.C.Tag.TIME_DELAY
 import com.android.sample.resources.C.Tag.TIME_DELTA
 import com.android.sample.resources.C.Tag.TIME_INIT
 import com.android.sample.resources.C.Tag.UNIT
@@ -85,7 +86,7 @@ class FallingFruit(
     var time = TIME_INIT
     while (positionY < screenHeight) {
       // Delay to simulate the time passing (simulate FPS)
-      delay((TIME_DELTA.toLong() * 1000L))
+      delay(TIME_DELAY)
       time += TIME_DELTA
       velocity += GRAVITY * time
       positionY += velocity * TIME_DELTA
