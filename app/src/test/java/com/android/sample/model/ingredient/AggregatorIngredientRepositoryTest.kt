@@ -16,264 +16,194 @@ import org.mockito.kotlin.doNothing
 import org.mockito.kotlin.verify
 
 class AggregatorIngredientRepositoryTest {
-    @Mock
-    private lateinit var mockFirestoreIngredientRepository: FirestoreIngredientRepository
+  @Mock private lateinit var mockFirestoreIngredientRepository: FirestoreIngredientRepository
 
-    @Mock
-    private lateinit var mockOpenFoodFactsIngredientRepository: OpenFoodFactsIngredientRepository
+  @Mock
+  private lateinit var mockOpenFoodFactsIngredientRepository: OpenFoodFactsIngredientRepository
 
-    @Captor
-    private lateinit var onSuccessSingleCapture: ArgumentCaptor<Function1<Ingredient?, Unit>>
-    @Captor
-    private lateinit var onSuccessCollectionCapture: ArgumentCaptor<Function1<List<Ingredient>, Unit>>
-    @Captor
-    private lateinit var onFailureCapture: ArgumentCaptor<Function1<Exception, Unit>>
+  @Captor private lateinit var onSuccessSingleCapture: ArgumentCaptor<Function1<Ingredient?, Unit>>
+  @Captor
+  private lateinit var onSuccessCollectionCapture: ArgumentCaptor<Function1<List<Ingredient>, Unit>>
+  @Captor private lateinit var onFailureCapture: ArgumentCaptor<Function1<Exception, Unit>>
 
-    private lateinit var aggregatorIngredientRepository: AggregatorIngredientRepository
+  private lateinit var aggregatorIngredientRepository: AggregatorIngredientRepository
 
-    private val ingredient = Ingredient(
-        uid = "1",
-        name = "Coca-Cola",
-        barCode = 5449000214911L
-    )
+  private val ingredient = Ingredient(uid = "1", name = "Coca-Cola", barCode = 5449000214911L)
 
-    @Before
-    fun setUp() {
-        MockitoAnnotations.openMocks(this)
+  @Before
+  fun setUp() {
+    MockitoAnnotations.openMocks(this)
 
-        doNothing().`when`(
-            mockFirestoreIngredientRepository).get(
-                any(),
-                capture(onSuccessSingleCapture),
-                capture(onFailureCapture)
+    doNothing()
+        .`when`(mockFirestoreIngredientRepository)
+        .get(any(), capture(onSuccessSingleCapture), capture(onFailureCapture))
 
-        )
+    doNothing()
+        .`when`(mockFirestoreIngredientRepository)
+        .search(any(), capture(onSuccessCollectionCapture), capture(onFailureCapture), any())
 
-        doNothing().`when`(
-            mockFirestoreIngredientRepository).search(
-                any(),
-                capture(onSuccessCollectionCapture),
-                capture(onFailureCapture),
-                any()
+    doNothing()
+        .`when`(mockOpenFoodFactsIngredientRepository)
+        .get(any(), capture(onSuccessSingleCapture), capture(onFailureCapture))
 
-        )
-        doNothing().`when`(
-            mockOpenFoodFactsIngredientRepository).get(
-                any(),
-                capture(onSuccessSingleCapture),
-                capture(onFailureCapture)
+    doNothing()
+        .`when`(mockOpenFoodFactsIngredientRepository)
+        .search(any(), capture(onSuccessCollectionCapture), capture(onFailureCapture), any())
 
-        )
-        doNothing().`when`(
-            mockOpenFoodFactsIngredientRepository).search(
-                any(),
-                capture(onSuccessCollectionCapture),
-                capture(onFailureCapture),
-                any()
+    aggregatorIngredientRepository =
+        AggregatorIngredientRepository(
+            mockFirestoreIngredientRepository, mockOpenFoodFactsIngredientRepository)
+  }
 
-        )
+  @Test
+  fun testGetReturnsRightIngredientWhenFoundInFirestore() {
+    var resultingIngredient: Ingredient? = null
+    var resultingException: Exception? = null
 
-        aggregatorIngredientRepository = AggregatorIngredientRepository(
-            mockFirestoreIngredientRepository,
-            mockOpenFoodFactsIngredientRepository
-        )
-    }
+    aggregatorIngredientRepository.get(
+        ingredient.barCode!!,
+        onSuccess = { resultingIngredient = it },
+        onFailure = { resultingException = it })
 
-    @Test
-    fun testGetReturnsRightIngredientWhenFoundInFirestore() {
-        var resultingIngredient: Ingredient? = null
-        var resultingException: Exception? = null
+    onSuccessSingleCapture.value.invoke(ingredient)
 
-        aggregatorIngredientRepository.get(
-            ingredient.barCode!!,
-            onSuccess = {
-                resultingIngredient = it
-            },
-            onFailure = {
-                resultingException = it
-            }
-        )
+    assertNotNull(resultingIngredient)
+    assertEquals(ingredient, resultingIngredient)
 
-        onSuccessSingleCapture.value.invoke(ingredient)
+    assertNull(resultingException)
+  }
 
-        assertNotNull(resultingIngredient)
-        assertEquals(ingredient, resultingIngredient)
+  @Test
+  fun testGetThrowsErrorOnFailureUsingFirestoreRepo() {
+    var resultingIngredient: Ingredient? = null
+    var resultingException: Exception? = null
 
-        assertNull(resultingException)
-    }
+    aggregatorIngredientRepository.get(
+        ingredient.barCode!!,
+        onSuccess = { resultingIngredient = it },
+        onFailure = { resultingException = it })
 
-    @Test
-    fun testGetThrowsErrorOnFailureUsingFirestoreRepo() {
-        var resultingIngredient: Ingredient? = null
-        var resultingException: Exception? = null
+    onFailureCapture.value.invoke(Exception("Error"))
 
-        aggregatorIngredientRepository.get(
-            ingredient.barCode!!,
-            onSuccess = {
-                resultingIngredient = it
-            },
-            onFailure = {
-                resultingException = it
-            }
-        )
+    assertNull(resultingIngredient)
 
-        onFailureCapture.value.invoke(Exception("Error"))
+    assertNotNull(resultingException)
+  }
 
-        assertNull(resultingIngredient)
+  @Test
+  fun testGetFindsFromOpenFoodFactsRepoWhenNotFoundInFirestore() {
+    var resultingIngredient: Ingredient? = null
+    var resultingException: Exception? = null
 
-        assertNotNull(resultingException)
-    }
+    aggregatorIngredientRepository.get(
+        ingredient.barCode!!,
+        onSuccess = { resultingIngredient = it },
+        onFailure = { resultingException = it })
 
-    @Test
-    fun testGetFindsFromOpenFoodFactsRepoWhenNotFoundInFirestore() {
-        var resultingIngredient: Ingredient? = null
-        var resultingException: Exception? = null
+    onSuccessSingleCapture.value.invoke(null)
 
-        aggregatorIngredientRepository.get(
-            ingredient.barCode!!,
-            onSuccess = {
-                resultingIngredient = it
-            },
-            onFailure = {
-                resultingException = it
-            }
-        )
+    onSuccessSingleCapture.value.invoke(ingredient)
 
-        onSuccessSingleCapture.value.invoke(null)
+    verify(mockFirestoreIngredientRepository)
+        .add(any<Ingredient>(), onSuccess = any(), onFailure = any())
 
-        onSuccessSingleCapture.value.invoke(ingredient)
+    assertNull(resultingException)
+    assertNotNull(resultingIngredient)
+    assertEquals(ingredient, resultingIngredient)
+  }
 
-        verify(mockFirestoreIngredientRepository).add(
-            any<Ingredient>(),
-            onSuccess = any(),
-            onFailure = any()
-        )
+  @Test
+  fun testGetCallsOnFailureUsingOpenFoodFactsRepo() {
+    var resultingIngredient: Ingredient? = null
+    var resultingException: Exception? = null
 
-        assertNull(resultingException)
-        assertNotNull(resultingIngredient)
-        assertEquals(ingredient, resultingIngredient)
-    }
+    aggregatorIngredientRepository.get(
+        ingredient.barCode!!,
+        onSuccess = { resultingIngredient = it },
+        onFailure = { resultingException = it })
 
-    @Test
-    fun testGetCallsOnFailureUsingOpenFoodFactsRepo() {
-        var resultingIngredient: Ingredient? = null
-        var resultingException: Exception? = null
+    onSuccessSingleCapture.value.invoke(null)
 
-        aggregatorIngredientRepository.get(
-            ingredient.barCode!!,
-            onSuccess = {
-                resultingIngredient = it
-            },
-            onFailure = {
-                resultingException = it
-            }
-        )
+    onFailureCapture.value.invoke(Exception("Error"))
 
-        onSuccessSingleCapture.value.invoke(null)
+    assertNotNull(resultingException)
+    assertNull(resultingIngredient)
+  }
 
-        onFailureCapture.value.invoke(Exception("Error"))
+  @Test
+  fun testSearchReturnsRightIngredientWhenFoundInFirestore() {
+    var resultingIngredient: Ingredient? = null
+    var resultingException: Exception? = null
 
-        assertNotNull(resultingException)
-        assertNull(resultingIngredient)
-    }
+    aggregatorIngredientRepository.search(
+        ingredient.name,
+        onSuccess = { resultingIngredient = it[0] },
+        onFailure = { resultingException = it },
+        count = 1)
 
-    @Test
-    fun testSearchReturnsRightIngredientWhenFoundInFirestore() {
-        var resultingIngredient: Ingredient? = null
-        var resultingException: Exception? = null
+    onSuccessCollectionCapture.value.invoke(listOf(ingredient))
 
-        aggregatorIngredientRepository.search(
-            ingredient.name,
-            onSuccess = {
-                resultingIngredient = it[0]
-            },
-            onFailure = {
-                resultingException = it
-            },
-            count = 1
-        )
+    assertNotNull(resultingIngredient)
+    assertEquals(ingredient, resultingIngredient)
 
-        onSuccessCollectionCapture.value.invoke(listOf(ingredient))
+    assertNull(resultingException)
+  }
 
-        assertNotNull(resultingIngredient)
-        assertEquals(ingredient, resultingIngredient)
+  @Test
+  fun testSearchThrowsErrorOnFailureUsingFirestoreRepo() {
+    var resultingIngredient: Ingredient? = null
+    var resultingException: Exception? = null
 
-        assertNull(resultingException)
-    }
+    aggregatorIngredientRepository.search(
+        ingredient.name,
+        onSuccess = { resultingIngredient = it[0] },
+        onFailure = { resultingException = it },
+        count = 1)
 
-    @Test
-    fun testSearchThrowsErrorOnFailureUsingFirestoreRepo() {
-        var resultingIngredient: Ingredient? = null
-        var resultingException: Exception? = null
+    onFailureCapture.value.invoke(Exception("Error"))
 
-        aggregatorIngredientRepository.search(
-            ingredient.name,
-            onSuccess = {
-                resultingIngredient = it[0]
-            },
-            onFailure = {
-                resultingException = it
-            },
-            count = 1
-        )
+    assertNull(resultingIngredient)
 
-        onFailureCapture.value.invoke(Exception("Error"))
+    assertNotNull(resultingException)
+  }
 
-        assertNull(resultingIngredient)
+  @Test
+  fun testSearchFindsFromOpenFoodFactsRepoWhenNotFoundInFirestore() {
+    var resultingIngredient: Ingredient? = null
+    var resultingException: Exception? = null
 
-        assertNotNull(resultingException)
-    }
+    aggregatorIngredientRepository.search(
+        ingredient.name,
+        onSuccess = { resultingIngredient = it[0] },
+        onFailure = { resultingException = it },
+        count = 1)
 
-    @Test
-    fun testSearchFindsFromOpenFoodFactsRepoWhenNotFoundInFirestore() {
-        var resultingIngredient: Ingredient? = null
-        var resultingException: Exception? = null
+    onSuccessCollectionCapture.value.invoke(emptyList())
 
-        aggregatorIngredientRepository.search(
-            ingredient.name,
-            onSuccess = {
-                resultingIngredient = it[0]
-            },
-            onFailure = {
-                resultingException = it
-            },
-            count = 1
-        )
+    onSuccessCollectionCapture.value.invoke(listOf(ingredient))
 
-        onSuccessCollectionCapture.value.invoke(emptyList())
+    verify(mockFirestoreIngredientRepository)
+        .add(any<List<Ingredient>>(), onSuccess = any(), onFailure = any())
 
-        onSuccessCollectionCapture.value.invoke(listOf(ingredient))
+    assertNull(resultingException)
+    assertNotNull(resultingIngredient)
+    assertEquals(ingredient, resultingIngredient)
+  }
 
-        verify(mockFirestoreIngredientRepository).add(
-            any<List<Ingredient>>(),
-            onSuccess = any(),
-            onFailure = any()
-        )
+  @Test
+  fun testSearchCallsOnFailureUsingOpenFoodFactsRepo() {
+    var resultingIngredient: Ingredient? = null
+    var resultingException: Exception? = null
 
-        assertNull(resultingException)
-        assertNotNull(resultingIngredient)
-        assertEquals(ingredient, resultingIngredient)
-    }
+    aggregatorIngredientRepository.search(
+        ingredient.name,
+        onSuccess = { resultingIngredient = it[0] },
+        onFailure = { resultingException = it },
+        count = 1)
 
-    @Test
-    fun testSearchCallsOnFailureUsingOpenFoodFactsRepo() {
-        var resultingIngredient: Ingredient? = null
-        var resultingException: Exception? = null
+    onFailureCapture.value.invoke(Exception("Error"))
 
-        aggregatorIngredientRepository.search(
-            ingredient.name,
-            onSuccess = {
-                resultingIngredient = it[0]
-            },
-            onFailure = {
-                resultingException = it
-            },
-            count = 1
-        )
-
-        onFailureCapture.value.invoke(Exception("Error"))
-
-        assertNotNull(resultingException)
-        assertNull(resultingIngredient)
-    }
+    assertNotNull(resultingException)
+    assertNull(resultingIngredient)
+  }
 }
