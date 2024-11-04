@@ -5,6 +5,14 @@ class AggregatorIngredientRepository(
     private val openFoodFactsIngredientRepository: OpenFoodFactsIngredientRepository
 ) : IngredientRepository {
 
+  /**
+   * Get an ingredient by barcode. If it isn't found in Firestore, it will be searched in
+   * OpenFoodFacts.
+   *
+   * @param barCode barcode of the ingredient
+   * @param onSuccess callback with the ingredient
+   * @param onFailure callback with an exception
+   */
   override fun get(
       barCode: Long,
       onSuccess: (Ingredient?) -> Unit,
@@ -33,6 +41,16 @@ class AggregatorIngredientRepository(
         onFailure = onFailure)
   }
 
+  /**
+   * Search for ingredients by name. If they aren't found in Firestore, they will be searched in
+   * OpenFoodFacts. If the count isn't reached when searching Firestore, the remaining ingredients
+   * will be searched in OpenFoodFacts.
+   *
+   * @param name name of the ingredient
+   * @param onSuccess callback with the list of ingredients
+   * @param onFailure callback with an exception
+   * @param count number of ingredients to return
+   */
   override fun search(
       name: String,
       onSuccess: (List<Ingredient>) -> Unit,

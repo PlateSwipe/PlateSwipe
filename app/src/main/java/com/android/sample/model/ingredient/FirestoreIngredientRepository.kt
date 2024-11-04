@@ -4,6 +4,11 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
 
+/**
+ * Firestore implementation of [IngredientRepository].
+ *
+ * @param db instance of [FirebaseFirestore]
+ */
 class FirestoreIngredientRepository(private val db: FirebaseFirestore) : IngredientRepository {
   private val collectionPath = "ingredients"
 
@@ -20,6 +25,13 @@ class FirestoreIngredientRepository(private val db: FirebaseFirestore) : Ingredi
     return Ingredient(uid = documentSnapshot.id, barCode = barCode, name = name, brands = brands)
   }
 
+  /**
+   * Get an ingredient by barcode.
+   *
+   * @param barCode barcode of the ingredient
+   * @param onSuccess callback with the ingredient
+   * @param onFailure callback with an exception
+   */
   override fun get(
       barCode: Long,
       onSuccess: (Ingredient?) -> Unit,
@@ -37,6 +49,14 @@ class FirestoreIngredientRepository(private val db: FirebaseFirestore) : Ingredi
         count = 1)
   }
 
+  /**
+   * Search for ingredients by name.
+   *
+   * @param name name of the ingredient
+   * @param onSuccess callback with the list of ingredients
+   * @param onFailure callback with an exception
+   * @param count number of ingredients to return
+   */
   override fun search(
       name: String,
       onSuccess: (List<Ingredient>) -> Unit,
@@ -46,6 +66,14 @@ class FirestoreIngredientRepository(private val db: FirebaseFirestore) : Ingredi
     searchFiltered(Filter.equalTo("name", name), onSuccess, onFailure, count)
   }
 
+  /**
+   * Search for ingredients by filter.
+   *
+   * @param filter filter to apply
+   * @param onSuccess callback with the list of ingredients
+   * @param onFailure callback with an exception
+   * @param count number of ingredients to return
+   */
   fun searchFiltered(
       filter: Filter,
       onSuccess: (List<Ingredient>) -> Unit,
@@ -71,6 +99,13 @@ class FirestoreIngredientRepository(private val db: FirebaseFirestore) : Ingredi
     }
   }
 
+  /**
+   * Add an ingredient. If the ingredient has a uid, it will be updated.
+   *
+   * @param ingredient ingredient to add
+   * @param onSuccess callback when the ingredient is added
+   * @param onFailure callback with an exception
+   */
   fun add(ingredient: Ingredient, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     var addedIngredient = ingredient
 
@@ -90,6 +125,13 @@ class FirestoreIngredientRepository(private val db: FirebaseFirestore) : Ingredi
         }
   }
 
+  /**
+   * Add a list of ingredients. If the ingredients exist, they will be updated.
+   *
+   * @param ingredient list of ingredients to add
+   * @param onSuccess callback when the ingredients are added
+   * @param onFailure callback with an exception
+   */
   fun add(ingredient: List<Ingredient>, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     ingredient.forEach { i -> add(i, onSuccess, onFailure) }
   }
