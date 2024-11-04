@@ -38,9 +38,8 @@ class IngredientViewModel(private val repository: IngredientRepository) : ViewMo
             return IngredientViewModel(
                 AggregatorIngredientRepository(
                     FirestoreIngredientRepository(FirebaseFirestore.getInstance()),
-                    OpenFoodFactsIngredientRepository(OkHttpClient())
-                )
-            ) as T
+                    OpenFoodFactsIngredientRepository(OkHttpClient())))
+                as T
           }
         }
   }
