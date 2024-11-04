@@ -23,19 +23,21 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
+import org.mockito.kotlin.never
+import org.mockito.kotlin.verify
 
 @RunWith(AndroidJUnit4::class)
 class SignInTest : TestCase() {
   @get:Rule val composeTestRule = createComposeRule()
-  private lateinit var navigationActions: NavigationActions
+  private lateinit var mockNavigationActions: NavigationActions
 
   @Before
   fun setUp() {
-    navigationActions = mock(NavigationActions::class.java)
-    `when`(navigationActions.navigateTo(Screen.SWIPE)).then {}
+    mockNavigationActions = mock(NavigationActions::class.java)
+    `when`(mockNavigationActions.navigateTo(Screen.SWIPE)).then {}
     Intents.init()
     composeTestRule.setContent {
-      SignInScreen(navigationActions) // Set up the SignInScreen directly
+      SignInScreen(mockNavigationActions) // Set up the SignInScreen directly
     }
   }
 
@@ -72,7 +74,7 @@ class SignInTest : TestCase() {
 
   @OptIn(ExperimentalCoroutinesApi::class)
   @Test
-  fun googleSignInReturnsValidActivityResult() = runTest {
+  fun googleSignInReturnsInValidResult() = runTest {
     // Perform click on Google Sign-In button
     composeTestRule.onNodeWithTag("loginButton", useUnmergedTree = true).assertIsEnabled()
 
@@ -82,6 +84,10 @@ class SignInTest : TestCase() {
     composeTestRule.waitForIdle()
 
     advanceUntilIdle()
+
+    composeTestRule.onNodeWithTag("swipeText", useUnmergedTree = true).performClick()
+
+    verify(mockNavigationActions, never()).navigateTo(Screen.OVERVIEW_RECIPE)
   }
 
   @Test

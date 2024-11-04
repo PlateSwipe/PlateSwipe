@@ -175,6 +175,7 @@ fun SignInScreen(navigationActions: NavigationActions) {
 
             SignInContent(
                 onSignInClick = {
+                  // force runing on main thread
                   coroutineScope.launch(Dispatchers.Main) {
                     googleSignInRequest(
                         onAuthComplete = { result ->
@@ -291,7 +292,7 @@ private fun RecipesAnimation() {
  * @param testTag: Test tag for the image
  */
 @Composable
-fun AnimatedImage(
+private fun AnimatedImage(
     imageRes: Int,
     initialOffsetX: Dp,
     initialOffsetY: Dp,
@@ -472,23 +473,24 @@ private suspend fun googleSignInRequest(
  * @param onAuthComplete: Callback function when authentication is successful
  * @param onAuthError: Callback function when authentication fails
  */
-suspend fun handleSignIn(
+private suspend fun handleSignIn(
     credentialManager: CredentialManager,
     request: GetCredentialRequest,
     activityContext: Context,
     onAuthComplete: (AuthResult) -> Unit,
     onAuthError: (Exception) -> Unit
 ) {
-  val result =
-      credentialManager.getCredential(
-          request = request,
-          context = activityContext,
-      )
-  when (val credential = result.credential) {
-    // Passkey credential
-    is CustomCredential -> {
-      if (credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
-        try {
+  try {
+    val result =
+        credentialManager.getCredential(
+            request = request,
+            context = activityContext,
+        )
+    when (val credential = result.credential) {
+      // Passkey credential
+      is CustomCredential -> {
+        if (credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
+
           // Use googleIdTokenCredential and extract id to validate and
           // authenticate on your server.
           val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
@@ -500,11 +502,15 @@ suspend fun handleSignIn(
           val authResult =
               FirebaseAuth.getInstance().signInWithCredential(firebaseCredential).await()
           onAuthComplete(authResult)
-        } catch (e: GoogleIdTokenParsingException) {
-          onAuthError(e)
+        } else {
+          onAuthError(Exception("Invalid credential type"))
         }
       }
     }
+  } catch (e: GoogleIdTokenParsingException) {
+    onAuthError(e)
+  } catch (e: Exception) {
+    onAuthError(e)
   }
 }
 
