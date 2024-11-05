@@ -1,8 +1,6 @@
 package com.android.sample.camera
 
 import android.Manifest
-import androidx.camera.core.ImageCapture
-import androidx.camera.core.ImageProxy
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
