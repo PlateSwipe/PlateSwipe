@@ -53,6 +53,8 @@ import com.android.sample.resources.C.Tag.IMAGE_ROUND_CORNER
 import com.android.sample.resources.C.Tag.INITIAL_NUMBER_VALUE_PER_RECETTE
 import com.android.sample.resources.C.Tag.LOADING
 import com.android.sample.resources.C.Tag.OVERVIEW_CHECKBOX_SIZE
+import com.android.sample.resources.C.Tag.OVERVIEW_COUNTER_TEXT_SIZE
+import com.android.sample.resources.C.Tag.OVERVIEW_MAX_COUNTER_VALUE
 import com.android.sample.resources.C.Tag.OVERVIEW_MIN_COUNTER_VALUE
 import com.android.sample.resources.C.Tag.OVERVIEW_RECIPE_STAR_SIZE
 import com.android.sample.resources.C.Tag.OVERVIEW_TIME_DISPLAY_RATE
@@ -373,11 +375,13 @@ private fun Counter(servingsCount: Int, onCounterChange: (Int) -> Unit) {
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.background,
             textAlign = TextAlign.Center,
-            modifier = Modifier.testTag("numberServings").width(20.dp))
+            modifier = Modifier.testTag("numberServings").width(OVERVIEW_COUNTER_TEXT_SIZE.dp))
 
         // + button
         Button(
-            onClick = { onCounterChange(servingsCount + 1) },
+            onClick = {
+              if (servingsCount < OVERVIEW_MAX_COUNTER_VALUE) onCounterChange(servingsCount + 1)
+            },
             colors =
                 ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.onBackground,
@@ -419,7 +423,7 @@ private fun extractAndDoubleFirstInt(measurement: String, servingsCount: Int): S
  */
 @Composable
 private fun IngredientsList(currentRecipe: Recipe, servingsCount: Int) {
-  Column() {
+  Column {
     currentRecipe.ingredientsAndMeasurements.forEach { (ingredient, measurement) ->
       var ticked by remember { mutableStateOf(false) }
       val modifiedMeasurement = extractAndDoubleFirstInt(measurement, servingsCount)
