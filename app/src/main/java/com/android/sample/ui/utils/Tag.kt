@@ -8,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.sample.ui.theme.tagBackground
@@ -19,15 +20,20 @@ import com.android.sample.ui.theme.tagBackground
  */
 @Composable
 fun Tag(tag: String) {
-  Box(
-      modifier =
-          Modifier.background(
-                  color = tagBackground,
-                  shape = RoundedCornerShape(16.dp)) // Smooth rounded corners
-              .padding(horizontal = 12.dp, vertical = 4.dp) // Padding for inside spacing
-      ) {
-        Text(
-            text = tag, fontSize = 14.sp, color = Color.White // Text color
-            )
-      }
+  if (tag != "") {
+    Box(
+        modifier =
+            Modifier.background(
+                    color = tagBackground,
+                    shape = RoundedCornerShape(16.dp)) // Smooth rounded corners
+                .padding(horizontal = 12.dp, vertical = 4.dp) // Padding for inside spacing
+        ) {
+          Text(
+              modifier = Modifier.testTag("TagTestTag"),
+              text = tag,
+              fontSize = 14.sp,
+              color = Color.White // Text color
+              )
+        }
+  }
 }
