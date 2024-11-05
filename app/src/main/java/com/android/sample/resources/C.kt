@@ -6,6 +6,10 @@ object C {
 
     const val main_screen_container = "main_screen_container"
 
+    // General
+    const val LOADING = "Loading..."
+    const val PADDING = 16
+
     // SwipePage
     const val END_ANIMATION = 1500f
     const val FILTER_ICON_DESCRIPTION = "filterIcon"
@@ -13,8 +17,6 @@ object C {
     const val PRICE_RANGE_INPUT_DESCRIPTION = "Price Range"
     const val DIFFICULTY_INPUT_DESCRIPTION = "Difficulty"
     const val CATEGORY_INPUT_DESCRIPTION = "Category"
-
-    const val LOADING = "Loading..."
 
     // Filter
     const val MIN_SHOULD_NOT_BE_GREATER_THAN_MAX = "min should not be greater than max"
@@ -99,5 +101,15 @@ object C {
     // CreateRecipeViewModel
     const val RECIPE_PUBLISHED_SUCCESS_MESSAGE = "Recipe published successfully!"
     const val RECIPE_PUBLISH_ERROR_MESSAGE = "Failed to publish recipe: %1\$s"
+
+    // RecipeOverview
+    const val INITIAL_NUMBER_VALUE_PER_RECETTE = 1
+    const val IMAGE_ROUND_CORNER = 10
+    const val COUNTER_ROUND_CORNER = 25
+    const val OVERVIEW_RECIPE_STAR_SIZE = 24
+    const val COUNTER_MIN_MAX_SIZE = 30
+    const val OVERVIEW_TIME_DISPLAY_RATE = 1f / 15f
+    const val OVERVIEW_MIN_COUNTER_VALUE = 1
+    const val OVERVIEW_CHECKBOX_SIZE = 15
   }
 }

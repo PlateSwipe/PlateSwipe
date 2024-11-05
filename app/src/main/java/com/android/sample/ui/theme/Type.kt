@@ -40,6 +40,13 @@ val Typography =
                 fontSize = 20.sp,
                 lineHeight = 16.sp,
                 letterSpacing = 0.sp),
+        titleSmall =
+            TextStyle(
+                fontFamily = Montserrat,
+                fontWeight = FontWeight.Bold,
+                fontSize = 13.sp,
+                lineHeight = 16.sp,
+                letterSpacing = 0.5.sp),
         labelSmall =
             TextStyle(
                 fontFamily = Montserrat,

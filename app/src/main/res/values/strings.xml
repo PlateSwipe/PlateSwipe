@@ -14,6 +14,14 @@
     <string name="account_screen_default_user_name">User Name</string>
     <string name="account_screen_liked_recipe_button_title">Liked Recipes</string>
     <string name="account_screen_created_recipe_button_title">Created Recipes</string>
+    <string name="prep_time">Prep time</string>
+    <string name="cook_time">Cook time</string>
+    <string name="total_time">Total time</string>
+    <string name="servings">Servings</string>
+    <string name="ingredients">Ingredients</string>
+    <string name="instructions">Instructions</string>
+    <string name="counter_min">-</string>
+    <string name="counter_max">+</string>
 
     <dimen name="paddingBasic">16dp</dimen>
     <dimen name="star_size">150dp</dimen>
