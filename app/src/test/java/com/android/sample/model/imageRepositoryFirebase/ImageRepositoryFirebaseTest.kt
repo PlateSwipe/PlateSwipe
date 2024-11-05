@@ -39,9 +39,11 @@ class ImageRepositoryFirebase {
   @Captor
   private lateinit var onCompleteUploadTaskListenerCaptor:
       ArgumentCaptor<OnCompleteListener<UploadTask.TaskSnapshot>>
+
   @Captor
   private lateinit var onCompleteFileDownloadTaskListenerCaptor:
       ArgumentCaptor<OnCompleteListener<FileDownloadTask.TaskSnapshot>>
+
   @Captor
   private lateinit var onCompleteVoidListenerCaptor: ArgumentCaptor<OnCompleteListener<Void>>
 

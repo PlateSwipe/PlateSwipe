@@ -79,6 +79,7 @@ object C {
 
     // FirestoreRecipeRepository
     const val FIRESTORE_COLLECTION_NAME = "recipes"
+
     // Values for storage
     const val FIRESTORE_RECIPE_NAME = "name"
     const val FIRESTORE_RECIPE_CATEGORY = "category"
@@ -143,11 +144,26 @@ object C {
       const val INGREDIENT_DISPLAY_TEXT_BUTTON_PADDING_V = 4
       const val INGREDIENT_DISPLAY_TEXT_BUTTON_PADDING_H = 8
     }
+
+    object CameraTakePhotoScreen {
+      const val BUTTON_SIZE = 0.1f
+      const val BUTTON_PADDING = 0.05f
+    }
   }
 
   object TestTag {
+
     object CameraScanCodeBarScreen {
       const val BARCODE_FRAME = "Barcode frame"
+    }
+
+    object CameraTakePhotoScreen {
+      const val BUTTON_BOX = "Take photo button box"
+      const val BUTTON = "Take photo button"
+    }
+
+    object CameraPreview {
+      const val PREVIEW = "camera_preview"
     }
   }
 }
