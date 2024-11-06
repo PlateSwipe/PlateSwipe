@@ -1,5 +1,8 @@
 package com.android.sample.model.ingredient
 
+import android.util.Log
+import com.android.sample.resources.C
+
 class AggregatorIngredientRepository(
     private val firestoreIngredientRepository: FirestoreIngredientRepository,
     private val openFoodFactsIngredientRepository: OpenFoodFactsIngredientRepository
@@ -30,9 +33,15 @@ class AggregatorIngredientRepository(
                   if (ingredientOpenFoodFacts != null) {
                     onSuccess(ingredientOpenFoodFacts)
                     firestoreIngredientRepository.add(
-                        ingredientOpenFoodFacts, onSuccess = {}, onFailure = onFailure)
+                        ingredientOpenFoodFacts,
+                        onSuccess = {
+                          Log.i(
+                              C.Tag.AGGREGATOR_TAG_ON_INGREDIENT_ADDED,
+                              ingredientOpenFoodFacts.name)
+                        },
+                        onFailure = onFailure)
                   } else {
-                    onFailure(Exception("Ingredient not found"))
+                    onFailure(Exception(C.Tag.INGREDIENT_NOT_FOUND_MESSAGE))
                   }
                 },
                 onFailure)
@@ -68,7 +77,13 @@ class AggregatorIngredientRepository(
                 onSuccess = { ingredientsOpenFoodFacts ->
                   val ingredients = ingredientsFirestore + ingredientsOpenFoodFacts
                   firestoreIngredientRepository.add(
-                      ingredientsOpenFoodFacts, onSuccess = {}, onFailure = onFailure)
+                      ingredientsOpenFoodFacts,
+                      onSuccess = {
+                        Log.i(
+                            C.Tag.AGGREGATOR_TAG_ON_INGREDIENT_ADDED,
+                            ingredientsOpenFoodFacts.toString())
+                      },
+                      onFailure = onFailure)
                   onSuccess(ingredients)
                 },
                 onFailure = onFailure,

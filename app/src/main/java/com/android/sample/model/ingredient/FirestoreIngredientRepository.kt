@@ -1,5 +1,6 @@
 package com.android.sample.model.ingredient
 
+import com.android.sample.resources.C
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
@@ -10,16 +11,15 @@ import com.google.firebase.firestore.FirebaseFirestore
  * @param db instance of [FirebaseFirestore]
  */
 class FirestoreIngredientRepository(private val db: FirebaseFirestore) : IngredientRepository {
-  private val collectionPath = "ingredients"
 
   private fun documentSnapshotToIngredient(documentSnapshot: DocumentSnapshot): Ingredient {
 
-    val barCode = documentSnapshot.getLong("barCode")
-    val name = documentSnapshot.getString("name")
-    val brands = documentSnapshot.getString("brands")
+    val barCode = documentSnapshot.getLong(C.Tag.FIRESTORE_INGREDIENT_BARCODE)
+    val name = documentSnapshot.getString(C.Tag.FIRESTORE_INGREDIENT_NAME)
+    val brands = documentSnapshot.getString(C.Tag.FIRESTORE_INGREDIENT_BRANDS)
 
     if (name.isNullOrEmpty()) {
-      throw Exception("Name is required")
+      throw Exception(C.Tag.INGREDIENT_NAME_NOT_PROVIDED)
     }
 
     return Ingredient(uid = documentSnapshot.id, barCode = barCode, name = name, brands = brands)
@@ -80,23 +80,26 @@ class FirestoreIngredientRepository(private val db: FirebaseFirestore) : Ingredi
       onFailure: (Exception) -> Unit,
       count: Int = 20
   ) {
-    db.collection(collectionPath).where(filter).limit(count.toLong()).get().addOnCompleteListener {
-        result ->
-      if (result.isSuccessful) {
-        val ingredients =
-            result.result!!.documents.mapNotNull { d ->
-              try {
-                documentSnapshotToIngredient(d)
-              } catch (e: Exception) {
-                onFailure(e)
-                return@addOnCompleteListener
-              }
-            }
-        onSuccess(ingredients)
-      } else {
-        onFailure(result.exception!!)
-      }
-    }
+    db.collection(C.Tag.FIRESTORE_INGREDIENT_COLLECTION_NAME)
+        .where(filter)
+        .limit(count.toLong())
+        .get()
+        .addOnCompleteListener { result ->
+          if (result.isSuccessful) {
+            val ingredients =
+                result.result!!.documents.mapNotNull { d ->
+                  try {
+                    documentSnapshotToIngredient(d)
+                  } catch (e: Exception) {
+                    onFailure(e)
+                    return@addOnCompleteListener
+                  }
+                }
+            onSuccess(ingredients)
+          } else {
+            onFailure(result.exception!!)
+          }
+        }
   }
 
   /**
@@ -110,10 +113,12 @@ class FirestoreIngredientRepository(private val db: FirebaseFirestore) : Ingredi
     var addedIngredient = ingredient
 
     if (ingredient.uid.isNullOrEmpty()) {
-      addedIngredient = ingredient.copy(uid = db.collection(collectionPath).document().id)
+      addedIngredient =
+          ingredient.copy(
+              uid = db.collection(C.Tag.FIRESTORE_INGREDIENT_COLLECTION_NAME).document().id)
     }
 
-    db.collection(collectionPath)
+    db.collection(C.Tag.FIRESTORE_INGREDIENT_COLLECTION_NAME)
         .document(addedIngredient.uid!!)
         .set(addedIngredient)
         .addOnCompleteListener { result ->
