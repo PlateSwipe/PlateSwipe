@@ -125,9 +125,9 @@ fun AddInstructionStepContent(
                             .heightIn(min = 200.dp)
                             .padding(vertical = 8.dp)
                             .testTag("InstructionInput"),
-                    isError = showError && stepDescription.isEmpty())
+                    isError = verifyStepDescription(showError, stepDescription))
 
-                if (showError && stepDescription.isEmpty()) {
+                if (verifyStepDescription(showError, stepDescription)) {
                   Text(
                       text = stringResource(R.string.error_message_empty_instruction),
                       style = Typography.bodySmall,
@@ -164,4 +164,8 @@ fun AddInstructionStepContent(
               style = Typography.bodyMedium.copy(fontWeight = FontWeight.Bold))
         }
       }
+}
+
+fun verifyStepDescription(showError: Boolean, stepDescription: String): Boolean {
+  return showError && stepDescription.isNotEmpty()
 }
