@@ -46,5 +46,9 @@
     <string name="add_ingredient">Add Ingredients</string>
     <string name="no_ingredients">No Ingredients</string>
 
+    //RecipeInstructionsScreen
+    <string name="add_instructions">Add Instructions</string>
+    <string name="describe_instructions">Describe each step of how to prepare your dish.</string>
+
 
 </resources>
