@@ -19,7 +19,7 @@ jobs:
   ci:
     name: CI-PlateSwipe
     # Execute the CI on the course's runners
-    runs-on: ubuntu-latest
+    runs-on: macos-latest # Apparently MacOS is faster than Ubuntu for Android builds
 
     env:
       app_name: PlateSwipe
@@ -51,11 +51,27 @@ jobs:
           distribution: "temurin"
           java-version: "17"
 
+      # Caching is a very useful part of a CI, as a workflow is executed in a clean environement every time,
+      # this means that one would need to re-download and re-process gradle files for every run. Which is very time consuming.
+      #
+      # To avoid that, we cache the the gradle folder to reuse it later.
+      - name: Retrieve gradle cache
+        uses: actions/cache@v4
+        with:
+          path: |
+          # path to files to cache
+            ~/.gradle/cache
+            ~/.gradle/wrapper
+          # explicit key for cache entry
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          # used for restoring stale cache if no cache hit occurred for key
+          restore-keys: ${{ runner.os }}-gradle
+
       # Cache Gradle files to speed up build process
       - name: Gradle cache
         uses: gradle/actions/setup-gradle@v3
 
-      # Load google-services.json and local.properties from the secrets
+        # Load google-services.json and local.properties from the secrets
       - name: Decode secrets
         env:
           GOOGLE_SERVICES: ${{ secrets.GOOGLE_SERVICES }}
@@ -63,6 +79,27 @@ jobs:
         run: |
           echo "$GOOGLE_SERVICES" | base64 --decode > ./app/google-services.json
           echo "$LOCAL_PROPERTIES" | base64 --decode > ./local.properties
+
+      - name: AVD cache
+        uses: actions/cache@v4
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-34
+
+      - name: create AVD and generate snapshot for caching
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back virtualscene
+          disable-animations: false
+          script: echo "Generated AVD snapshot for caching."
 
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
@@ -87,7 +124,7 @@ jobs:
           target: google_apis
           arch: x86_64
           avd-name: github
-          force-avd-creation: true
+          force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back virtualscene
           disable-animations: true
           script: ./gradlew connectedCheck --parallel --build-cache
