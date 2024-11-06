@@ -84,7 +84,7 @@ jobs:
           arch: x86_64
           avd-name: github
           force-avd-creation: true
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back virtualscene
           disable-animations: true
           script: ./gradlew connectedCheck --parallel --build-cache
 
