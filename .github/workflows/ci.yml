@@ -54,17 +54,17 @@ jobs:
       # Caching is a very useful part of a CI, as a workflow is executed in a clean environement every time,
       # this means that one would need to re-download and re-process gradle files for every run. Which is very time consuming.
       #
-      # To avoid that, we cache the the gradle folder to reuse it later.
+      # To avoid that, we cache the the gradle folder to reuse it later.$
+      # path : path to files to cache
+      # key : explicit key for cache entry
+      # restore-keys : used for restoring stale cache if no cache hit occurred for key
       - name: Retrieve gradle cache
         uses: actions/cache@v4
         with:
           path: |
-          # path to files to cache
             ~/.gradle/cache
             ~/.gradle/wrapper
-          # explicit key for cache entry
           key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          # used for restoring stale cache if no cache hit occurred for key
           restore-keys: ${{ runner.os }}-gradle
 
       # Cache Gradle files to speed up build process
