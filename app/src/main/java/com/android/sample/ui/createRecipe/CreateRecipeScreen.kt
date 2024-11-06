@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -22,7 +23,7 @@ fun CreateRecipeScreen(
     navigationActions: NavigationActions,
     createRecipeViewModel: CreateRecipeViewModel
 ) {
-  var currentStep by remember { mutableStateOf(INITIAL_RECIPE_STEP) }
+  var currentStep by remember { mutableIntStateOf(INITIAL_RECIPE_STEP) }
 
   Scaffold(
       topBar = { MyAppBar(onBackClick = { navigationActions.goBack() }) },
