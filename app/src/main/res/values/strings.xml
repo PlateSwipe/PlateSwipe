@@ -41,4 +41,10 @@
     <string name="done_text">Done !</string>
     <string name="publish_recipe_button">Publish Recipe</string>
 
+    //RecipeIngredientScreen
+    <string name="list_ingredients">List the ingredients needed for your recipe. Add as many as you need.</string>
+    <string name="add_ingredient">Add Ingredients</string>
+    <string name="no_ingredients">No Ingredients</string>
+
+
 </resources>
