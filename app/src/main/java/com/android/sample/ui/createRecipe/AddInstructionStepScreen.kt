@@ -167,5 +167,5 @@ fun AddInstructionStepContent(
 }
 
 fun verifyStepDescription(showError: Boolean, stepDescription: String): Boolean {
-  return showError && stepDescription.isNotEmpty()
+  return showError && stepDescription.isEmpty()
 }
