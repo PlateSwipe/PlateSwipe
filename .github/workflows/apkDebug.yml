@@ -1,9 +1,12 @@
 name: Android APK Build
 
+# This workflow is triggered on push events to branches that start with 'release/'.
+
 on:
   push:
     branches:
       - 'release/**' # Only trigger on branches starting with 'release/'
+
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
