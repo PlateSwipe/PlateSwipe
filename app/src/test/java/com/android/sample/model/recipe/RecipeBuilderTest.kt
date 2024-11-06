@@ -98,4 +98,26 @@ class RecipeBuilderTest {
     assertEquals("Easy", recipe.difficulty)
     assertEquals("5.00", recipe.price)
   }
+
+  @Test
+  fun `test clear function successfully clears`() {
+    builder.setName("Salad")
+    builder.setInstructions("Mix ingredients")
+    builder.addIngredientAndMeasurement("Lettuce", "100g")
+    builder.setCategory("Vegetarian")
+    builder.setArea("French")
+    builder.setPictureID("http://example.com/image.jpg")
+    builder.setTime("15 mins")
+    builder.setDifficulty("Easy")
+    builder.setPrice("5.00")
+
+    val recipe = builder.build()
+    builder.clear()
+
+    try {
+      builder.build()
+    } catch (e: IllegalArgumentException) {
+      assertEquals("Recipe name cannot be blank", e.message)
+    }
+  }
 }

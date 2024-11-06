@@ -107,4 +107,18 @@ class RecipeBuilder {
         difficulty = difficulty,
         price = price)
   }
+
+  /** Clears all fields in the builder. */
+  fun clear() {
+    this.idMeal = ""
+    this.strMeal = ""
+    this.strCategory = null
+    this.strArea = null
+    this.strInstructions = ""
+    this.strMealThumbUrl = ""
+    this.ingredientsAndMeasurements.clear()
+    this.time = null
+    this.difficulty = null
+    this.price = null
+  }
 }
