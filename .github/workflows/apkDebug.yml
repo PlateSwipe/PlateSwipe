@@ -42,4 +42,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: PlateSwipe-app-debug
-          path: app/build/outputs/apk/debug/
+          path: app/build/outputs/apk/debug/{{ github.ref_name }}.apk
