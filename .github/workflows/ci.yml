@@ -67,6 +67,10 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
+        # Check formatting
+      - name: KTFmt Check
+        run: ./gradlew ktfmtCheck
+
       # This step runs gradle commands to build the application
       - name: Assemble
         run: ./gradlew assembleDebug lint --parallel --build-cache
