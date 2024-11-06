@@ -57,6 +57,8 @@ fun PlateSwipeApp() {
   val recipesViewModel: RecipesViewModel = viewModel(factory = RecipesViewModel.Factory)
 
   val userViewModel = UserViewModel.Factory.create(UserViewModel::class.java)
+  val createRecipeViewModel: CreateRecipeViewModel =
+      viewModel(factory = CreateRecipeViewModel.Factory)
 
   NavHost(navController = navController, startDestination = Route.AUTH) {
     navigation(
@@ -88,42 +90,25 @@ fun PlateSwipeApp() {
         route = Route.CREATE_RECIPE,
     ) {
       composable(Screen.CREATE_RECIPE) { backStackEntry ->
-        val parentEntry =
-            remember(backStackEntry) { navController.getBackStackEntry(Route.CREATE_RECIPE) }
-        val createRecipeViewModel: CreateRecipeViewModel =
-            viewModel(parentEntry, factory = CreateRecipeViewModel.Factory)
+        remember(backStackEntry) { navController.getBackStackEntry(Route.CREATE_RECIPE) }
 
         CreateRecipeScreen(
             navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
       }
-      composable(Screen.CREATE_RECIPE_INGREDIENTS) { backStackEntry ->
-        val parentEntry =
-            remember(backStackEntry) { navController.getBackStackEntry(Route.CREATE_RECIPE) }
-        val createRecipeViewModel: CreateRecipeViewModel = viewModel(parentEntry)
-
+      composable(Screen.CREATE_RECIPE_INGREDIENTS) {
         RecipeIngredientsScreen(
             navigationActions = navigationActions,
             createRecipeViewModel = createRecipeViewModel,
             currentStep = 1)
       }
-      composable(Screen.CREATE_RECIPE_INSTRUCTIONS) { backStackEntry ->
-        val parentEntry =
-            remember(backStackEntry) { navController.getBackStackEntry(Route.CREATE_RECIPE) }
-
+      composable(Screen.CREATE_RECIPE_INSTRUCTIONS) {
         RecipeInstructionsScreen(navigationActions = navigationActions, currentStep = 2)
       }
-      composable(Screen.CREATE_RECIPE_ADD_INSTRUCTION) { backStackEntry ->
-        val parentEntry =
-            remember(backStackEntry) { navController.getBackStackEntry(Route.CREATE_RECIPE) }
-        val createRecipeViewModel: CreateRecipeViewModel = viewModel(parentEntry)
-
+      composable(Screen.CREATE_RECIPE_ADD_INSTRUCTION) {
         AddInstructionStepScreen(
             navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
       }
-      composable(Screen.PUBLISH_CREATED_RECIPE) { backStackEntry ->
-        val parentEntry =
-            remember(backStackEntry) { navController.getBackStackEntry(Route.CREATE_RECIPE) }
-        val createRecipeViewModel: CreateRecipeViewModel = viewModel(parentEntry)
+      composable(Screen.PUBLISH_CREATED_RECIPE) {
         PublishRecipeScreen(
             navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
       }

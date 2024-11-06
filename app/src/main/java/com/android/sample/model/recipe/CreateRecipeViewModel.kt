@@ -73,7 +73,10 @@ class CreateRecipeViewModel(private val repository: FirestoreRecipesRepository) 
       val recipe = recipeBuilder.build()
       repository.addRecipe(
           recipe,
-          onSuccess = { _publishError.value = RECIPE_PUBLISHED_SUCCESS_MESSAGE },
+          onSuccess = {
+            _publishError.value = RECIPE_PUBLISHED_SUCCESS_MESSAGE
+            recipeBuilder.clear()
+          },
           onFailure = { exception ->
             _publishError.value = RECIPE_PUBLISH_ERROR_MESSAGE.format(exception.message)
           })
