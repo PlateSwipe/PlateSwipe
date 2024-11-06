@@ -19,7 +19,7 @@ jobs:
   ci:
     name: CI-PlateSwipe
     # Execute the CI on the course's runners
-    runs-on: macos-latest # Apparently MacOS is faster than Ubuntu for Android builds
+    runs-on: ubuntu-latest # Apparently MacOS is faster than Ubuntu for Android builds
 
     env:
       app_name: PlateSwipe
