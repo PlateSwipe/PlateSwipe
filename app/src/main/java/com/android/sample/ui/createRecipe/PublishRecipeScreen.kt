@@ -19,45 +19,49 @@ import androidx.compose.ui.unit.sp
 import com.android.sample.R
 import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.resources.C.Tag.CHEF_IMAGE_DESCRIPTION
-import com.android.sample.ui.navigation.BottomNavigationMenu
-import com.android.sample.ui.navigation.LIST_TOP_LEVEL_DESTINATIONS
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.Typography
-import com.android.sample.ui.topbar.MyAppBar
+import com.android.sample.ui.utils.PlateSwipeScaffold
 
 @Composable
 fun PublishRecipeScreen(
     navigationActions: NavigationActions,
     createRecipeViewModel: CreateRecipeViewModel,
-    modifier: Modifier = Modifier
 ) {
-  Scaffold(
-      topBar = { MyAppBar(onBackClick = { navigationActions.goBack() }, showBackButton = true) },
-      bottomBar = {
-        BottomNavigationMenu(
-            onTabSelect = { tab -> navigationActions.navigateTo(tab) },
-            tabList = LIST_TOP_LEVEL_DESTINATIONS,
-            selectedItem = navigationActions.currentRoute())
-      },
-      modifier = modifier.fillMaxSize()) { paddingValues ->
+  PlateSwipeScaffold(
+      navigationActions = navigationActions,
+      selectedItem = Route.CREATE_RECIPE,
+      showBackArrow = true,
+      content = { paddingValues ->
         PublishRecipeContent(
             navigationActions,
             createRecipeViewModel,
             modifier = Modifier.padding(paddingValues).fillMaxSize())
-      }
+      })
 }
 
+/**
+ * Composable function that displays the content for publishing a recipe.
+ *
+ * @param navigationActions Actions for navigating between screens.
+ * @param createRecipeViewModel ViewModel for managing the recipe creation process.
+ * @param modifier Modifier to be applied to the content.
+ */
 @Composable
 fun PublishRecipeContent(
     navigationActions: NavigationActions,
     createRecipeViewModel: CreateRecipeViewModel,
     modifier: Modifier = Modifier
 ) {
+  // Get the current context
   val context = LocalContext.current
+
+  // Collect the publish error state
   val publishError = createRecipeViewModel.publishError.collectAsState(initial = null).value
 
+  // Show a toast message if there is a publish error
   publishError?.let {
     Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
     createRecipeViewModel.clearPublishError()
@@ -67,11 +71,13 @@ fun PublishRecipeContent(
       modifier = modifier,
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.SpaceBetween) {
+        // Display the done text
         Text(
             text = stringResource(R.string.done_text),
             style = Typography.titleLarge.copy(fontSize = 70.sp, fontWeight = FontWeight.Bold),
             modifier = Modifier.weight(0.4f).padding(bottom = 16.dp).testTag("DoneText"))
 
+        // Display the chef in egg image
         Image(
             painter = painterResource(id = R.drawable.chef_image_in_egg),
             contentDescription = CHEF_IMAGE_DESCRIPTION,
@@ -79,6 +85,7 @@ fun PublishRecipeContent(
 
         Spacer(modifier = Modifier.height(32.dp))
 
+        // Display the publish button
         Button(
             onClick = {
               createRecipeViewModel.publishRecipe()
