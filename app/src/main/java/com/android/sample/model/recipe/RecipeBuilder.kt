@@ -93,9 +93,7 @@ class RecipeBuilder {
    * @param measurement The measurement for the ingredient.
    */
   fun deleteIngredientAndMeasurement(ingredient: String, measurement: String) = apply {
-    if (ingredientsAndMeasurements.contains(ingredient to measurement)) {
-      ingredientsAndMeasurements.remove(ingredient to measurement)
-    }
+    ingredientsAndMeasurements.removeIf { it.first == ingredient && it.second == measurement }
   }
 
   /**
@@ -112,20 +110,29 @@ class RecipeBuilder {
       newIngredient: String,
       newMeasurement: String
   ) = apply {
-    if (ingredientsAndMeasurements.contains(ingredient to measurement)) {
-      ingredientsAndMeasurements.remove(ingredient to measurement)
-      ingredientsAndMeasurements.add(newIngredient to newMeasurement)
+    val index =
+        ingredientsAndMeasurements.indexOfFirst {
+          it.first == ingredient && it.second == measurement
+        }
+    if (index >= 0) {
+      ingredientsAndMeasurements[index] = newIngredient to newMeasurement
     }
   }
 
-  /** Builds and returns a Recipe instance if all required fields are set. */
+  /**
+   * Builds and returns a Recipe instance if all required fields are set. Ensures that essential
+   * fields such as recipe name, instructions, and at least one ingredient are provided.
+   *
+   * @return A Recipe instance with the configured properties.
+   * @throws IllegalArgumentException if any required field is missing or invalid.
+   */
   fun build(): Recipe {
     // Validation for essential fields
-    require(strMeal.isNotBlank()) { "Recipe name cannot be blank" }
-    require(strInstructions.isNotBlank()) { "Recipe instructions cannot be blank" }
-    require(ingredientsAndMeasurements.isNotEmpty()) {
-      "Ingredients and measurements must not be empty"
+    require(strMeal.isNotBlank()) { "Recipe name is required and cannot be blank." }
+    require(strInstructions.isNotBlank()) {
+      "Recipe instructions are required and cannot be blank."
     }
+    require(ingredientsAndMeasurements.isNotEmpty()) { "At least one ingredient is required." }
 
     return Recipe(
         idMeal = idMeal,
@@ -141,44 +148,33 @@ class RecipeBuilder {
   }
 
   /** Returns the ID of the recipe. */
-  fun getId(): String {
-    return idMeal
-  }
+  fun getId(): String = idMeal
+
   /** Returns the name of the recipe. */
-  fun getName(): String {
-    return strMeal
-  }
+  fun getName(): String = strMeal
 
   /** Returns the category of the recipe. */
-  fun getCategory(): String? {
-    return strCategory
-  }
+  fun getCategory(): String? = strCategory
+
   /** Returns the area of the recipe. */
-  fun getArea(): String? {
-    return strArea
-  }
+  fun getArea(): String? = strArea
+
   /** Returns the instructions for the recipe. */
-  fun getInstructions(): String {
-    return strInstructions
-  }
+  fun getInstructions(): String = strInstructions
+
   /** Returns the URL of the thumbnail image for the recipe. */
-  fun getPictureID(): String {
-    return strMealThumbUrl
-  }
+  fun getPictureID(): String = strMealThumbUrl
+
   /** Returns the time required to prepare the recipe. */
-  fun getTime(): String? {
-    return time
-  }
+  fun getTime(): String? = time
+
   /** Returns the difficulty level of the recipe. */
-  fun getDifficulty(): String? {
-    return difficulty
-  }
+  fun getDifficulty(): String? = difficulty
+
   /** Returns the price of the recipe. */
-  fun getPrice(): String? {
-    return price
-  }
+  fun getPrice(): String? = price
+
   /** Returns the ingredients and their measurements for the recipe. */
-  fun getIngredientsAndMeasurements(): List<Pair<String, String>> {
-    return ingredientsAndMeasurements.toList()
-  }
+  fun getIngredientsAndMeasurements(): List<Pair<String, String>> =
+      ingredientsAndMeasurements.toList()
 }
