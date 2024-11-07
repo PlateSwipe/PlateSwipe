@@ -53,7 +53,7 @@ class RecipeBuilderTest {
     builder.addIngredientAndMeasurement("Ingredient", "Measurement")
 
     val exception = assertThrows(IllegalArgumentException::class.java) { builder.build() }
-    assertEquals("Recipe name cannot be blank", exception.message)
+    assertEquals("Recipe name is required and cannot be blank.", exception.message)
   }
 
   @Test
@@ -62,7 +62,7 @@ class RecipeBuilderTest {
     builder.addIngredientAndMeasurement("Ingredient", "Measurement")
 
     val exception = assertThrows(IllegalArgumentException::class.java) { builder.build() }
-    assertEquals("Recipe instructions cannot be blank", exception.message)
+    assertEquals("Recipe instructions are required and cannot be blank.", exception.message)
   }
 
   @Test
@@ -71,7 +71,7 @@ class RecipeBuilderTest {
     builder.setInstructions("Recipe instructions")
 
     val exception = assertThrows(IllegalArgumentException::class.java) { builder.build() }
-    assertEquals("Ingredients and measurements must not be empty", exception.message)
+    assertEquals("At least one ingredient is required.", exception.message)
   }
 
   @Test
@@ -131,7 +131,7 @@ class RecipeBuilderTest {
     builder.addIngredientAndMeasurement("Sugar", "100g")
     builder.updateIngredientAndMeasurement("Flour", "200g", "Flour", "300g")
     val listOfIngredients = builder.getIngredientsAndMeasurements().toList()
-    assertEquals(listOf("Sugar" to "100g", "Flour" to "300g"), listOfIngredients)
+    assertEquals(listOf("Flour" to "300g", "Sugar" to "100g"), listOfIngredients)
   }
 
   @Test
