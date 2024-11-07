@@ -47,7 +47,7 @@ class RecipeStepScreenTest {
           currentStep = 1)
     }
 
-    composeTestRule.onNodeWithTag("BackButton").assertExists().performClick()
+    composeTestRule.onNodeWithTag("backArrowIcon").assertExists().performClick()
     verify(mockNavigationActions).goBack()
   }
 
