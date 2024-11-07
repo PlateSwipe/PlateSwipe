@@ -107,4 +107,46 @@ class RecipeBuilder {
         difficulty = difficulty,
         price = price)
   }
+
+  /** Returns the ID of the recipe. */
+  fun getId(): String {
+    return idMeal
+  }
+  /** Returns the name of the recipe. */
+  fun getName(): String {
+    return strMeal
+  }
+
+  /** Returns the category of the recipe. */
+  fun getCategory(): String? {
+    return strCategory
+  }
+  /** Returns the area of the recipe. */
+  fun getArea(): String? {
+    return strArea
+  }
+  /** Returns the instructions for the recipe. */
+  fun getInstructions(): String {
+    return strInstructions
+  }
+  /** Returns the URL of the thumbnail image for the recipe. */
+  fun getPictureID(): String {
+    return strMealThumbUrl
+  }
+  /** Returns the time required to prepare the recipe. */
+  fun getTime(): String? {
+    return time
+  }
+  /** Returns the difficulty level of the recipe. */
+  fun getDifficulty(): String? {
+    return difficulty
+  }
+  /** Returns the price of the recipe. */
+  fun getPrice(): String? {
+    return price
+  }
+  /** Returns the ingredients and their measurements for the recipe. */
+  fun getIngredientsAndMeasurements(): MutableList<Pair<String, String>> {
+    return ingredientsAndMeasurements
+  }
 }
