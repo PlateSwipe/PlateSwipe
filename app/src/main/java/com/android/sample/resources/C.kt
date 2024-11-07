@@ -11,6 +11,7 @@ object C {
     // General
     const val LOADING = "Loading..."
     const val PADDING = 16
+    const val SMALL_PADDING = 8
 
     // SwipePage
     const val END_ANIMATION = 1500f
@@ -19,9 +20,6 @@ object C {
     const val PRICE_RANGE_INPUT_DESCRIPTION = "Price Range"
     const val DIFFICULTY_INPUT_DESCRIPTION = "Difficulty"
     const val CATEGORY_INPUT_DESCRIPTION = "Category"
-
-
-    const val LOADING = "Loading..."
 
     // Sign In
     const val NONCE = "WhyShouldIUseThis"
@@ -224,21 +222,37 @@ object C {
     // CreateRecipeViewModel
     const val RECIPE_PUBLISHED_SUCCESS_MESSAGE = "Recipe published successfully!"
     const val RECIPE_PUBLISH_ERROR_MESSAGE = "Failed to publish recipe: %1\$s"
+  }
 
-    // RecipeOverview
-    const val INITIAL_NUMBER_VALUE_PER_RECETTE = 1
-    const val IMAGE_ROUND_CORNER = 10
-    const val COUNTER_ROUND_CORNER = 25
-    const val OVERVIEW_RECIPE_STAR_SIZE = 24
-    const val COUNTER_MIN_MAX_SIZE = 30
-    const val OVERVIEW_TIME_DISPLAY_RATE = 1f / 15f
-    const val OVERVIEW_MIN_COUNTER_VALUE = 1
-    const val OVERVIEW_MAX_COUNTER_VALUE = 99
-    const val OVERVIEW_CHECKBOX_SIZE = 15
-    const val OVERVIEW_COUNTER_TEXT_SIZE = 28
+  object Values {
+    object RecipeOverview {
+      const val INITIAL_NUMBER_VALUE_PER_RECIPE = 1
+    }
   }
 
   object Dimension {
+
+    object RecipeOverview {
+      const val IMAGE_ROUND_CORNER = 10
+      const val COUNTER_ROUND_CORNER = 25
+      const val OVERVIEW_RECIPE_STAR_SIZE = 24
+      const val COUNTER_MIN_MAX_SIZE = 30
+      const val OVERVIEW_TIME_DISPLAY_RATE = 1f / 15f
+      const val OVERVIEW_MIN_COUNTER_VALUE = 1
+      const val OVERVIEW_MAX_COUNTER_VALUE = 99
+      const val OVERVIEW_CHECKBOX_SIZE = 15
+      const val OVERVIEW_COUNTER_TEXT_SIZE = 28
+      const val OVERVIEW_RECIPE_ROUND = 5
+      const val OVERVIEW_RECIPE_ROUND_ROW = 10
+      const val OVERVIEW_RECIPE_CARD_SHAPE = 16
+      const val OVERVIEW_RECIPE_CARD_ELEVATION = 4
+      const val OVERVIEW_RECIPE_COUNTER_PADDING = 0
+      const val OVERVIEW_RECIPE_RATE = 1f / 3f
+      const val OVERVIEW_INSTRUCTION_START = 25
+      const val OVERVIEW_INSTRUCTION_END = 15
+      const val OVERVIEW_INSTRUCTION_TOP = 10
+      const val OVERVIEW_INSTRUCTION_BOTTOM = 5
+    }
 
     // CameraScanCodeBarScreen
     object CameraScanCodeBarScreen {
