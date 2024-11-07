@@ -196,9 +196,21 @@ object C {
     const val FIRESTORE_RECIPE_PRICE = "price"
     const val CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
 
+    // FirestoreIngredientRepository
+    const val FIRESTORE_INGREDIENT_COLLECTION_NAME = "ingredients"
+    // Values for storage
+    const val FIRESTORE_INGREDIENT_NAME = "name"
+    const val FIRESTORE_INGREDIENT_BARCODE = "barCode"
+    const val FIRESTORE_INGREDIENT_BRANDS = "brands"
+
+    // AggregatorIngredientRepository
+    const val AGGREGATOR_TAG_ON_INGREDIENT_ADDED = "Ingredient added successfully"
+
     // EXCEPTION MESSAGES
     const val LIMIT_MUST_BE_POSITIVE_MESSAGE = "Limit must be greater than 0"
     const val UNSUPPORTED_MESSAGE = "Operation not supported"
+    const val INGREDIENT_NOT_FOUND_MESSAGE = "Ingredient not found"
+    const val INGREDIENT_NAME_NOT_PROVIDED = "Ingredient name is required but has not been provided"
 
     // Camera Actions
     const val LOG_TAG_CAMERA_ACTIONS = "CameraActions"

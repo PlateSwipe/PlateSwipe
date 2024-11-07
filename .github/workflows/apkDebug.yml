@@ -1,33 +1,48 @@
+name: Android APK Build
+
 # This workflow is triggered on push events to branches that start with 'release/'.
+
 on:
   push:
     branches:
       - 'release/**' # Only trigger on branches starting with 'release/'
 
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
 jobs:
   build:
-    name: Build APK-Debug
-    # The job runs on the latest Ubuntu machine.
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Check out the repository code.
       - name: Checkout the code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      # Step 2: Set up JDK 11.
-      - name: Set up JDK 11
-        uses: actions/setup-java@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
         with:
-          java-version: '11'
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
 
-      # Step 3: Build the APK in debug mode.
+      # Load google-services.json and local.properties from the secrets
+      - name: Decode secrets
+        env:
+          GOOGLE_SERVICES: ${{ secrets.GOOGLE_SERVICES }}
+          LOCAL_PROPERTIES: ${{ secrets.LOCAL_PROPERTIES }}
+        run: |
+          echo "$GOOGLE_SERVICES" | base64 --decode > ./app/google-services.json
+          echo "$LOCAL_PROPERTIES" | base64 --decode > ./local.properties
+
+      - name: Change wrapper permissions
+        run: chmod +x ./gradlew
+
       - name: Build APK
         run: ./gradlew assembleDebug --stacktrace
 
-      # Step 4: Upload the generated APK as an artifact.
-      - name: Upload APK
-        uses: actions/upload-artifact@v3
+      - name: Upload APK Debug
+        uses: actions/upload-artifact@v4
         with:
           name: PlateSwipe-app-debug
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: app/build/outputs/apk/debug/{{ github.ref_name }}.apk

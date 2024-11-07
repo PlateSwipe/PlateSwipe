@@ -46,7 +46,7 @@ class CameraScanCodeBarScreenTest {
   @Test
   fun ingredientDisplayTest() {
 
-    val ingredient = Ingredient(122333, "Test Ingredient", "Test Brand")
+    val ingredient = Ingredient(barCode = 122333, name = "Test Ingredient", brands = "Test Brand")
     composeTestRule.setContent { IngredientDisplay(ingredient) }
 
     composeTestRule.onNodeWithText("Test Ingredient").assertIsDisplayed()
