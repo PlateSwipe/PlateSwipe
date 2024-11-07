@@ -5,6 +5,7 @@ import com.android.sample.R
 // Like R, but C
 object C {
   const val ZERO = 0
+
   object Tag {
 
     const val main_screen_container = "main_screen_container"
