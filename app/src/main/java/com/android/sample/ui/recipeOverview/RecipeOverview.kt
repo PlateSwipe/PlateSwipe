@@ -77,7 +77,7 @@ fun RecipeOverview(navigationActions: NavigationActions, recipesViewModel: Recip
             title = { Text("PlateSwipe") },
             modifier = Modifier.testTag("topBar"),
             navigationIcon = {
-              IconButton(onClick = {}) {
+              IconButton(onClick = { navigationActions.goBack() }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Return button")

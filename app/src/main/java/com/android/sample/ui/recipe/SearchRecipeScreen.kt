@@ -145,6 +145,7 @@ fun SearchingBar(recipes : List<Recipe> ) {
 
 @Composable
 fun FilterChip(text: String) {
+
   OutlinedButton(
     onClick = { /* Apply filter logic */ },
     modifier = Modifier,
@@ -157,13 +158,13 @@ fun FilterChip(text: String) {
 
 @Composable
 fun ClearAllChip() {
-  Button(
-    onClick = { /* Clear all filters logic */ },
-    colors = ButtonDefaults.buttonColors(
-      containerColor = MaterialTheme.colorScheme.surfaceVariant,
-      contentColor = MaterialTheme.colorScheme.onSurface
-    )
-  ) {
-    Text("Clear All", fontSize = 12.sp)
-  }
+    Button(
+        onClick = { /* Clear all filters logic */ },
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+            contentColor = MaterialTheme.colorScheme.onSurface
+        )
+    ) {
+        Text("Clear All", fontSize = 12.sp)
+    }
 }

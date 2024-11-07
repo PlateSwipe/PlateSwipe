@@ -16,3 +16,5 @@ val goldenBronze = Color(0xFFD6A55C)
 
 val starColor = Color(0xFFFFAC4B)
 val tagBackground = Color.Gray
+
+val valencia = Color(0xFFE94D4D)

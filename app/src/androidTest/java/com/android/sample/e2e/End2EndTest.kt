@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.model.user.UserRepository
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.ui.account.AccountScreen
@@ -20,7 +21,7 @@ import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.navigation.TopLevelDestinations
 import com.android.sample.ui.recipe.CreateRecipeScreen
-import com.android.sample.ui.recipe.SearchRecipeScreen
+import com.android.sample.ui.recipeOverview.SearchRecipeScreen
 import com.android.sample.ui.swipePage.SwipePage
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -60,23 +61,23 @@ class EndToEndTest {
     composeTestRule.setContent { SwipePage(navigationActions = navigationActions) }
 
     // Click on Fridge Icon
-    composeTestRule.onNodeWithTag("Fridge").assertExists().performClick()
+    composeTestRule.onNodeWithTag("tabFridge").assertExists().performClick()
     verify(navigationActions).navigateTo(TopLevelDestinations.FRIDGE)
 
     // Click on Create Recipe Icon
-    composeTestRule.onNodeWithTag("Add Recipe").assertExists().performClick()
+    composeTestRule.onNodeWithTag("tabAddRecipe").assertExists().performClick()
     verify(navigationActions).navigateTo(TopLevelDestinations.ADD_RECIPE)
 
     // Click on Search Icon
-    composeTestRule.onNodeWithTag("Search").assertExists().performClick()
+    composeTestRule.onNodeWithTag("tabSearch").assertExists().performClick()
     verify(navigationActions).navigateTo(TopLevelDestinations.SEARCH)
 
     // Click on Account Icon
-    composeTestRule.onNodeWithTag("Account").assertExists().performClick()
+    composeTestRule.onNodeWithTag("tabAccount").assertExists().performClick()
     verify(navigationActions).navigateTo(TopLevelDestinations.ACCOUNT)
 
     // Click on Swipe Icon
-    composeTestRule.onNodeWithTag("Swipe").assertExists().performClick()
+    composeTestRule.onNodeWithTag("tabSwipe").assertExists().performClick()
     verify(navigationActions).navigateTo(TopLevelDestinations.SWIPE)
   }
 
@@ -88,13 +89,13 @@ class EndToEndTest {
       FakeNavHost(navController, userViewModel)
     }
 
-    composeTestRule.onNodeWithTag("Fridge").assertExists().performClick()
+    composeTestRule.onNodeWithTag("tabFridge").assertExists().performClick()
     composeTestRule.onNodeWithText("Fridge Screen").assertExists()
 
-    composeTestRule.onNodeWithTag("Search").assertExists().performClick()
+    composeTestRule.onNodeWithTag("tabSearch").assertExists().performClick()
     composeTestRule.onNodeWithText("Search Recipe Screen").assertExists()
 
-    composeTestRule.onNodeWithTag("Add Recipe").assertExists().performClick()
+    composeTestRule.onNodeWithTag("tabAddRecipe").assertExists().performClick()
     composeTestRule.onNodeWithText("Create Recipe Screen").assertExists()
   }
 }
@@ -102,6 +103,7 @@ class EndToEndTest {
 @Composable
 fun FakeNavHost(navController: NavHostController, userViewModel: UserViewModel) {
   val navigationActions = NavigationActions(navController)
+    val recipesViewModel = mock(RecipesViewModel::class.java)
   NavHost(navController = navController, startDestination = Route.SWIPE) {
     navigation(
         startDestination = Screen.SWIPE,
@@ -120,7 +122,7 @@ fun FakeNavHost(navController: NavHostController, userViewModel: UserViewModel) 
         startDestination = Screen.SEARCH,
         route = Route.SEARCH,
     ) {
-      composable(Screen.SEARCH) { SearchRecipeScreen(navigationActions) }
+      composable(Screen.SEARCH) { SearchRecipeScreen(navigationActions, recipesViewModel) }
     }
     navigation(
         startDestination = Screen.CREATE_RECIPE,

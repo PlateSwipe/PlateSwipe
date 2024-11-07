@@ -20,12 +20,14 @@ import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C
 import com.android.sample.ui.account.AccountScreen
 import com.android.sample.ui.authentication.SignInScreen
+import com.android.sample.ui.filter.FilterPage
 import com.android.sample.ui.fridge.FridgeScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.recipe.CreateRecipeScreen
-import com.android.sample.ui.recipe.SearchRecipeScreen
+import com.android.sample.ui.recipeOverview.RecipeOverview
+import com.android.sample.ui.recipeOverview.SearchRecipeScreen
 import com.android.sample.ui.swipePage.SwipePage
 import com.android.sample.ui.theme.SampleAppTheme
 
@@ -64,6 +66,8 @@ fun PlateSwipeApp() {
         route = Route.SWIPE,
     ) {
       composable(Screen.SWIPE) { SwipePage(navigationActions, recipesViewModel) }
+      composable(Screen.OVERVIEW_RECIPE) { RecipeOverview(navigationActions, recipesViewModel) }
+      composable(Screen.FILTER) { FilterPage(navigationActions, recipesViewModel) }
     }
     navigation(
         startDestination = Screen.FRIDGE,
@@ -75,7 +79,7 @@ fun PlateSwipeApp() {
         startDestination = Screen.SEARCH,
         route = Route.SEARCH,
     ) {
-      composable(Screen.SEARCH) { SearchRecipeScreen(navigationActions) }
+      composable(Screen.SEARCH) { SearchRecipeScreen(navigationActions, recipesViewModel) }
     }
     navigation(
         startDestination = Screen.CREATE_RECIPE,
