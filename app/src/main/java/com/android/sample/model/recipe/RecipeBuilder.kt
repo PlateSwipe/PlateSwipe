@@ -86,6 +86,33 @@ class RecipeBuilder {
     ingredientsAndMeasurements.add(ingredient to measurement)
   }
 
+  /**
+   * Deletes an ingredient and its measurement from the recipe.
+   *
+   * @param ingredient The ingredient to delete.
+   * @param measurement The measurement for the ingredient.
+   */
+  fun deleteIngredientAndMeasurement(ingredient: String, measurement: String) = apply {
+    if (ingredientsAndMeasurements.contains(ingredient to measurement)) {
+      ingredientsAndMeasurements.remove(ingredient to measurement)
+    }
+  }
+
+  /**
+   * Updates an ingredient and its measurement in the recipe.
+   *
+   * @param ingredient The ingredient to update.
+   * @param measurement The measurement for the ingredient.
+   * @param newIngredient The new ingredient to update.
+   * @param newMeasurement The new measurement for the ingredient.
+   */
+  fun updateIngredientAndMeasurement(ingredient: String, measurement: String, newIngredient: String, newMeasurement: String) = apply {
+    if (ingredientsAndMeasurements.contains(ingredient to measurement)) {
+      ingredientsAndMeasurements.remove(ingredient to measurement)
+      ingredientsAndMeasurements.add(newIngredient to newMeasurement)
+    }
+  }
+
   /** Builds and returns a Recipe instance if all required fields are set. */
   fun build(): Recipe {
     // Validation for essential fields
@@ -146,7 +173,7 @@ class RecipeBuilder {
     return price
   }
   /** Returns the ingredients and their measurements for the recipe. */
-  fun getIngredientsAndMeasurements(): MutableList<Pair<String, String>> {
-    return ingredientsAndMeasurements
+  fun getIngredientsAndMeasurements(): List<Pair<String, String>> {
+    return ingredientsAndMeasurements.toList()
   }
 }
