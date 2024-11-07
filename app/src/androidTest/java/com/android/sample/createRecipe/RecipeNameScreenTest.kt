@@ -91,4 +91,22 @@ class RecipeNameScreenTest {
     // Verify navigation to the ingredients screen
     verify { mockNavigationActions.navigateTo(Screen.CREATE_RECIPE_INGREDIENTS) }
   }
+
+  /**
+   * Tests that the hint text is shown when recipe name is empty and hidden when text is entered.
+   */
+  @Test
+  fun testHintTextVisibilityBasedOnRecipeName() = runTest {
+    // Retrieve the hint text directly from resources if possible
+    val hintText = "Choose a catchy title that reflects your dish"
+
+    // Assert that the hint text is displayed initially (when recipeName is empty)
+    composeTestRule.onNodeWithText(hintText).assertExists().assertIsDisplayed()
+
+    // Enter text to make the label disappear
+    composeTestRule.onNodeWithTag("recipeNameTextField").performTextInput("Chocolate Cake")
+
+    // Assert that the hint text no longer exists once text is entered
+    composeTestRule.onNodeWithText(hintText).assertDoesNotExist()
+  }
 }

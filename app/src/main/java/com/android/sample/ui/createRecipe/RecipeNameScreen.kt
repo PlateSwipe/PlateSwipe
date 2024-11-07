@@ -19,6 +19,7 @@ import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.resources.C.Tag.RECIPE_NAME_BASE_PADDING
 import com.android.sample.resources.C.Tag.RECIPE_NAME_BUTTON_HEIGHT
 import com.android.sample.resources.C.Tag.RECIPE_NAME_BUTTON_WIDTH
+import com.android.sample.resources.C.Tag.RECIPE_NAME_CHARACTER_LIMIT
 import com.android.sample.resources.C.Tag.RECIPE_NAME_FIELD_HEIGHT
 import com.android.sample.resources.C.Tag.RECIPE_NAME_FIELD_SPACING
 import com.android.sample.resources.C.Tag.RECIPE_NAME_FONT_SPACING
@@ -26,6 +27,14 @@ import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.*
 
+/**
+ * Composable function that displays the screen for entering a recipe name.
+ *
+ * @param modifier Modifier to be applied to the screen.
+ * @param currentStep The current step in the recipe creation process.
+ * @param navigationActions Actions for navigating between screens.
+ * @param createRecipeViewModel ViewModel for managing the recipe creation process.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecipeNameScreen(
@@ -44,10 +53,12 @@ fun RecipeNameScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top,
             modifier = Modifier.fillMaxSize()) {
+              // Display the progress bar for the current step
               RecipeProgressBar(currentStep = currentStep)
 
               Spacer(modifier = Modifier.height(RECIPE_NAME_FIELD_SPACING))
 
+              // Display the title text
               Text(
                   text = stringResource(R.string.create_your_recipe),
                   style = MaterialTheme.typography.titleLarge,
@@ -60,6 +71,7 @@ fun RecipeNameScreen(
 
               Spacer(modifier = Modifier.height(RECIPE_NAME_FIELD_SPACING / 3))
 
+              // Display the description text
               Text(
                   text = stringResource(R.string.create_recipe_description),
                   style = MaterialTheme.typography.bodyMedium,
@@ -74,6 +86,7 @@ fun RecipeNameScreen(
               Spacer(modifier = Modifier.height(RECIPE_NAME_FIELD_SPACING))
 
               Column(modifier = Modifier.fillMaxWidth()) {
+                // Display the label for the recipe name field
                 Text(
                     text = stringResource(R.string.recipe_name_label),
                     style =
@@ -86,25 +99,29 @@ fun RecipeNameScreen(
 
                 Spacer(modifier = Modifier.height(RECIPE_NAME_BASE_PADDING / 2))
 
+                // Input field for the recipe name
                 OutlinedTextField(
                     value = recipeName,
                     onValueChange = {
-                      recipeName = it
-                      showError = false
+                      if (it.text.length <= RECIPE_NAME_CHARACTER_LIMIT) {
+                        recipeName = it
+                        showError = false
+                      }
                     },
                     label = {
-                      Text(
-                          text = stringResource(R.string.recipe_name_hint),
-                          style =
-                              MaterialTheme.typography.bodySmall.copy(
-                                  fontFamily = MeeraInimai,
-                                  letterSpacing = RECIPE_NAME_FONT_SPACING / 1.4f),
-                          color = MaterialTheme.colorScheme.secondary)
+                      if (recipeName.text.isEmpty()) {
+                        Text(
+                            text = stringResource(R.string.recipe_name_hint),
+                            style =
+                                MaterialTheme.typography.bodySmall.copy(
+                                    fontFamily = MeeraInimai,
+                                    letterSpacing = RECIPE_NAME_FONT_SPACING / 1.4f),
+                            color = MaterialTheme.colorScheme.secondary)
+                      }
                     },
                     shape = RoundedCornerShape(8.dp),
                     modifier =
                         Modifier.fillMaxWidth()
-                            .height(RECIPE_NAME_FIELD_HEIGHT)
                             .padding(horizontal = RECIPE_NAME_BASE_PADDING)
                             .background(lightCream, shape = RoundedCornerShape(8.dp))
                             .testTag("recipeNameTextField"),
@@ -113,9 +130,11 @@ fun RecipeNameScreen(
                             unfocusedBorderColor = Color.Transparent,
                             focusedBorderColor = Color.Transparent,
                         ),
-                    textStyle = MaterialTheme.typography.bodyMedium)
+                    textStyle = MaterialTheme.typography.bodyMedium,
+                    maxLines = 2)
               }
 
+              // Display error message if the recipe name is empty
               if (showError) {
                 Text(
                     text = stringResource(R.string.recipe_name_error),
@@ -123,25 +142,27 @@ fun RecipeNameScreen(
                     style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
                     modifier = Modifier.padding(top = RECIPE_NAME_BASE_PADDING / 2))
               }
-
               Spacer(modifier = Modifier.height(RECIPE_NAME_FIELD_SPACING))
+            }
 
-              Button(
-                  onClick = {
-                    if (recipeName.text.isEmpty()) {
-                      showError = true
-                    } else {
-                      createRecipeViewModel.updateRecipeName(recipeName.text)
-                      navigationActions.navigateTo(Screen.CREATE_RECIPE_INGREDIENTS)
-                    }
-                  },
-                  modifier =
-                      Modifier.width(RECIPE_NAME_BUTTON_WIDTH)
-                          .height(RECIPE_NAME_BUTTON_HEIGHT)
-                          .background(color = lightCream, shape = RoundedCornerShape(size = 4.dp))
-                          .testTag("NextStepButton")) {
-                    Text(stringResource(R.string.next_step))
-                  }
+        // Button to proceed to the next step
+        Button(
+            onClick = {
+              if (recipeName.text.isEmpty()) {
+                showError = true
+              } else {
+                createRecipeViewModel.updateRecipeName(recipeName.text)
+                navigationActions.navigateTo(Screen.CREATE_RECIPE_INGREDIENTS)
+              }
+            },
+            modifier =
+                Modifier.align(Alignment.BottomCenter)
+                    .width(RECIPE_NAME_BUTTON_WIDTH)
+                    .height(RECIPE_NAME_BUTTON_HEIGHT)
+                    .background(color = lightCream, shape = RoundedCornerShape(size = 4.dp))
+                    .testTag("NextStepButton"),
+            shape = RoundedCornerShape(4.dp)) {
+              Text(stringResource(R.string.next_step))
             }
       }
 }

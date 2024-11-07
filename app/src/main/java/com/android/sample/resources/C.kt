@@ -113,6 +113,7 @@ object C {
     val RECIPE_NAME_BUTTON_HEIGHT = 46.dp
     val RECIPE_NAME_FIELD_HEIGHT = 60.dp
     val RECIPE_NAME_FONT_SPACING = 0.14.sp
+    val RECIPE_NAME_CHARACTER_LIMIT = 50
 
     // RecipeStepScreen
     val BASE_PADDING = 16.dp
