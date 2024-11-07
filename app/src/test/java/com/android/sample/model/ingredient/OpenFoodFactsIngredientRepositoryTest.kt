@@ -1,6 +1,10 @@
 package com.android.sample.model.ingredient
 
+import com.android.sample.model.image.ImageRepositoryFirebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import java.io.IOException
+import java.io.InputStream
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
@@ -14,18 +18,26 @@ import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 import org.mockito.ArgumentCaptor
+import org.mockito.Mock
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
+import org.mockito.kotlin.any
 import org.mockito.kotlin.capture
 import org.mockito.kotlin.doNothing
 
 class OpenFoodFactsIngredientRepositoryTest {
 
+  @Mock private lateinit var mockFirebaseStorage: FirebaseStorage
+  @Mock private lateinit var mockStorageRef: StorageReference
+  @Mock private lateinit var mockImageRef: StorageReference
+
   private lateinit var mockHttpClient: OkHttpClient
+  private lateinit var imageStorage: ImageRepositoryFirebase
   private lateinit var mockCall: Call
   private lateinit var response: Response
   private lateinit var mockResponseBody: ResponseBody
+  private lateinit var mockInputStream: InputStream
 
   private lateinit var openFoodFactsIngredientRepository: OpenFoodFactsIngredientRepository
 
@@ -41,16 +53,31 @@ class OpenFoodFactsIngredientRepositoryTest {
                         "_id": 1234567890,
                         "product_name": "Ingredient 1",
                         "brands": "Brand 1",
+                        "categories": "",
+                        "quantity": "",
+                        "image_front_url": "",
+                        "image_front_thumb_url": "",
+                        "image_front_small_url": ""
                     },
                     {
                         "_id": 9876543210,
                         "product_name": "Ingredient 2",
                         "brands": "Brand 2",
+                        "categories": "",
+                        "quantity": "",
+                        "image_front_url": "",
+                        "image_front_thumb_url": "",
+                        "image_front_small_url": ""
                     },
                     {
                         "_id": 1357924680,
                         "product_name": "Ingredient 3",
                         "brands": "Brand 3",
+                        "categories": "",
+                        "quantity": "",
+                        "image_front_url": "",
+                        "image_front_thumb_url": "",
+                        "image_front_small_url": ""
                     },
                 ],
                 "skip": 0
@@ -77,6 +104,11 @@ class OpenFoodFactsIngredientRepositoryTest {
                     "_id": 1234567890,
                     "product_name": "apple",
                     "brands": "Brand 1",
+                    "categories": "",
+                    "quantity": "",
+                    "image_front_url": "",
+                    "image_front_thumb_url": "",
+                    "image_front_small_url": "",
                 },
                 "status": 1,
                 "status_verbose": "product found"
@@ -103,9 +135,15 @@ class OpenFoodFactsIngredientRepositoryTest {
   fun setUp() {
     MockitoAnnotations.openMocks(this)
 
+    `when`(mockFirebaseStorage.reference).thenReturn(mockStorageRef)
+    `when`(mockStorageRef.child(any())).thenReturn(mockImageRef)
+
     mockHttpClient = mock(OkHttpClient::class.java)
+    imageStorage = ImageRepositoryFirebase(mockFirebaseStorage)
     mockCall = mock(Call::class.java)
     mockResponseBody = mock(ResponseBody::class.java)
+    mockFirebaseStorage = mock(FirebaseStorage::class.java)
+    mockInputStream = mock(InputStream::class.java)
 
     response =
         Response.Builder()
@@ -116,7 +154,8 @@ class OpenFoodFactsIngredientRepositoryTest {
             .body(mockResponseBody)
             .build()
 
-    openFoodFactsIngredientRepository = OpenFoodFactsIngredientRepository(mockHttpClient)
+    openFoodFactsIngredientRepository =
+        OpenFoodFactsIngredientRepository(mockHttpClient, imageStorage)
   }
 
   @Test
@@ -180,6 +219,7 @@ class OpenFoodFactsIngredientRepositoryTest {
 
     assertNull(searchException)
     assertNotNull(searchIngredients)
+
     assert(searchIngredients?.count() == 2)
   }
 
