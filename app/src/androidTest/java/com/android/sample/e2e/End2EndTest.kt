@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.model.user.UserRepository
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.ui.account.AccountScreen
@@ -20,7 +21,7 @@ import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.navigation.TopLevelDestinations
 import com.android.sample.ui.recipe.CreateRecipeScreen
-import com.android.sample.ui.recipe.SearchRecipeScreen
+import com.android.sample.ui.recipeOverview.SearchRecipeScreen
 import com.android.sample.ui.swipePage.SwipePage
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -102,6 +103,7 @@ class EndToEndTest {
 @Composable
 fun FakeNavHost(navController: NavHostController, userViewModel: UserViewModel) {
   val navigationActions = NavigationActions(navController)
+    val recipesViewModel = mock(RecipesViewModel::class.java)
   NavHost(navController = navController, startDestination = Route.SWIPE) {
     navigation(
         startDestination = Screen.SWIPE,
@@ -120,7 +122,7 @@ fun FakeNavHost(navController: NavHostController, userViewModel: UserViewModel) 
         startDestination = Screen.SEARCH,
         route = Route.SEARCH,
     ) {
-      composable(Screen.SEARCH) { SearchRecipeScreen(navigationActions) }
+      composable(Screen.SEARCH) { SearchRecipeScreen(navigationActions, recipesViewModel) }
     }
     navigation(
         startDestination = Screen.CREATE_RECIPE,

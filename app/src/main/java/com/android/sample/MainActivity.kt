@@ -26,8 +26,8 @@ import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.recipe.CreateRecipeScreen
-import com.android.sample.ui.recipe.SearchRecipeScreen
 import com.android.sample.ui.recipeOverview.RecipeOverview
+import com.android.sample.ui.recipeOverview.SearchRecipeScreen
 import com.android.sample.ui.swipePage.SwipePage
 import com.android.sample.ui.theme.SampleAppTheme
 
@@ -79,7 +79,7 @@ fun PlateSwipeApp() {
         startDestination = Screen.SEARCH,
         route = Route.SEARCH,
     ) {
-      composable(Screen.SEARCH) { SearchRecipeScreen(navigationActions) }
+      composable(Screen.SEARCH) { SearchRecipeScreen(navigationActions, recipesViewModel) }
     }
     navigation(
         startDestination = Screen.CREATE_RECIPE,

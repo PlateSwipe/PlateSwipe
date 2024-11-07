@@ -1,4 +1,16 @@
-<?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-  
-</selector>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="21dp"
+    android:height="21dp"
+    android:viewportWidth="21"
+    android:viewportHeight="21">
+
+    <!-- Outer Circle Path -->
+    <path
+        android:fillColor="#131313"
+        android:pathData="M9.7666 1.52803C5.21657 1.52803 1.52805 5.21656 1.52805 9.76659C1.52805 14.3166 5.21657 18.0051 9.7666 18.0051C14.3166 18.0051 18.0052 14.3166 18.0052 9.76659C18.0052 5.21656 14.3166 1.52803 9.7666 1.52803ZM0.0280457 9.76659C0.0280457 4.38813 4.38815 0.0280304 9.7666 0.0280304C15.1451 0.0280304 19.5052 4.38813 19.5052 9.76659C19.5052 15.145 15.1451 19.5051 9.7666 19.5051C4.38815 19.5051 0.0280457 15.145 0.0280457 9.76659Z" />
+
+    <!-- Line Path -->
+    <path
+        android:fillColor="#131313"
+        android:pathData="M15.4873 15.9555C15.7798 15.6622 16.2547 15.6616 16.548 15.9541L20.072 19.469C20.3653 19.7615 20.3659 20.2364 20.0734 20.5296C19.7808 20.8229 19.306 20.8235 19.0127 20.531L15.4887 17.0161C15.1954 16.7236 15.1948 16.2488 15.4873 15.9555Z" />
+</vector>
