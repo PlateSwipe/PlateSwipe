@@ -39,7 +39,7 @@ class UserViewModelTest {
   private val userExample: User =
       User("001", "Gigel Frone", "", emptyList(), emptyList(), emptyList())
 
-  private val ingredientExample: Ingredient = Ingredient(133L, "apple")
+  private val ingredientExample: Ingredient = Ingredient(barCode = 133L, name = "apple")
   private val recipeExample: Recipe =
       Recipe(
           "123",
