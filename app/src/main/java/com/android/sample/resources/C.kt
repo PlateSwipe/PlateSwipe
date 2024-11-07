@@ -212,6 +212,9 @@ object C {
 
   object Dimension {
 
+    const val PAD_4 = 4
+    const val PAD_8 = 8
+    const val PAD_16 = 16
     // CameraScanCodeBarScreen
     object CameraScanCodeBarScreen {
 
@@ -248,6 +251,10 @@ object C {
       const val BUTTON_SIZE = 0.1f
       const val BUTTON_PADDING = 0.05f
     }
+
+    object PhotoPicker {
+      const val PHOTO_PICKER_IMAGE_SIZE = 0.7f
+    }
   }
 
   object TestTag {
@@ -263,6 +270,13 @@ object C {
 
     object CameraPreview {
       const val PREVIEW = "camera_preview"
+    }
+
+    object PhotoPicker {
+      const val PHOTO_PICKER_COLUMN = "Photo picker column"
+      const val PHOTO_PICKER_BUTTON = "Photo picker button"
+      const val PHOTO_PICKER_TEXT = "Photo picker text"
+      const val PHOTO_PICKER_IMAGE = "Photo picker image"
     }
   }
 }

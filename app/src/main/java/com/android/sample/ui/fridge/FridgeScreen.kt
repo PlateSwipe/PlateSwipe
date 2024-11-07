@@ -45,6 +45,10 @@ fun FridgeScreen(navigationActions: NavigationActions) {
           Button(onClick = { navigationActions.navigateTo(Screen.CAMERA_TAKE_PHOTO) }) {
             Text(text = stringResource(R.string.take_photo))
           }
+
+          Button(onClick = { navigationActions.navigateTo(Screen.CAMERA_IMPORT_PHOTO) }) {
+            Text(text = stringResource(R.string.import_photo))
+          }
         }
   }
 }

@@ -236,7 +236,9 @@ dependencies {
     // Image
     implementation(libs.coil.compose)
 
-
+    // Image Picker
+    implementation(libs.androidx.activity)
+    implementation(libs.androidx.activity.ktx)
 
 }
 

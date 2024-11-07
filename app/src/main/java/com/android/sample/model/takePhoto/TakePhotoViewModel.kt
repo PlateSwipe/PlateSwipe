@@ -1,6 +1,7 @@
 package com.android.sample.model.takePhoto
 
 import android.graphics.Bitmap
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -10,6 +11,13 @@ import kotlinx.coroutines.flow.StateFlow
 class TakePhotoViewModel : ViewModel() {
   // MutableStateFlow to hold the Bitmap photo
   private val _photo = MutableStateFlow<Bitmap?>(null)
+
+  // MutableStateFlow to hold the Uri
+  private val _uri = MutableStateFlow<Uri?>(null)
+
+  /** StateFlow to expose the Uri as an immutable state. */
+  val uri: StateFlow<Uri?>
+    get() = _uri
 
   /** StateFlow to expose the photo as an immutable state. */
   val photo: StateFlow<Bitmap?>
@@ -38,6 +46,15 @@ class TakePhotoViewModel : ViewModel() {
    */
   fun setRotation(rotation: Int) {
     _rotation.value = rotation
+  }
+
+  /**
+   * Sets the Uri.
+   *
+   * @param uri The Uri to set.
+   */
+  fun setUri(uri: Uri) {
+    _uri.value = uri
   }
 
   /** Factory to create instances of TakePhotoViewModel. */

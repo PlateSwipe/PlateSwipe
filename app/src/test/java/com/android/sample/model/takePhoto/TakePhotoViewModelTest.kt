@@ -1,6 +1,7 @@
 package com.android.sample.model.takePhoto
 
 import android.graphics.Bitmap
+import android.net.Uri
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
@@ -42,5 +43,14 @@ class TakePhotoViewModelTest {
     assertTrue(takePhotoViewModel is TakePhotoViewModel)
     // Check if the viewModel can call setRotation
     viewModel.setRotation(90)
+  }
+
+  @Test
+  fun setUri() {
+    val uri = Uri.parse("content://media/external/images/media/139469")
+    // Check if the uri is set to null by default
+    assert(takePhotoViewModel.uri.value == null)
+    takePhotoViewModel.setUri(uri)
+    assertEquals(uri, takePhotoViewModel.uri.value)
   }
 }

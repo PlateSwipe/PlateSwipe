@@ -35,6 +35,8 @@ object Screen {
   const val CAMERA_TAKE_PHOTO = "Camera Take Photo Screen"
 
   const val DISPLAY_IMAGE = "Display Image Screen"
+
+  const val CAMERA_IMPORT_PHOTO = "Camera Import Photo Screen"
 }
 
 data class TopLevelDestination(val route: String, val iconId: Int, val textId: String)
