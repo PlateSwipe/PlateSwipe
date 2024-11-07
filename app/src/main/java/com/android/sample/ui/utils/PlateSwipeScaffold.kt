@@ -8,10 +8,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material3.Icon
@@ -28,6 +26,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.android.sample.R
+import com.android.sample.resources.C.Dimension.CameraScanCodeBarScreen.BACK_ARROW_ICON_SIZE
+import com.android.sample.resources.C.Dimension.CameraScanCodeBarScreen.CHEF_HAT_ICON_END_PADDING
+import com.android.sample.resources.C.Dimension.CameraScanCodeBarScreen.CHEF_HAT_ICON_SIZE
+import com.android.sample.resources.C.TestTag.CameraScanCodeBarScreen.BACK_ARROW_ICON
+import com.android.sample.resources.C.TestTag.CameraScanCodeBarScreen.CHEF_HAT_ICON
+import com.android.sample.resources.C.TestTag.CameraScanCodeBarScreen.PLATESWIPE_SCAFFOLD
+import com.android.sample.resources.C.TestTag.CameraScanCodeBarScreen.TOP_BAR
+import com.android.sample.resources.C.TestTag.CameraScanCodeBarScreen.TOP_BAR_TITLE
 import com.android.sample.ui.navigation.BottomNavigationMenu
 import com.android.sample.ui.navigation.LIST_TOP_LEVEL_DESTINATIONS
 import com.android.sample.ui.navigation.NavigationActions
@@ -51,7 +57,7 @@ fun PlateSwipeScaffold(
     showBackArrow: Boolean = true
 ) {
   Scaffold(
-      modifier = Modifier.fillMaxSize().testTag("plateSwipeScaffold"),
+      modifier = Modifier.fillMaxSize().testTag(PLATESWIPE_SCAFFOLD),
       topBar = { PlateSwipeTopBar(navigationActions = navigationActions, showBackArrow) },
       bottomBar = {
         BottomNavigationMenu(
@@ -66,18 +72,18 @@ fun PlateSwipeScaffold(
 @Composable
 private fun PlateSwipeTopBar(navigationActions: NavigationActions, showBackArrow: Boolean = true) {
   Row(
-      modifier = Modifier.fillMaxWidth().background(color = lightCream).testTag("topBar"),
+      modifier = Modifier.fillMaxWidth().background(color = lightCream).testTag(TOP_BAR),
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.SpaceBetween) {
         Row(modifier = Modifier.weight(1f)) {
           if (showBackArrow) {
             IconButton(
                 onClick = { navigationActions.goBack() },
-                modifier = Modifier.testTag("backArrowIcon")) {
+                modifier = Modifier.testTag(BACK_ARROW_ICON)) {
                   Icon(
                       imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                       contentDescription = "Back",
-                      modifier = Modifier.width(30.dp).height(30.dp))
+                      modifier = Modifier.size(BACK_ARROW_ICON_SIZE.dp))
                 }
           }
         }
@@ -86,13 +92,16 @@ private fun PlateSwipeTopBar(navigationActions: NavigationActions, showBackArrow
           Image(
               painter = painterResource(id = R.drawable.chef_s_hat),
               contentDescription = "Chef's hat",
-              modifier = Modifier.size(35.dp).padding(end = 8.dp).testTag("chefHatIcon"),
+              modifier =
+                  Modifier.size(CHEF_HAT_ICON_SIZE.dp)
+                      .padding(end = CHEF_HAT_ICON_END_PADDING.dp)
+                      .testTag(CHEF_HAT_ICON),
               contentScale = ContentScale.Fit)
 
           Text(
               text = stringResource(id = R.string.plate_swipe_title),
               style = MaterialTheme.typography.titleLarge,
-              modifier = Modifier.testTag("topBarTitle"))
+              modifier = Modifier.testTag(TOP_BAR_TITLE))
         }
 
         Spacer(modifier = Modifier.weight(1f))

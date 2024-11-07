@@ -191,9 +191,21 @@ object C {
     const val FIRESTORE_RECIPE_PRICE = "price"
     const val CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
 
+    // FirestoreIngredientRepository
+    const val FIRESTORE_INGREDIENT_COLLECTION_NAME = "ingredients"
+    // Values for storage
+    const val FIRESTORE_INGREDIENT_NAME = "name"
+    const val FIRESTORE_INGREDIENT_BARCODE = "barCode"
+    const val FIRESTORE_INGREDIENT_BRANDS = "brands"
+
+    // AggregatorIngredientRepository
+    const val AGGREGATOR_TAG_ON_INGREDIENT_ADDED = "Ingredient added successfully"
+
     // EXCEPTION MESSAGES
     const val LIMIT_MUST_BE_POSITIVE_MESSAGE = "Limit must be greater than 0"
     const val UNSUPPORTED_MESSAGE = "Operation not supported"
+    const val INGREDIENT_NOT_FOUND_MESSAGE = "Ingredient not found"
+    const val INGREDIENT_NAME_NOT_PROVIDED = "Ingredient name is required but has not been provided"
 
     // Camera Actions
     const val LOG_TAG_CAMERA_ACTIONS = "CameraActions"
@@ -213,6 +225,12 @@ object C {
 
     // CameraScanCodeBarScreen
     object CameraScanCodeBarScreen {
+
+      // PLATE SWIPE SCAFFOLD
+      const val TOP_BAR_HEIGHT = 40
+      const val BACK_ARROW_ICON_SIZE = 26
+      const val CHEF_HAT_ICON_SIZE = 35
+      const val CHEF_HAT_ICON_END_PADDING = 8
 
       // BARCODE FRAME
       const val BARCODE_FRAME_WIDTH = 1f
@@ -247,6 +265,13 @@ object C {
   object TestTag {
     object CameraScanCodeBarScreen {
       const val BARCODE_FRAME = "Barcode frame"
+
+      // PLATE SWIPE SCAFFOLD
+      const val TOP_BAR = "topBar"
+      const val TOP_BAR_TITLE = "topBarTitle"
+      const val BACK_ARROW_ICON = "backArrowIcon"
+      const val PLATESWIPE_SCAFFOLD = "plateSwipeScaffold"
+      const val CHEF_HAT_ICON = "chefHatIcon"
     }
   }
 }
