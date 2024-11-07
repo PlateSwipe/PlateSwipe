@@ -3,6 +3,7 @@ package com.android.sample.model.takePhoto
 import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.android.sample.resources.C
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -16,7 +17,7 @@ class TakePhotoViewModel : ViewModel() {
     get() = _photo
 
   // MutableStateFlow to hold the rotation value
-  private val _rotation = MutableStateFlow(0)
+  private val _rotation = MutableStateFlow(C.ZERO)
 
   /** StateFlow to expose the rotation value as an immutable state. */
   val rotation: StateFlow<Int>
