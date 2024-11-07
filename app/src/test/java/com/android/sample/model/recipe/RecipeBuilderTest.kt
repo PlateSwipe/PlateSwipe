@@ -125,18 +125,17 @@ class RecipeBuilderTest {
     assertEquals("1", builder.getId())
   }
 
-
-    @Test
-    fun `test update ingredient and measurement`(){
-        builder.addIngredientAndMeasurement("Flour", "200g")
-        builder.addIngredientAndMeasurement("Sugar", "100g")
-        builder.updateIngredientAndMeasurement("Flour", "200g", "Flour", "300g")
-        val listOfIngredients = builder.getIngredientsAndMeasurements().toList()
-        assertEquals(listOf("Sugar" to "100g","Flour" to "300g"), listOfIngredients)
-    }
+  @Test
+  fun `test update ingredient and measurement`() {
+    builder.addIngredientAndMeasurement("Flour", "200g")
+    builder.addIngredientAndMeasurement("Sugar", "100g")
+    builder.updateIngredientAndMeasurement("Flour", "200g", "Flour", "300g")
+    val listOfIngredients = builder.getIngredientsAndMeasurements().toList()
+    assertEquals(listOf("Sugar" to "100g", "Flour" to "300g"), listOfIngredients)
+  }
 
   @Test
-  fun `test delete ingredient and measurement`(){
+  fun `test delete ingredient and measurement`() {
     builder.addIngredientAndMeasurement("Flour", "200g")
     builder.addIngredientAndMeasurement("Sugar", "100g")
     builder.deleteIngredientAndMeasurement("Flour", "200g")

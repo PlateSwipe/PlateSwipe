@@ -106,7 +106,12 @@ class RecipeBuilder {
    * @param newIngredient The new ingredient to update.
    * @param newMeasurement The new measurement for the ingredient.
    */
-  fun updateIngredientAndMeasurement(ingredient: String, measurement: String, newIngredient: String, newMeasurement: String) = apply {
+  fun updateIngredientAndMeasurement(
+      ingredient: String,
+      measurement: String,
+      newIngredient: String,
+      newMeasurement: String
+  ) = apply {
     if (ingredientsAndMeasurements.contains(ingredient to measurement)) {
       ingredientsAndMeasurements.remove(ingredient to measurement)
       ingredientsAndMeasurements.add(newIngredient to newMeasurement)
