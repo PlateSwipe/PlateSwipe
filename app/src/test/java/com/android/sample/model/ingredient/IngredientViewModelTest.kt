@@ -1,17 +1,23 @@
 package com.android.sample.model.ingredient
 
+import androidx.test.core.app.ApplicationProvider
+import com.google.firebase.Firebase
+import com.google.firebase.initialize
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers.eq
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.times
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
 import org.mockito.kotlin.verify
+import org.robolectric.RobolectricTestRunner
 
+@RunWith(RobolectricTestRunner::class)
 /** Ingredient view model test */
 class IngredientViewModelTest {
   private lateinit var ingredientViewModel: IngredientViewModel
@@ -21,12 +27,14 @@ class IngredientViewModelTest {
   fun setUp() {
     ingredientRepository = mock(IngredientRepository::class.java)
     ingredientViewModel = IngredientViewModel(ingredientRepository)
+
+    Firebase.initialize(ApplicationProvider.getApplicationContext())
   }
 
   @Test
   fun fetchIngredient_withNewBarcode_updatesIngredient() {
     val barCode = 123456L
-    val ingredient = Ingredient(barCode, "Test Ingredient", "Brand")
+    val ingredient = Ingredient(barCode = barCode, name = "Test Ingredient", brands = "Brand")
 
     `when`(ingredientRepository.get(eq(barCode), any(), any())).thenAnswer { invocation ->
       val onSuccess: (Ingredient?) -> Unit = invocation.getArgument(1)
@@ -55,7 +63,7 @@ class IngredientViewModelTest {
   @Test
   fun fetchIngredient_withSameBarcode_doesNotCallRepository() {
     val barCode = 123456L
-    val ingredient = Ingredient(barCode, "Test Ingredient", null)
+    val ingredient = Ingredient(barCode = barCode, name = "Test Ingredient", brands = null)
 
     // Mock the repository to call onSuccess with the ingredient
     `when`(ingredientRepository.get(eq(barCode), any(), any())).thenAnswer { invocation ->
