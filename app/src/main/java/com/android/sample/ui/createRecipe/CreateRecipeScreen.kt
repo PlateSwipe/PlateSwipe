@@ -3,8 +3,6 @@ package com.android.sample.ui.createRecipe
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.resources.C.Tag.INITIAL_RECIPE_STEP
