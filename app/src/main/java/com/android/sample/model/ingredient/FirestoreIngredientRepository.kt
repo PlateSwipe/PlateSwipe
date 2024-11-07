@@ -1,6 +1,9 @@
 package com.android.sample.model.ingredient
 
 import com.android.sample.resources.C
+import com.android.sample.resources.C.Tag.FIRESTORE_INGREDIENT_CATEGORIES
+import com.android.sample.resources.C.Tag.FIRESTORE_INGREDIENT_IMAGES
+import com.android.sample.resources.C.Tag.FIRESTORE_INGREDIENT_QUANTITY
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
@@ -12,17 +15,28 @@ import com.google.firebase.firestore.FirebaseFirestore
  */
 class FirestoreIngredientRepository(private val db: FirebaseFirestore) : IngredientRepository {
 
+  @Suppress("UNCHECKED_CAST")
   private fun documentSnapshotToIngredient(documentSnapshot: DocumentSnapshot): Ingredient {
 
     val barCode = documentSnapshot.getLong(C.Tag.FIRESTORE_INGREDIENT_BARCODE)
     val name = documentSnapshot.getString(C.Tag.FIRESTORE_INGREDIENT_NAME)
     val brands = documentSnapshot.getString(C.Tag.FIRESTORE_INGREDIENT_BRANDS)
+    val quantity = documentSnapshot.getString(FIRESTORE_INGREDIENT_QUANTITY)
+    val categories = documentSnapshot.get(FIRESTORE_INGREDIENT_CATEGORIES) as List<String>
+    val images = documentSnapshot.get(FIRESTORE_INGREDIENT_IMAGES) as List<String>
 
     if (name.isNullOrEmpty()) {
       throw Exception(C.Tag.INGREDIENT_NAME_NOT_PROVIDED)
     }
 
-    return Ingredient(uid = documentSnapshot.id, barCode = barCode, name = name, brands = brands)
+    return Ingredient(
+        uid = documentSnapshot.id,
+        barCode = barCode,
+        name = name,
+        brands = brands,
+        quantity = quantity,
+        categories = categories,
+        images = images)
   }
 
   /**
