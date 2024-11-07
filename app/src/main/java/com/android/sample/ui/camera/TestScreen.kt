@@ -8,6 +8,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.testTag
 import com.android.sample.feature.camera.rotateBitmap
 import com.android.sample.model.takePhoto.TakePhotoViewModel
 
@@ -28,5 +29,5 @@ fun DisplayImageScreen(takePhotoViewModel: TakePhotoViewModel) {
   Image(
       bitmap = bitmapRotated.asImageBitmap(),
       contentDescription = "Image taken from camera",
-      modifier = Modifier.fillMaxSize())
+      modifier = Modifier.fillMaxSize().testTag("display_image"))
 }

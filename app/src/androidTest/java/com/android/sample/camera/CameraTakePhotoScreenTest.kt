@@ -1,6 +1,7 @@
 package com.android.sample.camera
 
 import android.Manifest
+import android.content.Context
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -24,6 +25,7 @@ class CameraTakePhotoScreenTest {
 
   private lateinit var mockNavigationActions: NavigationActions
   private lateinit var takePhotoViewModel: TakePhotoViewModel
+  private lateinit var context: Context
 
   private val preview = "camera_preview"
   private val buttonBox = "Take photo button box"
@@ -38,6 +40,7 @@ class CameraTakePhotoScreenTest {
   fun setUp() {
     mockNavigationActions = mock(NavigationActions::class.java)
     takePhotoViewModel = TakePhotoViewModel()
+    context = mock(Context::class.java)
 
     `when`(mockNavigationActions.currentRoute()).thenReturn(Screen.CAMERA_TAKE_PHOTO)
   }
@@ -67,6 +70,6 @@ class CameraTakePhotoScreenTest {
 
     // Check if the button to take a photo is displayed
     composeTestRule.onNodeWithTag(buttonBox).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(button).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(button).assertIsDisplayed().performClick()
   }
 }
