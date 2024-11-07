@@ -31,7 +31,7 @@ class CreateRecipeScreenTest {
           createRecipeViewModel = mockCreateRecipeViewModel)
     }
 
-    composeTestRule.onNodeWithTag("TopAppBar").assertExists().assertIsDisplayed()
+    composeTestRule.onNodeWithTag("topBarTitle").assertExists().assertIsDisplayed()
     composeTestRule.onNodeWithTag("bottomNavigationMenu").assertExists().assertIsDisplayed()
     composeTestRule.onNodeWithText("Create your recipe").assertExists().assertIsDisplayed()
   }
@@ -44,7 +44,7 @@ class CreateRecipeScreenTest {
           createRecipeViewModel = mockCreateRecipeViewModel)
     }
 
-    composeTestRule.onNodeWithTag("BackButton").assertExists().performClick()
+    composeTestRule.onNodeWithTag("backArrowIcon").assertExists().performClick()
     verify(mockNavigationActions).goBack()
   }
 
