@@ -98,4 +98,30 @@ class RecipeBuilderTest {
     assertEquals("Easy", recipe.difficulty)
     assertEquals("5.00", recipe.price)
   }
+
+  @Test
+  fun `test all getters`() {
+    builder.apply {
+      setName("Salad")
+      setInstructions("Mix ingredients")
+      addIngredientAndMeasurement("Lettuce", "100g")
+      setCategory("Vegetarian")
+      setArea("French")
+      setPictureID("http://example.com/image.jpg")
+      setTime("15 mins")
+      setDifficulty("Easy")
+      setPrice("5.00")
+      setId("1")
+    }
+    assertEquals("Salad", builder.getName())
+    assertEquals("Mix ingredients", builder.getInstructions())
+    assertEquals("Vegetarian", builder.getCategory())
+    assertEquals("French", builder.getArea())
+    assertEquals("http://example.com/image.jpg", builder.getPictureID())
+    assertEquals("15 mins", builder.getTime())
+    assertEquals("Easy", builder.getDifficulty())
+    assertEquals("5.00", builder.getPrice())
+    assertEquals(listOf("Lettuce" to "100g"), builder.getIngredientsAndMeasurements())
+    assertEquals("1", builder.getId())
+  }
 }
