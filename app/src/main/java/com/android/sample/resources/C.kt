@@ -2,7 +2,6 @@ package com.android.sample.resources
 
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
 import com.android.sample.R
 
 // Like R, but C

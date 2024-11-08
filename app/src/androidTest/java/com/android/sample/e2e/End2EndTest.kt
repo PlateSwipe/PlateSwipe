@@ -25,7 +25,6 @@ import com.android.sample.ui.navigation.TopLevelDestinations
 import com.android.sample.ui.recipe.SearchRecipeScreen
 import com.android.sample.ui.swipePage.SwipePage
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import io.mockk.mockk
 import org.junit.Before

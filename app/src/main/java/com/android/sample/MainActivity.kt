@@ -16,8 +16,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
-import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.model.ingredient.IngredientViewModel
+import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C
