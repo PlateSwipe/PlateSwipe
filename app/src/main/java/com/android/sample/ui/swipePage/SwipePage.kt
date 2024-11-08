@@ -150,6 +150,7 @@ fun RecipeDisplay(
       modifier =
           Modifier.fillMaxSize().background(getBackgroundColor(offsetX.value, screenWidth))) {
         Column(
+            verticalArrangement = Arrangement.Top,
             modifier =
                 Modifier.fillMaxSize()
                     .padding(paddingValues)
@@ -315,7 +316,7 @@ fun RecipeDisplay(
                   currentRecipe?.strMeal ?: LOADING, currentRecipe?.strCategory ?: LOADING)
 
               // Spacer to push content to bottom
-              Spacer(modifier = Modifier.weight(1f))
+              // Spacer(modifier = Modifier.weight(1f))
 
               // The last column for recipe description at the bottom
               /*Column(
@@ -438,17 +439,17 @@ private fun ImageDescription(name: String, tag: String) {
             Modifier.fillMaxWidth().testTag("draggableItem"), // Ensure the Row takes up full width
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween) {
+
           // Display Recipe Name
           Text(
               modifier =
                   Modifier.testTag("recipeName")
                       .weight(3f), // Takes up 3 parts of the available space
               text = name,
-              style = MaterialTheme.typography.bodyLarge,
+              style = MaterialTheme.typography.bodyLarge.copy(fontSize = 20.sp),
               color = MaterialTheme.colorScheme.onSecondary,
-              maxLines = 2, // Limit to 1 line to prevent overflow
-              overflow = TextOverflow.Ellipsis // Show "..." if text is too long
-              )
+              maxLines = 1,
+              overflow = TextOverflow.Ellipsis)
 
           // Row for the star and rate text
           Row(
@@ -470,7 +471,7 @@ private fun ImageDescription(name: String, tag: String) {
                 Text(
                     text = stringResource(R.string.rate),
                     modifier = Modifier.testTag("recipeRate"),
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = MaterialTheme.typography.bodyLarge.copy(fontSize = 20.sp),
                     color = MaterialTheme.colorScheme.onSecondary)
               }
         }
@@ -478,6 +479,8 @@ private fun ImageDescription(name: String, tag: String) {
     Spacer(modifier = Modifier.padding(2.dp))
 
     Row(verticalAlignment = Alignment.CenterVertically) { Tag(tag) }
+
+    Spacer(modifier = Modifier.size(32.dp))
   }
 }
 
