@@ -140,6 +140,7 @@ fun RecipeNameScreen(
                     textStyle = MaterialTheme.typography.bodyMedium,
                     maxLines = 2)
 
+                // Display error message if recipe name is empty
                 Column(modifier = Modifier.weight(0.1f).align(Alignment.CenterHorizontally)) {
                   if (showError) {
                     Text(
@@ -150,6 +151,7 @@ fun RecipeNameScreen(
                         modifier = Modifier.padding(top = RECIPE_NAME_BASE_PADDING / 2))
                   }
                 }
+                // Display the chef image if the screen dimensions are large enough
                 if (screenWidthDp >= SCREEN_WIDTH_THRESHOLD &&
                     screenHeightDp >= SCREEN_HEIGHT_THRESHOLD) {
                   Row(

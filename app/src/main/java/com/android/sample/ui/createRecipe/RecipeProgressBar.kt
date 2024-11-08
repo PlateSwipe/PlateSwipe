@@ -25,62 +25,60 @@ import com.android.sample.ui.theme.lightCream
  */
 @Composable
 fun RecipeProgressBar(currentStep: Int) {
+  // List of icons representing each step in the recipe creation process
   val stepIcons =
       listOf(
-          R.drawable.chef_s_hat, // First step icon
-          R.drawable.whisk, // Second step icon
-          R.drawable.assignment, // Third step icon
-          R.drawable.crop_original // Fourth step icon
-          )
+          R.drawable.chef_s_hat, R.drawable.whisk, R.drawable.assignment, R.drawable.crop_original)
 
   Row(
       modifier = Modifier.fillMaxWidth().padding(16.dp).testTag("progressBar"),
       verticalAlignment = Alignment.CenterVertically) {
         stepIcons.forEachIndexed { index, iconResId ->
-          val isCompletedStep = index < currentStep
-          val isCurrentStep = index == currentStep
-          val iconBackgroundColor =
-              when {
-                isCompletedStep -> Orange80
-                else -> lightCream
-              }
+          // Display each step icon with appropriate styling
+          StepBox(
+              iconResId = iconResId,
+              isCompletedStep = index < currentStep,
+              isCurrentStep = index == currentStep,
+              index = index)
 
-          val borderModifier: Modifier =
-              if (isCurrentStep) {
-                Modifier.border(2.dp, Orange80, CircleShape)
-              } else {
-                Modifier
-              }
-
-          Box(
-              modifier =
-                  Modifier.size(50.dp) // Circle size
-                      .clip(CircleShape)
-                      .then(borderModifier)
-                      .background(iconBackgroundColor)
-                      .testTag("step_$index"), // Add testTag for each step
-              contentAlignment = Alignment.Center) {
-                // Display the icon, white tint for completed steps
-                Icon(
-                    painter = painterResource(id = iconResId),
-                    contentDescription = "Step ${index + 1}",
-                    modifier = Modifier.size(24.dp),
-                    tint =
-                        if (isCompletedStep) Color.White
-                        else Color.Unspecified // Tint the icon white if the step is completed
-                    )
-              }
-
-          // Add a horizontal line between the steps
+          // Display a line between steps, except after the last step
           if (index != stepIcons.lastIndex) {
             Box(
                 modifier =
                     Modifier.height(2.dp)
                         .weight(1f)
-                        .background(if (isCompletedStep) Orange80 else graySlate)
-                        .testTag("line_$index") // Add testTag for each horizontal line
-                )
+                        .background(if (index < currentStep) Orange80 else graySlate)
+                        .testTag("line_$index"))
           }
         }
+      }
+}
+
+/**
+ * Composable to display an individual step icon in the progression bar.
+ *
+ * @param iconResId Resource ID of the icon to display.
+ * @param isCompletedStep Boolean indicating if the step is completed.
+ * @param isCurrentStep Boolean indicating if this is the current step.
+ * @param index Index of the step in the progression.
+ */
+@Composable
+private fun StepBox(iconResId: Int, isCompletedStep: Boolean, isCurrentStep: Boolean, index: Int) {
+  val iconBackgroundColor = if (isCompletedStep) Orange80 else lightCream
+  val borderModifier = if (isCurrentStep) Modifier.border(2.dp, Orange80, CircleShape) else Modifier
+
+  Box(
+      modifier =
+          Modifier.size(50.dp) // Circle size
+              .clip(CircleShape)
+              .then(borderModifier)
+              .background(iconBackgroundColor)
+              .testTag("step_$index"),
+      contentAlignment = Alignment.Center) {
+        Icon(
+            painter = painterResource(id = iconResId),
+            contentDescription = "Step ${index + 1}",
+            modifier = Modifier.size(24.dp),
+            tint = if (isCompletedStep) Color.White else Color.Unspecified)
       }
 }
