@@ -43,7 +43,23 @@ class FirestoreIngredientRepositoryTest {
   private lateinit var firestoreIngredientRepository: FirestoreIngredientRepository
 
   private val ingredient: Ingredient =
-      Ingredient(uid = "1", name = "Coca-Cola", barCode = 5449000214911L)
+      Ingredient(
+          uid = "1",
+          name = "Coca-Cola",
+          barCode = 5449000214911L,
+          brands = "Coca cola",
+          quantity = "330 mL",
+          categories =
+              listOf(
+                  "Beverages and beverages preparations",
+                  "Beverages",
+                  "Carbonated drinks",
+                  "Sodas",
+                  "Carbonated soft drinks without fruit juice",
+                  "Colas",
+                  "Carbonated soft drinks without fruit juice with sugar",
+                  "Sweetened beverages"),
+          images = listOf("display_normal", "display_thumbnail", "display_small"))
 
   @Before
   fun setup() {
@@ -68,6 +84,9 @@ class FirestoreIngredientRepositoryTest {
     `when`(mockDocumentSnapshot.getLong("barCode")).thenReturn(ingredient.barCode)
     `when`(mockDocumentSnapshot.getString("name")).thenReturn(ingredient.name)
     `when`(mockDocumentSnapshot.getString("brands")).thenReturn(ingredient.brands)
+    `when`(mockDocumentSnapshot.getString("quantity")).thenReturn(ingredient.quantity)
+    `when`(mockDocumentSnapshot.get("categories")).thenReturn(ingredient.categories)
+    `when`(mockDocumentSnapshot.get("images")).thenReturn(ingredient.images)
 
     firestoreIngredientRepository = FirestoreIngredientRepository(mockFirebaseFirestore)
   }

@@ -2,7 +2,10 @@ package com.android.sample.model.ingredient
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.android.sample.model.image.ImageRepositoryFirebase
+import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
+import com.google.firebase.storage.storage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import okhttp3.OkHttpClient
@@ -37,8 +40,9 @@ class IngredientViewModel(private val repository: IngredientRepository) : ViewMo
           override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return IngredientViewModel(
                 AggregatorIngredientRepository(
-                    FirestoreIngredientRepository(com.google.firebase.Firebase.firestore),
-                    OpenFoodFactsIngredientRepository(OkHttpClient())))
+                    FirestoreIngredientRepository(Firebase.firestore),
+                    OpenFoodFactsIngredientRepository(
+                        OkHttpClient(), ImageRepositoryFirebase(Firebase.storage))))
                 as T
           }
         }

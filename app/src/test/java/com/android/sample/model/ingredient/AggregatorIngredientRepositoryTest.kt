@@ -8,7 +8,6 @@ import org.junit.Test
 import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.Mock
-import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
 import org.mockito.kotlin.capture
@@ -28,7 +27,24 @@ class AggregatorIngredientRepositoryTest {
 
   private lateinit var aggregatorIngredientRepository: AggregatorIngredientRepository
 
-  private val ingredient = Ingredient(uid = "1", name = "Coca-Cola", barCode = 5449000214911L)
+  private val ingredient =
+      Ingredient(
+          uid = "1",
+          name = "Coca-Cola",
+          barCode = 5449000214911L,
+          brands = "Coca cola",
+          quantity = "330 mL",
+          categories =
+              listOf(
+                  "Beverages and beverages preparations",
+                  "Beverages",
+                  "Carbonated drinks",
+                  "Sodas",
+                  "Carbonated soft drinks without fruit juice",
+                  "Colas",
+                  "Carbonated soft drinks without fruit juice with sugar",
+                  "Sweetened beverages"),
+          images = listOf("display_normal", "display_thumbnail", "display_small"))
 
   @Before
   fun setUp() {

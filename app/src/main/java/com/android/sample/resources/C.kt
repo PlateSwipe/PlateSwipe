@@ -197,9 +197,29 @@ object C {
     const val FIRESTORE_INGREDIENT_NAME = "name"
     const val FIRESTORE_INGREDIENT_BARCODE = "barCode"
     const val FIRESTORE_INGREDIENT_BRANDS = "brands"
+    const val FIRESTORE_INGREDIENT_QUANTITY = "quantity"
+    const val FIRESTORE_INGREDIENT_CATEGORIES = "categories"
+    const val FIRESTORE_INGREDIENT_IMAGES = "images"
 
     // AggregatorIngredientRepository
     const val AGGREGATOR_TAG_ON_INGREDIENT_ADDED = "Ingredient added successfully"
+
+    // OpenFoodFactsIngredientRepository
+    const val OPEN_FOOD_FACTS_URL = "https://world.openfoodfacts.net"
+    const val OPEN_FOOD_FACTS_INGREDIENT_REPOSITORY_TAG = "OpenFoodFactsIngredientRepository"
+    const val PRODUCT_NAME = "product_name"
+    const val PRODUCT_BRAND = "brands"
+    const val PRODUCT_ID = "_id"
+    const val PRODUCT_QUANTITY = "quantity"
+    const val PRODUCT_CATEGORIES = "categories"
+    const val PRODUCT_FRONT_IMAGE_URL = "image_front_url"
+    const val PRODUCT_FRONT_IMAGE = "display_normal"
+    const val PRODUCT_FRONT_IMAGE_THUMBNAIL_URL = "image_front_thumb_url"
+    const val PRODUCT_FRONT_IMAGE_THUMBNAIL = "display_thumbnail"
+    const val PRODUCT_FRONT_IMAGE_SMALL_URL = "image_front_small_url"
+    const val PRODUCT_FRONT_IMAGE_SMALL = "display_small"
+    const val INGREDIENT_IMAGE_ADDED_SUCCESSFULLY =
+        "Ingredient image added successfully to the storage"
 
     // EXCEPTION MESSAGES
     const val LIMIT_MUST_BE_POSITIVE_MESSAGE = "Limit must be greater than 0"
