@@ -77,7 +77,7 @@ class CreateRecipeViewModel(private val repository: FirestoreRecipesRepository) 
         newMeasurement = newMeasurement)
   }
 
-  fun getIngredients(): List<Pair<String, String>> {
+  fun getIngredientsAndMeasurments(): List<Pair<String, String>> {
     return recipeBuilder.getIngredientsAndMeasurements()
   }
 

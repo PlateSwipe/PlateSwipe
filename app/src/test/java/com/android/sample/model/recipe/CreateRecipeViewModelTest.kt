@@ -268,7 +268,7 @@ class CreateRecipeViewModelTest {
     assertEquals(recipe.strMeal, createRecipeViewModel.getRecipeName())
     assertEquals(recipe.strInstructions, createRecipeViewModel.getRecipeInstructions())
     assertEquals(recipe.strMealThumbUrl, createRecipeViewModel.getRecipeThumbnail())
-    assertEquals(listOf(Pair("Banana", "3")), createRecipeViewModel.getIngredients())
+    assertEquals(listOf(Pair("Banana", "3")), createRecipeViewModel.getIngredientsAndMeasurments())
     assertEquals("30 minutes", createRecipeViewModel.getRecipeTime())
     assertEquals("Medium", createRecipeViewModel.getRecipeDifficulty())
     assertEquals("15.99", createRecipeViewModel.getRecipePrice())
@@ -290,7 +290,7 @@ class CreateRecipeViewModelTest {
     createRecipeViewModel.updateRecipeArea("Italian")
 
     createRecipeViewModel.updateIngredientAndMeasurement("Banana", "3", "Apple", "4")
-    assertEquals(listOf(Pair("Apple", "4")), createRecipeViewModel.getIngredients())
+    assertEquals(listOf(Pair("Apple", "4")), createRecipeViewModel.getIngredientsAndMeasurments())
   }
 
   @Test
@@ -307,6 +307,6 @@ class CreateRecipeViewModelTest {
     createRecipeViewModel.updateRecipeArea("Italian")
 
     createRecipeViewModel.removeIngredientAndMeasurement("Banana", "3")
-    assertEquals(emptyList<Pair<String, String>>(), createRecipeViewModel.getIngredients())
+    assertEquals(emptyList<Pair<String, String>>(), createRecipeViewModel.getIngredientsAndMeasurments())
   }
 }
