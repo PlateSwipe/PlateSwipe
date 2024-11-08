@@ -20,11 +20,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -42,11 +44,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -71,6 +75,8 @@ import com.android.sample.resources.C.Tag.TIME_RANGE_INPUT_DESCRIPTION
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.graySlate
+import com.android.sample.ui.theme.greenSwipe
+import com.android.sample.ui.theme.redSwipe
 import com.android.sample.ui.theme.starColor
 import com.android.sample.ui.theme.tagBackground
 import com.android.sample.ui.utils.PlateSwipeScaffold
@@ -123,9 +129,11 @@ fun RecipeDisplay(
   val offsetX = remember { Animatable(0f) }
 
   val coroutineScope = rememberCoroutineScope()
-  val screenWidth = LocalConfiguration.current.screenWidthDp.toFloat()
-  // Threshold to like/dislike a recipe when swiped
-  val swipeThreshold = screenWidth * 2 / 3
+  val density = LocalDensity.current.density
+  val screenWidth =
+      LocalConfiguration.current.screenWidthDp *
+          density // Threshold to like/dislike a recipe when swiped
+  val swipeThreshold = screenWidth * 1 / 3
   // Collect the current and next recipe from the ViewModel
   val currentRecipe by recipesViewModel.currentRecipe.collectAsState()
   val nextRecipe by recipesViewModel.nextRecipe.collectAsState()
@@ -139,200 +147,275 @@ fun RecipeDisplay(
       displayCard2 = !displayCard2
     }
   }
-
-  Column(
+  Box(
       modifier =
-          Modifier.fillMaxSize()
-              .padding(paddingValues)
-              .padding(dimensionResource(id = R.dimen.paddingBasic))
-              .pointerInput(Unit) {
-                detectHorizontalDragGestures(
-                    onDragEnd = {
-                      if (kotlin.math.abs(offsetX.value) > swipeThreshold) {
-                        retrieveNextRecipe = true
-                        if (offsetX.value > 0 && currentRecipe != null) {
-                          userViewModel.addRecipeToUserLikedRecipes(currentRecipe!!)
-                        }
-                      }
-                    },
-                    onHorizontalDrag = { _, dragAmount ->
-                      coroutineScope.launch { offsetX.snapTo(offsetX.value + dragAmount) }
-                    })
-              }) {
-        Row(
-            horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth().weight(1f)) {
-              // Star Icon (fixed size, no weight needed)
-              Icon(
-                  painter = painterResource(R.drawable.filter),
-                  contentDescription = FILTER_ICON_DESCRIPTION,
-                  modifier =
-                      Modifier.testTag("filter").size(30.dp).clickable {
-                        navigationActions.navigateTo(Screen.FILTER)
-                      }, // Use fixed size for the icon
-                  tint = graySlate)
-            }
-        // Space between the filter icon and the filter chips
-        Spacer(modifier = Modifier.height(8.dp))
-        Row(
-            horizontalArrangement = Arrangement.Start,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier =
-                Modifier.testTag("filterRow")
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .horizontalScroll(rememberScrollState())) {
-              // Star Icon (fixed size, no weight needed)
-              var displayTimeRange by remember { mutableStateOf(!filter.timeRange.isLimited()) }
-              var displayPriceRange by remember { mutableStateOf(!filter.priceRange.isLimited()) }
-              var displayDifficulty by remember {
-                mutableStateOf(filter.difficulty != Difficulty.Undefined)
-              }
-              var displayCategory by remember { mutableStateOf(filter.category != null) }
-
-              FilterChip(
-                  displayState = displayTimeRange,
-                  onDelete = {
-                    displayTimeRange = false
-                    recipesViewModel.updateTimeRange(
-                        recipesViewModel.filter.value.timeRange.minBorn,
-                        recipesViewModel.filter.value.timeRange.maxBorn)
-                  },
-                  label = "${filter.timeRange.min.toInt()} - ${filter.timeRange.max.toInt()} min",
-                  testTag = "timeRangeChip",
-                  contentDescription = TIME_RANGE_INPUT_DESCRIPTION)
-
-              FilterChip(
-                  displayState = displayPriceRange,
-                  onDelete = {
-                    displayPriceRange = false
-                    recipesViewModel.updatePriceRange(
-                        recipesViewModel.filter.value.priceRange.minBorn,
-                        recipesViewModel.filter.value.priceRange.maxBorn)
-                  },
-                  label = "${filter.priceRange.min.toInt()} - ${filter.priceRange.max.toInt()} $",
-                  testTag = "priceRangeChip",
-                  contentDescription = PRICE_RANGE_INPUT_DESCRIPTION)
-
-              FilterChip(
-                  displayState = displayDifficulty,
-                  onDelete = {
-                    displayDifficulty = false
-                    recipesViewModel.updateDifficulty(Difficulty.Undefined)
-                  },
-                  label = filter.difficulty.toString(),
-                  testTag = "difficultyChip",
-                  contentDescription = DIFFICULTY_INPUT_DESCRIPTION)
-
-              FilterChip(
-                  displayState = displayCategory,
-                  onDelete = {
-                    displayCategory = false
-                    recipesViewModel.updateCategory(null)
-                  },
-                  label = filter.category.orEmpty(),
-                  testTag = "categoryChip",
-                  contentDescription = CATEGORY_INPUT_DESCRIPTION)
-            }
-
-        // Space between the filter chips and the recipe cards
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // First Recipe card with image
-        Box(modifier = Modifier.weight(15f)) {
-          Card(
-              modifier =
-                  Modifier.fillMaxWidth()
-                      .padding(dimensionResource(id = R.dimen.paddingBasic) / 2)
-                      .graphicsLayer(translationX = if (displayCard1) offsetX.value else 0f)
-                      .zIndex(if (displayCard1) 1f else 0f),
-              shape = RoundedCornerShape(16.dp),
-              elevation = CardDefaults.cardElevation(4.dp)) {
-                Column(
-                    modifier = Modifier.background(color = MaterialTheme.colorScheme.onPrimary)) {
-                      Image(
-                          painter =
-                              rememberAsyncImagePainter(
-                                  model =
-                                      if (displayCard1) currentRecipe?.strMealThumbUrl
-                                      else nextRecipe?.strMealThumbUrl),
-                          contentDescription = stringResource(R.string.recipe_image),
-                          modifier = Modifier.fillMaxSize().testTag("recipeImage1"),
-                          contentScale = ContentScale.Crop,
-                      )
-                    }
-              }
-
-          // Second Recipe card with image
-          Card(
-              modifier =
-                  Modifier.fillMaxWidth()
-                      .padding(dimensionResource(id = R.dimen.paddingBasic) / 2)
-                      .graphicsLayer(translationX = if (displayCard2) offsetX.value else 0f)
-                      .zIndex(if (displayCard2) 1f else 0f),
-              shape = RoundedCornerShape(16.dp),
-              elevation = CardDefaults.cardElevation(4.dp)) {
-                Column(
-                    modifier = Modifier.background(color = MaterialTheme.colorScheme.onPrimary)) {
-                      Image(
-                          painter =
-                              rememberAsyncImagePainter(
-                                  model =
-                                      if (displayCard2) currentRecipe?.strMealThumbUrl
-                                      else nextRecipe?.strMealThumbUrl),
-                          contentDescription = stringResource(R.string.recipe_image),
-                          modifier = Modifier.fillMaxSize().testTag("recipeImage2"),
-                          contentScale = ContentScale.Crop,
-                      )
-                    }
-              }
-        }
-
-        // Image Description
-        ImageDescription(currentRecipe?.strMeal ?: LOADING, currentRecipe?.strCategory ?: LOADING)
-
-        // Spacer to push content to bottom
-        Spacer(modifier = Modifier.weight(1f))
-
-        // The last column for recipe description at the bottom
+          Modifier.fillMaxSize().background(getBackgroundColor(offsetX.value, screenWidth))) {
         Column(
-            verticalArrangement = Arrangement.Bottom,
             modifier =
-                Modifier.weight(2f)
-                    .verticalScroll(rememberScrollState())
-                    .padding(bottom = dimensionResource(id = R.dimen.paddingBasic)),
-        ) {
-          // Display Recipe Description (truncated with ellipsis)
-          Text(
-              text = currentRecipe?.strInstructions ?: LOADING,
-              style = MaterialTheme.typography.bodyMedium,
-              color = MaterialTheme.colorScheme.onSecondary,
-              maxLines = 1, // Show full text if visible, otherwise one line
-              overflow = TextOverflow.Ellipsis, // Add "..." if text exceeds one line
-              modifier =
-                  Modifier.fillMaxWidth()
-                      .padding(top = dimensionResource(id = R.dimen.paddingBasic) / 2)
-                      .clickable { navigationActions.navigateTo(Screen.OVERVIEW_RECIPE) }
-                      .testTag("recipeDescription"),
-          )
-        }
+                Modifier.fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(dimensionResource(id = R.dimen.paddingBasic))
+                    .background(Color.Transparent)
+                    .pointerInput(Unit) {
+                      detectHorizontalDragGestures(
+                          onDragEnd = {
+                            if (kotlin.math.abs(offsetX.value) > swipeThreshold) {
+                              retrieveNextRecipe = true
+                              if (offsetX.value > 0 && currentRecipe != null) {
+                                userViewModel.addRecipeToUserLikedRecipes(currentRecipe!!)
+                              }
+                            }
+                          },
+                          onHorizontalDrag = { _, dragAmount ->
+                            coroutineScope.launch { offsetX.snapTo(offsetX.value + dragAmount) }
+                          })
+                    }) {
+              Row(
+                  horizontalArrangement = Arrangement.End,
+                  verticalAlignment = Alignment.CenterVertically,
+                  modifier = Modifier.fillMaxWidth().weight(1f)) {
+                    // Star Icon (fixed size, no weight needed)
+                    Icon(
+                        painter = painterResource(R.drawable.filter),
+                        contentDescription = FILTER_ICON_DESCRIPTION,
+                        modifier =
+                            Modifier.testTag("filter").size(30.dp).clickable {
+                              navigationActions.navigateTo(Screen.FILTER)
+                            }, // Use fixed size for the icon
+                        tint = graySlate)
+                  }
+              // Space between the filter icon and the filter chips
+              Spacer(modifier = Modifier.height(8.dp))
+              Row(
+                  horizontalArrangement = Arrangement.Start,
+                  verticalAlignment = Alignment.CenterVertically,
+                  modifier =
+                      Modifier.testTag("filterRow")
+                          .fillMaxWidth()
+                          .weight(1f)
+                          .horizontalScroll(rememberScrollState())) {
+                    // Star Icon (fixed size, no weight needed)
+                    var displayTimeRange by remember {
+                      mutableStateOf(!filter.timeRange.isLimited())
+                    }
+                    var displayPriceRange by remember {
+                      mutableStateOf(!filter.priceRange.isLimited())
+                    }
+                    var displayDifficulty by remember {
+                      mutableStateOf(filter.difficulty != Difficulty.Undefined)
+                    }
+                    var displayCategory by remember { mutableStateOf(filter.category != null) }
 
-        // Animate back to center if not swiped
-        LaunchedEffect(offsetX.value) {
-          val animationTarget =
-              when {
-                offsetX.value > swipeThreshold -> END_ANIMATION
-                offsetX.value < -swipeThreshold -> -END_ANIMATION
-                else -> 0f
+                    FilterChip(
+                        displayState = displayTimeRange,
+                        onDelete = {
+                          displayTimeRange = false
+                          recipesViewModel.updateTimeRange(
+                              recipesViewModel.filter.value.timeRange.minBorn,
+                              recipesViewModel.filter.value.timeRange.maxBorn)
+                        },
+                        label =
+                            "${filter.timeRange.min.toInt()} - ${filter.timeRange.max.toInt()} min",
+                        testTag = "timeRangeChip",
+                        contentDescription = TIME_RANGE_INPUT_DESCRIPTION)
+
+                    FilterChip(
+                        displayState = displayPriceRange,
+                        onDelete = {
+                          displayPriceRange = false
+                          recipesViewModel.updatePriceRange(
+                              recipesViewModel.filter.value.priceRange.minBorn,
+                              recipesViewModel.filter.value.priceRange.maxBorn)
+                        },
+                        label =
+                            "${filter.priceRange.min.toInt()} - ${filter.priceRange.max.toInt()} $",
+                        testTag = "priceRangeChip",
+                        contentDescription = PRICE_RANGE_INPUT_DESCRIPTION)
+
+                    FilterChip(
+                        displayState = displayDifficulty,
+                        onDelete = {
+                          displayDifficulty = false
+                          recipesViewModel.updateDifficulty(Difficulty.Undefined)
+                        },
+                        label = filter.difficulty.toString(),
+                        testTag = "difficultyChip",
+                        contentDescription = DIFFICULTY_INPUT_DESCRIPTION)
+
+                    FilterChip(
+                        displayState = displayCategory,
+                        onDelete = {
+                          displayCategory = false
+                          recipesViewModel.updateCategory(null)
+                        },
+                        label = filter.category.orEmpty(),
+                        testTag = "categoryChip",
+                        contentDescription = CATEGORY_INPUT_DESCRIPTION)
+                  }
+
+              // Space between the filter chips and the recipe cards
+              Spacer(modifier = Modifier.height(8.dp))
+
+              // First Recipe card with image
+              Box(modifier = Modifier.weight(15f)) {
+                Card(
+                    modifier =
+                        Modifier.fillMaxWidth()
+                            .padding(dimensionResource(id = R.dimen.paddingBasic) / 2)
+                            .graphicsLayer(translationX = if (displayCard1) offsetX.value else 0f)
+                            .zIndex(if (displayCard1) 1f else 0f),
+                    shape = RoundedCornerShape(16.dp),
+                    elevation = CardDefaults.cardElevation(4.dp)) {
+                      Column(
+                          modifier =
+                              Modifier.background(color = MaterialTheme.colorScheme.onPrimary)) {
+                            Image(
+                                painter =
+                                    rememberAsyncImagePainter(
+                                        model =
+                                            if (displayCard1) currentRecipe?.strMealThumbUrl
+                                            else nextRecipe?.strMealThumbUrl),
+                                contentDescription = stringResource(R.string.recipe_image),
+                                modifier = Modifier.fillMaxSize().testTag("recipeImage1"),
+                                contentScale = ContentScale.Crop,
+                            )
+                          }
+                    }
+
+                // Second Recipe card with image
+                Card(
+                    modifier =
+                        Modifier.fillMaxWidth()
+                            .padding(dimensionResource(id = R.dimen.paddingBasic) / 2)
+                            .graphicsLayer(translationX = if (displayCard2) offsetX.value else 0f)
+                            .zIndex(if (displayCard2) 1f else 0f),
+                    shape = RoundedCornerShape(16.dp),
+                    elevation = CardDefaults.cardElevation(4.dp)) {
+                      Column(
+                          modifier =
+                              Modifier.background(color = MaterialTheme.colorScheme.onPrimary)) {
+                            Image(
+                                painter =
+                                    rememberAsyncImagePainter(
+                                        model =
+                                            if (displayCard2) currentRecipe?.strMealThumbUrl
+                                            else nextRecipe?.strMealThumbUrl),
+                                contentDescription = stringResource(R.string.recipe_image),
+                                modifier = Modifier.fillMaxSize().testTag("recipeImage2"),
+                                contentScale = ContentScale.Crop,
+                            )
+                          }
+                    }
               }
-          if (retrieveNextRecipe && offsetX.value == 0f) {
-            recipesViewModel.nextRecipe()
-            retrieveNextRecipe = false
-          }
-          offsetX.animateTo(animationTarget, animationSpec = tween(50))
-        }
+
+              // Image Description
+              ImageDescription(
+                  currentRecipe?.strMeal ?: LOADING, currentRecipe?.strCategory ?: LOADING)
+
+              // Spacer to push content to bottom
+              Spacer(modifier = Modifier.weight(1f))
+
+              // The last column for recipe description at the bottom
+              /*Column(
+                  verticalArrangement = Arrangement.Bottom,
+                  modifier =
+                  Modifier.weight(2f)
+                      .verticalScroll(rememberScrollState())
+                      .padding(bottom = dimensionResource(id = R.dimen.paddingBasic)),
+              ) {
+                  // Display Recipe Description (truncated with ellipsis)
+                  Text(
+                      text = currentRecipe?.strInstructions ?: LOADING,
+                      style = MaterialTheme.typography.bodyMedium,
+                      color = MaterialTheme.colorScheme.onSecondary,
+                      maxLines = 1, // Show full text if visible, otherwise one line
+                      overflow = TextOverflow.Ellipsis, // Add "..." if text exceeds one line
+                      modifier =
+                      Modifier.fillMaxWidth()
+                          .padding(top = dimensionResource(id = R.dimen.paddingBasic) / 2)
+                          .clickable { navigationActions.navigateTo(Screen.OVERVIEW_RECIPE) }
+                          .testTag("recipeDescription"),
+                  )*/
+
+              ShawRecipeButton(navigationActions)
+
+              // Animate back to center if not swiped
+              LaunchedEffect(offsetX.value) {
+                val animationTarget =
+                    when {
+                      offsetX.value > swipeThreshold -> END_ANIMATION
+                      offsetX.value < -swipeThreshold -> -END_ANIMATION
+                      else -> 0f
+                    }
+                if (retrieveNextRecipe && offsetX.value == 0f) {
+                  recipesViewModel.nextRecipe()
+                  retrieveNextRecipe = false
+                }
+                offsetX.animateTo(animationTarget, animationSpec = tween(50))
+              }
+            }
       }
+}
+
+/**
+ * Composable for the Shaw Recipe Button
+ *
+ * @param navigationActions - Navigation Actions
+ */
+@Composable
+private fun ShawRecipeButton(navigationActions: NavigationActions) {
+  Button(
+      onClick = { navigationActions.navigateTo(Screen.OVERVIEW_RECIPE) },
+      colors =
+          ButtonDefaults.buttonColors(
+              containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+              contentColor = MaterialTheme.colorScheme.onPrimary),
+      elevation = ButtonDefaults.buttonElevation(4.dp),
+      shape = RoundedCornerShape(12.dp),
+      modifier =
+          Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+              .wrapContentSize()
+              .testTag("viewRecipeButton")) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)) {
+              Image(
+                  painter = painterResource(id = R.drawable.chef_s_hat),
+                  contentDescription = "Chef's hat",
+                  modifier = Modifier.size(24.dp),
+                  contentScale = ContentScale.Fit)
+
+              Text(
+                  text = "View Recipe",
+                  style = MaterialTheme.typography.bodyMedium,
+                  color = MaterialTheme.colorScheme.onPrimary,
+              )
+            }
+      }
+}
+
+@Composable
+private fun getBackgroundColor(offsetX: Float, screenWidth: Float): Brush {
+  val colorIntensity = (offsetX / screenWidth).coerceIn(-1f, 1f)
+
+  return when {
+    colorIntensity > 0 -> {
+      // Right swipe - green gradient
+      Brush.horizontalGradient(
+          colors = listOf(Color.Transparent, greenSwipe.copy(alpha = colorIntensity)),
+          startX = 0f,
+          endX = screenWidth)
+    }
+    colorIntensity < 0 -> {
+      // Left swipe - red gradient
+      Brush.horizontalGradient(
+          colors = listOf(Color.Transparent, redSwipe.copy(alpha = -colorIntensity)),
+          startX = screenWidth,
+          endX = 0f)
+    }
+    else -> Brush.horizontalGradient(colors = listOf(Color.Transparent, Color.Transparent))
+  }
 }
 
 /**

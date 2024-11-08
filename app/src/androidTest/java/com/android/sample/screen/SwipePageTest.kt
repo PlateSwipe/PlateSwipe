@@ -123,7 +123,13 @@ class SwipePageTest : TestCase() {
     composeTestRule.onNodeWithTag("recipeImage2", useUnmergedTree = true).assertIsDisplayed()
   }
 
-  /**  */
+  @Test
+  fun shawRecipeButtonIsDisplayed() = runTest {
+    composeTestRule.onNodeWithTag("viewRecipeButton", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag("viewRecipeButton", useUnmergedTree = true).performClick()
+    verify(mockNavigationActions).navigateTo(Screen.OVERVIEW_RECIPE)
+  }
+  /** This test checks if the filter button is correctly displayed. */
   @Test
   fun navigateToRecipeInfoWhenDescriptionIsPushed() = runTest {
     composeTestRule.onNodeWithTag("recipeDescription", useUnmergedTree = true).assertIsDisplayed()

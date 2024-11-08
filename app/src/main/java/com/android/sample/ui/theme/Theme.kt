@@ -28,7 +28,9 @@ private val LightColorScheme =
         background = Color.White,
         onPrimary = Color.Black,
         onSecondary = graySlate,
-        onTertiary = Color.Gray
+        onTertiary = Color.Gray,
+        onPrimaryContainer = lightCream,
+        onSecondaryContainer = goldenBronze,
 
         /* Other default colors to override
         background = Color(0xFFFFFBFE),
@@ -39,7 +41,7 @@ private val LightColorScheme =
         onBackground = Color(0xFF1C1B1F),
         onSurface = Color(0xFF1C1B1F),
         */
-        )
+    )
 
 @Composable
 fun SampleAppTheme(
