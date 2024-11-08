@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -42,7 +43,7 @@ fun SearchBar(modifier: Modifier = Modifier, list: List<Recipe> = emptyList()) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start),
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
+        modifier = modifier.testTag("searchBar")
     ) {
         Image(
             painter = painterResource(id = R.drawable.search),
@@ -51,6 +52,7 @@ fun SearchBar(modifier: Modifier = Modifier, list: List<Recipe> = emptyList()) {
                 .padding(0.dp)
                 .width(20.2643.dp)
                 .height(20.72197.dp)
+                .testTag("search icon")
         )
         TextField(
             value = if (isFocused) "$searchText|" else searchText,

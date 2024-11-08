@@ -43,7 +43,7 @@ class SearchBarTest {
       calledOnValueChange = true
     }
 
-    composeTestRule.setContent { SearchBar(onValueChange = onValueChange) }
+    composeTestRule.setContent { SearchBar() }
 
     composeTestRule.onNodeWithTag("searchBar").performTextInput(query)
     composeTestRule.waitForIdle()

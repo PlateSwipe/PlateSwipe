@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -31,6 +32,8 @@ import com.android.sample.ui.navigation.LIST_TOP_LEVEL_DESTINATIONS
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.utils.*
 
+
+// TODO: quand je cherche et enleve le searchText en le mettant a "" j'ai la liste recipes de base qui est regenerée entière.
 @Composable
 fun SearchRecipeScreen(navigationActions: NavigationActions, recipesViewModel: RecipesViewModel) {
   val selectedItem = navigationActions.currentRoute()
@@ -38,7 +41,7 @@ fun SearchRecipeScreen(navigationActions: NavigationActions, recipesViewModel: R
   var recipes by remember { mutableStateOf(currentRecipes) }
   val scrollState = rememberScrollState()
 
-  Scaffold(
+  Scaffold( modifier = Modifier.fillMaxSize().testTag("SearchRecipeScreen"),
     topBar = {
       Row(
         modifier = Modifier
@@ -57,6 +60,7 @@ fun SearchRecipeScreen(navigationActions: NavigationActions, recipesViewModel: R
             .padding(0.dp)
             .width(24.dp)
             .height(24.dp)
+            .testTag("PlateSwipeLogo icon")
         )
         Text(
           text = "PlateSwipe",
@@ -69,6 +73,7 @@ fun SearchRecipeScreen(navigationActions: NavigationActions, recipesViewModel: R
           modifier = Modifier
             .width(118.dp)
             .height(24.dp)
+            .testTag("PlateSwipeLogo text")
         )
 
       }},
@@ -76,7 +81,7 @@ fun SearchRecipeScreen(navigationActions: NavigationActions, recipesViewModel: R
       BottomNavigationMenu(
         onTabSelect = { tab -> navigationActions.navigateTo(tab) },
         tabList = LIST_TOP_LEVEL_DESTINATIONS,
-        selectedItem = selectedItem
+        selectedItem = selectedItem,
       )
     }
   ) { paddingValues ->
@@ -101,6 +106,7 @@ fun SearchRecipeScreen(navigationActions: NavigationActions, recipesViewModel: R
             .width(24.dp)
             .height(24.dp)
             .clickable { navigationActions.navigateTo("Filter Screen") }
+            .testTag("filter button")
         )
       }
 
@@ -130,6 +136,7 @@ fun SearchingBar(recipes : List<Recipe> ) {
       .background(color = Color(0xFFFFFFFF))
       .background(color = Color(0x33000000))
       .padding(start = 16.dp, top = 8.dp, end = 8.dp, bottom = 16.dp)
+
   ){
     SearchBar(Modifier
       .shadow(elevation = 4.dp, spotColor = Color(0x0F808080), ambientColor = Color(0x0F808080))
@@ -145,7 +152,6 @@ fun SearchingBar(recipes : List<Recipe> ) {
 
 @Composable
 fun FilterChip(text: String) {
-
   OutlinedButton(
     onClick = { /* Apply filter logic */ },
     modifier = Modifier,
