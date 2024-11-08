@@ -22,8 +22,8 @@ class FirestoreIngredientRepository(private val db: FirebaseFirestore) : Ingredi
     val name = documentSnapshot.getString(C.Tag.FIRESTORE_INGREDIENT_NAME)
     val brands = documentSnapshot.getString(C.Tag.FIRESTORE_INGREDIENT_BRANDS)
     val quantity = documentSnapshot.getString(FIRESTORE_INGREDIENT_QUANTITY)
-    val categories = documentSnapshot.get(FIRESTORE_INGREDIENT_CATEGORIES) as List<String>
-    val images = documentSnapshot.get(FIRESTORE_INGREDIENT_IMAGES) as List<String>
+    val categories = documentSnapshot[FIRESTORE_INGREDIENT_CATEGORIES] as List<String>
+    val images = documentSnapshot[FIRESTORE_INGREDIENT_IMAGES] as List<String>
 
     if (name.isNullOrEmpty()) {
       throw Exception(C.Tag.INGREDIENT_NAME_NOT_PROVIDED)
