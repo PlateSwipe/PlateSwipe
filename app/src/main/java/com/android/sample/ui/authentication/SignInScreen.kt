@@ -35,6 +35,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -140,6 +141,7 @@ import kotlinx.coroutines.tasks.await
 fun SignInScreen(navigationActions: NavigationActions) {
   val context = LocalContext.current
   val registered = remember { mutableStateOf(false) }
+  var isProcessing by remember { mutableStateOf(false) }
 
   val coroutineScope = rememberCoroutineScope()
   val activityContext = LocalContext.current
@@ -171,20 +173,25 @@ fun SignInScreen(navigationActions: NavigationActions) {
 
             SignInContent(
                 onSignInClick = {
-                  // force runing on main thread
-                  coroutineScope.launch(Dispatchers.Main) {
-                    googleSignInRequest(
-                        onAuthComplete = { result ->
-                          Log.d("SignInScreen", "User signed in: ${result.user?.displayName}")
-                          Toast.makeText(context, LOGIN_SUCCESSFUL, Toast.LENGTH_SHORT).show()
-                          registered.value = true
-                        },
-                        onAuthError = {
-                          Log.e("SignInScreen", "Failed to sign in: ${it.message}")
-                          Toast.makeText(context, LOGIN_FAILED, Toast.LENGTH_SHORT).show()
-                        },
-                        request = request,
-                        activityContext = activityContext)
+                  if (!isProcessing) {
+                    isProcessing = true
+                    // force runing on main thread
+                    coroutineScope.launch(Dispatchers.Main) {
+                      googleSignInRequest(
+                          onAuthComplete = { result ->
+                            Log.d("SignInScreen", "User signed in: ${result.user?.displayName}")
+                            Toast.makeText(context, LOGIN_SUCCESSFUL, Toast.LENGTH_SHORT).show()
+                            registered.value = true
+                            isProcessing = false
+                          },
+                          onAuthError = {
+                            Log.e("SignInScreen", "Failed to sign in: ${it.message}")
+                            Toast.makeText(context, LOGIN_FAILED, Toast.LENGTH_SHORT).show()
+                            isProcessing = false
+                          },
+                          request = request,
+                          activityContext = activityContext)
+                    }
                   }
                 })
           }
@@ -490,12 +497,11 @@ private suspend fun googleSignInRequest(
  */
 @Composable
 fun GoogleSignInButton(onSignInClick: () -> Unit) {
-
   Button(
       onClick = onSignInClick,
       colors =
           ButtonDefaults.buttonColors(
-              containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+              containerColor = MaterialTheme.colorScheme.background,
               contentColor = MaterialTheme.colorScheme.onPrimary),
       elevation = ButtonDefaults.buttonElevation(4.dp),
       shape = RoundedCornerShape(100),
