@@ -226,6 +226,12 @@ object C {
     // CameraScanCodeBarScreen
     object CameraScanCodeBarScreen {
 
+      // PLATE SWIPE SCAFFOLD
+      const val TOP_BAR_HEIGHT = 40
+      const val BACK_ARROW_ICON_SIZE = 26
+      const val CHEF_HAT_ICON_SIZE = 35
+      const val CHEF_HAT_ICON_END_PADDING = 8
+
       // BARCODE FRAME
       const val BARCODE_FRAME_WIDTH = 1f
       const val BARCODE_FRAME_HEIGHT = 0.4f
@@ -259,6 +265,13 @@ object C {
   object TestTag {
     object CameraScanCodeBarScreen {
       const val BARCODE_FRAME = "Barcode frame"
+
+      // PLATE SWIPE SCAFFOLD
+      const val TOP_BAR = "topBar"
+      const val TOP_BAR_TITLE = "topBarTitle"
+      const val BACK_ARROW_ICON = "backArrowIcon"
+      const val PLATESWIPE_SCAFFOLD = "plateSwipeScaffold"
+      const val CHEF_HAT_ICON = "chefHatIcon"
     }
   }
 }
