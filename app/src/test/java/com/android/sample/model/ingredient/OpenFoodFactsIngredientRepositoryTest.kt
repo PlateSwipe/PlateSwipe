@@ -1,8 +1,10 @@
 package com.android.sample.model.ingredient
 
 import com.android.sample.model.image.ImageRepositoryFirebase
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.UploadTask
 import java.io.IOException
 import java.io.InputStream
 import okhttp3.Call
@@ -17,7 +19,9 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
+import org.mockito.Captor
 import org.mockito.Mock
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
@@ -25,12 +29,20 @@ import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
 import org.mockito.kotlin.capture
 import org.mockito.kotlin.doNothing
+import org.mockito.kotlin.verify
+import org.robolectric.RobolectricTestRunner
 
+@RunWith(RobolectricTestRunner::class)
 class OpenFoodFactsIngredientRepositoryTest {
 
   @Mock private lateinit var mockFirebaseStorage: FirebaseStorage
   @Mock private lateinit var mockStorageRef: StorageReference
   @Mock private lateinit var mockImageRef: StorageReference
+  @Mock private lateinit var mockUpload: UploadTask
+
+  @Captor
+  private lateinit var onCompleteUploadTaskListenerCaptor:
+      ArgumentCaptor<OnCompleteListener<UploadTask.TaskSnapshot>>
 
   private lateinit var mockHttpClient: OkHttpClient
   private lateinit var imageStorage: ImageRepositoryFirebase
@@ -78,7 +90,7 @@ class OpenFoodFactsIngredientRepositoryTest {
                         "image_front_url": "",
                         "image_front_thumb_url": "",
                         "image_front_small_url": ""
-                    },
+                    }
                 ],
                 "skip": 0
             }
@@ -96,7 +108,45 @@ class OpenFoodFactsIngredientRepositoryTest {
             }
             """
 
-  private val openFoodFactsJsonGetFoundJson =
+  private val openFoodFactsJsonNormalImageGetFoundJson =
+      """
+            {
+                "code": "1234567890",
+                "product": {
+                    "_id": 1234567890,
+                    "product_name": "apple",
+                    "brands": "Brand 1",
+                    "categories": "",
+                    "quantity": "",
+                    "image_front_url": "https://images.openfoodfacts.net/images/products/544/900/021/4911/front_fr.224.200.jpg",
+                    "image_front_thumb_url": "",
+                    "image_front_small_url": ""
+                },
+                "status": 1,
+                "status_verbose": "product found"
+            }
+            """
+
+  private val openFoodFactsJsonThumbnailImageGetFoundJson =
+      """
+            {
+                "code": "1234567890",
+                "product": {
+                    "_id": 1234567890,
+                    "product_name": "apple",
+                    "brands": "Brand 1",
+                    "categories": "",
+                    "quantity": "",
+                    "image_front_url": "",
+                    "image_front_thumb_url": "https://images.openfoodfacts.net/images/products/544/900/021/4911/front_fr.224.100.jpg",
+                    "image_front_small_url": ""
+                },
+                "status": 1,
+                "status_verbose": "product found"
+            }
+            """
+
+  private val openFoodFactsJsonSmallImageGetFoundJson =
       """
             {
                 "code": "1234567890",
@@ -108,7 +158,7 @@ class OpenFoodFactsIngredientRepositoryTest {
                     "quantity": "",
                     "image_front_url": "",
                     "image_front_thumb_url": "",
-                    "image_front_small_url": "",
+                    "image_front_small_url": "https://images.openfoodfacts.net/images/products/544/900/021/4911/front_fr.224.200.jpg"
                 },
                 "status": 1,
                 "status_verbose": "product found"
@@ -178,6 +228,8 @@ class OpenFoodFactsIngredientRepositoryTest {
     val searchCallBack = callbackCapture.value
 
     `when`(mockResponseBody.string()).thenReturn(openFoodFactsJsonSearchJson)
+    `when`(mockImageRef.putStream(any())).thenReturn(mockUpload)
+    `when`(mockUpload.isSuccessful).thenReturn(true)
 
     searchCallBack.onResponse(mockCall, response)
 
@@ -310,7 +362,7 @@ class OpenFoodFactsIngredientRepositoryTest {
   }
 
   @Test
-  fun `test getting retrieves the right ingredient`() {
+  fun `test getting retrieves the right ingredient normal image`() {
     val callbackCapture: ArgumentCaptor<Callback> = ArgumentCaptor.forClass(Callback::class.java)
     val requestCapture: ArgumentCaptor<Request> = ArgumentCaptor.forClass(Request::class.java)
 
@@ -327,9 +379,77 @@ class OpenFoodFactsIngredientRepositoryTest {
 
     val searchCallBack = callbackCapture.value
 
-    `when`(mockResponseBody.string()).thenReturn(openFoodFactsJsonGetFoundJson)
+    `when`(mockResponseBody.string()).thenReturn(openFoodFactsJsonNormalImageGetFoundJson)
+    `when`(mockImageRef.putStream(any())).thenReturn(mockUpload)
+    `when`(mockUpload.isSuccessful).thenReturn(true)
 
     searchCallBack.onResponse(mockCall, response)
+
+    verify(mockUpload).addOnCompleteListener(onCompleteUploadTaskListenerCaptor.capture())
+
+    assertNull(getException)
+    assertNotNull(getIngredient)
+    assert(getIngredient?.name == "apple")
+    assert(getIngredient?.barCode == 1234567890L)
+  }
+
+  @Test
+  fun `test getting retrieves the right ingredient thumbnail image`() {
+    val callbackCapture: ArgumentCaptor<Callback> = ArgumentCaptor.forClass(Callback::class.java)
+    val requestCapture: ArgumentCaptor<Request> = ArgumentCaptor.forClass(Request::class.java)
+
+    `when`(mockHttpClient.newCall(capture(requestCapture))).thenReturn(mockCall)
+    doNothing().`when`(mockCall).enqueue(capture(callbackCapture))
+
+    var getIngredient: Ingredient? = null
+    var getException: Exception? = null
+
+    openFoodFactsIngredientRepository.get(
+        1234567890L,
+        onSuccess = { ingredients -> getIngredient = ingredients },
+        onFailure = { exception -> getException = exception })
+
+    val searchCallBack = callbackCapture.value
+
+    `when`(mockResponseBody.string()).thenReturn(openFoodFactsJsonThumbnailImageGetFoundJson)
+    `when`(mockImageRef.putStream(any())).thenReturn(mockUpload)
+    `when`(mockUpload.isSuccessful).thenReturn(true)
+
+    searchCallBack.onResponse(mockCall, response)
+
+    verify(mockUpload).addOnCompleteListener(onCompleteUploadTaskListenerCaptor.capture())
+
+    assertNull(getException)
+    assertNotNull(getIngredient)
+    assert(getIngredient?.name == "apple")
+    assert(getIngredient?.barCode == 1234567890L)
+  }
+
+  @Test
+  fun `test getting retrieves the right ingredient small image`() {
+    val callbackCapture: ArgumentCaptor<Callback> = ArgumentCaptor.forClass(Callback::class.java)
+    val requestCapture: ArgumentCaptor<Request> = ArgumentCaptor.forClass(Request::class.java)
+
+    `when`(mockHttpClient.newCall(capture(requestCapture))).thenReturn(mockCall)
+    doNothing().`when`(mockCall).enqueue(capture(callbackCapture))
+
+    var getIngredient: Ingredient? = null
+    var getException: Exception? = null
+
+    openFoodFactsIngredientRepository.get(
+        1234567890L,
+        onSuccess = { ingredients -> getIngredient = ingredients },
+        onFailure = { exception -> getException = exception })
+
+    val searchCallBack = callbackCapture.value
+
+    `when`(mockResponseBody.string()).thenReturn(openFoodFactsJsonSmallImageGetFoundJson)
+    `when`(mockImageRef.putStream(any())).thenReturn(mockUpload)
+    `when`(mockUpload.isSuccessful).thenReturn(true)
+
+    searchCallBack.onResponse(mockCall, response)
+
+    verify(mockUpload).addOnCompleteListener(onCompleteUploadTaskListenerCaptor.capture())
 
     assertNull(getException)
     assertNotNull(getIngredient)
