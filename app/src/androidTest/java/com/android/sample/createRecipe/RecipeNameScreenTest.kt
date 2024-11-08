@@ -1,9 +1,12 @@
 package com.android.sample.ui.createRecipe
 
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.model.recipe.FirestoreRecipesRepository
+import com.android.sample.resources.C.Tag.SCREEN_HEIGHT_THRESHOLD
+import com.android.sample.resources.C.Tag.SCREEN_WIDTH_THRESHOLD
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.google.firebase.firestore.FirebaseFirestore
@@ -31,12 +34,7 @@ class RecipeNameScreenTest {
     createRecipeViewModel = spyk(CreateRecipeViewModel(repository)) // Spy to verify calls
 
     // Set the content for testing
-    composeTestRule.setContent {
-      RecipeNameScreen(
-          navigationActions = mockNavigationActions,
-          currentStep = 0,
-          createRecipeViewModel = createRecipeViewModel)
-    }
+
   }
 
   @After
@@ -47,6 +45,12 @@ class RecipeNameScreenTest {
   /** Tests if all components of RecipeNameScreen are displayed. */
   @Test
   fun testRecipeNameScreenComponentsAreDisplayed() {
+    composeTestRule.setContent {
+      RecipeNameScreen(
+          navigationActions = mockNavigationActions,
+          currentStep = 0,
+          createRecipeViewModel = createRecipeViewModel)
+    }
     composeTestRule.onNodeWithTag("RecipeTitle").assertExists().assertIsDisplayed()
     composeTestRule.onNodeWithTag("RecipeSubtitle").assertExists().assertIsDisplayed()
     composeTestRule.onNodeWithTag("recipeNameTextField").assertExists().assertIsDisplayed()
@@ -56,6 +60,12 @@ class RecipeNameScreenTest {
   /** Tests that an error message is shown if the recipe name is empty when clicking "Next Step". */
   @Test
   fun testErrorDisplayedWhenRecipeNameIsEmpty() = runTest {
+    composeTestRule.setContent {
+      RecipeNameScreen(
+          navigationActions = mockNavigationActions,
+          currentStep = 0,
+          createRecipeViewModel = createRecipeViewModel)
+    }
     composeTestRule.onNodeWithText("Next Step").performClick()
     composeTestRule.onNodeWithText("Please enter a recipe name").assertExists().assertIsDisplayed()
   }
@@ -65,6 +75,12 @@ class RecipeNameScreenTest {
    */
   @Test
   fun testNoErrorDisplayedWhenRecipeNameIsEntered() = runTest {
+    composeTestRule.setContent {
+      RecipeNameScreen(
+          navigationActions = mockNavigationActions,
+          currentStep = 0,
+          createRecipeViewModel = createRecipeViewModel)
+    }
     composeTestRule.onNodeWithTag("recipeNameTextField").performTextInput("Chocolate Cake")
     composeTestRule.onNodeWithText("Next Step").performClick()
     composeTestRule.onNodeWithText("Please enter a recipe name").assertDoesNotExist()
@@ -75,6 +91,12 @@ class RecipeNameScreenTest {
    */
   @Test
   fun testNextStepButtonCallsUpdateAndNavigatesWhenRecipeNameIsEntered() = runTest {
+    composeTestRule.setContent {
+      RecipeNameScreen(
+          navigationActions = mockNavigationActions,
+          currentStep = 0,
+          createRecipeViewModel = createRecipeViewModel)
+    }
     // Set up expectation for updateRecipeName
     every { createRecipeViewModel.updateRecipeName(any()) } just runs
 
@@ -97,6 +119,12 @@ class RecipeNameScreenTest {
    */
   @Test
   fun testHintTextVisibilityBasedOnRecipeName() = runTest {
+    composeTestRule.setContent {
+      RecipeNameScreen(
+          navigationActions = mockNavigationActions,
+          currentStep = 0,
+          createRecipeViewModel = createRecipeViewModel)
+    }
     // Retrieve the hint text directly from resources if possible
     val hintText = "Choose a catchy title that reflects your dish"
 
@@ -108,5 +136,39 @@ class RecipeNameScreenTest {
 
     // Assert that the hint text no longer exists once text is entered
     composeTestRule.onNodeWithText(hintText).assertDoesNotExist()
+  }
+
+  @Test
+  fun testChefImageDisplayedWhenScreenDimensionsAreLarge() = runTest {
+    composeTestRule.setContent {
+      LocalConfiguration.current.apply {
+        screenWidthDp = SCREEN_WIDTH_THRESHOLD
+        screenHeightDp = SCREEN_HEIGHT_THRESHOLD
+      }
+      RecipeNameScreen(
+          navigationActions = mockNavigationActions,
+          currentStep = 0,
+          createRecipeViewModel = createRecipeViewModel)
+    }
+
+    // Check if ChefImage is displayed based on large dimensions
+    composeTestRule.onNodeWithTag("ChefImage").assertExists().assertIsDisplayed()
+  }
+
+  @Test
+  fun testChefImageNotDisplayedWhenScreenDimensionsAreSmall() = runTest {
+    composeTestRule.setContent {
+      LocalConfiguration.current.apply {
+        screenWidthDp = SCREEN_WIDTH_THRESHOLD - 1
+        screenHeightDp = SCREEN_HEIGHT_THRESHOLD - 1
+      }
+      RecipeNameScreen(
+          navigationActions = mockNavigationActions,
+          currentStep = 0,
+          createRecipeViewModel = createRecipeViewModel)
+    }
+
+    // Check if ChefImage is not displayed based on small dimensions
+    composeTestRule.onNodeWithTag("ChefImage").assertDoesNotExist()
   }
 }

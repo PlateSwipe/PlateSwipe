@@ -99,8 +99,6 @@ object C {
     const val UNSUPPORTED_MESSAGE = "Operation not supported"
 
     // Used in ChefImage composable
-    val CHEF_IMAGE_WIDTH = 250.dp
-    val CHEF_IMAGE_HEIGHT = 300.dp
     val CHEF_IMAGE_CORNER_RADIUS = 16.dp
 
     // Initial step value for recipe creation flow
@@ -114,6 +112,8 @@ object C {
     val RECIPE_NAME_FIELD_HEIGHT = 60.dp
     val RECIPE_NAME_FONT_SPACING = 0.14.sp
     val RECIPE_NAME_CHARACTER_LIMIT = 50
+    const val SCREEN_WIDTH_THRESHOLD = 400
+    const val SCREEN_HEIGHT_THRESHOLD = 865
 
     // RecipeStepScreen
     val BASE_PADDING = 16.dp
@@ -123,11 +123,7 @@ object C {
 
     // AddInstructionStepScreen
     const val HORIZONTAL_PADDING = 16
-    const val SAVE_BUTTON_WIDTH = 150
-    const val SAVE_BUTTON_HEIGHT = 48
-    const val DELETE_BUTTON_TAG = "deleteButton"
     const val SAVE_BUTTON_TAG = "saveButton"
-    const val STEP_DESCRIPTION_HEIGHT = 150
 
     // PublishRecipeScreen
     val CHEF_IMAGE_DESCRIPTION = "Chef illustration inside an egg"

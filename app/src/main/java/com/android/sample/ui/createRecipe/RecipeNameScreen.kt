@@ -8,6 +8,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -23,6 +24,8 @@ import com.android.sample.resources.C.Tag.RECIPE_NAME_CHARACTER_LIMIT
 import com.android.sample.resources.C.Tag.RECIPE_NAME_FIELD_HEIGHT
 import com.android.sample.resources.C.Tag.RECIPE_NAME_FIELD_SPACING
 import com.android.sample.resources.C.Tag.RECIPE_NAME_FONT_SPACING
+import com.android.sample.resources.C.Tag.SCREEN_HEIGHT_THRESHOLD
+import com.android.sample.resources.C.Tag.SCREEN_WIDTH_THRESHOLD
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.*
@@ -43,6 +46,10 @@ fun RecipeNameScreen(
     navigationActions: NavigationActions,
     createRecipeViewModel: CreateRecipeViewModel
 ) {
+  val configuration = LocalConfiguration.current
+  val screenWidthDp = configuration.screenWidthDp
+  val screenHeightDp = configuration.screenHeightDp
+
   var recipeName by remember { mutableStateOf(TextFieldValue("")) }
   var showError by remember { mutableStateOf(false) }
 
@@ -132,17 +139,29 @@ fun RecipeNameScreen(
                         ),
                     textStyle = MaterialTheme.typography.bodyMedium,
                     maxLines = 2)
-              }
 
-              // Display error message if the recipe name is empty
-              if (showError) {
-                Text(
-                    text = stringResource(R.string.recipe_name_error),
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                    modifier = Modifier.padding(top = RECIPE_NAME_BASE_PADDING / 2))
+                Column(modifier = Modifier.weight(0.1f).align(Alignment.CenterHorizontally)) {
+                  if (showError) {
+                    Text(
+                        text = stringResource(R.string.recipe_name_error),
+                        color = MaterialTheme.colorScheme.error,
+                        style =
+                            MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                        modifier = Modifier.padding(top = RECIPE_NAME_BASE_PADDING / 2))
+                  }
+                }
+                if (screenWidthDp >= SCREEN_WIDTH_THRESHOLD &&
+                    screenHeightDp >= SCREEN_HEIGHT_THRESHOLD) {
+                  Row(
+                      modifier = Modifier.weight(0.8f),
+                      verticalAlignment = Alignment.CenterVertically) {
+                        Spacer(modifier = Modifier.weight(0.25f))
+                        ChefImage(
+                            modifier = Modifier.fillMaxHeight().weight(1f).testTag("ChefImage"))
+                      }
+                  Spacer(modifier = Modifier.weight(0.05f))
+                }
               }
-              Spacer(modifier = Modifier.height(RECIPE_NAME_FIELD_SPACING))
             }
 
         // Button to proceed to the next step
