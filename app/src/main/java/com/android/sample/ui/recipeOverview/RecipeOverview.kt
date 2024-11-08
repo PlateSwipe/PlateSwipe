@@ -45,6 +45,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.android.sample.R
+import com.android.sample.animation.LoadingCook
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.recipe.RecipeOverviewViewModel
 import com.android.sample.resources.C.Dimension.RecipeOverview.COUNTER_MIN_MAX_SIZE
@@ -88,22 +89,27 @@ fun RecipeOverview(
       showBackArrow = true,
       content = { paddingValues ->
         Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier =
                 Modifier.testTag("draggableItem")
                     .fillMaxSize()
                     .padding(paddingValues)
-                    .padding(PADDING.dp)
                     .verticalScroll(rememberScrollState())) {
-              if (currentRecipe == null) {
+              if (currentRecipe != null) {
+                LoadingCook()
+                Spacer(modifier = Modifier.size(SMALL_PADDING.dp))
                 Text(
                     text = LOADING,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSecondary)
               } else {
-                RecipeImage(currentRecipe!!)
-                RecipeDescription(currentRecipe!!)
-                PrepareCookTotalTimeDisplay()
-                RecipeInformation(currentRecipe!!)
+                currentRecipe?.let { recipe ->
+                  RecipeImage(recipe)
+                  RecipeDescription(recipe)
+                  PrepareCookTotalTimeDisplay()
+                  RecipeInformation(recipe)
+                }
               }
             }
       })

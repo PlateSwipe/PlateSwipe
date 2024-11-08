@@ -231,6 +231,12 @@ object C {
   }
 
   object Dimension {
+    object LoadingCook {
+      const val COOK_SIZE = 250
+      const val ROTATION_MIN = 0f
+      const val ROTATION_MAX = -360f
+      const val ROTATION_DURATION = 2000
+    }
 
     object RecipeOverview {
       const val IMAGE_ROUND_CORNER = 10

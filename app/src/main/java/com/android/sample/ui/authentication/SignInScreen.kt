@@ -54,6 +54,7 @@ import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
 import com.android.sample.R
+import com.android.sample.animation.LoadingAnimation
 import com.android.sample.resources.C.Tag.ANIMATION_DURATION
 import com.android.sample.resources.C.Tag.AVOCADO_MVM_DURATION
 import com.android.sample.resources.C.Tag.AVOCADO_MVM_RANGE
@@ -121,7 +122,6 @@ import com.android.sample.resources.C.Tag.TOMATO_Y
 import com.android.sample.resources.C.Tag.WIDTH_BASE
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
-import com.android.sample.ui.utils.LoadingAnimation
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.common.primitives.Floats.min
