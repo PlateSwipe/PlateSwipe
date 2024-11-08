@@ -37,7 +37,6 @@ import com.android.sample.resources.C.TestTag.CameraScanCodeBarScreen.TOP_BAR_TI
 import com.android.sample.ui.navigation.BottomNavigationMenu
 import com.android.sample.ui.navigation.LIST_TOP_LEVEL_DESTINATIONS
 import com.android.sample.ui.navigation.NavigationActions
-import com.android.sample.ui.theme.lightCream
 
 /**
  * PlateSwipeScaffold is a custom Scaffold that is used in the PlateSwipe app. It has a custom top
@@ -72,7 +71,10 @@ fun PlateSwipeScaffold(
 @Composable
 private fun PlateSwipeTopBar(navigationActions: NavigationActions, showBackArrow: Boolean = true) {
   Row(
-      modifier = Modifier.fillMaxWidth().background(color = lightCream).testTag(TOP_BAR),
+      modifier =
+          Modifier.fillMaxWidth()
+              .background(color = MaterialTheme.colorScheme.onPrimaryContainer)
+              .testTag(TOP_BAR),
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.SpaceBetween) {
         Row(modifier = Modifier.weight(1f)) {

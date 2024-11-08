@@ -57,7 +57,7 @@ fun PlateSwipeApp() {
 
   val userViewModel = UserViewModel.Factory.create(UserViewModel::class.java)
 
-  NavHost(navController = navController, startDestination = Route.SWIPE) {
+  NavHost(navController = navController, startDestination = Route.AUTH) {
     navigation(
         startDestination = Screen.AUTH,
         route = Route.AUTH,

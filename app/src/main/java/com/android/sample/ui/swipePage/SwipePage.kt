@@ -130,9 +130,7 @@ fun RecipeDisplay(
 
   val coroutineScope = rememberCoroutineScope()
   val density = LocalDensity.current.density
-  val screenWidth =
-      LocalConfiguration.current.screenWidthDp *
-          density // Threshold to like/dislike a recipe when swiped
+  val screenWidth = LocalConfiguration.current.screenWidthDp * density
   val swipeThreshold = screenWidth * 1 / 3
   // Collect the current and next recipe from the ViewModel
   val currentRecipe by recipesViewModel.currentRecipe.collectAsState()
@@ -337,7 +335,9 @@ fun RecipeDisplay(
                           .testTag("recipeDescription"),
                   )*/
 
-              ShawRecipeButton(navigationActions)
+              Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                ShawRecipeButton(navigationActions)
+              }
 
               // Animate back to center if not swiped
               LaunchedEffect(offsetX.value) {

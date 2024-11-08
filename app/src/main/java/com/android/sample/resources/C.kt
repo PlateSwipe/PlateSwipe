@@ -75,8 +75,8 @@ object C {
     const val PEPPER_MVM_DURATION = 1500
     const val PEPPER_MVM_RANGE = 10f
 
-    const val WIDTH_BASE = 360f
-    const val HEIGHT_BASE = 755f
+    const val WIDTH_BASE = 1080f
+    const val HEIGHT_BASE = 2265f
     const val DURATION_ROTATION_LOOP = 30000
 
     const val CUBE_EASING_A = 0.25f
@@ -86,7 +86,6 @@ object C {
 
     const val COOK_SIZE = 300
     const val GOOGLE_LOGO_SIZE = 30
-    const val GOOGLE_SIGN_IN_BUTTON_HEIGHT = 48
     const val SPACE = 16
 
     // Filter
@@ -227,7 +226,6 @@ object C {
     object CameraScanCodeBarScreen {
 
       // PLATE SWIPE SCAFFOLD
-      const val TOP_BAR_HEIGHT = 40
       const val BACK_ARROW_ICON_SIZE = 26
       const val CHEF_HAT_ICON_SIZE = 35
       const val CHEF_HAT_ICON_END_PADDING = 8

@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -38,11 +39,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -72,7 +73,6 @@ import com.android.sample.resources.C.Tag.CUBE_EASING_C
 import com.android.sample.resources.C.Tag.CUBE_EASING_D
 import com.android.sample.resources.C.Tag.DURATION_ROTATION_LOOP
 import com.android.sample.resources.C.Tag.GOOGLE_LOGO_SIZE
-import com.android.sample.resources.C.Tag.GOOGLE_SIGN_IN_BUTTON_HEIGHT
 import com.android.sample.resources.C.Tag.HEIGHT_BASE
 import com.android.sample.resources.C.Tag.LOGIN_FAILED
 import com.android.sample.resources.C.Tag.LOGIN_SUCCESSFUL
@@ -124,12 +124,9 @@ import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.utils.LoadingAnimation
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
-import com.google.common.primitives.Floats.min
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider.getCredential
-import kotlin.math.abs
-import kotlin.math.sign
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -300,8 +297,9 @@ private fun AnimatedImage(
     movementRange: Float,
     testTag: String
 ) {
-  val width = LocalConfiguration.current.screenWidthDp.toFloat()
-  val height = LocalConfiguration.current.screenHeightDp.toFloat()
+  val density = LocalDensity.current.density
+  val width = LocalConfiguration.current.screenWidthDp * density
+  val height = LocalConfiguration.current.screenHeightDp * density
 
   val ratioWidth = width / WIDTH_BASE
   val ratioHeight = height / HEIGHT_BASE
@@ -327,10 +325,8 @@ private fun AnimatedImage(
   val offsetX by
       infiniteTransition.animateFloat(
           // manage when images goes outside of the screen
-          initialValue = sign(initialOffsetX.value) * min(abs(initialOffsetX.value), width),
-          targetValue =
-              sign(initialOffsetX.value + movementRange) *
-                  min(abs(initialOffsetX.value + movementRange), width),
+          initialValue = initialOffsetX.value * ratioWidth,
+          targetValue = (initialOffsetX.value + movementRange) * ratioWidth,
           animationSpec =
               infiniteRepeatable(
                   animation =
@@ -345,11 +341,8 @@ private fun AnimatedImage(
   // manage vertical movement
   val offsetY by
       infiniteTransition.animateFloat(
-          initialValue =
-              sign(initialOffsetY.value) * min(abs(initialOffsetY.value), height - iconSize.value),
-          targetValue =
-              sign(initialOffsetY.value) *
-                  min(abs(initialOffsetY.value + movementRange), height - iconSize.value),
+          initialValue = initialOffsetY.value * ratioHeight,
+          targetValue = (initialOffsetY.value + movementRange) * ratioHeight,
           animationSpec =
               infiniteRepeatable(
                   animation =
@@ -386,7 +379,7 @@ private fun SignInContent(onSignInClick: () -> Unit) {
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.Center,
   ) {
-    PlateSwipeTitle(Modifier.weight(2f))
+    PlateSwipeTitle(Modifier.weight(3f))
 
     // Cook image display
     Box(
@@ -500,12 +493,16 @@ fun GoogleSignInButton(onSignInClick: () -> Unit) {
 
   Button(
       onClick = onSignInClick,
-      colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.background),
+      colors =
+          ButtonDefaults.buttonColors(
+              containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+              contentColor = MaterialTheme.colorScheme.onPrimary),
+      elevation = ButtonDefaults.buttonElevation(4.dp),
       shape = RoundedCornerShape(100),
-      border = BorderStroke(1.dp, Color.LightGray),
+      border = BorderStroke(1.dp, MaterialTheme.colorScheme.onPrimaryContainer),
       modifier =
-          Modifier.padding(SPACE.dp)
-              .height(GOOGLE_SIGN_IN_BUTTON_HEIGHT.dp)
+          Modifier.padding(horizontal = (SPACE / 2).dp, vertical = (SPACE / 4).dp)
+              .wrapContentSize()
               .testTag("loginButton")) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
