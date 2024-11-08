@@ -117,7 +117,7 @@ class RecipeBuilderTest {
     try {
       builder.build()
     } catch (e: IllegalArgumentException) {
-      assertEquals("Recipe name cannot be blank", e.message)
+      assertEquals("Recipe name is required and cannot be blank.", e.message)
     }
   }
 
