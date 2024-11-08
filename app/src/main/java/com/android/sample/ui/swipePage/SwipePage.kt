@@ -124,6 +124,7 @@ fun RecipeDisplay(
   var retrieveNextRecipe by remember { mutableStateOf(false) }
   var displayCard1 by remember { mutableStateOf(true) }
   var displayCard2 by remember { mutableStateOf(false) }
+  var isClicking by remember { mutableStateOf(false) }
 
   // Offset for the swipe animation
   val offsetX = remember { Animatable(0f) }
@@ -156,7 +157,9 @@ fun RecipeDisplay(
                     .background(Color.Transparent)
                     .pointerInput(Unit) {
                       detectHorizontalDragGestures(
+                          onDragStart = { isClicking = true },
                           onDragEnd = {
+                            isClicking = false
                             if (kotlin.math.abs(offsetX.value) > swipeThreshold) {
                               retrieveNextRecipe = true
                               if (offsetX.value > 0 && currentRecipe != null) {
@@ -164,6 +167,7 @@ fun RecipeDisplay(
                               }
                             }
                           },
+                          onDragCancel = { isClicking = false },
                           onHorizontalDrag = { _, dragAmount ->
                             coroutineScope.launch { offsetX.snapTo(offsetX.value + dragAmount) }
                           })
@@ -341,17 +345,19 @@ fun RecipeDisplay(
 
               // Animate back to center if not swiped
               LaunchedEffect(offsetX.value) {
-                val animationTarget =
-                    when {
-                      offsetX.value > swipeThreshold -> END_ANIMATION
-                      offsetX.value < -swipeThreshold -> -END_ANIMATION
-                      else -> 0f
-                    }
-                if (retrieveNextRecipe && offsetX.value == 0f) {
-                  recipesViewModel.nextRecipe()
-                  retrieveNextRecipe = false
+                if (!isClicking) {
+                  val animationTarget =
+                      when {
+                        offsetX.value > swipeThreshold -> END_ANIMATION
+                        offsetX.value < -swipeThreshold -> -END_ANIMATION
+                        else -> 0f
+                      }
+                  if (retrieveNextRecipe && offsetX.value == 0f) {
+                    recipesViewModel.nextRecipe()
+                    retrieveNextRecipe = false
+                  }
+                  offsetX.animateTo(animationTarget, animationSpec = tween(50))
                 }
-                offsetX.animateTo(animationTarget, animationSpec = tween(50))
               }
             }
       }
