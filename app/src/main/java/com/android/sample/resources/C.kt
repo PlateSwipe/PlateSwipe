@@ -226,7 +226,7 @@ object C {
 
   object Values {
     object RecipeOverview {
-      const val INITIAL_NUMBER_VALUE_PER_RECIPE = 1
+      const val INITIAL_NUMBER_PERSON_PER_RECIPE = 1
     }
   }
 

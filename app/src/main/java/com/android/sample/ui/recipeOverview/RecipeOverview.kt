@@ -41,6 +41,8 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
@@ -70,7 +72,7 @@ import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_TIME_DIS
 import com.android.sample.resources.C.Tag.LOADING
 import com.android.sample.resources.C.Tag.PADDING
 import com.android.sample.resources.C.Tag.SMALL_PADDING
-import com.android.sample.resources.C.Values.RecipeOverview.INITIAL_NUMBER_VALUE_PER_RECIPE
+import com.android.sample.resources.C.Values.RecipeOverview.INITIAL_NUMBER_PERSON_PER_RECIPE
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.theme.starColor
 import com.android.sample.ui.utils.PlateSwipeScaffold
@@ -96,7 +98,7 @@ fun RecipeOverview(
                     .fillMaxSize()
                     .padding(paddingValues)
                     .verticalScroll(rememberScrollState())) {
-              if (currentRecipe != null) {
+              if (currentRecipe == null) {
                 LoadingCook()
                 Spacer(modifier = Modifier.size(SMALL_PADDING.dp))
                 Text(
@@ -132,7 +134,7 @@ private fun RecipeInformation(currentRecipe: Recipe) {
               .fillMaxSize()
               .padding(SMALL_PADDING.dp)) {
         // Variable to track the current selection
-        var isIngredientDisplay by remember { mutableStateOf(true) }
+        var isInstructionDisplay by remember { mutableStateOf(true) }
 
         // Custom switch style with two button-like labels
         Row(
@@ -144,36 +146,36 @@ private fun RecipeInformation(currentRecipe: Recipe) {
                         MaterialTheme.colorScheme.background,
                         shape = RoundedCornerShape(OVERVIEW_RECIPE_ROUND_ROW.dp))) {
               SlidingButton(
-                  !isIngredientDisplay,
+                  !isInstructionDisplay,
                   stringResource(R.string.ingredients),
                   "ingredientButton",
                   Modifier.weight(1f),
-                  clickable = { isIngredientDisplay = true })
+                  clickable = { isInstructionDisplay = true })
 
               SlidingButton(
-                  isIngredientDisplay,
+                  isInstructionDisplay,
                   stringResource(R.string.instructions),
                   "instructionsButton",
                   Modifier.weight(1f),
-                  clickable = { isIngredientDisplay = false })
+                  clickable = { isInstructionDisplay = false })
             }
 
         // Display the appropriate view based on the toggle state
-        IngredientInstructionView(isIngredientDisplay, currentRecipe)
+        IngredientInstructionView(isInstructionDisplay, currentRecipe)
       }
 }
 
 /**
  * Custom button that slides to the left or right based on the selection
  *
- * @param isIngredientDisplay: Boolean to determine if the ingredient is displayed
+ * @param isInstructionDisplay: Boolean to determine if the ingredient is displayed
  * @param text: Text to display on the button
  * @param testTag: Test tag for the button
  * @param modifier: Modifier to apply to the button
  */
 @Composable
 private fun SlidingButton(
-    isIngredientDisplay: Boolean,
+    isInstructionDisplay: Boolean,
     text: String,
     testTag: String,
     modifier: Modifier = Modifier,
@@ -183,7 +185,7 @@ private fun SlidingButton(
       modifier =
           modifier
               .background(
-                  if (!isIngredientDisplay) MaterialTheme.colorScheme.onBackground
+                  if (!isInstructionDisplay) MaterialTheme.colorScheme.onBackground
                   else Color.Transparent,
                   shape = RoundedCornerShape(IMAGE_ROUND_CORNER.dp))
               .clickable { clickable() }
@@ -193,10 +195,13 @@ private fun SlidingButton(
             text = text,
             style = MaterialTheme.typography.bodyMedium,
             color =
-                if (!isIngredientDisplay) MaterialTheme.colorScheme.background
+                if (!isInstructionDisplay) MaterialTheme.colorScheme.background
                 else MaterialTheme.colorScheme.onPrimary,
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(SMALL_PADDING.dp).testTag(testTag))
+            modifier =
+                Modifier.padding(SMALL_PADDING.dp).testTag(testTag).semantics {
+                  contentDescription = text
+                })
       }
 }
 
@@ -216,7 +221,7 @@ private fun RecipeImage(currentRecipe: Recipe) {
         Column(modifier = Modifier.background(color = MaterialTheme.colorScheme.onPrimary)) {
           Image(
               painter = rememberAsyncImagePainter(model = currentRecipe.strMealThumbUrl),
-              contentDescription = "Recipe Image",
+              contentDescription = stringResource(R.string.recipe_image),
               modifier = Modifier.fillMaxWidth().height(height).testTag("recipeImage"),
               contentScale = ContentScale.Crop,
           )
@@ -334,8 +339,12 @@ private fun IngredientInstructionView(
 
 /** Display of the ingredients and the ability to change the number of servings */
 @Composable
-private fun IngredientView(currentRecipe: Recipe) {
-  var servingsCount by remember { mutableIntStateOf(INITIAL_NUMBER_VALUE_PER_RECIPE) }
+private fun IngredientView(
+    currentRecipe: Recipe,
+    initialServings: Int = INITIAL_NUMBER_PERSON_PER_RECIPE
+) {
+  var servingsCount by remember { mutableIntStateOf(initialServings) }
+
   Row(
       modifier =
           Modifier.fillMaxWidth().padding(horizontal = PADDING.dp).testTag("ingredientsView"),
@@ -347,7 +356,9 @@ private fun IngredientView(currentRecipe: Recipe) {
             textAlign = TextAlign.Start,
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSecondary,
-            modifier = Modifier.weight(1f))
+            modifier =
+                Modifier.weight(1f).semantics { contentDescription = "$servingsCount servings" },
+        )
 
         // Button row on the right
         Counter(servingsCount) { newCounter -> servingsCount = newCounter }
@@ -423,7 +434,7 @@ private fun Counter(servingsCount: Int, onCounterChange: (Int) -> Unit) {
  * @param servingsCount: The number of servings
  * @return The modified string
  */
-private fun extractAndDoubleFirstInt(measurement: String, servingsCount: Int): String {
+private fun scaleFirstIntByServings(measurement: String, servingsCount: Int): String {
   val regex = Regex("""\d+""")
   val match = regex.find(measurement)
   return if (match != null) {
@@ -446,7 +457,7 @@ private fun IngredientsList(currentRecipe: Recipe, servingsCount: Int) {
   Column(verticalArrangement = Arrangement.spacedBy((PADDING).dp)) {
     currentRecipe.ingredientsAndMeasurements.forEach { (ingredient, measurement) ->
       var ticked by remember { mutableStateOf(false) }
-      val modifiedMeasurement = extractAndDoubleFirstInt(measurement, servingsCount)
+      val modifiedMeasurement = scaleFirstIntByServings(measurement, servingsCount)
 
       Row(
           modifier = Modifier.padding(start = (PADDING * 3).dp),
@@ -465,7 +476,10 @@ private fun IngredientsList(currentRecipe: Recipe, servingsCount: Int) {
                       textAlign = TextAlign.Left,
                       style = MaterialTheme.typography.bodyMedium,
                       color = MaterialTheme.colorScheme.onPrimary,
-                      modifier = Modifier.testTag("ingredient$ingredient"))
+                      modifier =
+                          Modifier.testTag("ingredient$ingredient").semantics {
+                            contentDescription = "$ingredient, $modifiedMeasurement"
+                          })
                 }
           }
     }
