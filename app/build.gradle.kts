@@ -118,9 +118,18 @@ sonar {
         property("sonar.projectName", "Android-Sample")
         property("sonar.organization", "gabrielfleischer")
         property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.junit.reportPaths", "${project.layout.buildDirectory.get()}/test-results/testDebugunitTest/")
-        property("sonar.androidLint.reportPaths", "${project.layout.buildDirectory.get()}/reports/lint-results-debug.xml")
-        property("sonar.coverage.jacoco.xmlReportPaths", "${project.layout.buildDirectory.get()}/reports/jacoco/jacocoTestReport/jacocoTestReport.xml")
+        property(
+            "sonar.junit.reportPaths",
+            "${project.layout.buildDirectory.get()}/test-results/testDebugunitTest/"
+        )
+        property(
+            "sonar.androidLint.reportPaths",
+            "${project.layout.buildDirectory.get()}/reports/lint-results-debug.xml"
+        )
+        property(
+            "sonar.coverage.jacoco.xmlReportPaths",
+            "${project.layout.buildDirectory.get()}/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
+        )
     }
 }
 
@@ -140,6 +149,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(platform(libs.compose.bom))
     implementation(libs.androidx.espresso.intents)
+    implementation(libs.google.googleid)
     testImplementation(libs.junit)
     globalTestImplementation(libs.androidx.junit)
     globalTestImplementation(libs.androidx.espresso.core)
@@ -148,10 +158,8 @@ dependencies {
     implementation(composeBom)
     globalTestImplementation(composeBom)
 
-    // ecrire aussi sur lib version pour meileur format
-    implementation("io.coil-kt:coil-compose:2.0.0")
-    implementation("androidx.compose.material:material-icons-extended:1.5.0")
-
+    implementation(libs.coil.compose)
+    implementation(libs.compose.material.icons.extended)
     implementation(libs.compose.ui)
     implementation(libs.compose.ui.graphics)
     implementation(libs.compose.material3)
@@ -227,6 +235,9 @@ dependencies {
 
     // Image
     implementation(libs.coil.compose)
+
+
+
 }
 
 tasks.withType<Test> {
@@ -284,7 +295,6 @@ tasks.register("jacocoTestReport", JacocoReport::class) {
 
 fun parseCoverageRatio(file: File): Double {
     val xml = file.readText()
-    println("Coverage XML Content: $xml")
     val regex = Regex("""<counter type="INSTRUCTION" missed="(\d+)" covered="(\d+)"\/>""")
     val matches = regex.findAll(xml)
     var missed = 0

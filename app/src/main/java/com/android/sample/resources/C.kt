@@ -3,6 +3,8 @@ package com.android.sample.resources
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+import com.android.sample.R
+
 // Like R, but C
 object C {
   object Tag {
@@ -18,6 +20,77 @@ object C {
     const val CATEGORY_INPUT_DESCRIPTION = "Category"
 
     const val LOADING = "Loading..."
+
+    // Sign In
+    const val NONCE = "WhyShouldIUseThis"
+    const val PLATE = "Plate"
+    const val SWIPE = "Swipe"
+    const val SHIFTING_SPACE_TITLE = 50
+    const val LOGIN_SUCCESSFUL = "Login successful!"
+    const val SIGN_IN_WITH_GOOGLE = "Sign in with Google"
+    const val LOGIN_FAILED = "Login Failed!"
+    const val ANIMATION_DURATION = 4000L
+
+    const val ORIGINAL_ICON_SIZE = 70
+    const val TACO_X = -(250)
+    const val TACO_Y = 400
+    const val TACO_ROTATION = 15
+    const val TACO_MVM_DURATION = 1500
+    const val TACO_MVM_RANGE = 9f
+    const val SUSHI_X = -(350)
+    const val SUSHI_Y = 150
+    const val SUSHI_ROTATION = 17
+    const val SUSHI_MVM_DURATION = 1000
+    const val SUSHI_MVM_RANGE = 8f
+    const val AVOCADO_X = -(350)
+    const val AVOCADO_Y = -(200)
+    const val AVOCADO_ROTATION = 15
+    const val AVOCADO_MVM_DURATION = 1250
+    const val AVOCADO_MVM_RANGE = 9f
+    const val TOMATO_X = -(180)
+    const val TOMATO_Y = -(450)
+    const val TOMATO_ROTATION = 20
+    const val TOMATO_MVM_DURATION = 1500
+    const val TOMATO_MVM_RANGE = 10f
+    const val PANCAKES_X = 200
+    const val PANCAKES_Y = -(450)
+    const val PANCAKES_ROTATION = 15
+    const val PANCAKES_MVM_DURATION = 800
+    const val PANCAKES_MVM_RANGE = 6f
+    const val BROCCOLI_X = 330
+    const val BROCCOLI_Y = -(250)
+    const val BROCCOLI_ROTATION = 17
+    const val BROCCOLI_MVM_DURATION = 1500
+    const val BROCCOLI_MVM_RANGE = 9f
+    const val PASTA_X = 345
+    const val PASTA_Y = 0
+    const val PASTA_ROTATION = 10
+    const val PASTA_MVM_DURATION = 1200
+    const val PASTA_MVM_RANGE = 12f
+    const val SALAD_X = 300
+    const val SALAD_Y = 225
+    const val SALAD_ROTATION = 17
+    const val SALAD_MVM_DURATION = 900
+    const val SALAD_MVM_RANGE = 9f
+    const val PEPPER_X = 150
+    const val PEPPER_Y = 400
+    const val PEPPER_ROTATION = 14
+    const val PEPPER_MVM_DURATION = 1500
+    const val PEPPER_MVM_RANGE = 10f
+
+    const val WIDTH_BASE = 360f
+    const val HEIGHT_BASE = 755f
+    const val DURATION_ROTATION_LOOP = 30000
+
+    const val CUBE_EASING_A = 0.25f
+    const val CUBE_EASING_B = 0.1f
+    const val CUBE_EASING_C = 0.25f
+    const val CUBE_EASING_D = 1.0f
+
+    const val COOK_SIZE = 300
+    const val GOOGLE_LOGO_SIZE = 30
+    const val GOOGLE_SIGN_IN_BUTTON_HEIGHT = 48
+    const val SPACE = 16
 
     // Filter
     const val MIN_SHOULD_NOT_BE_GREATER_THAN_MAX = "min should not be greater than max"
@@ -46,6 +119,32 @@ object C {
     const val DIFFICULTY_NAME = "Difficulty"
     const val CATEGORY_NAME = "Category"
     const val MAX_ITEM_IN_ROW = 3 // Choose to optimize with medium and small phone
+
+    // LoadingAnimation
+    const val GRAVITY = 9.8f
+    const val INITIAL_SPEED = 100
+    val fruitImages =
+        listOf(
+            R.drawable.taco,
+            R.drawable.sushi,
+            R.drawable.avocado,
+            R.drawable.tomato,
+            R.drawable.pancakes,
+            R.drawable.broccoli,
+            R.drawable.pasta,
+            R.drawable.salad,
+            R.drawable.pepper)
+
+    const val MAX_ROTATION_START = 90
+    const val UNIT = 1
+    const val TIME_INIT = 0f
+    const val TIME_DELTA = 0.016f
+    const val TIME_DELAY = 16L
+    const val ROTATION_DELTA = 0.03f
+    const val DELAY_RESPAWN = 150L
+    const val DELAY_SPAWN = 300L
+    const val NUMBER_FRUIT_MAX = 8
+    const val FRUIT_SIZE = 120
 
     // RecipesViewModel
     const val MINIMUM_RECIPES_BEFORE_FETCH = 3
@@ -81,7 +180,7 @@ object C {
     const val MEAL_DB_CATEGORY_ARRAY = "categories"
 
     // FirestoreRecipeRepository
-    const val FIRESTORE_COLLECTION_NAME = "created recipe"
+    const val FIRESTORE_COLLECTION_NAME = "recipes"
     // Values for storage
     const val FIRESTORE_RECIPE_NAME = "name"
     const val FIRESTORE_RECIPE_CATEGORY = "category"
@@ -93,10 +192,32 @@ object C {
     const val FIRESTORE_RECIPE_TIME = "time"
     const val FIRESTORE_RECIPE_DIFFICULTY = "difficulty"
     const val FIRESTORE_RECIPE_PRICE = "price"
+    const val CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+
+    // FirestoreIngredientRepository
+    const val FIRESTORE_INGREDIENT_COLLECTION_NAME = "ingredients"
+    // Values for storage
+    const val FIRESTORE_INGREDIENT_NAME = "name"
+    const val FIRESTORE_INGREDIENT_BARCODE = "barCode"
+    const val FIRESTORE_INGREDIENT_BRANDS = "brands"
+
+    // AggregatorIngredientRepository
+    const val AGGREGATOR_TAG_ON_INGREDIENT_ADDED = "Ingredient added successfully"
 
     // EXCEPTION MESSAGES
     const val LIMIT_MUST_BE_POSITIVE_MESSAGE = "Limit must be greater than 0"
     const val UNSUPPORTED_MESSAGE = "Operation not supported"
+    const val INGREDIENT_NOT_FOUND_MESSAGE = "Ingredient not found"
+    const val INGREDIENT_NAME_NOT_PROVIDED = "Ingredient name is required but has not been provided"
+
+    // Camera Actions
+    const val LOG_TAG_CAMERA_ACTIONS = "CameraActions"
+    const val UNBINDING_ERR = "Error in unbinding all use cases"
+
+    // Camera Utils
+    const val SCAN_THRESHOLD = 3
+    const val LOG_TAG_CAMERA_UTILS = "CameraUtils"
+    const val INVALID_BARCODE_MSG = "Invalid barcode"
 
     // Used in ChefImage composable
     val CHEF_IMAGE_CORNER_RADIUS = 16.dp
@@ -131,5 +252,59 @@ object C {
     // CreateRecipeViewModel
     const val RECIPE_PUBLISHED_SUCCESS_MESSAGE = "Recipe published successfully!"
     const val RECIPE_PUBLISH_ERROR_MESSAGE = "Failed to publish recipe: %1\$s"
+  }
+
+  object Dimension {
+
+    // CameraScanCodeBarScreen
+    object CameraScanCodeBarScreen {
+
+      // PLATE SWIPE SCAFFOLD
+      const val TOP_BAR_HEIGHT = 40
+      const val BACK_ARROW_ICON_SIZE = 26
+      const val CHEF_HAT_ICON_SIZE = 35
+      const val CHEF_HAT_ICON_END_PADDING = 8
+
+      // BARCODE FRAME
+      const val BARCODE_FRAME_WIDTH = 1f
+      const val BARCODE_FRAME_HEIGHT = 0.4f
+      const val BARCODE_FRAME_PADDING = 32
+      const val BARCODE_FRAME_BORDER_WIDTH = 1
+      const val BARCODE_FRAME_BORDER_RADIUS = 8
+
+      // INGREDIENT OVERLAY
+      const val INGREDIENT_OVERLAY_HEIGHT = 0.4f
+
+      // INGREDIENT DISPLAY
+      const val INGREDIENT_DISPLAY_BORDER_RADIUS = 10
+      const val INGREDIENT_DISPLAY_PADDING = 8
+      const val INGREDIENT_DISPLAY_IMAGE_WEIGHT = 0.3f
+      const val INGREDIENT_DISPLAY_IMAGE_PADDING = 8
+      const val INGREDIENT_DISPLAY_IMAGE_WIDTH = 100
+      const val INGREDIENT_DISPLAY_IMAGE_HEIGHT = 100
+      const val INGREDIENT_DISPLAY_IMAGE_BORDER_RADIUS = 8
+      const val INGREDIENT_DISPLAY_IMAGE_BORDER_WIDTH = 1
+      const val INGREDIENT_DISPLAY_TEXT_WEIGHT = 0.7f
+      const val INGREDIENT_DISPLAY_TEXT_PADDING = 8
+      const val INGREDIENT_DISPLAY_TEXT_NAME_PADDING_V = 4
+      const val INGREDIENT_DISPLAY_TEXT_NAME_PADDING_H = 8
+      const val INGREDIENT_DISPLAY_TEXT_BRAND_PADDING_V = 4
+      const val INGREDIENT_DISPLAY_TEXT_BRAND_PADDING_H = 8
+      const val INGREDIENT_DISPLAY_TEXT_BUTTON_PADDING_V = 4
+      const val INGREDIENT_DISPLAY_TEXT_BUTTON_PADDING_H = 8
+    }
+  }
+
+  object TestTag {
+    object CameraScanCodeBarScreen {
+      const val BARCODE_FRAME = "Barcode frame"
+
+      // PLATE SWIPE SCAFFOLD
+      const val TOP_BAR = "topBar"
+      const val TOP_BAR_TITLE = "topBarTitle"
+      const val BACK_ARROW_ICON = "backArrowIcon"
+      const val PLATESWIPE_SCAFFOLD = "plateSwipeScaffold"
+      const val CHEF_HAT_ICON = "chefHatIcon"
+    }
   }
 }

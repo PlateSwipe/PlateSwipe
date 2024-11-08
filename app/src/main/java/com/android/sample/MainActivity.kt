@@ -17,11 +17,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import com.android.sample.model.recipe.CreateRecipeViewModel
+import com.android.sample.model.ingredient.IngredientViewModel
 import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C
 import com.android.sample.ui.account.AccountScreen
 import com.android.sample.ui.authentication.SignInScreen
+import com.android.sample.ui.camera.CameraScanCodeBarScreen
 import com.android.sample.ui.createRecipe.AddInstructionStepScreen
 import com.android.sample.ui.createRecipe.CreateRecipeScreen
 import com.android.sample.ui.createRecipe.PublishRecipeScreen
@@ -57,6 +59,7 @@ fun PlateSwipeApp() {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
   val recipesViewModel: RecipesViewModel = viewModel(factory = RecipesViewModel.Factory)
+  val ingredientViewModel: IngredientViewModel = viewModel(factory = IngredientViewModel.Factory)
 
   val userViewModel = UserViewModel.Factory.create(UserViewModel::class.java)
   val createRecipeViewModel: CreateRecipeViewModel =
@@ -82,6 +85,9 @@ fun PlateSwipeApp() {
         route = Route.FRIDGE,
     ) {
       composable(Screen.FRIDGE) { FridgeScreen(navigationActions) }
+      composable(Screen.CAMERA_SCAN_CODE_BAR) {
+        CameraScanCodeBarScreen(navigationActions, ingredientViewModel)
+      }
     }
     navigation(
         startDestination = Screen.SEARCH,

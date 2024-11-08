@@ -42,7 +42,6 @@ class EndToEndTest {
   private lateinit var navigationActions: NavigationActions
   private lateinit var mockUserRepository: UserRepository
   private lateinit var mockFirebaseAuth: FirebaseAuth
-  private lateinit var mockCurrentUser: FirebaseUser
 
   private lateinit var userViewModel: UserViewModel
   private lateinit var createRecipeViewModel: CreateRecipeViewModel
@@ -68,10 +67,6 @@ class EndToEndTest {
     // Set the initial content to the MainScreen
     composeTestRule.setContent { SwipePage(navigationActions = navigationActions) }
 
-    // Click on Fridge Icon
-    composeTestRule.onNodeWithTag("tabFridge").assertExists().performClick()
-    verify(navigationActions).navigateTo(TopLevelDestinations.FRIDGE)
-
     // Click on Create Recipe Icon
     composeTestRule.onNodeWithTag("tabAdd Recipe").assertExists().performClick()
     verify(navigationActions).navigateTo(TopLevelDestinations.ADD_RECIPE)
@@ -87,6 +82,10 @@ class EndToEndTest {
     // Click on Swipe Icon
     composeTestRule.onNodeWithTag("tabSwipe").assertExists().performClick()
     verify(navigationActions).navigateTo(TopLevelDestinations.SWIPE)
+
+    // Click on Fridge Icon
+    composeTestRule.onNodeWithTag("tabFridge").assertExists().performClick()
+    verify(navigationActions).navigateTo(TopLevelDestinations.FRIDGE)
   }
 
   @Test
@@ -97,14 +96,16 @@ class EndToEndTest {
       FakeNavHost(navController, userViewModel, createRecipeViewModel)
     }
 
-    composeTestRule.onNodeWithTag("tabFridge").assertExists().performClick()
-    composeTestRule.onNodeWithText("Fridge Screen").assertExists()
-
     composeTestRule.onNodeWithTag("tabSearch").assertExists().performClick()
     composeTestRule.onNodeWithText("Search Recipe Screen").assertExists()
 
     composeTestRule.onNodeWithTag("tabAdd Recipe").assertExists().performClick()
     composeTestRule.onNodeWithText("Create your recipe").assertExists()
+    composeTestRule.onNodeWithTag("tabAddRecipe").assertExists().performClick()
+    composeTestRule.onNodeWithText("Create Recipe Screen").assertExists()
+
+    composeTestRule.onNodeWithTag("tabFridge").assertExists().performClick()
+    composeTestRule.onNodeWithText("Fridge Screen").assertExists()
   }
 }
 
