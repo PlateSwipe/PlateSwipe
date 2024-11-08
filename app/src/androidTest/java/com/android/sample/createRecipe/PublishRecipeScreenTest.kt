@@ -8,7 +8,6 @@ import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.model.recipe.FirestoreRecipesRepository
 import com.android.sample.ui.createRecipe.PublishRecipeScreen
 import com.android.sample.ui.navigation.NavigationActions
-import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
 import io.mockk.*
 import kotlinx.coroutines.test.runTest
@@ -72,7 +71,7 @@ class PublishRecipeScreenTest {
     verify { createRecipeViewModel.publishRecipe() }
 
     // Verify navigation to the CREATE_RECIPE screen
-    verify { navigationActions.navigateAndClearStack(Screen.CREATE_RECIPE, Route.CREATE_RECIPE) }
+    verify { navigationActions.navigateTo(Screen.SWIPE) }
   }
 
   /** Verifies that an error is thrown when trying to publish without a recipe ID. */

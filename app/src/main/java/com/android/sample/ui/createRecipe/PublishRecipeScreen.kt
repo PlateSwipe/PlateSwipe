@@ -71,26 +71,27 @@ fun PublishRecipeContent(
       modifier = modifier,
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.SpaceBetween) {
+        Spacer(modifier = Modifier.weight(0.05f))
         // Display the done text
         Text(
             text = stringResource(R.string.done_text),
             style = Typography.titleLarge.copy(fontSize = 70.sp, fontWeight = FontWeight.Bold),
             modifier = Modifier.weight(0.4f).padding(bottom = 16.dp).testTag("DoneText"))
+        Spacer(modifier = Modifier.weight(0.1f))
 
         // Display the chef in egg image
         Image(
             painter = painterResource(id = R.drawable.chef_image_in_egg),
             contentDescription = CHEF_IMAGE_DESCRIPTION,
-            modifier = Modifier.weight(2f).fillMaxWidth(1f).aspectRatio(0.5f).testTag("ChefImage"))
+            modifier = Modifier.weight(1f).fillMaxWidth(1f).aspectRatio(0.5f).testTag("ChefImage"))
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.weight(0.1f))
 
         // Display the publish button
         Button(
             onClick = {
               createRecipeViewModel.publishRecipe()
-              navigationActions.navigateAndClearStack(
-                  screen = Screen.CREATE_RECIPE, clearUpToRoute = Route.CREATE_RECIPE)
+              navigationActions.navigateTo(Screen.SWIPE)
             },
             colors =
                 ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
@@ -98,8 +99,7 @@ fun PublishRecipeContent(
             modifier =
                 Modifier.padding(horizontal = 16.dp)
                     .fillMaxWidth(0.7f)
-                    .height(48.dp)
-                    .weight(0.3f)
+                    .weight(0.2f)
                     .testTag("PublishButton")) {
               Text(
                   text = stringResource(R.string.publish_recipe_button),

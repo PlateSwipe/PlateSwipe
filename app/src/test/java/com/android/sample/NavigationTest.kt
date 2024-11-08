@@ -52,13 +52,4 @@ class NavigationActionsTest {
 
     assertThat(navigationActions.currentRoute(), `is`(Route.SWIPE))
   }
-
-  @Test
-  fun navigateAndClearStackCallsController() {
-    val screen = Screen.SEARCH
-    val clearUpToRoute = Route.AUTH
-
-    navigationActions.navigateAndClearStack(screen, clearUpToRoute)
-    verify(navHostController).navigate(eq(screen), any<NavOptionsBuilder.() -> Unit>())
-  }
 }

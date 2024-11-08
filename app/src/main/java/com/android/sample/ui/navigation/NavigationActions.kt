@@ -88,13 +88,6 @@ open class NavigationActions(
     }
   }
 
-  open fun navigateAndClearStack(screen: String, clearUpToRoute: String) {
-    navController.navigate(screen) {
-      popUpTo(clearUpToRoute) { inclusive = true }
-      launchSingleTop = true
-    }
-  }
-
   /**
    * Navigate to the specified screen.
    *
