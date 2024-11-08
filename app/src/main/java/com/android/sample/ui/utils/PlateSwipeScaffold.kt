@@ -100,7 +100,7 @@ private fun PlateSwipeTopBar(navigationActions: NavigationActions, showBackArrow
 
           Text(
               text = stringResource(id = R.string.plate_swipe_title),
-              style = MaterialTheme.typography.titleLarge,
+              style = MaterialTheme.typography.headlineMedium,
               modifier = Modifier.testTag(TOP_BAR_TITLE))
         }
 

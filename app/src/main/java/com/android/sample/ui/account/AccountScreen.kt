@@ -62,7 +62,7 @@ fun AccountScreen(navigationActions: NavigationActions, userViewModel: UserViewM
           Text(
               text = userName.value ?: stringResource(R.string.account_screen_default_user_name),
               modifier = Modifier.weight(.1f).testTag("userName"),
-              style = MaterialTheme.typography.titleLarge)
+              style = MaterialTheme.typography.headlineMedium)
 
           ListSelection(userViewModel, modifier = Modifier.weight(.8f))
         }
