@@ -100,8 +100,8 @@ class EndToEndTest {
 
     composeTestRule.onNodeWithTag("tabAdd Recipe").assertExists().performClick()
     composeTestRule.onNodeWithText("Create your recipe").assertExists()
-    composeTestRule.onNodeWithTag("tabAddRecipe").assertExists().performClick()
-    composeTestRule.onNodeWithText("Create Recipe Screen").assertExists()
+    composeTestRule.onNodeWithTag("tabAdd Recipe").assertExists().performClick()
+    composeTestRule.onNodeWithTag("RecipeTitle").assertExists()
 
     composeTestRule.onNodeWithTag("tabFridge").assertExists().performClick()
     composeTestRule.onNodeWithText("Fridge Screen").assertExists()
