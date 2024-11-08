@@ -308,6 +308,6 @@ class CreateRecipeViewModelTest {
 
     createRecipeViewModel.removeIngredientAndMeasurement("Banana", "3")
     assertEquals(
-        emptyList<Pair<String, String>>(), createRecipeViewModel.getIngredientsAndMeasurments())
+        emptyList<Pair<String, String>>(), createRecipeViewModel.getIngredientsAndMeasurements())
   }
 }
