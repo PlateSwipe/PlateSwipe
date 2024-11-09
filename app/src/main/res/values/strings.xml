@@ -4,7 +4,12 @@
     <string name="title_activity_second">SecondActivity</string>
     <string name="default_web_client_id">308109588643-14cdmrd4mgdqns8sn27i9p25cm2b0mlq.apps.googleusercontent.com</string>
     <string name="recipe_image">Recipe Image</string>
-    <string name="rate">4.5</string>
+    <string name="filter_icon">Filter Icon</string>
+    <string name="time_range_input_description">Time Range</string>
+    <string name="price_range_input_description">Price Range</string>
+    <string name="difficulty_input_description">Difficulty</string>
+    <string name="category_input_description">Category</string>
+
     <string name="star_rate_description">Star rate</string>
 
     <string name="plate_swipe_title">PlateSwipe</string>
@@ -18,7 +23,6 @@
     <string name="account_screen_liked_recipe_button_title">Liked Recipes</string>
     <string name="account_screen_created_recipe_button_title">Created Recipes</string>
 
-    <dimen name="paddingBasic">16dp</dimen>
-    <dimen name="star_size">150dp</dimen>
+
 
 </resources>

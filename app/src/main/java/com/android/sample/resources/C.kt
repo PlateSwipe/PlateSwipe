@@ -7,16 +7,20 @@ object C {
   object Tag {
 
     const val main_screen_container = "main_screen_container"
-
-    // SwipePage
-    const val END_ANIMATION = 1500f
-    const val FILTER_ICON_DESCRIPTION = "filterIcon"
-    const val TIME_RANGE_INPUT_DESCRIPTION = "Time Range"
-    const val PRICE_RANGE_INPUT_DESCRIPTION = "Price Range"
-    const val DIFFICULTY_INPUT_DESCRIPTION = "Difficulty"
-    const val CATEGORY_INPUT_DESCRIPTION = "Category"
-
     const val LOADING = "Loading..."
+    const val PADDING = 16
+    const val SMALL_PADDING = 8
+
+    object SwipePage {
+      const val END_ANIMATION = 1500f
+      const val INITIAL_RETRIEVE_NEXT_RECIPE = false
+      const val INITIAL_DISPLAY_CARD_1 = true
+      const val INITIAL_DISPLAY_CARD_2 = false
+      const val INITIAL_IS_CLICKING = false
+      const val INITIAL_DISPLAY_LIKE = false
+      const val INITIAL_DISPLAY_DISLIKE = false
+      const val RATE_VALUE = "4.5"
+    }
 
     // Sign In
     const val NONCE = "WhyShouldIUseThis"
@@ -177,6 +181,7 @@ object C {
 
     // FirestoreRecipeRepository
     const val FIRESTORE_COLLECTION_NAME = "recipes"
+
     // Values for storage
     const val FIRESTORE_RECIPE_NAME = "name"
     const val FIRESTORE_RECIPE_CATEGORY = "category"
@@ -192,6 +197,7 @@ object C {
 
     // FirestoreIngredientRepository
     const val FIRESTORE_INGREDIENT_COLLECTION_NAME = "ingredients"
+
     // Values for storage
     const val FIRESTORE_INGREDIENT_NAME = "name"
     const val FIRESTORE_INGREDIENT_BARCODE = "barCode"
@@ -221,6 +227,48 @@ object C {
   }
 
   object Dimension {
+    object SwipePage {
+      const val FILTER_ICON_SIZE = 30
+      const val FILTER_ICON_WEIGHT = 1f
+      const val CHIPS_WEIGHT = 1f
+      const val CARD_WEIGHT = 15f
+      const val BUTTON_COOK_SIZE = 24
+      const val INITIAL_OFFSET_X = 0f
+      const val MIN_OFFSET_X = 0
+      const val SWIPE_THRESHOLD = 1f / 3f
+      const val DISPLAY_CARD_FRONT = 1f
+      const val DISPLAY_CARD_BACK = 0f
+      const val CORNER_RADIUS = 16
+      const val CARD_ELEVATION = 4
+      const val BUTTON_ELEVATION = 4
+      const val BUTTON_RADIUS = 12
+      const val BUTTON_PADDING = 12
+      const val ANIMATION_PADDING_SWIPE = 200
+      const val ANIMATION_PADDING_TOP = 64
+      const val ANIMATION_SWIPE_TIME = 50
+      const val ANIMATION_OPACITY_TIME = 300
+      const val ANIMATION_OPACITY_MIN = 0f
+      const val ANIMATION_OPACITY_MAX = 1f
+      const val MIN_INTENSITY = -1f
+      const val MAX_INTENSITY = 1f
+      const val THRESHOLD_INTENSITY = 0
+      const val SCREEN_MIN = 0f
+      const val DESCRIPTION_WEIGHT = 3f
+      const val DESCRIPTION_FONT_SIZE = 20
+      const val STAR_WEIGHT = 1f
+      const val STAR_SIZE = 24
+      const val LIKE_DISLIKE_ANIMATION_PADDING_RATE = 2f / 11f
+      const val LIKE_DISLIKE_ANIMATION_ICON_SCALE_MIN = 0.8f
+      const val LIKE_DISLIKE_ANIMATION_ICON_SCALE_MAX = 1.5f
+      const val DURATION_ICON_SCALE = 500
+      const val SCALE_UP = 1.2f
+      const val SCALE_UP_TIME = 150
+      const val SCALE_MAX = 1.5f
+      const val SCALE_MAX_TIME = 250
+      const val SCALE_END = 1.4f
+      const val SCALE_END_TIME = 400
+      const val BACKGROUND_ANIMATION = 2f
+    }
 
     // CameraScanCodeBarScreen
     object CameraScanCodeBarScreen {
