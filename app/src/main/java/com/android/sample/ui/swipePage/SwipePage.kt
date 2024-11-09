@@ -2,6 +2,8 @@ package com.android.sample.ui.swipePage
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -44,6 +46,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -125,6 +129,8 @@ fun RecipeDisplay(
   var displayCard1 by remember { mutableStateOf(true) }
   var displayCard2 by remember { mutableStateOf(false) }
   var isClicking by remember { mutableStateOf(false) }
+  var displayLike by remember { mutableStateOf(false) }
+  var displayDisLike by remember { mutableStateOf(false) }
 
   // Offset for the swipe animation
   val offsetX = remember { Animatable(0f) }
@@ -139,16 +145,11 @@ fun RecipeDisplay(
   val filter by recipesViewModel.filter.collectAsState()
 
   // Snap back to center when animation is finished
-  coroutineScope.launch {
-    if (offsetX.value.absoluteValue > END_ANIMATION - 200) {
-      offsetX.snapTo(0f)
-      displayCard1 = !displayCard1
-      displayCard2 = !displayCard2
-    }
-  }
   Box(
       modifier =
           Modifier.fillMaxSize().background(getBackgroundColor(offsetX.value, screenWidth))) {
+        LikeDislikeIconAnimation(displayLike, displayLike || displayDisLike)
+
         Column(
             verticalArrangement = Arrangement.Top,
             modifier =
@@ -346,6 +347,11 @@ fun RecipeDisplay(
 
               // Animate back to center if not swiped
               LaunchedEffect(offsetX.value) {
+                if (offsetX.value.absoluteValue > END_ANIMATION - 200) {
+                  displayCard1 = !displayCard1
+                  displayCard2 = !displayCard2
+                  offsetX.snapTo(0f)
+                }
                 if (!isClicking) {
                   val animationTarget =
                       when {
@@ -353,6 +359,9 @@ fun RecipeDisplay(
                         offsetX.value < -swipeThreshold -> -END_ANIMATION
                         else -> 0f
                       }
+                  displayLike = animationTarget == END_ANIMATION
+                  displayDisLike = animationTarget == -END_ANIMATION
+
                   if (retrieveNextRecipe && offsetX.value == 0f) {
                     recipesViewModel.nextRecipe()
                     retrieveNextRecipe = false
@@ -405,6 +414,8 @@ private fun ShawRecipeButton(navigationActions: NavigationActions) {
 @Composable
 private fun getBackgroundColor(offsetX: Float, screenWidth: Float): Brush {
   val colorIntensity = (offsetX / screenWidth).coerceIn(-1f, 1f)
+
+  // if (offsetX > )
 
   return when {
     colorIntensity > 0 -> {
@@ -544,5 +555,52 @@ fun FilterChip(
               tint = MaterialTheme.colorScheme.onSecondary)
         })
     Spacer(modifier = Modifier.width(8.dp))
+  }
+}
+
+@Composable
+fun LikeDislikeIconAnimation(
+    isLiked: Boolean, // true for like, false for dislike
+    isDisplaying: Boolean,
+) {
+
+  val padding = LocalConfiguration.current.screenWidthDp * 2 / 11
+
+  // Choose the appropriate icon and color based on `isLiked` value
+  val iconRes = if (isLiked) R.drawable.like else R.drawable.dislike
+  val iconColor = if (isLiked) Color(0xFF43A047) else Color(0xFFD32F2F)
+  val arrangement = if (isLiked) Arrangement.End else Arrangement.Start
+
+  // Define animation properties
+  val iconScale by
+      animateFloatAsState(
+          targetValue = if (isDisplaying) 1.5f else 0.8f,
+          animationSpec =
+              keyframes {
+                durationMillis = 500
+                1.2f at 150 // Quick scale up at the beginning
+                1.5f at 250 // Scale to max
+                1.4f at 400
+              },
+          label = "scale animation")
+
+  val iconOpacity by
+      animateFloatAsState(
+          targetValue = if (isDisplaying) 1f else 0f,
+          animationSpec = tween(durationMillis = 300),
+          label = "opacity animation")
+
+  // Display the animated icon
+  if (isDisplaying) {
+    Row(
+        horizontalArrangement = arrangement,
+        modifier =
+            Modifier.fillMaxWidth().padding(start = padding.dp, end = padding.dp, top = 64.dp)) {
+          Icon(
+              painter = painterResource(id = iconRes),
+              contentDescription = if (isLiked) "Like" else "Dislike",
+              tint = iconColor,
+              modifier = Modifier.scale(iconScale).alpha(iconOpacity).zIndex(2f))
+        }
   }
 }
