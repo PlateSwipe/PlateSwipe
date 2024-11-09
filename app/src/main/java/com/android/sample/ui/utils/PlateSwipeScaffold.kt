@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.android.sample.R
 import com.android.sample.resources.C.Dimension.CameraScanCodeBarScreen.BACK_ARROW_ICON_SIZE
 import com.android.sample.resources.C.Dimension.CameraScanCodeBarScreen.CHEF_HAT_ICON_END_PADDING
@@ -89,19 +90,24 @@ private fun PlateSwipeTopBar(navigationActions: NavigationActions, showBackArrow
         }
 
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(3f)) {
-          Image(
-              painter = painterResource(id = R.drawable.chef_s_hat),
-              contentDescription = "Chef's hat",
-              modifier =
-                  Modifier.size(CHEF_HAT_ICON_SIZE.dp)
-                      .padding(end = CHEF_HAT_ICON_END_PADDING.dp)
-                      .testTag(CHEF_HAT_ICON),
-              contentScale = ContentScale.Fit)
+          Row(modifier = Modifier.weight(1f)) {
+            Image(
+                painter = painterResource(id = R.drawable.chef_s_hat),
+                contentDescription = "Chef's hat",
+                modifier =
+                    Modifier.size(CHEF_HAT_ICON_SIZE.dp)
+                        .padding(end = CHEF_HAT_ICON_END_PADDING.dp)
+                        .testTag(CHEF_HAT_ICON),
+                contentScale = ContentScale.Fit)
+          }
 
           Text(
               text = stringResource(id = R.string.plate_swipe_title),
-              style = MaterialTheme.typography.headlineMedium,
-              modifier = Modifier.testTag(TOP_BAR_TITLE))
+              style = MaterialTheme.typography.titleMedium,
+              modifier = Modifier.testTag(TOP_BAR_TITLE),
+              fontSize = 32.sp)
+
+          Spacer(modifier = Modifier.weight(1f))
         }
 
         Spacer(modifier = Modifier.weight(1f))
