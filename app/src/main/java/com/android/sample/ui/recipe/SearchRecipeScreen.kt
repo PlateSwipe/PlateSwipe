@@ -27,150 +27,154 @@ import androidx.compose.ui.unit.sp
 import com.android.sample.R
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.recipe.RecipesViewModel
+import com.android.sample.resources.C.Tag.SEARCH_BAR_CORNER_RADIUS
 import com.android.sample.ui.navigation.BottomNavigationMenu
 import com.android.sample.ui.navigation.LIST_TOP_LEVEL_DESTINATIONS
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.utils.*
 
-
-// TODO: quand je cherche et enleve le searchText en le mettant a "" j'ai la liste recipes de base qui est regenerée entière.
+// TODO: quand je cherche et enleve le searchText en le mettant a "" j'ai la liste recipes de base
+// qui est regenerée entière.
 @Composable
 fun SearchRecipeScreen(navigationActions: NavigationActions, recipesViewModel: RecipesViewModel) {
   val selectedItem = navigationActions.currentRoute()
   val currentRecipes by recipesViewModel.recipes.collectAsState()
   var recipes by remember { mutableStateOf(currentRecipes) }
+
   val scrollState = rememberScrollState()
 
-  Scaffold( modifier = Modifier.fillMaxSize().testTag("SearchRecipeScreen"),
-    topBar = {
-      Row(
-        modifier = Modifier
-          .border(width = 1.dp, color = Color(0xFF000000))
-          .border(width = 1.dp, color = Color(0x33000000))
-          .width(412.dp)
-          .height(26.dp)
-          .background(color = Color(0xFFFFFFFF)),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
-      ){
-        Image(
-          painter = painterResource(id = R.drawable.plateswipelogo),
-          contentDescription = "PlateSwipe logo",
-          modifier = Modifier
-            .padding(0.dp)
-            .width(24.dp)
-            .height(24.dp)
-            .testTag("PlateSwipeLogo icon")
+  Scaffold(
+      modifier = Modifier.fillMaxSize().testTag("SearchRecipeScreen"),
+      topBar = {
+        Row(
+            modifier =
+                Modifier.border(width = 1.dp, color = Color(0xFF000000))
+                    .border(width = 1.dp, color = Color(0x33000000))
+                    .width(412.dp)
+                    .height(26.dp)
+                    .background(color = Color(0xFFFFFFFF)),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically) {
+              Image(
+                  painter = painterResource(id = R.drawable.plateswipelogo),
+                  contentDescription = "PlateSwipe logo",
+                  modifier =
+                      Modifier.padding(0.dp)
+                          .width(24.dp)
+                          .height(24.dp)
+                          .testTag("PlateSwipeLogo icon"))
+              Text(
+                  text = "PlateSwipe",
+                  style =
+                      TextStyle(
+                          fontSize = 20.sp,
+                          fontFamily = FontFamily(Font(R.font.montserrat_regular)),
+                          fontWeight = FontWeight(600),
+                          color = Color(0xFF1B263B),
+                      ),
+                  modifier = Modifier.width(118.dp).height(24.dp).testTag("PlateSwipeLogo text"))
+            }
+      },
+      bottomBar = {
+        BottomNavigationMenu(
+            onTabSelect = { tab -> navigationActions.navigateTo(tab) },
+            tabList = LIST_TOP_LEVEL_DESTINATIONS,
+            selectedItem = selectedItem,
         )
-        Text(
-          text = "PlateSwipe",
-          style = TextStyle(
-            fontSize = 20.sp,
-            fontFamily = FontFamily(Font(R.font.montserrat_regular)),
-            fontWeight = FontWeight(600),
-            color = Color(0xFF1B263B),
-          ),
-          modifier = Modifier
-            .width(118.dp)
-            .height(24.dp)
-            .testTag("PlateSwipeLogo text")
-        )
+      }) { paddingValues ->
+        Column(
+            modifier =
+                Modifier.fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(16.dp)
+                    .verticalScroll(scrollState)) {
+              Row(
+                  horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start),
+                  verticalAlignment = Alignment.CenterVertically,
+              ) {
+                SearchingBar(recipes)
+                Image(
+                    painter = painterResource(id = R.drawable.filter),
+                    contentDescription = "image description",
+                    contentScale = ContentScale.None,
+                    modifier =
+                        Modifier.padding(0.dp)
+                            .width(24.dp)
+                            .height(24.dp)
+                            .clickable { navigationActions.navigateTo("Filter Screen") }
+                            .testTag("filter button"))
+              }
 
-      }},
-    bottomBar = {
-      BottomNavigationMenu(
-        onTabSelect = { tab -> navigationActions.navigateTo(tab) },
-        tabList = LIST_TOP_LEVEL_DESTINATIONS,
-        selectedItem = selectedItem,
-      )
-    }
-  ) { paddingValues ->
-    Column(
-      modifier = Modifier
-        .fillMaxSize()
-        .padding(paddingValues)
-        .padding(16.dp)
-        .verticalScroll(scrollState)
-    ) {
-      Row(
-        horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start),
-        verticalAlignment = Alignment.CenterVertically,
-      ){
-        SearchingBar(recipes)
-        Image(
-          painter = painterResource(id = R.drawable.filter),
-          contentDescription = "image description",
-          contentScale = ContentScale.None,
-          modifier = Modifier
-            .padding(0.dp)
-            .width(24.dp)
-            .height(24.dp)
-            .clickable { navigationActions.navigateTo("Filter Screen") }
-            .testTag("filter button")
-        )
+              RecipeList(
+                  list = recipes,
+                  onRecipeSelected = { recipe ->
+                    recipesViewModel.updateCurrentRecipe(recipe)
+                    navigationActions.navigateTo("Overview Recipe Screen")
+                  },
+                  topCornerButton = { recipe -> TopCornerLikeButton(recipe) })
+            }
       }
-
-      RecipeList(
-        list = recipes,
-        onRecipeSelected = { recipe ->
-          recipesViewModel.updateCurrentRecipe(recipe)
-          navigationActions.navigateTo("Overview Recipe Screen")
-        },
-        topCornerButton = { recipe -> TopCornerLikeButton(recipe) }
-      )
-    }
-  }
 }
 
 @Composable
-fun SearchingBar(recipes : List<Recipe> ) {
+fun SearchingBar(recipes: List<Recipe>) {
   Column(
-    verticalArrangement = Arrangement.spacedBy(0.dp, Alignment.Top),
-    horizontalAlignment = Alignment.Start,
-    modifier = Modifier.shadow(elevation = 4.dp, spotColor = Color(0x40000000), ambientColor = Color(0x40000000))
-      .shadow(elevation = 4.dp, spotColor = Color(0x40000000), ambientColor = Color(0x40000000))
-      .border(width = 1.dp, color = Color(0xFF000000))
-      .border(width = 1.dp, color = Color(0x33000000))
-      .width(329.dp)
-      .height(64.dp)
-      .background(color = Color(0xFFFFFFFF))
-      .background(color = Color(0x33000000))
-      .padding(start = 16.dp, top = 8.dp, end = 8.dp, bottom = 16.dp)
-
-  ){
-    SearchBar(Modifier
-      .shadow(elevation = 4.dp, spotColor = Color(0x0F808080), ambientColor = Color(0x0F808080))
-      .shadow(elevation = 4.dp, spotColor = Color(0x1A808080), ambientColor = Color(0x1A808080))
-      .border(width = 1.dp, color = Color(0xFFF2F2F2), shape = RoundedCornerShape(size = 16.dp))
-      .padding(0.5.dp)
-      .width(305.dp)
-      .height(40.dp)
-      .background(color = Color(0xFFF8F8F8), shape = RoundedCornerShape(size = 16.dp))
-      .padding(start = 12.dp, top = 8.dp, end = 12.dp, bottom = 8.dp), recipes)
-  }
+      verticalArrangement = Arrangement.spacedBy(0.dp, Alignment.Top),
+      horizontalAlignment = Alignment.Start,
+      modifier =
+          Modifier.shadow(
+                  elevation = 4.dp, spotColor = Color(0x40000000), ambientColor = Color(0x40000000))
+              .shadow(
+                  elevation = 4.dp, spotColor = Color(0x40000000), ambientColor = Color(0x40000000))
+              .border(width = 1.dp, color = Color(0xFF000000))
+              .border(width = 1.dp, color = Color(0x33000000))
+              .width(329.dp)
+              .height(64.dp)
+              .background(color = Color(0xFFFFFFFF))
+              .background(color = Color(0x33000000))
+              .padding(start = 16.dp, top = 8.dp, end = 8.dp, bottom = 16.dp)) {
+        SearchBar(
+            Modifier.shadow(
+                    elevation = 4.dp,
+                    spotColor = Color(0x0F808080),
+                    ambientColor = Color(0x0F808080))
+                .shadow(
+                    elevation = 4.dp,
+                    spotColor = Color(0x1A808080),
+                    ambientColor = Color(0x1A808080))
+                .border(
+                    width = 1.dp,
+                    color = Color(0xFFF2F2F2),
+                    shape = RoundedCornerShape(size = SEARCH_BAR_CORNER_RADIUS.dp))
+                .padding(0.5.dp)
+                .width(305.dp)
+                .height(40.dp)
+                .background(color = Color(0xFFF8F8F8), shape = RoundedCornerShape(size = 16.dp))
+                .padding(start = 12.dp, top = 8.dp, end = 12.dp, bottom = 8.dp),
+            recipes)
+      }
 }
 
 @Composable
 fun FilterChip(text: String) {
   OutlinedButton(
-    onClick = { /* Apply filter logic */ },
-    modifier = Modifier,
-    colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
-    border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface)
-  ) {
-    Text(text, fontSize = 12.sp)
-  }
+      onClick = { /* Apply filter logic */},
+      modifier = Modifier,
+      colors =
+          ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
+      border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface)) {
+        Text(text, fontSize = 12.sp)
+      }
 }
 
 @Composable
 fun ClearAllChip() {
-    Button(
-        onClick = { /* Clear all filters logic */ },
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-            contentColor = MaterialTheme.colorScheme.onSurface
-        )
-    ) {
+  Button(
+      onClick = { /* Clear all filters logic */},
+      colors =
+          ButtonDefaults.buttonColors(
+              containerColor = MaterialTheme.colorScheme.surfaceVariant,
+              contentColor = MaterialTheme.colorScheme.onSurface)) {
         Text("Clear All", fontSize = 12.sp)
-    }
+      }
 }

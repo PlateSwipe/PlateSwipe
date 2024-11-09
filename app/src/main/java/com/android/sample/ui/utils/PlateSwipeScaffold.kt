@@ -1,5 +1,6 @@
 package com.android.sample.ui.utils
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -8,7 +9,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
@@ -19,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.android.sample.R
@@ -80,10 +84,16 @@ private fun PlateSwipeTopBar(navigationActions: NavigationActions, showBackArrow
           Spacer(modifier = Modifier.weight(7f))
         }
 
+        Image(
+            painter = painterResource(id = R.drawable.plateswipelogo),
+            contentDescription = "PlateSwipe logo",
+            modifier =
+                Modifier.padding(0.dp).width(24.dp).height(24.dp).testTag("PlateSwipeLogo icon"))
+
         Text(
             text = stringResource(R.string.plate_swipe_title),
             style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.testTag("topBarTitle"),
+            modifier = Modifier.testTag("topBarTitle").width(118.dp).height(24.dp),
             color = MaterialTheme.colorScheme.onPrimary)
 
         Spacer(modifier = Modifier.weight(1f))

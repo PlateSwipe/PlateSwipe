@@ -12,7 +12,6 @@ import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.recipe.RecipesRepository
 import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.ui.navigation.NavigationActions
-import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.utils.RecipeList
 import com.android.sample.ui.utils.TopCornerLikeButton
@@ -31,63 +30,63 @@ class searchRecipeScreenTest {
   private lateinit var recipesViewModel: RecipesViewModel
 
   private val recipesList: List<Recipe> =
-    listOf(
-      Recipe(
-        "0",
-        "Meal1",
-        "Meal1cat",
-        "Meal1Area",
-        "Meals 1 instructions",
-        "https://img.jakpost.net/c/2016/09/29/2016_09_29_12990_1475116504._large.jpg",
-        listOf(Pair("1", "peu"), Pair("2", "beaucoup"), Pair("3", "peu")),
-      ),
-      Recipe(
-        "1",
-        "Meal2",
-        "Meal2cat",
-        "Meal2Area",
-        "Meals 2 instructions",
-        "https://img.jakpost.net/c/2016/09/29/2016_09_29_12990_1475116504._large.jpg",
-        listOf(Pair("1", "peu"), Pair("2", "beaucoup"), Pair("3", "peu")),
-      ),
-      Recipe(
-        "2",
-        "Meal3",
-        "Meal3cat",
-        "Meal3Area",
-        "Meals 3 instructions",
-        "https://img.jakpost.net/c/2016/09/29/2016_09_29_12990_1475116504._large.jpg",
-        listOf(Pair("1", "peu"), Pair("2", "beaucoup"), Pair("3", "peu")),
-      ),
-      Recipe(
-        "3",
-        "Meal4",
-        "Meal4cat",
-        "Meal4Area",
-        "Meals 4 instructions",
-        "https://img.jakpost.net/c/2016/09/29/2016_09_29_12990_1475116504._large.jpg",
-        listOf(Pair("1", "peu"), Pair("2", "beaucoup"), Pair("3", "peu")),
-      ),
-      Recipe(
-        "4",
-        "Meal5",
-        "Meal5cat",
-        "Meal5Area",
-        "Meals 5 instructions",
-        "https://img.jakpost.net/c/2016/09/29/2016_09_29_12990_1475116504._large.jpg",
-        listOf(Pair("1", "peu"), Pair("2", "beaucoup"), Pair("3", "peu")),
-      ))
+      listOf(
+          Recipe(
+              "0",
+              "Meal1",
+              "Meal1cat",
+              "Meal1Area",
+              "Meals 1 instructions",
+              "https://img.jakpost.net/c/2016/09/29/2016_09_29_12990_1475116504._large.jpg",
+              listOf(Pair("1", "peu"), Pair("2", "beaucoup"), Pair("3", "peu")),
+          ),
+          Recipe(
+              "1",
+              "Meal2",
+              "Meal2cat",
+              "Meal2Area",
+              "Meals 2 instructions",
+              "https://img.jakpost.net/c/2016/09/29/2016_09_29_12990_1475116504._large.jpg",
+              listOf(Pair("1", "peu"), Pair("2", "beaucoup"), Pair("3", "peu")),
+          ),
+          Recipe(
+              "2",
+              "Meal3",
+              "Meal3cat",
+              "Meal3Area",
+              "Meals 3 instructions",
+              "https://img.jakpost.net/c/2016/09/29/2016_09_29_12990_1475116504._large.jpg",
+              listOf(Pair("1", "peu"), Pair("2", "beaucoup"), Pair("3", "peu")),
+          ),
+          Recipe(
+              "3",
+              "Meal4",
+              "Meal4cat",
+              "Meal4Area",
+              "Meals 4 instructions",
+              "https://img.jakpost.net/c/2016/09/29/2016_09_29_12990_1475116504._large.jpg",
+              listOf(Pair("1", "peu"), Pair("2", "beaucoup"), Pair("3", "peu")),
+          ),
+          Recipe(
+              "4",
+              "Meal5",
+              "Meal5cat",
+              "Meal5Area",
+              "Meals 5 instructions",
+              "https://img.jakpost.net/c/2016/09/29/2016_09_29_12990_1475116504._large.jpg",
+              listOf(Pair("1", "peu"), Pair("2", "beaucoup"), Pair("3", "peu")),
+          ))
 
   private val testRecipe =
-    Recipe(
-      idMeal = "12345",
-      strMeal = "Test Recipe",
-      strCategory = "Test Category",
-      strArea = "Test Area",
-      strInstructions = "Test Instructions",
-      strMealThumbUrl = "https://example.com/image.jpg",
-      ingredientsAndMeasurements = listOf(Pair("1", "Test Ingredient")),
-    )
+      Recipe(
+          idMeal = "12345",
+          strMeal = "Test Recipe",
+          strCategory = "Test Category",
+          strArea = "Test Area",
+          strInstructions = "Test Instructions",
+          strMealThumbUrl = "https://example.com/image.jpg",
+          ingredientsAndMeasurements = listOf(Pair("1", "Test Ingredient")),
+      )
 
   @get:Rule val composeTestRule = createComposeRule()
 
@@ -110,24 +109,24 @@ class searchRecipeScreenTest {
   fun testCorrectlyElements() {
     composeTestRule.setContent {
       RecipeList(
-        modifier = Modifier.fillMaxSize(),
-        list = recipesList,
-        onRecipeSelected = {},
-        topCornerButton = { recipe -> TopCornerLikeButton(recipe = recipe) })
+          modifier = Modifier.fillMaxSize(),
+          list = recipesList,
+          onRecipeSelected = {},
+          topCornerButton = { recipe -> TopCornerLikeButton(recipe = recipe) })
     }
 
     composeTestRule
-      .onAllNodesWithTag("recipeCard", useUnmergedTree = true)
-      .assertCountEquals(recipesList.count())
+        .onAllNodesWithTag("recipeCard", useUnmergedTree = true)
+        .assertCountEquals(recipesList.count())
     composeTestRule
-      .onAllNodesWithTag("recipeTitle", useUnmergedTree = true)
-      .assertCountEquals(recipesList.count())
+        .onAllNodesWithTag("recipeTitle", useUnmergedTree = true)
+        .assertCountEquals(recipesList.count())
     composeTestRule
-      .onAllNodesWithTag("recipeImage", useUnmergedTree = true)
-      .assertCountEquals(recipesList.count())
+        .onAllNodesWithTag("recipeImage", useUnmergedTree = true)
+        .assertCountEquals(recipesList.count())
     composeTestRule
-      .onAllNodesWithTag("recipeFavoriteIcon", useUnmergedTree = true)
-      .assertCountEquals(recipesList.count())
+        .onAllNodesWithTag("recipeFavoriteIcon", useUnmergedTree = true)
+        .assertCountEquals(recipesList.count())
   }
 
   @Test

@@ -103,7 +103,7 @@ class EndToEndTest {
 @Composable
 fun FakeNavHost(navController: NavHostController, userViewModel: UserViewModel) {
   val navigationActions = NavigationActions(navController)
-    val recipesViewModel = mock(RecipesViewModel::class.java)
+  val recipesViewModel = mock(RecipesViewModel::class.java)
   NavHost(navController = navController, startDestination = Route.SWIPE) {
     navigation(
         startDestination = Screen.SWIPE,
