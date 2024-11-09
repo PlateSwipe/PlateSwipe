@@ -73,7 +73,11 @@ fun PlateSwipeScaffold(
 @Composable
 private fun PlateSwipeTopBar(navigationActions: NavigationActions, showBackArrow: Boolean = true) {
   Row(
-      modifier = Modifier.fillMaxWidth().background(color = lightCream).testTag(TOP_BAR),
+      modifier =
+          Modifier.fillMaxWidth()
+              .height(TOP_BAR_HEIGHT.dp)
+              .background(color = lightCream)
+              .testTag(TOP_BAR),
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.SpaceBetween) {
         Row(modifier = Modifier.weight(1f)) {
