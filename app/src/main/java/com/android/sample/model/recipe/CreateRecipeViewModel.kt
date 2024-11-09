@@ -60,6 +60,59 @@ class CreateRecipeViewModel(private val repository: FirestoreRecipesRepository) 
     recipeBuilder.addIngredientAndMeasurement(ingredient, measurement)
   }
 
+  fun removeIngredientAndMeasurement(ingredient: String, measurement: String) {
+    recipeBuilder.deleteIngredientAndMeasurement(ingredient = ingredient, measurement = measurement)
+  }
+
+  fun updateIngredientAndMeasurement(
+      ingredient: String,
+      measurement: String,
+      newIngredient: String,
+      newMeasurement: String
+  ) {
+    recipeBuilder.updateIngredientAndMeasurement(
+        ingredient = ingredient,
+        measurement = measurement,
+        newIngredient = newIngredient,
+        newMeasurement = newMeasurement)
+  }
+
+  fun getIngredientsAndMeasurements(): List<Pair<String, String>> {
+    return recipeBuilder.getIngredientsAndMeasurements()
+  }
+
+  fun getRecipeName(): String {
+    return recipeBuilder.getName()
+  }
+
+  fun getRecipeInstructions(): String {
+    return recipeBuilder.getInstructions()
+  }
+
+  fun getRecipeCategory(): String? {
+    return recipeBuilder.getCategory()
+  }
+
+  fun getRecipeArea(): String? {
+    return recipeBuilder.getArea()
+  }
+
+  fun getRecipeThumbnail(): String {
+    return recipeBuilder.getPictureID()
+  }
+
+  fun getRecipeTime(): String? {
+    return recipeBuilder.getTime()
+  }
+
+  fun getRecipeDifficulty(): String? {
+    return recipeBuilder.getDifficulty()
+  }
+
+  fun getRecipePrice(): String? {
+    return recipeBuilder.getPrice()
+  }
+
   fun clearPublishError() {
     _publishError.value = null
   }
