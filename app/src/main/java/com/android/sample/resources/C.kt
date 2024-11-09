@@ -8,6 +8,11 @@ object C {
 
     const val main_screen_container = "main_screen_container"
 
+    // General
+    const val LOADING = "Loading..."
+    const val PADDING = 16
+    const val SMALL_PADDING = 8
+
     // SwipePage
     const val END_ANIMATION = 1500f
     const val FILTER_ICON_DESCRIPTION = "filterIcon"
@@ -15,8 +20,6 @@ object C {
     const val PRICE_RANGE_INPUT_DESCRIPTION = "Price Range"
     const val DIFFICULTY_INPUT_DESCRIPTION = "Difficulty"
     const val CATEGORY_INPUT_DESCRIPTION = "Category"
-
-    const val LOADING = "Loading..."
 
     // Sign In
     const val NONCE = "WhyShouldIUseThis"
@@ -197,9 +200,29 @@ object C {
     const val FIRESTORE_INGREDIENT_NAME = "name"
     const val FIRESTORE_INGREDIENT_BARCODE = "barCode"
     const val FIRESTORE_INGREDIENT_BRANDS = "brands"
+    const val FIRESTORE_INGREDIENT_QUANTITY = "quantity"
+    const val FIRESTORE_INGREDIENT_CATEGORIES = "categories"
+    const val FIRESTORE_INGREDIENT_IMAGES = "images"
 
     // AggregatorIngredientRepository
     const val AGGREGATOR_TAG_ON_INGREDIENT_ADDED = "Ingredient added successfully"
+
+    // OpenFoodFactsIngredientRepository
+    const val OPEN_FOOD_FACTS_URL = "https://world.openfoodfacts.net"
+    const val OPEN_FOOD_FACTS_INGREDIENT_REPOSITORY_TAG = "OpenFoodFactsIngredientRepository"
+    const val PRODUCT_NAME = "product_name"
+    const val PRODUCT_BRAND = "brands"
+    const val PRODUCT_ID = "_id"
+    const val PRODUCT_QUANTITY = "quantity"
+    const val PRODUCT_CATEGORIES = "categories"
+    const val PRODUCT_FRONT_IMAGE_URL = "image_front_url"
+    const val PRODUCT_FRONT_IMAGE = "display_normal"
+    const val PRODUCT_FRONT_IMAGE_THUMBNAIL_URL = "image_front_thumb_url"
+    const val PRODUCT_FRONT_IMAGE_THUMBNAIL = "display_thumbnail"
+    const val PRODUCT_FRONT_IMAGE_SMALL_URL = "image_front_small_url"
+    const val PRODUCT_FRONT_IMAGE_SMALL = "display_small"
+    const val INGREDIENT_IMAGE_ADDED_SUCCESSFULLY =
+        "Ingredient image added successfully to the storage"
 
     // EXCEPTION MESSAGES
     const val LIMIT_MUST_BE_POSITIVE_MESSAGE = "Limit must be greater than 0"
@@ -221,7 +244,41 @@ object C {
     const val RECIPE_PUBLISH_ERROR_MESSAGE = "Failed to publish recipe: %1\$s"
   }
 
+  object Values {
+    object RecipeOverview {
+      const val INITIAL_NUMBER_PERSON_PER_RECIPE = 1
+    }
+  }
+
   object Dimension {
+    object LoadingCook {
+      const val COOK_SIZE = 250
+      const val ROTATION_MIN = 0f
+      const val ROTATION_MAX = -360f
+      const val ROTATION_DURATION = 2000
+    }
+
+    object RecipeOverview {
+      const val IMAGE_ROUND_CORNER = 10
+      const val COUNTER_ROUND_CORNER = 25
+      const val OVERVIEW_RECIPE_STAR_SIZE = 24
+      const val COUNTER_MIN_MAX_SIZE = 30
+      const val OVERVIEW_TIME_DISPLAY_RATE = 1f / 15f
+      const val OVERVIEW_MIN_COUNTER_VALUE = 1
+      const val OVERVIEW_MAX_COUNTER_VALUE = 99
+      const val OVERVIEW_CHECKBOX_SIZE = 15
+      const val OVERVIEW_COUNTER_TEXT_SIZE = 28
+      const val OVERVIEW_RECIPE_ROUND = 5
+      const val OVERVIEW_RECIPE_ROUND_ROW = 10
+      const val OVERVIEW_RECIPE_CARD_SHAPE = 16
+      const val OVERVIEW_RECIPE_CARD_ELEVATION = 4
+      const val OVERVIEW_RECIPE_COUNTER_PADDING = 0
+      const val OVERVIEW_RECIPE_RATE = 1f / 3f
+      const val OVERVIEW_INSTRUCTION_START = 25
+      const val OVERVIEW_INSTRUCTION_END = 15
+      const val OVERVIEW_INSTRUCTION_TOP = 10
+      const val OVERVIEW_INSTRUCTION_BOTTOM = 5
+    }
 
     // CameraScanCodeBarScreen
     object CameraScanCodeBarScreen {
