@@ -263,6 +263,7 @@ object C {
       const val BACK_ARROW_ICON_SIZE = 26
       const val CHEF_HAT_ICON_SIZE = 35
       const val CHEF_HAT_ICON_END_PADDING = 8
+      const val BOTTOM_BAR_HEIGHT = 60
 
       // BARCODE FRAME
       const val BARCODE_FRAME_WIDTH = 1f
