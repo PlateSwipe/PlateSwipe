@@ -109,23 +109,13 @@ fun RecipeNameScreen(
                 // Input field for the recipe name
                 OutlinedTextField(
                     value = recipeName,
-                    onValueChange = {
-                      if (it.text.length <= RECIPE_NAME_CHARACTER_LIMIT) {
-                        recipeName = it
-                        showError = false
-                      }
+                    onValueChange = { newName ->
+                      handleRecipeNameChange(
+                          newName = newName,
+                          onRecipeNameChange = { recipeName = it },
+                          onShowErrorChange = { showError = it })
                     },
-                    label = {
-                      if (recipeName.text.isEmpty()) {
-                        Text(
-                            text = stringResource(R.string.recipe_name_hint),
-                            style =
-                                MaterialTheme.typography.bodySmall.copy(
-                                    fontFamily = MeeraInimai,
-                                    letterSpacing = RECIPE_NAME_FONT_SPACING / 1.4f),
-                            color = MaterialTheme.colorScheme.secondary)
-                      }
-                    },
+                    label = getLabelText(recipeName),
                     shape = RoundedCornerShape(8.dp),
                     modifier =
                         Modifier.fillMaxWidth()
@@ -142,18 +132,11 @@ fun RecipeNameScreen(
 
                 // Display error message if recipe name is empty
                 Column(modifier = Modifier.weight(0.1f).align(Alignment.CenterHorizontally)) {
-                  if (showError) {
-                    Text(
-                        text = stringResource(R.string.recipe_name_error),
-                        color = MaterialTheme.colorScheme.error,
-                        style =
-                            MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                        modifier = Modifier.padding(top = RECIPE_NAME_BASE_PADDING / 2))
-                  }
+                  getErrorMessage(showError).invoke()
                 }
+
                 // Display the chef image if the screen dimensions are large enough
-                if (screenWidthDp >= SCREEN_WIDTH_THRESHOLD &&
-                    screenHeightDp >= SCREEN_HEIGHT_THRESHOLD) {
+                if (shouldDisplayChefImage(screenWidthDp, screenHeightDp)) {
                   Row(
                       modifier = Modifier.weight(0.8f),
                       verticalAlignment = Alignment.CenterVertically) {
@@ -169,12 +152,13 @@ fun RecipeNameScreen(
         // Button to proceed to the next step
         Button(
             onClick = {
-              if (recipeName.text.isEmpty()) {
-                showError = true
-              } else {
-                createRecipeViewModel.updateRecipeName(recipeName.text)
-                navigationActions.navigateTo(Screen.CREATE_RECIPE_INGREDIENTS)
-              }
+              handleOnClick(
+                  recipeName = recipeName,
+                  onShowErrorChange = { showError = it },
+                  onUpdateRecipeName = { createRecipeViewModel.updateRecipeName(it) },
+                  onNavigateToNextScreen = {
+                    navigationActions.navigateTo(Screen.CREATE_RECIPE_INGREDIENTS)
+                  })
             },
             modifier =
                 Modifier.align(Alignment.BottomCenter)
@@ -186,4 +170,92 @@ fun RecipeNameScreen(
               Text(stringResource(R.string.next_step))
             }
       }
+}
+
+/**
+ * Helper function to handle changes in the recipe name.
+ *
+ * @param newName The new value of the recipe name.
+ * @param onRecipeNameChange Callback to update the recipe name.
+ * @param onShowErrorChange Callback to update the error state.
+ */
+fun handleRecipeNameChange(
+    newName: TextFieldValue,
+    onRecipeNameChange: (TextFieldValue) -> Unit,
+    onShowErrorChange: (Boolean) -> Unit
+) {
+  if (newName.text.length <= RECIPE_NAME_CHARACTER_LIMIT) {
+    onRecipeNameChange(newName)
+    onShowErrorChange(false)
+  }
+}
+
+/**
+ * Helper function to get the label text for the recipe name field.
+ *
+ * @param recipeName The current value of the recipe name.
+ * @return A composable function that displays the label text.
+ */
+fun getLabelText(recipeName: TextFieldValue): @Composable () -> Unit {
+  return {
+    if (recipeName.text.isEmpty()) {
+      Text(
+          text = stringResource(R.string.recipe_name_hint),
+          style =
+              MaterialTheme.typography.bodySmall.copy(
+                  fontFamily = MeeraInimai, letterSpacing = RECIPE_NAME_FONT_SPACING / 1.4f),
+          color = MaterialTheme.colorScheme.secondary)
+    }
+  }
+}
+
+/**
+ * Helper function to get the error message for the recipe name field.
+ *
+ * @param showError Boolean indicating whether to show the error message.
+ * @return A composable function that displays the error message.
+ */
+fun getErrorMessage(showError: Boolean): @Composable () -> Unit {
+  return {
+    if (showError) {
+      Text(
+          text = stringResource(R.string.recipe_name_error),
+          color = MaterialTheme.colorScheme.error,
+          style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+          modifier = Modifier.padding(top = RECIPE_NAME_BASE_PADDING / 2))
+    }
+  }
+}
+
+/**
+ * Helper function to determine if the chef image should be displayed.
+ *
+ * @param screenWidthDp The width of the screen in dp.
+ * @param screenHeightDp The height of the screen in dp.
+ * @return Boolean indicating whether to display the chef image.
+ */
+fun shouldDisplayChefImage(screenWidthDp: Int, screenHeightDp: Int): Boolean {
+  return screenWidthDp >= SCREEN_WIDTH_THRESHOLD && screenHeightDp >= SCREEN_HEIGHT_THRESHOLD
+}
+
+/**
+ * Helper function to handle the onClick event for the next step button.
+ *
+ * @param recipeName The current value of the recipe name.
+ * @param onShowErrorChange Callback to update the error state.
+ * @param onUpdateRecipeName Callback to update the recipe name.
+ * @param onNavigateToNextScreen Callback to navigate to the next screen.
+ */
+fun handleOnClick(
+    recipeName: TextFieldValue,
+    onShowErrorChange: (Boolean) -> Unit,
+    onUpdateRecipeName: (String) -> Unit,
+    onNavigateToNextScreen: () -> Unit
+) {
+  if (recipeName.text.isEmpty()) {
+    onShowErrorChange(true)
+  } else {
+    onUpdateRecipeName(recipeName.text)
+    onNavigateToNextScreen()
+  }
 }
