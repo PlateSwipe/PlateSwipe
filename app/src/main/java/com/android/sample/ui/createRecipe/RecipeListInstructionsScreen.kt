@@ -156,28 +156,32 @@ fun InstructionValue(index: Int, time: String?, icon: Int, onClick: () -> Unit) 
   ) {
     Column(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
       // Date and Status Row
-      Row(modifier = Modifier.fillMaxWidth(1f).testTag("InstructionThumbnail"), horizontalArrangement = Arrangement.SpaceBetween) {
-        Image(
-            painter = painterResource(id = R.drawable.fire),
-            contentDescription = "Fire",
-            modifier = Modifier.size(24.dp).testTag("InstructionIcon"))
-        Column(modifier = Modifier.testTag("InstructionTextSpace")) {
-          Text(
-              modifier = Modifier.testTag("InstructionText"),
-              text = "Step $officialStep",
-              style = MaterialTheme.typography.bodyMedium,
-              fontWeight = FontWeight.Bold)
+      Row(
+          modifier = Modifier.fillMaxWidth(1f).testTag("InstructionThumbnail"),
+          horizontalArrangement = Arrangement.SpaceBetween) {
+            Image(
+                painter = painterResource(id = R.drawable.fire),
+                contentDescription = "Fire",
+                modifier = Modifier.size(24.dp).testTag("InstructionIcon"))
+            Column(modifier = Modifier.testTag("InstructionTextSpace")) {
+              Text(
+                  modifier = Modifier.testTag("InstructionText"),
+                  text = "Step $officialStep",
+                  style = MaterialTheme.typography.bodyMedium,
+                  fontWeight = FontWeight.Bold)
 
-
-          if (!time.isNullOrBlank()) {
-            Text(text = "$time min", style = MaterialTheme.typography.bodySmall, modifier = Modifier.testTag("InstructionTime"))
+              if (!time.isNullOrBlank()) {
+                Text(
+                    text = "$time min",
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.testTag("InstructionTime"))
+              }
+            }
+            Icon(
+                imageVector = Icons.Default.ModeEdit,
+                contentDescription = "Edit",
+                modifier = Modifier.size(24.dp).testTag("EditInstructionIcon"))
           }
-        }
-        Icon(
-            imageVector = Icons.Default.ModeEdit,
-            contentDescription = "Edit",
-            modifier = Modifier.size(24.dp).testTag("EditInstructionIcon"))
-      }
     }
   }
 }
