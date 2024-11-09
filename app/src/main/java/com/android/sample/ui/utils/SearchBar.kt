@@ -38,13 +38,16 @@ import com.android.sample.resources.C.Tag.SEARCH_BAR_PLACE_HOLDER
  */
 @Preview
 @Composable
-fun SearchBar(modifier: Modifier = Modifier, list: List<Recipe> = emptyList()) {
+fun SearchBar(
+    modifier: Modifier = Modifier,
+    list: List<Recipe> = emptyList(),
+    onValueChange: (String) -> Unit = {}
+) {
   var searchText by remember { mutableStateOf("") }
   var isFocused by remember { mutableStateOf(false) }
   Row(
       horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start),
-      verticalAlignment = Alignment.CenterVertically,
-      modifier = modifier.testTag("searchBar")) {
+      verticalAlignment = Alignment.CenterVertically,) {
         Image(
             painter = painterResource(id = R.drawable.search),
             contentDescription = "search icon",
@@ -55,6 +58,7 @@ fun SearchBar(modifier: Modifier = Modifier, list: List<Recipe> = emptyList()) {
             onValueChange = {
               if (isFocused) searchText = it.dropLast(1) else searchText = it
               filter(searchText, list)
+              onValueChange(searchText)
             },
             textStyle =
                 TextStyle(
@@ -68,7 +72,7 @@ fun SearchBar(modifier: Modifier = Modifier, list: List<Recipe> = emptyList()) {
             modifier =
                 Modifier.width(253.dp).height(40.dp).onFocusChanged { focusState ->
                   isFocused = focusState.isFocused
-                })
+                }.testTag("searchBar"))
       }
 }
 
