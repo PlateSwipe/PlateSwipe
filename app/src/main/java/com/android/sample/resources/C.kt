@@ -14,12 +14,16 @@ object C {
     const val SMALL_PADDING = 8
 
     // SwipePage
-    const val END_ANIMATION = 1500f
-    const val FILTER_ICON_DESCRIPTION = "filterIcon"
-    const val TIME_RANGE_INPUT_DESCRIPTION = "Time Range"
-    const val PRICE_RANGE_INPUT_DESCRIPTION = "Price Range"
-    const val DIFFICULTY_INPUT_DESCRIPTION = "Difficulty"
-    const val CATEGORY_INPUT_DESCRIPTION = "Category"
+    object SwipePage {
+      const val END_ANIMATION = 1500f
+      const val INITIAL_RETRIEVE_NEXT_RECIPE = false
+      const val INITIAL_DISPLAY_CARD_1 = true
+      const val INITIAL_DISPLAY_CARD_2 = false
+      const val INITIAL_IS_CLICKING = false
+      const val INITIAL_DISPLAY_LIKE = false
+      const val INITIAL_DISPLAY_DISLIKE = false
+      const val RATE_VALUE = "4.5"
+    }
 
     // Sign In
     const val NONCE = "WhyShouldIUseThis"
@@ -78,8 +82,8 @@ object C {
     const val PEPPER_MVM_DURATION = 1500
     const val PEPPER_MVM_RANGE = 10f
 
-    const val WIDTH_BASE = 1080f
-    const val HEIGHT_BASE = 2265f
+    const val WIDTH_BASE = 360f
+    const val HEIGHT_BASE = 755f
     const val DURATION_ROTATION_LOOP = 30000
 
     const val CUBE_EASING_A = 0.25f
@@ -180,7 +184,6 @@ object C {
 
     // FirestoreRecipeRepository
     const val FIRESTORE_COLLECTION_NAME = "recipes"
-
     // Values for storage
     const val FIRESTORE_RECIPE_NAME = "name"
     const val FIRESTORE_RECIPE_CATEGORY = "category"
@@ -200,9 +203,29 @@ object C {
     const val FIRESTORE_INGREDIENT_NAME = "name"
     const val FIRESTORE_INGREDIENT_BARCODE = "barCode"
     const val FIRESTORE_INGREDIENT_BRANDS = "brands"
+    const val FIRESTORE_INGREDIENT_QUANTITY = "quantity"
+    const val FIRESTORE_INGREDIENT_CATEGORIES = "categories"
+    const val FIRESTORE_INGREDIENT_IMAGES = "images"
 
     // AggregatorIngredientRepository
     const val AGGREGATOR_TAG_ON_INGREDIENT_ADDED = "Ingredient added successfully"
+
+    // OpenFoodFactsIngredientRepository
+    const val OPEN_FOOD_FACTS_URL = "https://world.openfoodfacts.net"
+    const val OPEN_FOOD_FACTS_INGREDIENT_REPOSITORY_TAG = "OpenFoodFactsIngredientRepository"
+    const val PRODUCT_NAME = "product_name"
+    const val PRODUCT_BRAND = "brands"
+    const val PRODUCT_ID = "_id"
+    const val PRODUCT_QUANTITY = "quantity"
+    const val PRODUCT_CATEGORIES = "categories"
+    const val PRODUCT_FRONT_IMAGE_URL = "image_front_url"
+    const val PRODUCT_FRONT_IMAGE = "display_normal"
+    const val PRODUCT_FRONT_IMAGE_THUMBNAIL_URL = "image_front_thumb_url"
+    const val PRODUCT_FRONT_IMAGE_THUMBNAIL = "display_thumbnail"
+    const val PRODUCT_FRONT_IMAGE_SMALL_URL = "image_front_small_url"
+    const val PRODUCT_FRONT_IMAGE_SMALL = "display_small"
+    const val INGREDIENT_IMAGE_ADDED_SUCCESSFULLY =
+        "Ingredient image added successfully to the storage"
 
     // EXCEPTION MESSAGES
     const val LIMIT_MUST_BE_POSITIVE_MESSAGE = "Limit must be greater than 0"
@@ -222,6 +245,12 @@ object C {
     // CreateRecipeViewModel
     const val RECIPE_PUBLISHED_SUCCESS_MESSAGE = "Recipe published successfully!"
     const val RECIPE_PUBLISH_ERROR_MESSAGE = "Failed to publish recipe: %1\$s"
+  }
+
+  object Values {
+    object RecipeOverview {
+      const val INITIAL_NUMBER_PERSON_PER_RECIPE = 1
+    }
   }
 
   object Dimension {
@@ -267,6 +296,7 @@ object C {
       const val SCALE_END_TIME = 400
       const val BACKGROUND_ANIMATION = 2f
     }
+
     object LoadingCook {
       const val COOK_SIZE = 250
       const val ROTATION_MIN = 0f

@@ -72,6 +72,7 @@ import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_TIME_DIS
 import com.android.sample.resources.C.Tag.LOADING
 import com.android.sample.resources.C.Tag.PADDING
 import com.android.sample.resources.C.Tag.SMALL_PADDING
+import com.android.sample.resources.C.Tag.SwipePage.RATE_VALUE
 import com.android.sample.resources.C.Values.RecipeOverview.INITIAL_NUMBER_PERSON_PER_RECIPE
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.theme.starColor
@@ -261,7 +262,7 @@ private fun RecipeDescription(currentRecipe: Recipe) {
 
           // Rating Text
           Text(
-              text = stringResource(R.string.rate),
+              text = RATE_VALUE,
               modifier = Modifier.testTag("recipeRate"),
               style = MaterialTheme.typography.bodyMedium,
               color = MaterialTheme.colorScheme.onSecondary)
