@@ -82,8 +82,8 @@ object C {
     const val PEPPER_MVM_DURATION = 1500
     const val PEPPER_MVM_RANGE = 10f
 
-    const val WIDTH_BASE = 360f
-    const val HEIGHT_BASE = 755f
+    const val WIDTH_BASE = 1080f
+    const val HEIGHT_BASE = 2265f
     const val DURATION_ROTATION_LOOP = 30000
 
     const val CUBE_EASING_A = 0.25f
