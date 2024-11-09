@@ -242,6 +242,12 @@ object C {
     // CreateRecipeViewModel
     const val RECIPE_PUBLISHED_SUCCESS_MESSAGE = "Recipe published successfully!"
     const val RECIPE_PUBLISH_ERROR_MESSAGE = "Failed to publish recipe: %1\$s"
+
+    // UserViewModel
+    const val REMOVED_TOO_MANY_INGREDIENTS_ERROR =
+        "Cannot remove more ingredients than there are in the fridge."
+    const val REMOVED_INGREDIENT_NOT_IN_FRIDGE_ERROR =
+        "Cannot remove an ingredient that is not in the fridge."
   }
 
   object Values {

@@ -4,12 +4,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.recipe.Recipe
+import com.android.sample.resources.C.Tag.REMOVED_INGREDIENT_NOT_IN_FRIDGE_ERROR
+import com.android.sample.resources.C.Tag.REMOVED_TOO_MANY_INGREDIENTS_ERROR
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 
 class UserViewModel(
     private val userRepository: UserRepository,
@@ -22,8 +26,8 @@ class UserViewModel(
   private val _profilePictureUrl: MutableStateFlow<String?> = MutableStateFlow(null)
   val profilePictureUrl: StateFlow<String?> = _profilePictureUrl
 
-  private val _fridge: MutableStateFlow<List<Ingredient>> = MutableStateFlow(emptyList())
-  val fridge: StateFlow<List<Ingredient>> = _fridge
+  private val _fridge: MutableStateFlow<List<Pair<Ingredient, Int>>> = MutableStateFlow(emptyList())
+  val fridge: StateFlow<List<Pair<Ingredient, Int>>> = _fridge
 
   private val _likedRecipes: MutableStateFlow<List<Recipe>> = MutableStateFlow(emptyList())
   val likedRecipes: StateFlow<List<Recipe>> = _likedRecipes
@@ -40,8 +44,7 @@ class UserViewModel(
         object : ViewModelProvider.Factory {
           @Suppress("UNCHECKED_CAST")
           override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return UserViewModel(UserRepositoryFirestore(com.google.firebase.Firebase.firestore))
-                as T
+            return UserViewModel(userRepository = UserRepositoryFirestore(Firebase.firestore)) as T
           }
         }
   }
@@ -88,7 +91,7 @@ class UserViewModel(
             uid = firebaseAuth.currentUser?.uid ?: return,
             userName = _userName.value ?: "",
             profilePictureUrl = _profilePictureUrl.value ?: "",
-            fridge = _fridge.value.map { it.barCode.toString() },
+            fridge = _fridge.value.map { Pair(it.first.barCode.toString(), it.second) },
             likedRecipes = _likedRecipes.value.map { it.idMeal },
             createdRecipes = _createdRecipes.value.map { it.idMeal })
 
@@ -113,12 +116,21 @@ class UserViewModel(
     _profilePictureUrl.value = newProfilePictureUrl
   }
 
+  /**
+   * Updates the list of items by adding or removing an item. If the item is already in the list and
+   * add is true, it will not be added again.
+   *
+   * @param list the list to be updated
+   * @param item the item to be added or removed
+   * @param add true if the item should be added, false if the item should be removed
+   * @return the updated list
+   */
   private fun <T> updateList(list: MutableStateFlow<List<T>>, item: T, add: Boolean): List<T> {
 
     val currentList = list.value
     val newList = currentList.toMutableList()
 
-    if (add) {
+    if (add && !newList.contains(item)) {
       newList.add(item)
     } else {
       newList.remove(item)
@@ -129,21 +141,50 @@ class UserViewModel(
   }
 
   /**
-   * Adds an ingredient to the user fridge.
+   * Adds an ingredient to the user fridge. More precisely, it increases the count of said
+   * ingredient in the fridge.
    *
    * @param ingredient the ingredient to be added
+   * @param count the number of ingredients to be added
    */
-  fun addIngredientToUserFridge(ingredient: Ingredient) {
-    updateList(_fridge, ingredient, true)
+  fun addIngredientToUserFridge(ingredient: Ingredient, count: Int = 1) {
+    try {
+      val changedElement: Pair<Ingredient, Int> =
+          _fridge.value.first { it.first.barCode == ingredient.barCode }
+
+      updateList(_fridge, changedElement, add = false)
+      updateList(_fridge, Pair(changedElement.first, changedElement.second + count), add = true)
+    } catch (e: NoSuchElementException) {
+      updateList(_fridge, Pair(ingredient, count), add = true)
+    }
   }
 
   /**
-   * Removes an ingredient from the user fridge.
+   * Removes an ingredient from the user fridge. More precisely, it will decrease the count of said
+   * ingredient in the fridge.
    *
    * @param ingredient the ingredient to be removed
+   * @param count the number of ingredients to be removed
+   * @throws IllegalArgumentException if the count is greater than the number of ingredients in the
+   *   fridge
    */
-  fun removeIngredientFromUserFridge(ingredient: Ingredient) {
-    updateList(_fridge, ingredient, false)
+  fun removeIngredientFromUserFridge(ingredient: Ingredient, count: Int = 1) {
+    try {
+      val changedElement: Pair<Ingredient, Int> =
+          _fridge.value.first { it.first.barCode == ingredient.barCode }
+
+      updateList(_fridge, changedElement, add = false)
+
+      if (changedElement.second - count > 0) {
+        updateList(_fridge, Pair(changedElement.first, changedElement.second - count), add = true)
+      } else if (changedElement.second - count == 0) {
+        updateList(_fridge, changedElement, add = false)
+      } else {
+        throw IllegalArgumentException(REMOVED_TOO_MANY_INGREDIENTS_ERROR)
+      }
+    } catch (e: NoSuchElementException) {
+      throw IllegalArgumentException(REMOVED_INGREDIENT_NOT_IN_FRIDGE_ERROR)
+    }
   }
 
   /**

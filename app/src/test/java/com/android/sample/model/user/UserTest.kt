@@ -8,7 +8,7 @@ class UserTest {
   private lateinit var uid: String
   private lateinit var userName: String
   private lateinit var profilePictureUrl: String
-  private lateinit var fridge: List<String>
+  private lateinit var fridge: List<Pair<String, Int>>
   private lateinit var likedRecipes: List<String>
   private lateinit var createdRecipes: List<String>
 
@@ -17,7 +17,7 @@ class UserTest {
     uid = "001"
     userName = "Gigel Frone"
     profilePictureUrl = ""
-    fridge = listOf("1")
+    fridge = listOf(Pair("1", 1))
     likedRecipes = listOf("2")
     createdRecipes = listOf("3")
   }
@@ -29,7 +29,7 @@ class UserTest {
     assert(user.uid == "001")
     assert(user.userName == "Gigel Frone")
     assert(user.profilePictureUrl == "")
-    assert(user.fridge == listOf("1"))
+    assert(user.fridge == listOf(Pair("1", 1)))
     assert(user.likedRecipes == listOf("2"))
     assert(user.createdRecipes == listOf("3"))
   }
