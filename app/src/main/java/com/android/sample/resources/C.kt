@@ -7,20 +7,19 @@ object C {
   object Tag {
 
     const val main_screen_container = "main_screen_container"
+
+    // General
     const val LOADING = "Loading..."
     const val PADDING = 16
     const val SMALL_PADDING = 8
 
-    object SwipePage {
-      const val END_ANIMATION = 1500f
-      const val INITIAL_RETRIEVE_NEXT_RECIPE = false
-      const val INITIAL_DISPLAY_CARD_1 = true
-      const val INITIAL_DISPLAY_CARD_2 = false
-      const val INITIAL_IS_CLICKING = false
-      const val INITIAL_DISPLAY_LIKE = false
-      const val INITIAL_DISPLAY_DISLIKE = false
-      const val RATE_VALUE = "4.5"
-    }
+    // SwipePage
+    const val END_ANIMATION = 1500f
+    const val FILTER_ICON_DESCRIPTION = "filterIcon"
+    const val TIME_RANGE_INPUT_DESCRIPTION = "Time Range"
+    const val PRICE_RANGE_INPUT_DESCRIPTION = "Price Range"
+    const val DIFFICULTY_INPUT_DESCRIPTION = "Difficulty"
+    const val CATEGORY_INPUT_DESCRIPTION = "Category"
 
     // Sign In
     const val NONCE = "WhyShouldIUseThis"
@@ -197,7 +196,6 @@ object C {
 
     // FirestoreIngredientRepository
     const val FIRESTORE_INGREDIENT_COLLECTION_NAME = "ingredients"
-
     // Values for storage
     const val FIRESTORE_INGREDIENT_NAME = "name"
     const val FIRESTORE_INGREDIENT_BARCODE = "barCode"
@@ -269,11 +267,40 @@ object C {
       const val SCALE_END_TIME = 400
       const val BACKGROUND_ANIMATION = 2f
     }
+    object LoadingCook {
+      const val COOK_SIZE = 250
+      const val ROTATION_MIN = 0f
+      const val ROTATION_MAX = -360f
+      const val ROTATION_DURATION = 2000
+    }
+
+    object RecipeOverview {
+      const val IMAGE_ROUND_CORNER = 10
+      const val COUNTER_ROUND_CORNER = 25
+      const val OVERVIEW_RECIPE_STAR_SIZE = 24
+      const val COUNTER_MIN_MAX_SIZE = 30
+      const val OVERVIEW_TIME_DISPLAY_RATE = 1f / 15f
+      const val OVERVIEW_MIN_COUNTER_VALUE = 1
+      const val OVERVIEW_MAX_COUNTER_VALUE = 99
+      const val OVERVIEW_CHECKBOX_SIZE = 15
+      const val OVERVIEW_COUNTER_TEXT_SIZE = 28
+      const val OVERVIEW_RECIPE_ROUND = 5
+      const val OVERVIEW_RECIPE_ROUND_ROW = 10
+      const val OVERVIEW_RECIPE_CARD_SHAPE = 16
+      const val OVERVIEW_RECIPE_CARD_ELEVATION = 4
+      const val OVERVIEW_RECIPE_COUNTER_PADDING = 0
+      const val OVERVIEW_RECIPE_RATE = 1f / 3f
+      const val OVERVIEW_INSTRUCTION_START = 25
+      const val OVERVIEW_INSTRUCTION_END = 15
+      const val OVERVIEW_INSTRUCTION_TOP = 10
+      const val OVERVIEW_INSTRUCTION_BOTTOM = 5
+    }
 
     // CameraScanCodeBarScreen
     object CameraScanCodeBarScreen {
 
       // PLATE SWIPE SCAFFOLD
+      const val TOP_BAR_HEIGHT = 40
       const val BACK_ARROW_ICON_SIZE = 26
       const val CHEF_HAT_ICON_SIZE = 35
       const val CHEF_HAT_ICON_END_PADDING = 8
