@@ -118,6 +118,11 @@ fun PlateSwipeApp() {
         AddInstructionStepScreen(
             navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
       }
+
+      composable(Screen.CREATE_RECIPE_LIST_INSTRUCTIONS) {
+        RecipeListInstructionsScreen(
+            navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
+      }
       composable(Screen.PUBLISH_CREATED_RECIPE) {
         PublishRecipeScreen(
             navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
