@@ -1,8 +1,7 @@
-package com.android.sample.utils
+package com.android.sample.animation
 
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import com.android.sample.ui.utils.LoadingAnimation
 import org.junit.Rule
 import org.junit.Test
 
