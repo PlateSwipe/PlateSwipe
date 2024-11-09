@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -30,6 +31,8 @@ import com.android.sample.R
 import com.android.sample.resources.C.Dimension.CameraScanCodeBarScreen.BACK_ARROW_ICON_SIZE
 import com.android.sample.resources.C.Dimension.CameraScanCodeBarScreen.CHEF_HAT_ICON_END_PADDING
 import com.android.sample.resources.C.Dimension.CameraScanCodeBarScreen.CHEF_HAT_ICON_SIZE
+import com.android.sample.resources.C.Dimension.CameraScanCodeBarScreen.TOP_BAR_HEIGHT
+import com.android.sample.resources.C.Dimension.CameraScanCodeBarScreen.TOP_BAR_TITLE_FONT_SIZE
 import com.android.sample.resources.C.TestTag.CameraScanCodeBarScreen.BACK_ARROW_ICON
 import com.android.sample.resources.C.TestTag.CameraScanCodeBarScreen.CHEF_HAT_ICON
 import com.android.sample.resources.C.TestTag.CameraScanCodeBarScreen.PLATESWIPE_SCAFFOLD
@@ -93,26 +96,20 @@ private fun PlateSwipeTopBar(navigationActions: NavigationActions, showBackArrow
           }
         }
 
-        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(3f)) {
-          Row(modifier = Modifier.weight(1f)) {
-            Image(
-                painter = painterResource(id = R.drawable.chef_s_hat),
-                contentDescription = "Chef's hat",
-                modifier =
-                    Modifier.size(CHEF_HAT_ICON_SIZE.dp)
-                        .padding(end = CHEF_HAT_ICON_END_PADDING.dp)
-                        .testTag(CHEF_HAT_ICON),
-                contentScale = ContentScale.Fit)
-          }
+        Image(
+            painter = painterResource(id = R.drawable.chef_s_hat),
+            contentDescription = "Chef's hat",
+            modifier =
+                Modifier.size(CHEF_HAT_ICON_SIZE.dp)
+                    .padding(end = CHEF_HAT_ICON_END_PADDING.dp)
+                    .testTag(CHEF_HAT_ICON),
+            contentScale = ContentScale.Fit)
 
-          Text(
-              text = stringResource(id = R.string.plate_swipe_title),
-              style = MaterialTheme.typography.titleMedium,
-              modifier = Modifier.testTag(TOP_BAR_TITLE),
-              fontSize = 32.sp)
-
-          Spacer(modifier = Modifier.weight(1f))
-        }
+        Text(
+            text = stringResource(id = R.string.plate_swipe_title),
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.testTag(TOP_BAR_TITLE),
+            fontSize = TOP_BAR_TITLE_FONT_SIZE.sp)
 
         Spacer(modifier = Modifier.weight(1f))
       }
