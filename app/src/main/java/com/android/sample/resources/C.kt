@@ -393,13 +393,11 @@ object C {
       const val RECIPE_NAME_TEXT = "RecipeNameText"
       const val INSTRUCTION_LIST = "InstructionList"
       const val INSTRUCTION_LIST_ITEM = "InstructionListItem"
-        const val NEXT_STEP_BUTTON = "NextStepButton"
-        const val RECIPE_LIST_INSTRUCTIONS_SCREEN_SPACER1 = "RecipeListInstructionsScreenSpacer1"
-        const val RECIPE_LIST_INSTRUCTIONS_SCREEN_SPACER2 = "RecipeListInstructionsScreenSpacer2"
+      const val NEXT_STEP_BUTTON = "NextStepButton"
+      const val RECIPE_LIST_INSTRUCTIONS_SCREEN_SPACER1 = "RecipeListInstructionsScreenSpacer1"
+      const val RECIPE_LIST_INSTRUCTIONS_SCREEN_SPACER2 = "RecipeListInstructionsScreenSpacer2"
       const val RECIPE_LIST_ITEM_THUMBNAIL = "InstructionThumbnail"
       const val RECIPE_LIST_INSTRUCTION_ICON = "InstructionIcon"
-
-
     }
   }
 }

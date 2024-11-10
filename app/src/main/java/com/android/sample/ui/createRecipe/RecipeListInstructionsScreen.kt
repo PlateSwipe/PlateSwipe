@@ -97,12 +97,15 @@ fun RecipeListInstructionsContent(
           modifier
               .padding(top = TOP_BAR_HEIGHT.dp, bottom = BOTTOM_BAR_HEIGHT.dp)
               .fillMaxSize()
-              .padding(RECIPE_NAME_BASE_PADDING).testTag(SCREEN_COLUMN)) {
+              .padding(RECIPE_NAME_BASE_PADDING)
+              .testTag(SCREEN_COLUMN)) {
         RecipeProgressBar(currentStep = CURRENT_STEP)
         Spacer(
             modifier =
                 Modifier.height(C.Dimension.CreateRecipeListInstructionsScreen.BIG_PADDING.dp)
-                    .testTag(C.TestTag.CreateRecipeListInstructionsScreen.RECIPE_LIST_INSTRUCTIONS_SCREEN_SPACER1))
+                    .testTag(
+                        C.TestTag.CreateRecipeListInstructionsScreen
+                            .RECIPE_LIST_INSTRUCTIONS_SCREEN_SPACER1))
         Text(
             modifier = Modifier.testTag(RECIPE_NAME_TEXT),
             text = createRecipeViewModel.getRecipeName(),
@@ -148,7 +151,9 @@ fun RecipeListInstructionsContent(
                     { navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_INSTRUCTION) })
               }
             }
-        Spacer(modifier = Modifier.weight(SPACER_SIZE).testTag(RECIPE_LIST_INSTRUCTIONS_SCREEN_SPACER2))
+        Spacer(
+            modifier =
+                Modifier.weight(SPACER_SIZE).testTag(RECIPE_LIST_INSTRUCTIONS_SCREEN_SPACER2))
         // Fixed button at the bottom
         NextStepButton(
             modifier = modifier.align(Alignment.CenterHorizontally),
@@ -217,13 +222,15 @@ fun InstructionValue(index: Int, time: String?, icon: Int, onClick: () -> Unit) 
                 Column(modifier = Modifier.testTag(INSTRUCTION_TEXT_SPACE)) {
                   Text(
                       modifier = Modifier.testTag(INSTRUCTION_TEXT_IN_CARD),
-                      text = "${stringResource(R.string.RecipeListInstructionsScreen_Step)} $officialStep",
+                      text =
+                          "${stringResource(R.string.RecipeListInstructionsScreen_Step)} $officialStep",
                       style = MaterialTheme.typography.bodyMedium,
                       fontWeight = FontWeight.Bold)
 
                   if (!time.isNullOrBlank()) {
                     Text(
-                        text = "$time ${stringResource(R.string.RecipeListInstructionsScreen_Minutes)}",
+                        text =
+                            "$time ${stringResource(R.string.RecipeListInstructionsScreen_Minutes)}",
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.testTag(INSTRUCTION_TIME))
                   }
