@@ -47,33 +47,35 @@ fun SearchBar(
   var isFocused by remember { mutableStateOf(false) }
   Row(
       horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start),
-      verticalAlignment = Alignment.CenterVertically,) {
-        Image(
-            painter = painterResource(id = R.drawable.search),
-            contentDescription = "search icon",
-            modifier =
-                Modifier.padding(0.dp).width(20.2643.dp).height(20.72197.dp).testTag("search icon"))
-        TextField(
-            value = if (isFocused) "$searchText|" else searchText,
-            onValueChange = {
-              if (isFocused) searchText = it.dropLast(1) else searchText = it
-              filter(searchText, list)
-              onValueChange(searchText)
-            },
-            textStyle =
-                TextStyle(
-                    fontSize = 16.sp,
-                    lineHeight = 20.sp,
-                    fontFamily = FontFamily(Font(R.font.montserrat_light)),
-                    fontWeight = FontWeight(400),
-                    color = Color(0xFF131313),
-                ),
-            placeholder = { Text(SEARCH_BAR_PLACE_HOLDER, fontSize = 16.sp) },
-            modifier =
-                Modifier.width(253.dp).height(40.dp).onFocusChanged { focusState ->
-                  isFocused = focusState.isFocused
-                }.testTag("searchBar"))
-      }
+      verticalAlignment = Alignment.CenterVertically,
+  ) {
+    Image(
+        painter = painterResource(id = R.drawable.search),
+        contentDescription = "search icon",
+        modifier =
+            Modifier.padding(0.dp).width(20.2643.dp).height(20.72197.dp).testTag("search icon"))
+    TextField(
+        value = if (isFocused) "$searchText|" else searchText,
+        onValueChange = {
+          if (isFocused) searchText = it.dropLast(1) else searchText = it
+          filter(searchText, list)
+          onValueChange(searchText)
+        },
+        textStyle =
+            TextStyle(
+                fontSize = 16.sp,
+                lineHeight = 20.sp,
+                fontFamily = FontFamily(Font(R.font.montserrat_light)),
+                fontWeight = FontWeight(400),
+                color = Color(0xFF131313),
+            ),
+        placeholder = { Text(SEARCH_BAR_PLACE_HOLDER, fontSize = 16.sp) },
+        modifier =
+            Modifier.width(253.dp)
+                .height(40.dp)
+                .onFocusChanged { focusState -> isFocused = focusState.isFocused }
+                .testTag("searchBar"))
+  }
 }
 
 /**

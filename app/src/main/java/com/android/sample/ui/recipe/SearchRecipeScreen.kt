@@ -6,9 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -80,36 +78,32 @@ fun SearchRecipeScreen(navigationActions: NavigationActions, recipesViewModel: R
             selectedItem = selectedItem,
         )
       }) { paddingValues ->
-        Column(
-            modifier =
-                Modifier.fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(16.dp)) {
-              Row(
-                  horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start),
-                  verticalAlignment = Alignment.CenterVertically,
-              ) {
-                SearchingBar(recipes)
-                Image(
-                    painter = painterResource(id = R.drawable.filter),
-                    contentDescription = "image description",
-                    contentScale = ContentScale.None,
-                    modifier =
-                        Modifier.padding(0.dp)
-                            .width(24.dp)
-                            .height(24.dp)
-                            .clickable { navigationActions.navigateTo("Filter Screen") }
-                            .testTag("filter button"))
-              }
+        Column(modifier = Modifier.fillMaxSize().padding(paddingValues).padding(16.dp)) {
+          Row(
+              horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start),
+              verticalAlignment = Alignment.CenterVertically,
+          ) {
+            SearchingBar(recipes)
+            Image(
+                painter = painterResource(id = R.drawable.filter),
+                contentDescription = "image description",
+                contentScale = ContentScale.None,
+                modifier =
+                    Modifier.padding(0.dp)
+                        .width(24.dp)
+                        .height(24.dp)
+                        .clickable { navigationActions.navigateTo("Filter Screen") }
+                        .testTag("filter button"))
+          }
 
-              RecipeList(
-                  list = recipes,
-                  onRecipeSelected = { recipe ->
-                    recipesViewModel.updateCurrentRecipe(recipe)
-                    navigationActions.navigateTo("Overview Recipe Screen")
-                  },
-                  topCornerButton = { recipe -> TopCornerLikeButton(recipe) })
-            }
+          RecipeList(
+              list = recipes,
+              onRecipeSelected = { recipe ->
+                recipesViewModel.updateCurrentRecipe(recipe)
+                navigationActions.navigateTo("Overview Recipe Screen")
+              },
+              topCornerButton = { recipe -> TopCornerLikeButton(recipe) })
+        }
       }
 }
 

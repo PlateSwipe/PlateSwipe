@@ -96,49 +96,52 @@ class EndToEndTest {
     composeTestRule.onNodeWithText("Fridge Screen").assertExists()
 
     composeTestRule.onNodeWithTag("tabSearch").assertExists().performClick()
-    //composeTestRule.onNodeWithText("Search Recipe Screen").assertExists()
+    // composeTestRule.onNodeWithText("Search Recipe Screen").assertExists()
 
     composeTestRule.onNodeWithTag("tabAddRecipe").assertExists().performClick()
-    //composeTestRule.onNodeWithText("Create Recipe Screen").assertExists()
+    // composeTestRule.onNodeWithText("Create Recipe Screen").assertExists()
   }
 }
 
 @Composable
-fun FakeNavHost(navController: NavHostController, userViewModel: UserViewModel, recipesRepository: RecipesRepository) {
+fun FakeNavHost(
+    navController: NavHostController,
+    userViewModel: UserViewModel,
+    recipesRepository: RecipesRepository
+) {
   val navigationActions = NavigationActions(navController)
-  val recipesViewModel = RecipesViewModel( recipesRepository)
+  val recipesViewModel = RecipesViewModel(recipesRepository)
   NavHost(navController = navController, startDestination = Route.SWIPE) {
     navigation(
-      startDestination = Screen.SWIPE,
-      route = Route.SWIPE,
+        startDestination = Screen.SWIPE,
+        route = Route.SWIPE,
     ) {
       composable(Screen.SWIPE) { SwipePage(navigationActions = navigationActions) }
     }
     navigation(
-      startDestination = Screen.FRIDGE,
-      route = Route.FRIDGE,
+        startDestination = Screen.FRIDGE,
+        route = Route.FRIDGE,
     ) {
       composable(Screen.FRIDGE) { FridgeScreen(navigationActions) }
     }
 
     navigation(
-      startDestination = Screen.SEARCH,
-      route = Route.SEARCH,
+        startDestination = Screen.SEARCH,
+        route = Route.SEARCH,
     ) {
       composable(Screen.SEARCH) { SearchRecipeScreen(navigationActions, recipesViewModel) }
     }
     navigation(
-      startDestination = Screen.CREATE_RECIPE,
-      route = Route.CREATE_RECIPE,
+        startDestination = Screen.CREATE_RECIPE,
+        route = Route.CREATE_RECIPE,
     ) {
       composable(Screen.CREATE_RECIPE) { CreateRecipeScreen(navigationActions) }
     }
     navigation(
-      startDestination = Screen.ACCOUNT,
-      route = Route.ACCOUNT,
+        startDestination = Screen.ACCOUNT,
+        route = Route.ACCOUNT,
     ) {
       composable(Screen.ACCOUNT) { AccountScreen(navigationActions, userViewModel) }
     }
   }
 }
-

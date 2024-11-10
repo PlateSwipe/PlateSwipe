@@ -6,10 +6,7 @@ import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.performClick
 import androidx.test.espresso.intent.Intents
-import androidx.test.espresso.intent.Intents.intended
-import androidx.test.espresso.intent.matcher.IntentMatchers.toPackage
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.sample.ui.authentication.SignInScreen
 import com.android.sample.ui.navigation.NavigationActions
@@ -52,7 +49,7 @@ class SignInTest : TestCase() {
     composeTestRule.onNodeWithTag("loginButton").assertHasClickAction()
   }
 
- /* @Test
+  /* @Test
   fun googleSignInReturnsValidActivityResult() {
     composeTestRule.onNodeWithTag("loginButton").performClick()
     composeTestRule.waitForIdle()
