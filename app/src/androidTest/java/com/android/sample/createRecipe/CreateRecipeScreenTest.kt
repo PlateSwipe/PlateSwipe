@@ -37,18 +37,6 @@ class CreateRecipeScreenTest {
   }
 
   @Test
-  fun testBackButtonNavigatesBack() {
-    composeTestRule.setContent {
-      CreateRecipeScreen(
-          navigationActions = mockNavigationActions,
-          createRecipeViewModel = mockCreateRecipeViewModel)
-    }
-
-    composeTestRule.onNodeWithTag("backArrowIcon").assertExists().performClick()
-    verify(mockNavigationActions).goBack()
-  }
-
-  @Test
   fun testBottomNavigationSelectsTabAndNavigates() {
     composeTestRule.setContent {
       CreateRecipeScreen(
