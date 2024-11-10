@@ -1,6 +1,7 @@
 package com.android.sample.ui.utils
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -8,23 +9,40 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.android.sample.R
+import com.android.sample.resources.C.Dimension.CameraScanCodeBarScreen.BACK_ARROW_ICON_SIZE
+import com.android.sample.resources.C.Dimension.CameraScanCodeBarScreen.CHEF_HAT_ICON_END_PADDING
+import com.android.sample.resources.C.Dimension.CameraScanCodeBarScreen.CHEF_HAT_ICON_SIZE
+import com.android.sample.resources.C.Dimension.CameraScanCodeBarScreen.TOP_BAR_HEIGHT
+import com.android.sample.resources.C.Dimension.CameraScanCodeBarScreen.TOP_BAR_TITLE_FONT_SIZE
+import com.android.sample.resources.C.TestTag.CameraScanCodeBarScreen.BACK_ARROW_ICON
+import com.android.sample.resources.C.TestTag.CameraScanCodeBarScreen.CHEF_HAT_ICON
+import com.android.sample.resources.C.TestTag.CameraScanCodeBarScreen.PLATESWIPE_SCAFFOLD
+import com.android.sample.resources.C.TestTag.CameraScanCodeBarScreen.TOP_BAR
+import com.android.sample.resources.C.TestTag.CameraScanCodeBarScreen.TOP_BAR_TITLE
 import com.android.sample.ui.navigation.BottomNavigationMenu
 import com.android.sample.ui.navigation.LIST_TOP_LEVEL_DESTINATIONS
 import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.theme.lightCream
 
 /**
  * PlateSwipeScaffold is a custom Scaffold that is used in the PlateSwipe app. It has a custom top
@@ -44,7 +62,7 @@ fun PlateSwipeScaffold(
     showBackArrow: Boolean = true
 ) {
   Scaffold(
-      modifier = Modifier.fillMaxSize().testTag("plateSwipeScaffold"),
+      modifier = Modifier.fillMaxSize().testTag(PLATESWIPE_SCAFFOLD),
       topBar = { PlateSwipeTopBar(navigationActions = navigationActions, showBackArrow) },
       bottomBar = {
         BottomNavigationMenu(
@@ -59,33 +77,46 @@ fun PlateSwipeScaffold(
 @Composable
 private fun PlateSwipeTopBar(navigationActions: NavigationActions, showBackArrow: Boolean = true) {
   Row(
-      modifier = Modifier.fillMaxWidth().height(40.dp).testTag("topBar"),
+      modifier =
+          Modifier.fillMaxWidth()
+              .height(TOP_BAR_HEIGHT.dp)
+              .background(color = lightCream)
+              .testTag(TOP_BAR),
+      verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.SpaceBetween,
-      verticalAlignment = Alignment.CenterVertically) {
-        Row(
-            modifier = Modifier.weight(1f),
-        ) {
-          Spacer(modifier = Modifier.weight(1f))
-          if (showBackArrow) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = "Navigate back",
-                modifier =
-                    Modifier.size(26.dp).testTag("backArrowIcon").clickable {
-                      navigationActions.goBack()
-                    },
-                tint = MaterialTheme.colorScheme.onSecondary,
-            )
-          }
-          Spacer(modifier = Modifier.weight(7f))
-        }
-
-        Text(
-            text = stringResource(R.string.plate_swipe_title),
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.testTag("topBarTitle"),
-            color = MaterialTheme.colorScheme.onPrimary)
-
-        Spacer(modifier = Modifier.weight(1f))
+  ) {
+    Row(modifier = Modifier.weight(1f)) {
+      if (showBackArrow) {
+        IconButton(
+            onClick = { navigationActions.goBack() },
+            modifier = Modifier.testTag(BACK_ARROW_ICON)) {
+              Icon(
+                  imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
+                  contentDescription = "Back",
+                  modifier = Modifier.size(BACK_ARROW_ICON_SIZE.dp),
+                  tint = MaterialTheme.colorScheme.onPrimary)
+            }
       }
+    }
+
+    Image(
+        painter = painterResource(id = R.drawable.chef_s_hat),
+        contentDescription = "Chef's hat",
+        modifier =
+            Modifier.size(CHEF_HAT_ICON_SIZE.dp)
+                .padding(end = CHEF_HAT_ICON_END_PADDING.dp)
+                .testTag(CHEF_HAT_ICON),
+        contentScale = ContentScale.Fit,
+        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary))
+
+    Text(
+        text = stringResource(id = R.string.plate_swipe_title),
+        style = MaterialTheme.typography.titleMedium,
+        modifier = Modifier.testTag(TOP_BAR_TITLE),
+        fontSize = TOP_BAR_TITLE_FONT_SIZE.sp,
+        color = MaterialTheme.colorScheme.onPrimary,
+    )
+
+    Spacer(modifier = Modifier.weight(1f))
+  }
 }

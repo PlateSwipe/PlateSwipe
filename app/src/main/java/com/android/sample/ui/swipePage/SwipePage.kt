@@ -42,7 +42,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
@@ -53,7 +52,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
@@ -72,8 +70,8 @@ import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.graySlate
 import com.android.sample.ui.theme.starColor
-import com.android.sample.ui.theme.tagBackground
 import com.android.sample.ui.utils.PlateSwipeScaffold
+import com.android.sample.ui.utils.Tag
 import kotlin.math.absoluteValue
 import kotlinx.coroutines.launch
 
@@ -390,26 +388,6 @@ private fun ImageDescription(name: String, tag: String) {
 
     Row(verticalAlignment = Alignment.CenterVertically) { Tag(tag) }
   }
-}
-
-/**
- * Composable for the Tags of the recipe
- *
- * @param tag - Tag Name
- */
-@Composable
-private fun Tag(tag: String) {
-  Box(
-      modifier =
-          Modifier.background(
-                  color = tagBackground,
-                  shape = RoundedCornerShape(16.dp)) // Smooth rounded corners
-              .padding(horizontal = 12.dp, vertical = 4.dp) // Padding for inside spacing
-      ) {
-        Text(
-            text = tag, fontSize = 14.sp, color = Color.White // Text color
-            )
-      }
 }
 
 /**
