@@ -355,6 +355,7 @@ object C {
     }
 
     object CreateRecipeListInstructionsScreen {
+      const val REALLY_SMALL_PADDING = 4
       const val BIG_PADDING = 32
       const val SMALL_PADDING = 8
       const val MEDIUM_PADDING = 16
@@ -362,6 +363,11 @@ object C {
       const val ROUNDED_CORNER_SHAPE = 4
       const val CARD_BORDER_THICKNESS = 1
       const val ICON_SIZE = 24
+      const val ROW_SIZE = 1f
+      const val SPACER_SIZE = 1f
+
+      // progress bar value
+      const val CURRENT_STEP = 2
     }
   }
 
@@ -375,6 +381,25 @@ object C {
       const val BACK_ARROW_ICON = "backArrowIcon"
       const val PLATESWIPE_SCAFFOLD = "plateSwipeScaffold"
       const val CHEF_HAT_ICON = "chefHatIcon"
+    }
+
+    object CreateRecipeListInstructionsScreen {
+      const val SCREEN_COLUMN = "ScreenColumn"
+      const val INSTRUCTION_TEXT_SPACE = "InstructionTextSpace"
+      const val INSTRUCTION_TEXT_IN_CARD = "InstructionTextInCard"
+      const val INSTRUCTION_TIME = "InstructionTime"
+      const val EDIT_INSTRUCTION_ICON = "EditInstructionIcon"
+      const val INSTRUCTION_TEXT = "InstructionsText"
+      const val RECIPE_NAME_TEXT = "RecipeNameText"
+      const val INSTRUCTION_LIST = "InstructionList"
+      const val INSTRUCTION_LIST_ITEM = "InstructionListItem"
+        const val NEXT_STEP_BUTTON = "NextStepButton"
+        const val RECIPE_LIST_INSTRUCTIONS_SCREEN_SPACER1 = "RecipeListInstructionsScreenSpacer1"
+        const val RECIPE_LIST_INSTRUCTIONS_SCREEN_SPACER2 = "RecipeListInstructionsScreenSpacer2"
+      const val RECIPE_LIST_ITEM_THUMBNAIL = "InstructionThumbnail"
+      const val RECIPE_LIST_INSTRUCTION_ICON = "InstructionIcon"
+
+
     }
   }
 }

@@ -71,6 +71,9 @@
 
     //RecipeListInstructionsScreen
     <string name="RecipeListInstructionsScreen_Instructions">Instructions</string>
+    <string name="RecipeListInstructionsScreen_Step">Step</string>
+    <string name="RecipeListInstructionsScreen_Minutes">min</string>
+
 
 
 </resources>

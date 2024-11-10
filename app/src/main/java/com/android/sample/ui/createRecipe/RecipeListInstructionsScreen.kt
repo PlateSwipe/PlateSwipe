@@ -41,9 +41,26 @@ import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.resources.C
 import com.android.sample.resources.C.Dimension.CameraScanCodeBarScreen.BOTTOM_BAR_HEIGHT
 import com.android.sample.resources.C.Dimension.CameraScanCodeBarScreen.TOP_BAR_HEIGHT
+import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScreen.CURRENT_STEP
+import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScreen.REALLY_SMALL_PADDING
+import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScreen.ROW_SIZE
+import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScreen.SPACER_SIZE
 import com.android.sample.resources.C.Tag.RECIPE_NAME_BASE_PADDING
 import com.android.sample.resources.C.Tag.RECIPE_NAME_BUTTON_HEIGHT
 import com.android.sample.resources.C.Tag.RECIPE_NAME_BUTTON_WIDTH
+import com.android.sample.resources.C.Tag.SMALL_PADDING
+import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.EDIT_INSTRUCTION_ICON
+import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.INSTRUCTION_LIST
+import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.INSTRUCTION_LIST_ITEM
+import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.INSTRUCTION_TEXT
+import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.INSTRUCTION_TEXT_IN_CARD
+import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.INSTRUCTION_TEXT_SPACE
+import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.INSTRUCTION_TIME
+import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.RECIPE_LIST_INSTRUCTIONS_SCREEN_SPACER2
+import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.RECIPE_LIST_INSTRUCTION_ICON
+import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.RECIPE_LIST_ITEM_THUMBNAIL
+import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.RECIPE_NAME_TEXT
+import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.SCREEN_COLUMN
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
@@ -80,19 +97,19 @@ fun RecipeListInstructionsContent(
           modifier
               .padding(top = TOP_BAR_HEIGHT.dp, bottom = BOTTOM_BAR_HEIGHT.dp)
               .fillMaxSize()
-              .padding(RECIPE_NAME_BASE_PADDING)) {
-        RecipeProgressBar(currentStep = 2)
+              .padding(RECIPE_NAME_BASE_PADDING).testTag(SCREEN_COLUMN)) {
+        RecipeProgressBar(currentStep = CURRENT_STEP)
         Spacer(
             modifier =
                 Modifier.height(C.Dimension.CreateRecipeListInstructionsScreen.BIG_PADDING.dp)
-                    .testTag("RecipeListInstructionsScreenSpacer1"))
+                    .testTag(C.TestTag.CreateRecipeListInstructionsScreen.RECIPE_LIST_INSTRUCTIONS_SCREEN_SPACER1))
         Text(
-            modifier = Modifier.testTag("RecipeNameText"),
+            modifier = Modifier.testTag(RECIPE_NAME_TEXT),
             text = createRecipeViewModel.getRecipeName(),
             style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
         )
         Text(
-            modifier = Modifier.testTag("InstructionsText"),
+            modifier = Modifier.testTag(INSTRUCTION_TEXT),
             text = stringResource(R.string.RecipeListInstructionsScreen_Instructions),
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
         )
@@ -112,7 +129,7 @@ fun RecipeListInstructionsContent(
                     .padding(
                         top = C.Dimension.CreateRecipeListInstructionsScreen.SMALL_PADDING.dp,
                         bottom = C.Dimension.CreateRecipeListInstructionsScreen.SMALL_PADDING.dp)
-                    .testTag("InstructionList")) {
+                    .testTag(INSTRUCTION_LIST)) {
 
               /**
                * This Part will be later improved by adding the list of instructions
@@ -131,7 +148,7 @@ fun RecipeListInstructionsContent(
                     { navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_INSTRUCTION) })
               }
             }
-        Spacer(modifier = Modifier.weight(1f).testTag("RecipeListInstructionsScreenSpacer2"))
+        Spacer(modifier = Modifier.weight(SPACER_SIZE).testTag(RECIPE_LIST_INSTRUCTIONS_SCREEN_SPACER2))
         // Fixed button at the bottom
         NextStepButton(
             modifier = modifier.align(Alignment.CenterHorizontally),
@@ -154,7 +171,7 @@ fun NextStepButton(modifier: Modifier, navigationActions: NavigationActions) {
                           size =
                               C.Dimension.CreateRecipeListInstructionsScreen.ROUNDED_CORNER_SHAPE
                                   .dp))
-              .testTag("NextStepButton"),
+              .testTag(C.TestTag.CreateRecipeListInstructionsScreen.NEXT_STEP_BUTTON),
       colors = ButtonDefaults.buttonColors(lightCream, contentColor = Color.Black),
       shape =
           RoundedCornerShape(
@@ -168,9 +185,9 @@ fun InstructionValue(index: Int, time: String?, icon: Int, onClick: () -> Unit) 
   val officialStep = index + 1
   Card(
       modifier =
-          Modifier.testTag("InstructionListItem")
+          Modifier.testTag(INSTRUCTION_LIST_ITEM)
               .fillMaxWidth()
-              .padding(vertical = 4.dp)
+              .padding(vertical = REALLY_SMALL_PADDING.dp)
               .clickable(onClick = onClick)
               .border(
                   C.Dimension.CreateRecipeListInstructionsScreen.CARD_BORDER_THICKNESS.dp,
@@ -189,26 +206,26 @@ fun InstructionValue(index: Int, time: String?, icon: Int, onClick: () -> Unit) 
                 .padding(C.Dimension.CreateRecipeListInstructionsScreen.SMALL_PADDING.dp)) {
           // Date and Status Row
           Row(
-              modifier = Modifier.fillMaxWidth(1f).testTag("InstructionThumbnail"),
+              modifier = Modifier.fillMaxWidth(ROW_SIZE).testTag(RECIPE_LIST_ITEM_THUMBNAIL),
               horizontalArrangement = Arrangement.SpaceBetween) {
                 Image(
                     painter = painterResource(id = R.drawable.fire),
                     contentDescription = "Fire",
                     modifier =
                         Modifier.size(C.Dimension.CreateRecipeListInstructionsScreen.ICON_SIZE.dp)
-                            .testTag("InstructionIcon"))
-                Column(modifier = Modifier.testTag("InstructionTextSpace")) {
+                            .testTag(RECIPE_LIST_INSTRUCTION_ICON))
+                Column(modifier = Modifier.testTag(INSTRUCTION_TEXT_SPACE)) {
                   Text(
-                      modifier = Modifier.testTag("InstructionText"),
-                      text = "Step $officialStep",
+                      modifier = Modifier.testTag(INSTRUCTION_TEXT_IN_CARD),
+                      text = "${stringResource(R.string.RecipeListInstructionsScreen_Step)} $officialStep",
                       style = MaterialTheme.typography.bodyMedium,
                       fontWeight = FontWeight.Bold)
 
                   if (!time.isNullOrBlank()) {
                     Text(
-                        text = "$time min",
+                        text = "$time ${stringResource(R.string.RecipeListInstructionsScreen_Minutes)}",
                         style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.testTag("InstructionTime"))
+                        modifier = Modifier.testTag(INSTRUCTION_TIME))
                   }
                 }
                 Icon(
@@ -216,7 +233,7 @@ fun InstructionValue(index: Int, time: String?, icon: Int, onClick: () -> Unit) 
                     contentDescription = "Edit",
                     modifier =
                         Modifier.size(C.Dimension.CreateRecipeListInstructionsScreen.ICON_SIZE.dp)
-                            .testTag("EditInstructionIcon"))
+                            .testTag(EDIT_INSTRUCTION_ICON))
               }
         }
   }
