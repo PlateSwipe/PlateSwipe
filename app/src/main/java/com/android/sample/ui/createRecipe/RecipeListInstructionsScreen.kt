@@ -62,7 +62,6 @@ fun RecipeListInstructionsScreen(
       showBackArrow = true,
       content = {
         RecipeListInstructionsContent(
-
             createRecipeViewModel = createRecipeViewModel,
             modifier = Modifier,
             navigationActions = navigationActions)
