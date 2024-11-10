@@ -436,6 +436,12 @@ private fun ShawRecipeButton(navigationActions: NavigationActions) {
       }
 }
 
+/**
+ * Composable for the Background Gradient
+ *
+ * @param offsetX - Offset for the swipe animation
+ * @param screenWidth - Screen width
+ */
 @Composable
 private fun getBackgroundColor(offsetX: Float, screenWidth: Float): Brush {
   val colorIntensity = (offsetX / screenWidth).coerceIn(MIN_INTENSITY, MAX_INTENSITY)
@@ -567,6 +573,12 @@ fun FilterChip(
   }
 }
 
+/**
+ * Composable for the Like and Dislike Icon Animation
+ *
+ * @param isLiked - True for Like, False for Dislike
+ * @param isDisplaying - True if the icon is displaying
+ */
 @Composable
 fun LikeDislikeIconAnimation(
     isLiked: Boolean, // true for like, false for dislike
