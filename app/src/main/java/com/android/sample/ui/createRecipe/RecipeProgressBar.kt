@@ -30,6 +30,9 @@ fun RecipeProgressBar(currentStep: Int) {
       listOf(
           R.drawable.chef_s_hat, R.drawable.whisk, R.drawable.assignment, R.drawable.crop_original)
 
+  // Ensure currentStep is within bounds
+  val safeCurrentStep = currentStep.coerceIn(0, stepIcons.size - 1)
+
   Row(
       modifier = Modifier.fillMaxWidth().padding(16.dp).testTag("progressBar"),
       verticalAlignment = Alignment.CenterVertically) {
@@ -37,8 +40,8 @@ fun RecipeProgressBar(currentStep: Int) {
           // Display each step icon with appropriate styling
           StepBox(
               iconResId = iconResId,
-              isCompletedStep = index < currentStep,
-              isCurrentStep = index == currentStep,
+              isCompletedStep = index < safeCurrentStep,
+              isCurrentStep = index == safeCurrentStep,
               index = index)
 
           // Display a line between steps, except after the last step
@@ -47,7 +50,7 @@ fun RecipeProgressBar(currentStep: Int) {
                 modifier =
                     Modifier.height(2.dp)
                         .weight(1f)
-                        .background(if (index < currentStep) Orange80 else graySlate)
+                        .background(if (index < safeCurrentStep) Orange80 else graySlate)
                         .testTag("line_$index"))
           }
         }

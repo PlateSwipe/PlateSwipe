@@ -241,8 +241,9 @@ object C {
     const val LOG_TAG_CAMERA_UTILS = "CameraUtils"
     const val INVALID_BARCODE_MSG = "Invalid barcode"
 
-    // Used in ChefImage composable
+    // ChefImage composable
     val CHEF_IMAGE_CORNER_RADIUS = 16.dp
+    val CHEF_IMAGE_STANDING_ORIGINAL_RATIO = 224 / 300f
 
     // Initial step value for recipe creation flow
     const val INITIAL_RECIPE_STEP = 0
@@ -270,6 +271,7 @@ object C {
 
     // PublishRecipeScreen
     val CHEF_IMAGE_DESCRIPTION = "Chef illustration inside an egg"
+    val CHEF_IN_EGG_ORIGINAL_RATIO = 412 / 500f
 
     // CreateRecipeViewModel
     const val RECIPE_PUBLISHED_SUCCESS_MESSAGE = "Recipe published successfully!"
@@ -317,6 +319,7 @@ object C {
 
       // PLATE SWIPE SCAFFOLD
       const val TOP_BAR_HEIGHT = 40
+      const val TOP_BAR_TITLE_FONT_SIZE = 28
       const val BACK_ARROW_ICON_SIZE = 26
       const val CHEF_HAT_ICON_SIZE = 35
       const val CHEF_HAT_ICON_END_PADDING = 8

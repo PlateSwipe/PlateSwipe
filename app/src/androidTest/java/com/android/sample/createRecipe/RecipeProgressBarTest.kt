@@ -60,4 +60,27 @@ class RecipeProgressBarTest {
       composeTestRule.onNodeWithTag("line_$index").assertExists().assertIsDisplayed()
     }
   }
+
+  @Test
+  fun testNegativeOutOfBoundsCurrentStep() {
+    // Set up the composable with an out-of-bounds currentStep (-1)
+    composeTestRule.setContent { SampleAppTheme { RecipeProgressBar(currentStep = -1) } }
+
+    // Verify that only the first step is highlighted as the current step
+    composeTestRule.onNodeWithTag("step_0").assertExists().assertIsDisplayed()
+    for (index in 1 until 4) {
+      composeTestRule.onNodeWithTag("step_$index").assertExists().assertIsDisplayed()
+    }
+  }
+
+  @Test
+  fun testExcessiveOutOfBoundsCurrentStep() {
+    // Set up the composable with an out-of-bounds currentStep (greater than the max index)
+    composeTestRule.setContent { SampleAppTheme { RecipeProgressBar(currentStep = 5) } }
+
+    // Verify that the last step is highlighted as the current step
+    for (index in 0 until 4) {
+      composeTestRule.onNodeWithTag("step_$index").assertExists().assertIsDisplayed()
+    }
+  }
 }
