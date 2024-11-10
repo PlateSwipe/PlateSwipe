@@ -51,10 +51,6 @@
 
     //IconDropDownMenu
     <string name="add_icon">Add Icon</string>
-    <string name="icon_fire_desc">Fire</string>
-    <string name="icon_salt_desc">Salt</string>
-    <string name="icon_mortar_desc">Mortar</string>
-    <string name="icon_axe_desc">Axe</string>
 
     //PublishRecipeScreen
     <string name="done_text">Done !</string>
