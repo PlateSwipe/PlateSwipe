@@ -34,7 +34,14 @@ class IngredientViewModelTest {
   @Test
   fun fetchIngredient_withNewBarcode_updatesIngredient() {
     val barCode = 123456L
-    val ingredient = Ingredient(barCode = barCode, name = "Test Ingredient", brands = "Brand")
+    val ingredient =
+        Ingredient(
+            barCode = barCode,
+            name = "Test Ingredient",
+            brands = "Brand",
+            quantity = "",
+            categories = listOf(""),
+            images = listOf(""))
 
     `when`(ingredientRepository.get(eq(barCode), any(), any())).thenAnswer { invocation ->
       val onSuccess: (Ingredient?) -> Unit = invocation.getArgument(1)
@@ -63,7 +70,14 @@ class IngredientViewModelTest {
   @Test
   fun fetchIngredient_withSameBarcode_doesNotCallRepository() {
     val barCode = 123456L
-    val ingredient = Ingredient(barCode = barCode, name = "Test Ingredient", brands = null)
+    val ingredient =
+        Ingredient(
+            barCode = barCode,
+            name = "Test Ingredient",
+            brands = null,
+            quantity = "",
+            categories = listOf(""),
+            images = listOf(""))
 
     // Mock the repository to call onSuccess with the ingredient
     `when`(ingredientRepository.get(eq(barCode), any(), any())).thenAnswer { invocation ->

@@ -1,4 +1,4 @@
-package com.android.sample.ui.utils
+package com.android.sample.animation
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
