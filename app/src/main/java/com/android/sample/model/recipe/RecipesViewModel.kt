@@ -9,10 +9,11 @@ import com.android.sample.model.filter.Filter
 import com.android.sample.model.filter.FilterPageViewModel
 import com.android.sample.resources.C.Tag.MINIMUM_RECIPES_BEFORE_FETCH
 import com.android.sample.resources.C.Tag.NUMBER_RECIPES_TO_FETCH
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import okhttp3.OkHttpClient
 
 /**
  * ViewModel for managing recipes.
@@ -108,9 +109,11 @@ class RecipesViewModel(private val repository: RecipesRepository) :
    */
   override fun updateCategory(category: String?) {
     viewModelScope.launch {
-      if (category == null) {
-        _recipes.value = emptyList()
-      }
+      // if (category == null) {
+      _recipes.value = emptyList()
+      _currentRecipe.value = null
+      _nextRecipe.value = null
+      // }
       _filter.value.category = category
       fetchRandomRecipes(NUMBER_RECIPES_TO_FETCH)
       _loading.collect { isLoading ->
@@ -131,28 +134,29 @@ class RecipesViewModel(private val repository: RecipesRepository) :
     require(numberOfRecipes >= 1) { "Number of fetched recipes must be at least 1" }
     _loading.value = true // Set loading to true while fetching
     // uncomment when backend is ready. Tested with hardcoded mealDB data
-    /*if (_filter.value.category != null) {
+    if (_filter.value.category != null) {
       repository.searchByCategory(
           _filter.value.category!!,
           onSuccess = { recipes ->
-            _recipes.value = recipes
+            _recipes.value += recipes
             _loading.value = false
           },
           onFailure = { exception ->
             _loading.value = false
             Log.e("RecipesViewModel", "Error fetching recipes", exception)
           })
-    }*/
-    repository.random(
-        nbOfElements = numberOfRecipes,
-        onSuccess = { randomRecipes ->
-          _recipes.value += randomRecipes // Add to the list of recipes
-          _loading.value = false // Set loading to false after fetching
-        },
-        onFailure = { exception ->
-          _loading.value = false // Set loading to false on failure
-          Log.e("RecipesViewModel", "Error fetching recipes", exception)
-        })
+    } else {
+      repository.random(
+          nbOfElements = numberOfRecipes,
+          onSuccess = { randomRecipes ->
+            _recipes.value += randomRecipes // Add to the list of recipes
+            _loading.value = false // Set loading to false after fetching
+          },
+          onFailure = { exception ->
+            _loading.value = false // Set loading to false on failure
+            Log.e("RecipesViewModel", "Error fetching recipes", exception)
+          })
+    }
   }
 
   /**
@@ -233,8 +237,7 @@ class RecipesViewModel(private val repository: RecipesRepository) :
         object : ViewModelProvider.Factory {
           @Suppress("UNCHECKED_CAST")
           override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            val okHttpClient = OkHttpClient()
-            val repository = MealDBRecipesRepository(okHttpClient)
+            val repository = FirestoreRecipesRepository(Firebase.firestore)
             return RecipesViewModel(repository) as T
           }
         }

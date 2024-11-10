@@ -128,6 +128,7 @@ import com.android.sample.ui.theme.redSwipe
 import com.android.sample.ui.theme.starColor
 import com.android.sample.ui.utils.PlateSwipeScaffold
 import com.android.sample.ui.utils.Tag
+import kotlin.math.abs
 import kotlin.math.absoluteValue
 import kotlinx.coroutines.launch
 
@@ -191,8 +192,6 @@ fun RecipeDisplay(
   // Snap back to center when animation is finished
   coroutineScope.launch {
     if (offsetX.value.absoluteValue > END_ANIMATION - ANIMATION_PADDING_SWIPE) {
-      displayCard1 = !displayCard1
-      displayCard2 = !displayCard2
       offsetX.snapTo(INITIAL_OFFSET_X)
     }
   }
@@ -213,7 +212,7 @@ fun RecipeDisplay(
                           onDragStart = { isClicking = true },
                           onDragEnd = {
                             isClicking = false
-                            if (kotlin.math.abs(offsetX.value) > swipeThreshold) {
+                            if (abs(offsetX.value) > swipeThreshold) {
                               retrieveNextRecipe = true
                               if (MIN_OFFSET_X < offsetX.value && currentRecipe != null) {
                                 userViewModel.addRecipeToUserLikedRecipes(currentRecipe!!)
@@ -382,6 +381,10 @@ fun RecipeDisplay(
                         offsetX.value < -swipeThreshold -> -END_ANIMATION
                         else -> INITIAL_OFFSET_X
                       }
+                  if (abs(animationTarget) == END_ANIMATION) {
+                    displayCard1 = !displayCard1
+                    displayCard2 = !displayCard2
+                  }
                   displayLike = animationTarget == END_ANIMATION
                   displayDisLike = animationTarget == -END_ANIMATION
 

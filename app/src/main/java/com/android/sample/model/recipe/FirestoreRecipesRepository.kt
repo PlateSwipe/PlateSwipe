@@ -14,7 +14,6 @@ import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_PICTURE_ID
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_PRICE
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_TIME
 import com.android.sample.resources.C.Tag.LIMIT_MUST_BE_POSITIVE_MESSAGE
-import com.android.sample.resources.C.Tag.UNSUPPORTED_MESSAGE
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldPath
@@ -140,7 +139,7 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
 
     // Generate a random UID
     val randomUID = generateRandomUID()
-    Log.d("TestRecipeRepo", "generateRandomUID :" + randomUID)
+    Log.d("TestRecipeRepo", "generateRandomUID :$randomUID")
 
     Log.d("TestRecipeRepo", (nbOfElements / 2).toString())
     // Query for UIDs greater than or equal to the random UID
@@ -178,7 +177,7 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
         } else onFailure(Exception("Recipe not found"))
       } else {
         task.exception?.let { e ->
-          Log.e("FirestoreRecipesRepository", "Error search document : idMeal " + mealID, e)
+          Log.e("FirestoreRecipesRepository", "Error search document : idMeal $mealID", e)
           onFailure(e)
         }
       }
@@ -209,8 +208,28 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
         .addOnFailureListener { e -> onFailure(e) }
   }
 
-  /** This method will not be in the interface anymore in the future * */
+  /**
+   * Fetches the list of categories from the repository.
+   *
+   * @param onSuccess The callback to call if the operation is successful.
+   * @param onFailure The callback to call if the operation fails.
+   */
   override fun listCategories(onSuccess: (List<String>) -> Unit, onFailure: (Exception) -> Unit) {
-    throw UnsupportedOperationException(UNSUPPORTED_MESSAGE)
+    // unused categories: "Goat",
+    onSuccess(
+        listOf(
+            "Beef",
+            "Breakfast",
+            "Chicken",
+            "Dessert",
+            "Lamb",
+            "Miscellaneous",
+            "Pasta",
+            "Pork",
+            "Seafood",
+            "Side",
+            "Starter",
+            "Vegan",
+            "Vegetarian"))
   }
 }

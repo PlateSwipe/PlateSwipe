@@ -78,6 +78,12 @@ class SwipePageTest : TestCase() {
       null
     }
 
+    `when`(mockRepository.searchByCategory(any(), any(), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.getArgument<(List<Recipe>) -> Unit>(1)
+      onSuccess(mockedRecipesList)
+      null
+    }
+
     recipesViewModel = RecipesViewModel(mockRepository)
     advanceUntilIdle()
 
@@ -139,12 +145,14 @@ class SwipePageTest : TestCase() {
   }*/
 
   /** This test checks if nextRecipe called update the current correctly */
+  @OptIn(ExperimentalCoroutinesApi::class)
   @Test
   fun testNextRecipeWithoutJobAndWaitForIdle() = runTest {
     val currentRecipe = recipesViewModel.currentRecipe.value
 
     // Simulate a drag event
     recipesViewModel.nextRecipe()
+    advanceUntilIdle()
     assertNotEquals(currentRecipe, recipesViewModel.currentRecipe.value)
   }
 
