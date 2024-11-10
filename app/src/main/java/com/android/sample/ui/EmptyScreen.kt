@@ -27,8 +27,14 @@ fun EmptyScreen(navigationActions: NavigationActions, title: String) {
             modifier = Modifier.fillMaxSize().padding(paddingValues),
             contentAlignment = Alignment.Center) {
               Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(title, style = MaterialTheme.typography.titleLarge)
-                Text("Work in progress... Stay tuned!", style = MaterialTheme.typography.bodyMedium)
+                Text(
+                    title,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onPrimary)
+                Text(
+                    "Work in progress... Stay tuned!",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onPrimary)
               }
             }
       }
