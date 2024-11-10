@@ -353,6 +353,7 @@ object C {
       const val INGREDIENT_DISPLAY_TEXT_BUTTON_PADDING_V = 4
       const val INGREDIENT_DISPLAY_TEXT_BUTTON_PADDING_H = 8
     }
+
     object CreateRecipeListInstructionsScreen {
       const val BIG_PADDING = 32
       const val SMALL_PADDING = 8

@@ -36,10 +36,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.rememberNavController
 import com.android.sample.R
 import com.android.sample.model.recipe.CreateRecipeViewModel
-import com.android.sample.model.recipe.RecipeBuilder
 import com.android.sample.resources.C
 import com.android.sample.resources.C.Dimension.CameraScanCodeBarScreen.BOTTOM_BAR_HEIGHT
 import com.android.sample.resources.C.Dimension.CameraScanCodeBarScreen.TOP_BAR_HEIGHT
@@ -57,21 +55,15 @@ fun RecipeListInstructionsScreen(
     createRecipeViewModel: CreateRecipeViewModel,
     navigationActions: NavigationActions
 ) {
-  /** **************************Testing stuff*************************** */
-  val navController = rememberNavController()
-  val recipeBuilder = RecipeBuilder()
-  recipeBuilder.setName("Recipe name")
-  recipeBuilder.setInstructions("Instruction1")
-  recipeBuilder.setTime("10")
-  /** ****************************************************************** */
+
   PlateSwipeScaffold(
-      navigationActions = NavigationActions(navController = navController),
+      navigationActions = navigationActions,
       selectedItem = Route.CREATE_RECIPE,
       showBackArrow = true,
-      content = { pd ->
+      content = {
         RecipeListInstructionsContent(
-            pd = pd,
-            recipeBuilder = recipeBuilder,
+
+            createRecipeViewModel = createRecipeViewModel,
             modifier = Modifier,
             navigationActions = navigationActions)
       })
@@ -79,8 +71,7 @@ fun RecipeListInstructionsScreen(
 
 @Composable
 fun RecipeListInstructionsContent(
-    pd: PaddingValues,
-    recipeBuilder: RecipeBuilder,
+    createRecipeViewModel: CreateRecipeViewModel,
     modifier: Modifier,
     navigationActions: NavigationActions
 ) {
@@ -92,10 +83,13 @@ fun RecipeListInstructionsContent(
               .fillMaxSize()
               .padding(RECIPE_NAME_BASE_PADDING)) {
         RecipeProgressBar(currentStep = 2)
-        Spacer(modifier = Modifier.height(C.Dimension.CreateRecipeListInstructionsScreen.BIG_PADDING.dp).testTag("RecipeListInstructionsScreenSpacer1"))
+        Spacer(
+            modifier =
+                Modifier.height(C.Dimension.CreateRecipeListInstructionsScreen.BIG_PADDING.dp)
+                    .testTag("RecipeListInstructionsScreenSpacer1"))
         Text(
             modifier = Modifier.testTag("RecipeNameText"),
-            text = recipeBuilder.getName(),
+            text = createRecipeViewModel.getRecipeName(),
             style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
         )
         Text(
@@ -105,15 +99,38 @@ fun RecipeListInstructionsContent(
         )
         // LazyColumn for the scrollable list of instructions
         LazyColumn(
-            contentPadding = PaddingValues(vertical = C.Dimension.CreateRecipeListInstructionsScreen.SMALL_PADDING.dp),
+            contentPadding =
+                PaddingValues(
+                    vertical = C.Dimension.CreateRecipeListInstructionsScreen.SMALL_PADDING.dp),
             modifier =
                 modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(C.Dimension.CreateRecipeListInstructionsScreen.LIST_HEIGHT_FRACTION)
-                    .padding(horizontal = C.Dimension.CreateRecipeListInstructionsScreen.MEDIUM_PADDING.dp)
-                    .padding(top = C.Dimension.CreateRecipeListInstructionsScreen.SMALL_PADDING.dp, bottom = C.Dimension.CreateRecipeListInstructionsScreen.SMALL_PADDING.dp)
+                    .fillMaxHeight(
+                        C.Dimension.CreateRecipeListInstructionsScreen.LIST_HEIGHT_FRACTION)
+                    .padding(
+                        horizontal =
+                            C.Dimension.CreateRecipeListInstructionsScreen.MEDIUM_PADDING.dp)
+                    .padding(
+                        top = C.Dimension.CreateRecipeListInstructionsScreen.SMALL_PADDING.dp,
+                        bottom = C.Dimension.CreateRecipeListInstructionsScreen.SMALL_PADDING.dp)
                     .testTag("InstructionList")) {
-              items(5) { index -> InstructionValue(index, recipeBuilder.getTime(), 0, {navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_INSTRUCTION)}) }
+
+              /**
+               * This Part will be later improved by adding the list of instructions
+               *
+               * items(createRecipeViewModel.getInstructions().length) { index ->
+               * InstructionValue(index, recipeBuilder.getTime(), 0,
+               * {navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_INSTRUCTION)}) }
+               */
+              //
+
+              item {
+                InstructionValue(
+                    0,
+                    createRecipeViewModel.getRecipeTime(),
+                    0,
+                    { navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_INSTRUCTION) })
+              }
             }
         Spacer(modifier = Modifier.weight(1f).testTag("RecipeListInstructionsScreenSpacer2"))
         // Fixed button at the bottom
@@ -131,10 +148,18 @@ fun NextStepButton(modifier: Modifier, navigationActions: NavigationActions) {
           modifier
               .width(RECIPE_NAME_BUTTON_WIDTH)
               .height(RECIPE_NAME_BUTTON_HEIGHT)
-              .background(color = lightCream, shape = RoundedCornerShape(size = C.Dimension.CreateRecipeListInstructionsScreen.ROUNDED_CORNER_SHAPE.dp))
+              .background(
+                  color = lightCream,
+                  shape =
+                      RoundedCornerShape(
+                          size =
+                              C.Dimension.CreateRecipeListInstructionsScreen.ROUNDED_CORNER_SHAPE
+                                  .dp))
               .testTag("NextStepButton"),
       colors = ButtonDefaults.buttonColors(lightCream, contentColor = Color.Black),
-      shape = RoundedCornerShape(C.Dimension.CreateRecipeListInstructionsScreen.ROUNDED_CORNER_SHAPE.dp)) {
+      shape =
+          RoundedCornerShape(
+              C.Dimension.CreateRecipeListInstructionsScreen.ROUNDED_CORNER_SHAPE.dp)) {
         Text(stringResource(R.string.next_step))
       }
 }
@@ -148,41 +173,52 @@ fun InstructionValue(index: Int, time: String?, icon: Int, onClick: () -> Unit) 
               .fillMaxWidth()
               .padding(vertical = 4.dp)
               .clickable(onClick = onClick)
-              .border(C.Dimension.CreateRecipeListInstructionsScreen.CARD_BORDER_THICKNESS.dp, Color.Gray, RoundedCornerShape(C.Dimension.CreateRecipeListInstructionsScreen.CARD_BORDER_THICKNESS.dp)),
+              .border(
+                  C.Dimension.CreateRecipeListInstructionsScreen.CARD_BORDER_THICKNESS.dp,
+                  Color.Gray,
+                  RoundedCornerShape(
+                      C.Dimension.CreateRecipeListInstructionsScreen.CARD_BORDER_THICKNESS.dp)),
       colors =
           CardDefaults.cardColors(
               containerColor = Color.White, // Background color of the card
               contentColor = Color.Black // Content color of the card
               ),
   ) {
-    Column(modifier = Modifier.fillMaxWidth().padding(C.Dimension.CreateRecipeListInstructionsScreen.SMALL_PADDING.dp)) {
-      // Date and Status Row
-      Row(
-          modifier = Modifier.fillMaxWidth(1f).testTag("InstructionThumbnail"),
-          horizontalArrangement = Arrangement.SpaceBetween) {
-            Image(
-                painter = painterResource(id = R.drawable.fire),
-                contentDescription = "Fire",
-                modifier = Modifier.size(C.Dimension.CreateRecipeListInstructionsScreen.ICON_SIZE.dp).testTag("InstructionIcon"))
-            Column(modifier = Modifier.testTag("InstructionTextSpace")) {
-              Text(
-                  modifier = Modifier.testTag("InstructionText"),
-                  text = "Step $officialStep",
-                  style = MaterialTheme.typography.bodyMedium,
-                  fontWeight = FontWeight.Bold)
+    Column(
+        modifier =
+            Modifier.fillMaxWidth()
+                .padding(C.Dimension.CreateRecipeListInstructionsScreen.SMALL_PADDING.dp)) {
+          // Date and Status Row
+          Row(
+              modifier = Modifier.fillMaxWidth(1f).testTag("InstructionThumbnail"),
+              horizontalArrangement = Arrangement.SpaceBetween) {
+                Image(
+                    painter = painterResource(id = R.drawable.fire),
+                    contentDescription = "Fire",
+                    modifier =
+                        Modifier.size(C.Dimension.CreateRecipeListInstructionsScreen.ICON_SIZE.dp)
+                            .testTag("InstructionIcon"))
+                Column(modifier = Modifier.testTag("InstructionTextSpace")) {
+                  Text(
+                      modifier = Modifier.testTag("InstructionText"),
+                      text = "Step $officialStep",
+                      style = MaterialTheme.typography.bodyMedium,
+                      fontWeight = FontWeight.Bold)
 
-              if (!time.isNullOrBlank()) {
-                Text(
-                    text = "$time min",
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.testTag("InstructionTime"))
+                  if (!time.isNullOrBlank()) {
+                    Text(
+                        text = "$time min",
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.testTag("InstructionTime"))
+                  }
+                }
+                Icon(
+                    imageVector = Icons.Default.ModeEdit,
+                    contentDescription = "Edit",
+                    modifier =
+                        Modifier.size(C.Dimension.CreateRecipeListInstructionsScreen.ICON_SIZE.dp)
+                            .testTag("EditInstructionIcon"))
               }
-            }
-            Icon(
-                imageVector = Icons.Default.ModeEdit,
-                contentDescription = "Edit",
-                modifier = Modifier.size(C.Dimension.CreateRecipeListInstructionsScreen.ICON_SIZE.dp).testTag("EditInstructionIcon"))
-          }
-    }
+        }
   }
 }
