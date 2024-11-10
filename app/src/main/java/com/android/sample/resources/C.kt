@@ -293,6 +293,15 @@ object C {
       const val INGREDIENT_DISPLAY_TEXT_BUTTON_PADDING_V = 4
       const val INGREDIENT_DISPLAY_TEXT_BUTTON_PADDING_H = 8
     }
+    object CreateRecipeListInstructionsScreen {
+      const val BIG_PADDING = 32
+      const val SMALL_PADDING = 8
+      const val MEDIUM_PADDING = 16
+      const val LIST_HEIGHT_FRACTION = 0.8899f
+      const val ROUNDED_CORNER_SHAPE = 4
+      const val CARD_BORDER_THICKNESS = 1
+      const val ICON_SIZE = 24
+    }
   }
 
   object TestTag {
