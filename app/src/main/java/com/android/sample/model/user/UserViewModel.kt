@@ -171,11 +171,11 @@ class UserViewModel(
       val changedElement: Pair<Ingredient, Int> =
           _fridge.value.first { it.first.barCode == ingredient.barCode }
 
-      updateList(_fridge, changedElement, add = false)
-
       if (changedElement.second - count > 0) {
+        updateList(_fridge, changedElement, add = false)
         updateList(_fridge, Pair(changedElement.first, changedElement.second - count), add = true)
       } else if (changedElement.second - count == 0) {
+        updateList(_fridge, changedElement, add = false)
         updateList(_fridge, changedElement, add = false)
       } else {
         throw IllegalArgumentException(REMOVED_TOO_MANY_INGREDIENTS_ERROR)
