@@ -93,7 +93,7 @@ fun RecipeOverview(
       content = { paddingValues ->
         Column(
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
+            horizontalAlignment = Alignment.Start,
             modifier =
                 Modifier.testTag("draggableItem")
                     .fillMaxSize()
@@ -126,11 +126,9 @@ fun RecipeOverview(
 @Composable
 private fun RecipeInformation(currentRecipe: Recipe) {
   Column(
-      horizontalAlignment = Alignment.CenterHorizontally,
-      verticalArrangement = Arrangement.spacedBy(SMALL_PADDING.dp),
       modifier =
           Modifier.background(
-                  MaterialTheme.colorScheme.primary,
+                  MaterialTheme.colorScheme.onPrimaryContainer,
                   shape = RoundedCornerShape(OVERVIEW_RECIPE_ROUND))
               .fillMaxSize()
               .padding(SMALL_PADDING.dp)) {
@@ -186,7 +184,7 @@ private fun SlidingButton(
       modifier =
           modifier
               .background(
-                  if (!isInstructionDisplay) MaterialTheme.colorScheme.onBackground
+                  if (!isInstructionDisplay) MaterialTheme.colorScheme.onSecondaryContainer
                   else Color.Transparent,
                   shape = RoundedCornerShape(IMAGE_ROUND_CORNER.dp))
               .clickable { clickable() }
@@ -216,7 +214,8 @@ private fun RecipeImage(currentRecipe: Recipe) {
   val height = LocalConfiguration.current.screenHeightDp.dp * OVERVIEW_RECIPE_RATE
 
   Card(
-      modifier = Modifier.fillMaxWidth().padding(SMALL_PADDING.dp),
+      modifier =
+          Modifier.fillMaxWidth().padding(start = PADDING.dp, top = PADDING.dp, end = PADDING.dp),
       shape = RoundedCornerShape(OVERVIEW_RECIPE_CARD_SHAPE.dp),
       elevation = CardDefaults.cardElevation(OVERVIEW_RECIPE_CARD_ELEVATION.dp)) {
         Column(modifier = Modifier.background(color = MaterialTheme.colorScheme.onPrimary)) {
@@ -237,7 +236,7 @@ private fun RecipeImage(currentRecipe: Recipe) {
  */
 @Composable
 private fun RecipeDescription(currentRecipe: Recipe) {
-  Column {
+  Column(horizontalAlignment = Alignment.Start, modifier = Modifier.padding(start = PADDING.dp)) {
     Text(
         text = currentRecipe.strMeal,
         modifier = Modifier.testTag("recipeTitle"),
@@ -279,7 +278,8 @@ private fun PrepareCookTotalTimeDisplay() {
       modifier =
           Modifier.padding(padding, padding)
               .background(
-                  MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(IMAGE_ROUND_CORNER))
+                  MaterialTheme.colorScheme.onPrimaryContainer,
+                  shape = RoundedCornerShape(IMAGE_ROUND_CORNER))
               .fillMaxWidth()
               .padding(padding / 2),
       horizontalArrangement = Arrangement.SpaceBetween,
@@ -379,7 +379,7 @@ private fun Counter(servingsCount: Int, onCounterChange: (Int) -> Unit) {
   Row(
       modifier =
           Modifier.background(
-                  MaterialTheme.colorScheme.onBackground,
+                  MaterialTheme.colorScheme.onSecondaryContainer,
                   shape = RoundedCornerShape(COUNTER_ROUND_CORNER.dp))
               .padding(horizontal = SMALL_PADDING.dp, vertical = (PADDING / 4).dp),
       verticalAlignment = Alignment.CenterVertically,
@@ -391,7 +391,7 @@ private fun Counter(servingsCount: Int, onCounterChange: (Int) -> Unit) {
             },
             colors =
                 ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.onBackground,
+                    containerColor = MaterialTheme.colorScheme.onSecondaryContainer,
                     contentColor = MaterialTheme.colorScheme.background),
             modifier = Modifier.size(COUNTER_MIN_MAX_SIZE.dp).testTag("removeServings"),
             contentPadding = PaddingValues(OVERVIEW_RECIPE_COUNTER_PADDING.dp)) {
@@ -416,7 +416,7 @@ private fun Counter(servingsCount: Int, onCounterChange: (Int) -> Unit) {
             },
             colors =
                 ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.onBackground,
+                    containerColor = MaterialTheme.colorScheme.onSecondaryContainer,
                     contentColor = MaterialTheme.colorScheme.background),
             modifier = Modifier.size(COUNTER_MIN_MAX_SIZE.dp).testTag("addServings"),
             contentPadding = PaddingValues(OVERVIEW_RECIPE_COUNTER_PADDING.dp)) {

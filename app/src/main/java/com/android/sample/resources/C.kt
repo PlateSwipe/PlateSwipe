@@ -309,7 +309,7 @@ object C {
       const val COUNTER_ROUND_CORNER = 25
       const val OVERVIEW_RECIPE_STAR_SIZE = 24
       const val COUNTER_MIN_MAX_SIZE = 30
-      const val OVERVIEW_TIME_DISPLAY_RATE = 1f / 15f
+      const val OVERVIEW_TIME_DISPLAY_RATE = 1f / 12f
       const val OVERVIEW_MIN_COUNTER_VALUE = 1
       const val OVERVIEW_MAX_COUNTER_VALUE = 99
       const val OVERVIEW_CHECKBOX_SIZE = 15
