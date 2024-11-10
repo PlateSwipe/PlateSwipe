@@ -84,39 +84,39 @@ private fun PlateSwipeTopBar(navigationActions: NavigationActions, showBackArrow
               .testTag(TOP_BAR),
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.SpaceBetween,
-      ) {
-        Row(modifier = Modifier.weight(1f)) {
-          if (showBackArrow) {
-            IconButton(
-                onClick = { navigationActions.goBack() },
-                modifier = Modifier.testTag(BACK_ARROW_ICON)) {
-                  Icon(
-                      imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                      contentDescription = "Back",
-                      modifier = Modifier.size(BACK_ARROW_ICON_SIZE.dp),
-                      tint = MaterialTheme.colorScheme.onPrimary)
-                }
-          }
-        }
-
-        Image(
-            painter = painterResource(id = R.drawable.chef_s_hat),
-            contentDescription = "Chef's hat",
-            modifier =
-                Modifier.size(CHEF_HAT_ICON_SIZE.dp)
-                    .padding(end = CHEF_HAT_ICON_END_PADDING.dp)
-                    .testTag(CHEF_HAT_ICON),
-            contentScale = ContentScale.Fit,
-            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary))
-
-        Text(
-            text = stringResource(id = R.string.plate_swipe_title),
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.testTag(TOP_BAR_TITLE),
-            fontSize = TOP_BAR_TITLE_FONT_SIZE.sp,
-            color = MaterialTheme.colorScheme.onPrimary,
-        )
-
-        Spacer(modifier = Modifier.weight(1f))
+  ) {
+    Row(modifier = Modifier.weight(1f)) {
+      if (showBackArrow) {
+        IconButton(
+            onClick = { navigationActions.goBack() },
+            modifier = Modifier.testTag(BACK_ARROW_ICON)) {
+              Icon(
+                  imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
+                  contentDescription = "Back",
+                  modifier = Modifier.size(BACK_ARROW_ICON_SIZE.dp),
+                  tint = MaterialTheme.colorScheme.onPrimary)
+            }
       }
+    }
+
+    Image(
+        painter = painterResource(id = R.drawable.chef_s_hat),
+        contentDescription = "Chef's hat",
+        modifier =
+            Modifier.size(CHEF_HAT_ICON_SIZE.dp)
+                .padding(end = CHEF_HAT_ICON_END_PADDING.dp)
+                .testTag(CHEF_HAT_ICON),
+        contentScale = ContentScale.Fit,
+        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary))
+
+    Text(
+        text = stringResource(id = R.string.plate_swipe_title),
+        style = MaterialTheme.typography.titleMedium,
+        modifier = Modifier.testTag(TOP_BAR_TITLE),
+        fontSize = TOP_BAR_TITLE_FONT_SIZE.sp,
+        color = MaterialTheme.colorScheme.onPrimary,
+    )
+
+    Spacer(modifier = Modifier.weight(1f))
+  }
 }
