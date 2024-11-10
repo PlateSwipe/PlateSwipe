@@ -15,10 +15,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import com.android.sample.R
 import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.resources.C.Tag.CHEF_IMAGE_DESCRIPTION
+import com.android.sample.resources.C.Tag.CHEF_IN_EGG_ORIGINAL_RATIO
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
@@ -59,10 +60,10 @@ fun PublishRecipeContent(
   val context = LocalContext.current
 
   // Collect the publish error state
-  val publishError = createRecipeViewModel.publishError.collectAsState(initial = null).value
+  val publishStatus = createRecipeViewModel.publishStatus.collectAsState(initial = null).value
 
   // Show a toast message if there is a publish error
-  publishError?.let {
+  publishStatus?.let {
     Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
     createRecipeViewModel.clearPublishError()
   }
@@ -75,7 +76,7 @@ fun PublishRecipeContent(
         // Display the done text
         Text(
             text = stringResource(R.string.done_text),
-            style = Typography.titleLarge.copy(fontSize = 70.sp, fontWeight = FontWeight.Bold),
+            style = Typography.titleLarge,
             modifier = Modifier.weight(0.4f).padding(bottom = 16.dp).testTag("DoneText"))
         Spacer(modifier = Modifier.weight(0.1f))
 
@@ -83,7 +84,12 @@ fun PublishRecipeContent(
         Image(
             painter = painterResource(id = R.drawable.chef_image_in_egg),
             contentDescription = CHEF_IMAGE_DESCRIPTION,
-            modifier = Modifier.weight(1f).fillMaxWidth(1f).aspectRatio(0.5f).testTag("ChefImage"))
+            modifier =
+                Modifier.weight(1f)
+                    .fillMaxSize(1f)
+                    .aspectRatio(CHEF_IN_EGG_ORIGINAL_RATIO)
+                    .zIndex(-1f)
+                    .testTag("ChefImage"))
 
         Spacer(modifier = Modifier.weight(0.1f))
 

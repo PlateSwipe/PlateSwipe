@@ -270,6 +270,7 @@ object C {
 
     // PublishRecipeScreen
     val CHEF_IMAGE_DESCRIPTION = "Chef illustration inside an egg"
+    val CHEF_IN_EGG_ORIGINAL_RATIO = 412 / 500f
 
     // CreateRecipeViewModel
     const val RECIPE_PUBLISHED_SUCCESS_MESSAGE = "Recipe published successfully!"

@@ -16,9 +16,9 @@ import kotlinx.coroutines.flow.StateFlow
 class CreateRecipeViewModel(private val repository: FirestoreRecipesRepository) : ViewModel() {
 
   val recipeBuilder = RecipeBuilder()
-  private val _publishError = MutableStateFlow<String?>(null)
-  val publishError: StateFlow<String?>
-    get() = _publishError
+  private val _publishStatus = MutableStateFlow<String?>(null)
+  val publishStatus: StateFlow<String?>
+    get() = _publishStatus
 
   fun updateRecipeName(name: String) {
     require(name.isNotBlank()) { "Recipe name must not be blank." }
@@ -114,7 +114,7 @@ class CreateRecipeViewModel(private val repository: FirestoreRecipesRepository) 
   }
 
   fun clearPublishError() {
-    _publishError.value = null
+    _publishStatus.value = null
   }
 
   fun publishRecipe() {
@@ -127,14 +127,14 @@ class CreateRecipeViewModel(private val repository: FirestoreRecipesRepository) 
       repository.addRecipe(
           recipe,
           onSuccess = {
-            _publishError.value = RECIPE_PUBLISHED_SUCCESS_MESSAGE
+            _publishStatus.value = RECIPE_PUBLISHED_SUCCESS_MESSAGE
             recipeBuilder.clear()
           },
           onFailure = { exception ->
-            _publishError.value = RECIPE_PUBLISH_ERROR_MESSAGE.format(exception.message)
+            _publishStatus.value = RECIPE_PUBLISH_ERROR_MESSAGE.format(exception.message)
           })
     } catch (e: IllegalArgumentException) {
-      _publishError.value = e.message
+      _publishStatus.value = e.message
     }
   }
 
