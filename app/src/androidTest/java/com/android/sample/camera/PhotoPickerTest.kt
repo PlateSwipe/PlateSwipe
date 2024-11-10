@@ -1,6 +1,7 @@
 package com.android.sample.camera
 
 import android.net.Uri
+import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -41,6 +42,12 @@ class PhotoPickerTest {
   }
 
   @Test
+  fun photoPickerNoImageTest() {
+    composeTestRule.setContent { PhotoPicker(takePhotoViewModel) }
+    composeTestRule.onNodeWithText("No image selected yet.").assertIsDisplayed()
+  }
+
+  @Test
   fun photoPickerTest() {
     val packageName = "com.android.sample.camera" // Replace with your app's package name
     val mockImageUri = Uri.parse("android.resource://$packageName/drawable/scoobygourmand_normal")
@@ -52,5 +59,31 @@ class PhotoPickerTest {
 
     composeTestRule.onNodeWithText(PHOTO_PICKER_TEXT).assertIsDisplayed()
     composeTestRule.onNodeWithTag(PHOTO_PICKER_IMAGE).assertIsDisplayed()
+  }
+
+  @Test
+  fun photoPickerImageTest() {
+    val packageName = "com.android.sample.camera" // Replace with your app's package name
+    val mockImageUri = Uri.parse("android.resource://$packageName/drawable/scoobygourmand_normal")
+
+    takePhotoViewModel.setUri(mockImageUri)
+    composeTestRule.setContent { PhotoPicker(takePhotoViewModel) }
+
+    // Set the selectedImageUri programmatically
+
+    composeTestRule.onNodeWithTag(PHOTO_PICKER_IMAGE).assertIsDisplayed()
+  }
+
+  @Test
+  fun photoPickerImageClickTest() {
+    val packageName = "com.android.sample.camera" // Replace with your app's package name
+    val mockImageUri = Uri.parse("android.resource://$packageName/drawable/scoobygourmand_normal")
+
+    takePhotoViewModel.setUri(mockImageUri)
+    composeTestRule.setContent { PhotoPicker(takePhotoViewModel) }
+
+    // Set the selectedImageUri programmatically
+
+    composeTestRule.onNodeWithTag(PHOTO_PICKER_IMAGE).assertIsDisplayed().assertHasClickAction()
   }
 }

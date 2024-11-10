@@ -1,6 +1,7 @@
 package com.android.sample.ui.camera
 
 import android.net.Uri
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -57,10 +58,7 @@ fun PhotoPicker(takePhotoViewModel: TakePhotoViewModel) {
         // Button to launch the photo picker
         Button(
             modifier = Modifier.testTag(C.TestTag.PhotoPicker.PHOTO_PICKER_BUTTON),
-            onClick = {
-              photoPickerLauncher.launch(
-                  PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-            }) {
+            onClick = { openGallery(photoPickerLauncher) }) {
               Text(
                   text = stringResource(R.string.select_image),
                   style = MaterialTheme.typography.bodySmall,
@@ -73,7 +71,7 @@ fun PhotoPicker(takePhotoViewModel: TakePhotoViewModel) {
               painter =
                   rememberAsyncImagePainter(
                       ImageRequest.Builder(context).data(uri).crossfade(true).build()),
-              contentDescription = null,
+              contentDescription = stringResource(R.string.imported_image_from_the_gallery),
               modifier =
                   Modifier.size(
                           (C.Dimension.PhotoPicker.PHOTO_PICKER_IMAGE_SIZE *
@@ -81,12 +79,22 @@ fun PhotoPicker(takePhotoViewModel: TakePhotoViewModel) {
                               .dp)
                       .clickable {
                         // Re-open the photo picker when clicking the image
-                        photoPickerLauncher.launch(
-                            PickVisualMediaRequest(
-                                ActivityResultContracts.PickVisualMedia.ImageOnly))
+                        openGallery(photoPickerLauncher)
                       }
                       .testTag(C.TestTag.PhotoPicker.PHOTO_PICKER_IMAGE),
               contentScale = ContentScale.Crop)
-        }
+        } ?: run { Text(text = stringResource(R.string.no_image_selected_yet)) }
       }
+}
+
+/**
+ * Function to open the gallery to select an image
+ *
+ * @param photoPickerLauncher ManagedActivityResultLauncher<PickVisualMediaRequest, Uri?>
+ */
+private fun openGallery(
+    photoPickerLauncher: ManagedActivityResultLauncher<PickVisualMediaRequest, Uri?>
+) {
+  photoPickerLauncher.launch(
+      PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
 }
