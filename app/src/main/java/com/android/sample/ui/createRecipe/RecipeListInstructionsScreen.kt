@@ -100,7 +100,7 @@ fun RecipeListInstructionsContent(
         )
         Text(
             modifier = Modifier.testTag("InstructionsText"),
-            text = "Instructions",
+            text = stringResource(R.string.RecipeListInstructionsScreen_Instructions),
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
         )
         // LazyColumn for the scrollable list of instructions

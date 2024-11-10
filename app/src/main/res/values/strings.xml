@@ -57,5 +57,8 @@
     <string name="add_instructions">Add Instructions</string>
     <string name="describe_instructions">Describe each step of how to prepare your dish.</string>
 
+    //RecipeListInstructionsScreen
+    <string name="RecipeListInstructionsScreen_Instructions">Instructions</string>
+
 
 </resources>
