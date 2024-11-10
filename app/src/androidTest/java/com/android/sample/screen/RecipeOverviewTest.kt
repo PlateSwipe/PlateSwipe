@@ -2,7 +2,7 @@ package com.android.sample.screen
 
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsOff
+import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.hasTestTag
@@ -142,9 +142,17 @@ class RecipeOverviewTest {
     // Check if each ingredient has a checkbox and can be checked
     composeTestRule.onAllNodesWithTag("checkboxIngredient", useUnmergedTree = true).apply {
       assertCountEquals(3) // Assuming 3 ingredients for this test
-      get(0).performClick().assertIsOff()
-      get(1).performClick().assertIsOff()
-      get(2).performClick().assertIsOff()
+      get(0).performClick()
+      get(1).performClick()
+      get(2).performClick()
+    }
+    composeTestRule.waitForIdle()
+
+    composeTestRule.onAllNodesWithTag("checkboxIngredient", useUnmergedTree = true).apply {
+      assertCountEquals(3) // Assuming 3 ingredients for this test
+      get(0).assertIsOn()
+      get(1).assertIsOn()
+      get(2).assertIsOn()
     }
   }
 
