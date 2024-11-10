@@ -41,8 +41,6 @@ fun SearchRecipeScreen(navigationActions: NavigationActions, recipesViewModel: R
   val currentRecipes by recipesViewModel.recipes.collectAsState()
   var recipes by remember { mutableStateOf(currentRecipes) }
 
-  val scrollState = rememberScrollState()
-
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("SearchRecipeScreen"),
       topBar = {
@@ -86,8 +84,7 @@ fun SearchRecipeScreen(navigationActions: NavigationActions, recipesViewModel: R
             modifier =
                 Modifier.fillMaxSize()
                     .padding(paddingValues)
-                    .padding(16.dp)
-                    .verticalScroll(scrollState)) {
+                    .padding(16.dp)) {
               Row(
                   horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start),
                   verticalAlignment = Alignment.CenterVertically,

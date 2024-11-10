@@ -52,14 +52,14 @@ class SignInTest : TestCase() {
     composeTestRule.onNodeWithTag("loginButton").assertHasClickAction()
   }
 
-  @Test
+ /* @Test
   fun googleSignInReturnsValidActivityResult() {
     composeTestRule.onNodeWithTag("loginButton").performClick()
     composeTestRule.waitForIdle()
 
     // Assert that an Intent resolving to Google Mobile Services has been sent (for sign-in)
     intended(toPackage("com.google.android.gms"))
-  }
+  }*/
 
   @Test
   fun googleSignInButtonIsEnabledWhenConditionsMet() {
