@@ -18,7 +18,7 @@ fun CreateRecipeScreen(
   PlateSwipeScaffold(
       navigationActions = navigationActions,
       selectedItem = Route.CREATE_RECIPE,
-      showBackArrow = true,
+      showBackArrow = false,
       content = { paddingValues ->
         RecipeNameScreen(
             currentStep = INITIAL_RECIPE_STEP,

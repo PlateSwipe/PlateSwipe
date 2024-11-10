@@ -241,8 +241,9 @@ object C {
     const val LOG_TAG_CAMERA_UTILS = "CameraUtils"
     const val INVALID_BARCODE_MSG = "Invalid barcode"
 
-    // Used in ChefImage composable
+    // ChefImage composable
     val CHEF_IMAGE_CORNER_RADIUS = 16.dp
+    val CHEF_IMAGE_STANDING_ORIGINAL_RATIO = 224 / 300f
 
     // Initial step value for recipe creation flow
     const val INITIAL_RECIPE_STEP = 0

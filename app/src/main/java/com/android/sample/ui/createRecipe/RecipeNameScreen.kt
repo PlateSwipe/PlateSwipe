@@ -131,21 +131,21 @@ fun RecipeNameScreen(
                     maxLines = 2)
 
                 // Display error message if recipe name is empty
-                Column(modifier = Modifier.weight(0.1f).align(Alignment.CenterHorizontally)) {
+                Column(modifier = Modifier.weight(0.3f).align(Alignment.CenterHorizontally)) {
                   getErrorMessage(showError).invoke()
                 }
+                Spacer(modifier = Modifier.weight(0.4f))
 
                 // Display the chef image if the screen dimensions are large enough
                 if (shouldDisplayChefImage(screenWidthDp, screenHeightDp)) {
                   Row(
-                      modifier = Modifier.weight(0.8f),
+                      modifier = Modifier.weight(0.6f),
                       verticalAlignment = Alignment.CenterVertically) {
-                        Spacer(modifier = Modifier.weight(0.25f))
-                        ChefImage(
-                            modifier = Modifier.fillMaxHeight().weight(1f).testTag("ChefImage"))
+                        Spacer(modifier = Modifier.weight(0.2f))
+                        ChefImage(modifier = Modifier.weight(0.6f).testTag("ChefImage"))
                       }
-                  Spacer(modifier = Modifier.weight(0.05f))
                 }
+                Spacer(modifier = Modifier.weight(0.4f))
               }
             }
 
