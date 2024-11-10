@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -82,7 +83,8 @@ private fun PlateSwipeTopBar(navigationActions: NavigationActions, showBackArrow
               .background(color = lightCream)
               .testTag(TOP_BAR),
       verticalAlignment = Alignment.CenterVertically,
-      horizontalArrangement = Arrangement.SpaceBetween) {
+      horizontalArrangement = Arrangement.SpaceBetween,
+      ) {
         Row(modifier = Modifier.weight(1f)) {
           if (showBackArrow) {
             IconButton(
@@ -91,7 +93,8 @@ private fun PlateSwipeTopBar(navigationActions: NavigationActions, showBackArrow
                   Icon(
                       imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                       contentDescription = "Back",
-                      modifier = Modifier.size(BACK_ARROW_ICON_SIZE.dp))
+                      modifier = Modifier.size(BACK_ARROW_ICON_SIZE.dp),
+                      tint = MaterialTheme.colorScheme.onPrimary)
                 }
           }
         }
@@ -103,7 +106,8 @@ private fun PlateSwipeTopBar(navigationActions: NavigationActions, showBackArrow
                 Modifier.size(CHEF_HAT_ICON_SIZE.dp)
                     .padding(end = CHEF_HAT_ICON_END_PADDING.dp)
                     .testTag(CHEF_HAT_ICON),
-            contentScale = ContentScale.Fit)
+            contentScale = ContentScale.Fit,
+            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary))
 
         Text(
             text = stringResource(id = R.string.plate_swipe_title),
