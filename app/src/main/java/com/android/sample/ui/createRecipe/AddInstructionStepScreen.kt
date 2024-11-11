@@ -61,7 +61,9 @@ fun AddInstructionStepContent(
   var stepDescription by remember { mutableStateOf(createRecipeViewModel.getRecipeInstructions()) }
   var stepTime by remember { mutableStateOf(createRecipeViewModel.getRecipeTime()) }
   var stepCategory by remember { mutableStateOf(createRecipeViewModel.getRecipeCategory()) }
-  var selectedIcon by remember { mutableStateOf<IconType?>(createRecipeViewModel.getSelectedIcon()) }
+  var selectedIcon by remember {
+    mutableStateOf<IconType?>(createRecipeViewModel.getSelectedIcon())
+  }
   var showError by remember { mutableStateOf(false) }
 
   Column(
@@ -91,7 +93,7 @@ fun AddInstructionStepContent(
                     verticalAlignment = Alignment.CenterVertically) {
                       // Time input field
                       OutlinedTextField(
-                          value = if(stepTime.isNullOrEmpty()) "" else stepTime.toString(),
+                          value = if (stepTime.isNullOrEmpty()) "" else stepTime.toString(),
                           onValueChange = { stepTime = it },
                           label = {
                             Text(stringResource(R.string.time_label), style = Typography.bodySmall)
@@ -104,7 +106,7 @@ fun AddInstructionStepContent(
 
                       // Category input field
                       OutlinedTextField(
-                          value = if(stepCategory.isNullOrEmpty()) "" else stepCategory.toString(),
+                          value = if (stepCategory.isNullOrEmpty()) "" else stepCategory.toString(),
                           onValueChange = { stepCategory = it },
                           label = {
                             Text(

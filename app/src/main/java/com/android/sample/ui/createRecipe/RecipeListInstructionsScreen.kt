@@ -148,9 +148,10 @@ fun RecipeListInstructionsContent(
                     index = 0,
                     time = createRecipeViewModel.getRecipeTime(),
                     icon = 0,
-                    onClick={ index ->
-                        createRecipeViewModel.selectDescription(index = index)
-                        navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_INSTRUCTION) })
+                    onClick = { index ->
+                      createRecipeViewModel.selectDescription(index = index)
+                      navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_INSTRUCTION)
+                    })
               }
             }
         Spacer(
@@ -195,7 +196,7 @@ fun InstructionValue(index: Int, time: String?, icon: Int, onClick: (Int) -> Uni
           Modifier.testTag(INSTRUCTION_LIST_ITEM)
               .fillMaxWidth()
               .padding(vertical = REALLY_SMALL_PADDING.dp)
-              .clickable(onClick = {onClick(index)})
+              .clickable(onClick = { onClick(index) })
               .border(
                   C.Dimension.CreateRecipeListInstructionsScreen.CARD_BORDER_THICKNESS.dp,
                   Color.Gray,
