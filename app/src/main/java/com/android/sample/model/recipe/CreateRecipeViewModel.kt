@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.android.sample.resources.C.Tag.RECIPE_PUBLISHED_SUCCESS_MESSAGE
 import com.android.sample.resources.C.Tag.RECIPE_PUBLISH_ERROR_MESSAGE
+import com.android.sample.ui.createRecipe.IconType
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,6 +17,15 @@ import kotlinx.coroutines.flow.StateFlow
 class CreateRecipeViewModel(private val repository: FirestoreRecipesRepository) : ViewModel() {
 
   val recipeBuilder = RecipeBuilder()
+
+  // Fields for the selected Instruction when modifying a recipe
+  private val selectedDescription = MutableStateFlow<Int?>(null)
+  private val selectedIcon = MutableStateFlow<IconType?>(null)
+
+  fun selectDescription(index: Int) {
+    selectedDescription.value = index
+  }
+
   private val _publishStatus = MutableStateFlow<String?>(null)
   val publishStatus: StateFlow<String?>
     get() = _publishStatus
@@ -136,6 +146,14 @@ class CreateRecipeViewModel(private val repository: FirestoreRecipesRepository) 
     } catch (e: IllegalArgumentException) {
       _publishStatus.value = e.message
     }
+  }
+
+  fun selectIcon(icon: IconType) {
+    selectedIcon.value = icon
+  }
+
+  fun getSelectedIcon(): IconType? {
+    return selectedIcon.value
   }
 
   companion object {

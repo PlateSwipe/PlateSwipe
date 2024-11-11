@@ -145,10 +145,12 @@ fun RecipeListInstructionsContent(
 
               item {
                 InstructionValue(
-                    0,
-                    createRecipeViewModel.getRecipeTime(),
-                    0,
-                    { navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_INSTRUCTION) })
+                    index = 0,
+                    time = createRecipeViewModel.getRecipeTime(),
+                    icon = 0,
+                    onClick={ index ->
+                        createRecipeViewModel.selectDescription(index = index)
+                        navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_INSTRUCTION) })
               }
             }
         Spacer(
@@ -186,14 +188,14 @@ fun NextStepButton(modifier: Modifier, navigationActions: NavigationActions) {
 }
 
 @Composable
-fun InstructionValue(index: Int, time: String?, icon: Int, onClick: () -> Unit) {
+fun InstructionValue(index: Int, time: String?, icon: Int, onClick: (Int) -> Unit) {
   val officialStep = index + 1
   Card(
       modifier =
           Modifier.testTag(INSTRUCTION_LIST_ITEM)
               .fillMaxWidth()
               .padding(vertical = REALLY_SMALL_PADDING.dp)
-              .clickable(onClick = onClick)
+              .clickable(onClick = {onClick(index)})
               .border(
                   C.Dimension.CreateRecipeListInstructionsScreen.CARD_BORDER_THICKNESS.dp,
                   Color.Gray,

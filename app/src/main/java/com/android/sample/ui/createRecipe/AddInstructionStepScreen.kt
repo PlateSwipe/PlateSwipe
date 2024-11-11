@@ -58,10 +58,10 @@ fun AddInstructionStepContent(
     navigationActions: NavigationActions,
     modifier: Modifier = Modifier
 ) {
-  var stepDescription by remember { mutableStateOf("") }
-  var stepTime by remember { mutableStateOf("") }
-  var stepCategory by remember { mutableStateOf("") }
-  var selectedIcon by remember { mutableStateOf<IconType?>(null) }
+  var stepDescription by remember { mutableStateOf(createRecipeViewModel.getRecipeInstructions()) }
+  var stepTime by remember { mutableStateOf(createRecipeViewModel.getRecipeTime()) }
+  var stepCategory by remember { mutableStateOf(createRecipeViewModel.getRecipeCategory()) }
+  var selectedIcon by remember { mutableStateOf<IconType?>(createRecipeViewModel.getSelectedIcon()) }
   var showError by remember { mutableStateOf(false) }
 
   Column(
