@@ -156,6 +156,11 @@ class CreateRecipeViewModel(private val repository: FirestoreRecipesRepository) 
     return selectedIcon.value
   }
 
+  fun getIcon(index:Int): IconType? {
+    return selectedIcon.value
+  }
+
+
   companion object {
     val Factory: ViewModelProvider.Factory =
         object : ViewModelProvider.Factory {
