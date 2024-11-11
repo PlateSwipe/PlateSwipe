@@ -91,7 +91,7 @@ fun AddInstructionStepContent(
                     verticalAlignment = Alignment.CenterVertically) {
                       // Time input field
                       OutlinedTextField(
-                          value = stepTime,
+                          value = if(stepTime.isNullOrEmpty()) "" else stepTime.toString(),
                           onValueChange = { stepTime = it },
                           label = {
                             Text(stringResource(R.string.time_label), style = Typography.bodySmall)
@@ -104,7 +104,7 @@ fun AddInstructionStepContent(
 
                       // Category input field
                       OutlinedTextField(
-                          value = stepCategory,
+                          value = if(stepCategory.isNullOrEmpty()) "" else stepCategory.toString(),
                           onValueChange = { stepCategory = it },
                           label = {
                             Text(
@@ -161,14 +161,17 @@ fun AddInstructionStepContent(
               showError = stepDescription.isEmpty() // Set error if instructions are empty
               if (stepDescription.isNotEmpty()) {
                 createRecipeViewModel.updateRecipeInstructions(stepDescription)
-                if (stepTime.isNotEmpty()) {
-                  createRecipeViewModel.updateRecipeTime(stepTime)
+                if (!stepTime.isNullOrEmpty()) {
+                  createRecipeViewModel.updateRecipeTime(stepTime.toString())
                 }
-                if (stepCategory.isNotEmpty()) {
-                  createRecipeViewModel.updateRecipeCategory(stepCategory)
+                if (!stepCategory.isNullOrEmpty()) {
+                  createRecipeViewModel.updateRecipeCategory(stepCategory.toString())
+                }
+                if (selectedIcon != null) {
+                  createRecipeViewModel.selectIcon(selectedIcon!!)
                 }
 
-                navigationActions.navigateTo(Screen.PUBLISH_CREATED_RECIPE)
+                navigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INSTRUCTIONS)
               }
             },
             modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp).testTag(SAVE_BUTTON_TAG),
