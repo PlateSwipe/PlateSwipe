@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.android.sample.resources.C.TestTag.Utils.TEST_TAG
 import com.android.sample.ui.theme.tagBackground
 
 /**
@@ -29,7 +30,7 @@ fun Tag(tag: String) {
                 .padding(horizontal = 12.dp, vertical = 4.dp) // Padding for inside spacing
         ) {
           Text(
-              modifier = Modifier.testTag("TagTestTag"),
+              modifier = Modifier.testTag(TEST_TAG),
               text = tag,
               fontSize = 14.sp,
               color = Color.White // Text color

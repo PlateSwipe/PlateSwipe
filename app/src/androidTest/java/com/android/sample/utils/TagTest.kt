@@ -5,6 +5,7 @@ import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import com.android.sample.resources.C.TestTag.Utils.TEST_TAG
 import com.android.sample.ui.utils.Tag
 import org.junit.Rule
 import org.junit.Test
@@ -21,7 +22,7 @@ class TagTest {
     composeTestRule.setContent { Tag(tag = tagName) }
 
     // Verify that the tag is displayed with the correct text
-    composeTestRule.onNodeWithTag("TagTestTag").assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TEST_TAG).assertIsDisplayed()
     composeTestRule.onNodeWithText(tagName).assertIsDisplayed()
   }
 
@@ -33,6 +34,6 @@ class TagTest {
     composeTestRule.setContent { Tag(tag = tagName) }
 
     // Verify that the tag is displayed with the correct text
-    composeTestRule.onNodeWithTag("TagTestTag").assertIsNotDisplayed()
+    composeTestRule.onNodeWithTag(TEST_TAG).assertIsNotDisplayed()
   }
 }
