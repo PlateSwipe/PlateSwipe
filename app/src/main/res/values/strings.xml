@@ -33,42 +33,6 @@
 
 
 
-    //RecipeNameScreen
-    <string name="create_your_recipe">Create your recipe</string>
-    <string name="create_recipe_description">Create a recipe that others can discover and enjoy. Start by giving your dish a name!</string>
-    <string name="recipe_name_label">Name of the recipe</string>
-    <string name="recipe_name_hint">Choose a catchy title that reflects your dish</string>
-    <string name="recipe_name_error">Please enter a recipe name</string>
-    <string name="next_step">Next Step</string>
-
-    //ChefImage
-    <string name="chef_standing_description">Chef standing</string>
-
-    //AddInstructionStepScreen
-    <string name="step_label">Step</string>
-    <string name="time_label">Time</string>
-    <string name="instruction_label">Instruction</string>
-    <string name="save_label">Save</string>
-    <string name="add_step">Add Step</string>
-    <string name="category_label">Category</string>
-    <string name="error_message_empty_instruction">Please enter an instruction</string>
-
-    //IconDropDownMenu
-    <string name="add_icon">Add Icon</string>
-
-    //PublishRecipeScreen
-    <string name="done_text">Done !</string>
-    <string name="publish_recipe_button">Publish Recipe</string>
-
-    //RecipeIngredientScreen
-    <string name="list_ingredients">List the ingredients needed for your recipe. Add as many as you need.</string>
-    <string name="add_ingredient">Add Ingredients</string>
-    <string name="no_ingredients">No Ingredients</string>
-
-    //RecipeInstructionsScreen
-    <string name="add_instructions">Add Instructions</string>
-    <string name="describe_instructions">Describe each step of how to prepare your dish.</string>
-
 
     //RecipeNameScreen
     <string name="create_your_recipe">Create your recipe</string>
