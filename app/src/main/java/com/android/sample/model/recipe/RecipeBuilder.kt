@@ -191,4 +191,9 @@ class RecipeBuilder {
   /** Returns the ingredients and their measurements for the recipe. */
   fun getIngredientsAndMeasurements(): List<Pair<String, String>> =
       ingredientsAndMeasurements.toList()
+
+  /** Gets the i th instruction of the recipe. */
+  fun getInstruction(i: Int): String {
+      return strInstructions
+  }
 }
