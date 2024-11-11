@@ -57,70 +57,95 @@ import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
 import com.android.sample.R
 import com.android.sample.animation.LoadingAnimation
-import com.android.sample.resources.C.Tag.ANIMATION_DURATION
-import com.android.sample.resources.C.Tag.AVOCADO_MVM_DURATION
-import com.android.sample.resources.C.Tag.AVOCADO_MVM_RANGE
-import com.android.sample.resources.C.Tag.AVOCADO_ROTATION
-import com.android.sample.resources.C.Tag.AVOCADO_X
-import com.android.sample.resources.C.Tag.AVOCADO_Y
-import com.android.sample.resources.C.Tag.BROCCOLI_MVM_DURATION
-import com.android.sample.resources.C.Tag.BROCCOLI_MVM_RANGE
-import com.android.sample.resources.C.Tag.BROCCOLI_ROTATION
-import com.android.sample.resources.C.Tag.BROCCOLI_X
-import com.android.sample.resources.C.Tag.BROCCOLI_Y
-import com.android.sample.resources.C.Tag.COOK_SIZE
-import com.android.sample.resources.C.Tag.CUBE_EASING_A
-import com.android.sample.resources.C.Tag.CUBE_EASING_B
-import com.android.sample.resources.C.Tag.CUBE_EASING_C
-import com.android.sample.resources.C.Tag.CUBE_EASING_D
-import com.android.sample.resources.C.Tag.DURATION_ROTATION_LOOP
-import com.android.sample.resources.C.Tag.GOOGLE_LOGO_SIZE
-import com.android.sample.resources.C.Tag.HEIGHT_BASE
-import com.android.sample.resources.C.Tag.LOGIN_FAILED
-import com.android.sample.resources.C.Tag.LOGIN_SUCCESSFUL
-import com.android.sample.resources.C.Tag.NONCE
-import com.android.sample.resources.C.Tag.ORIGINAL_ICON_SIZE
-import com.android.sample.resources.C.Tag.PANCAKES_MVM_DURATION
-import com.android.sample.resources.C.Tag.PANCAKES_MVM_RANGE
-import com.android.sample.resources.C.Tag.PANCAKES_ROTATION
-import com.android.sample.resources.C.Tag.PANCAKES_X
-import com.android.sample.resources.C.Tag.PANCAKES_Y
-import com.android.sample.resources.C.Tag.PASTA_MVM_DURATION
-import com.android.sample.resources.C.Tag.PASTA_MVM_RANGE
-import com.android.sample.resources.C.Tag.PASTA_ROTATION
-import com.android.sample.resources.C.Tag.PASTA_X
-import com.android.sample.resources.C.Tag.PASTA_Y
-import com.android.sample.resources.C.Tag.PEPPER_MVM_DURATION
-import com.android.sample.resources.C.Tag.PEPPER_MVM_RANGE
-import com.android.sample.resources.C.Tag.PEPPER_ROTATION
-import com.android.sample.resources.C.Tag.PEPPER_X
-import com.android.sample.resources.C.Tag.PEPPER_Y
-import com.android.sample.resources.C.Tag.PLATE
-import com.android.sample.resources.C.Tag.SALAD_MVM_DURATION
-import com.android.sample.resources.C.Tag.SALAD_MVM_RANGE
-import com.android.sample.resources.C.Tag.SALAD_ROTATION
-import com.android.sample.resources.C.Tag.SALAD_X
-import com.android.sample.resources.C.Tag.SALAD_Y
-import com.android.sample.resources.C.Tag.SHIFTING_SPACE_TITLE
-import com.android.sample.resources.C.Tag.SIGN_IN_WITH_GOOGLE
-import com.android.sample.resources.C.Tag.SPACE
-import com.android.sample.resources.C.Tag.SUSHI_MVM_DURATION
-import com.android.sample.resources.C.Tag.SUSHI_MVM_RANGE
-import com.android.sample.resources.C.Tag.SUSHI_ROTATION
-import com.android.sample.resources.C.Tag.SUSHI_X
-import com.android.sample.resources.C.Tag.SUSHI_Y
-import com.android.sample.resources.C.Tag.SWIPE
-import com.android.sample.resources.C.Tag.TACO_MVM_DURATION
-import com.android.sample.resources.C.Tag.TACO_MVM_RANGE
-import com.android.sample.resources.C.Tag.TACO_ROTATION
-import com.android.sample.resources.C.Tag.TACO_X
-import com.android.sample.resources.C.Tag.TACO_Y
-import com.android.sample.resources.C.Tag.TOMATO_MVM_DURATION
-import com.android.sample.resources.C.Tag.TOMATO_MVM_RANGE
-import com.android.sample.resources.C.Tag.TOMATO_ROTATION
-import com.android.sample.resources.C.Tag.TOMATO_X
-import com.android.sample.resources.C.Tag.TOMATO_Y
-import com.android.sample.resources.C.Tag.WIDTH_BASE
+import com.android.sample.resources.C.Dimension.SignInScreen.AVOCADO_MVM_DURATION
+import com.android.sample.resources.C.Dimension.SignInScreen.AVOCADO_MVM_RANGE
+import com.android.sample.resources.C.Dimension.SignInScreen.AVOCADO_ROTATION
+import com.android.sample.resources.C.Dimension.SignInScreen.AVOCADO_X
+import com.android.sample.resources.C.Dimension.SignInScreen.AVOCADO_Y
+import com.android.sample.resources.C.Dimension.SignInScreen.BROCCOLI_MVM_DURATION
+import com.android.sample.resources.C.Dimension.SignInScreen.BROCCOLI_MVM_RANGE
+import com.android.sample.resources.C.Dimension.SignInScreen.BROCCOLI_ROTATION
+import com.android.sample.resources.C.Dimension.SignInScreen.BROCCOLI_X
+import com.android.sample.resources.C.Dimension.SignInScreen.BROCCOLI_Y
+import com.android.sample.resources.C.Dimension.SignInScreen.COOK_SIZE
+import com.android.sample.resources.C.Dimension.SignInScreen.CUBE_EASING_A
+import com.android.sample.resources.C.Dimension.SignInScreen.CUBE_EASING_B
+import com.android.sample.resources.C.Dimension.SignInScreen.CUBE_EASING_C
+import com.android.sample.resources.C.Dimension.SignInScreen.CUBE_EASING_D
+import com.android.sample.resources.C.Dimension.SignInScreen.DURATION_ROTATION_LOOP
+import com.android.sample.resources.C.Dimension.SignInScreen.GOOGLE_LOGO_SIZE
+import com.android.sample.resources.C.Dimension.SignInScreen.HEIGHT_BASE
+import com.android.sample.resources.C.Dimension.SignInScreen.ORIGINAL_ICON_SIZE
+import com.android.sample.resources.C.Dimension.SignInScreen.PANCAKES_MVM_DURATION
+import com.android.sample.resources.C.Dimension.SignInScreen.PANCAKES_MVM_RANGE
+import com.android.sample.resources.C.Dimension.SignInScreen.PANCAKES_ROTATION
+import com.android.sample.resources.C.Dimension.SignInScreen.PANCAKES_X
+import com.android.sample.resources.C.Dimension.SignInScreen.PANCAKES_Y
+import com.android.sample.resources.C.Dimension.SignInScreen.PASTA_MVM_DURATION
+import com.android.sample.resources.C.Dimension.SignInScreen.PASTA_MVM_RANGE
+import com.android.sample.resources.C.Dimension.SignInScreen.PASTA_ROTATION
+import com.android.sample.resources.C.Dimension.SignInScreen.PASTA_X
+import com.android.sample.resources.C.Dimension.SignInScreen.PASTA_Y
+import com.android.sample.resources.C.Dimension.SignInScreen.PEPPER_MVM_DURATION
+import com.android.sample.resources.C.Dimension.SignInScreen.PEPPER_MVM_RANGE
+import com.android.sample.resources.C.Dimension.SignInScreen.PEPPER_ROTATION
+import com.android.sample.resources.C.Dimension.SignInScreen.PEPPER_X
+import com.android.sample.resources.C.Dimension.SignInScreen.PEPPER_Y
+import com.android.sample.resources.C.Dimension.SignInScreen.SALAD_MVM_DURATION
+import com.android.sample.resources.C.Dimension.SignInScreen.SALAD_MVM_RANGE
+import com.android.sample.resources.C.Dimension.SignInScreen.SALAD_ROTATION
+import com.android.sample.resources.C.Dimension.SignInScreen.SALAD_X
+import com.android.sample.resources.C.Dimension.SignInScreen.SALAD_Y
+import com.android.sample.resources.C.Dimension.SignInScreen.SUSHI_MVM_DURATION
+import com.android.sample.resources.C.Dimension.SignInScreen.SUSHI_MVM_RANGE
+import com.android.sample.resources.C.Dimension.SignInScreen.SUSHI_ROTATION
+import com.android.sample.resources.C.Dimension.SignInScreen.SUSHI_X
+import com.android.sample.resources.C.Dimension.SignInScreen.SUSHI_Y
+import com.android.sample.resources.C.Dimension.SignInScreen.TACO_MVM_DURATION
+import com.android.sample.resources.C.Dimension.SignInScreen.TACO_MVM_RANGE
+import com.android.sample.resources.C.Dimension.SignInScreen.TACO_ROTATION
+import com.android.sample.resources.C.Dimension.SignInScreen.TACO_X
+import com.android.sample.resources.C.Dimension.SignInScreen.TACO_Y
+import com.android.sample.resources.C.Dimension.SignInScreen.TOMATO_MVM_DURATION
+import com.android.sample.resources.C.Dimension.SignInScreen.TOMATO_MVM_RANGE
+import com.android.sample.resources.C.Dimension.SignInScreen.TOMATO_ROTATION
+import com.android.sample.resources.C.Dimension.SignInScreen.TOMATO_X
+import com.android.sample.resources.C.Dimension.SignInScreen.TOMATO_Y
+import com.android.sample.resources.C.Dimension.SignInScreen.WIDTH_BASE
+import com.android.sample.resources.C.Tag.PADDING
+import com.android.sample.resources.C.Tag.SMALL_PADDING
+import com.android.sample.resources.C.Tag.SignInScreen.ANIMATION_DURATION
+import com.android.sample.resources.C.Tag.SignInScreen.COOK_DESCRIPTION
+import com.android.sample.resources.C.Tag.SignInScreen.GOOGLE_DESCRIPTION
+import com.android.sample.resources.C.Tag.SignInScreen.LOGIN_FAILED
+import com.android.sample.resources.C.Tag.SignInScreen.LOGIN_SUCCESSFUL
+import com.android.sample.resources.C.Tag.SignInScreen.NONCE
+import com.android.sample.resources.C.Tag.SignInScreen.PLATE
+import com.android.sample.resources.C.Tag.SignInScreen.ROTATION_LABEL
+import com.android.sample.resources.C.Tag.SignInScreen.SHIFTING_SPACE_TITLE
+import com.android.sample.resources.C.Tag.SignInScreen.SIGN_IN_ERROR_NO_CRED
+import com.android.sample.resources.C.Tag.SignInScreen.SIGN_IN_FAILED
+import com.android.sample.resources.C.Tag.SignInScreen.SIGN_IN_SUCCESSED
+import com.android.sample.resources.C.Tag.SignInScreen.SIGN_IN_TAG
+import com.android.sample.resources.C.Tag.SignInScreen.SIGN_IN_WITH_GOOGLE
+import com.android.sample.resources.C.Tag.SignInScreen.SWIPE
+import com.android.sample.resources.C.Tag.SignInScreen.TRANSITION_LABEL
+import com.android.sample.resources.C.Tag.SignInScreen.X_TRANSLATION_LABEL
+import com.android.sample.resources.C.Tag.SignInScreen.Y_TRANSLATION_LABEL
+import com.android.sample.resources.C.TestTag.SignInScreen.AVOCADO
+import com.android.sample.resources.C.TestTag.SignInScreen.BROCCOLI
+import com.android.sample.resources.C.TestTag.SignInScreen.COOK_IMAGE
+import com.android.sample.resources.C.TestTag.SignInScreen.LOGIN_BUTTON
+import com.android.sample.resources.C.TestTag.SignInScreen.LOGIN_TITLE
+import com.android.sample.resources.C.TestTag.SignInScreen.PANCAKES
+import com.android.sample.resources.C.TestTag.SignInScreen.PASTA
+import com.android.sample.resources.C.TestTag.SignInScreen.PEPPER
+import com.android.sample.resources.C.TestTag.SignInScreen.PLATE_TEXT
+import com.android.sample.resources.C.TestTag.SignInScreen.SALAD
+import com.android.sample.resources.C.TestTag.SignInScreen.SUSHI
+import com.android.sample.resources.C.TestTag.SignInScreen.SWIPE_TEXT
+import com.android.sample.resources.C.TestTag.SignInScreen.TACO
+import com.android.sample.resources.C.TestTag.SignInScreen.TOMATO
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
@@ -179,13 +204,13 @@ fun SignInScreen(navigationActions: NavigationActions) {
                     coroutineScope.launch(Dispatchers.Main) {
                       googleSignInRequest(
                           onAuthComplete = { result ->
-                            Log.d("SignInScreen", "User signed in: ${result.user?.displayName}")
+                            Log.d(SIGN_IN_TAG, "$SIGN_IN_SUCCESSED${result.user?.displayName}")
                             Toast.makeText(context, LOGIN_SUCCESSFUL, Toast.LENGTH_SHORT).show()
                             registered.value = true
                             isProcessing = false
                           },
                           onAuthError = {
-                            Log.e("SignInScreen", "Failed to sign in: ${it.message}")
+                            Log.e(SIGN_IN_TAG, "$SIGN_IN_FAILED${it.message}")
                             Toast.makeText(context, LOGIN_FAILED, Toast.LENGTH_SHORT).show()
                             isProcessing = false
                           },
@@ -211,7 +236,7 @@ private fun RecipesAnimation() {
         rotationSpeed = TACO_ROTATION,
         movementDuration = TACO_MVM_DURATION,
         movementRange = TACO_MVM_RANGE,
-        testTag = "taco")
+        testTag = TACO)
     AnimatedImage(
         imageRes = R.drawable.sushi,
         initialOffsetX = SUSHI_X.dp,
@@ -219,7 +244,7 @@ private fun RecipesAnimation() {
         rotationSpeed = SUSHI_ROTATION,
         movementDuration = SUSHI_MVM_DURATION,
         movementRange = SUSHI_MVM_RANGE,
-        testTag = "sushi")
+        testTag = SUSHI)
     AnimatedImage(
         imageRes = R.drawable.avocado,
         initialOffsetX = AVOCADO_X.dp,
@@ -227,7 +252,7 @@ private fun RecipesAnimation() {
         rotationSpeed = AVOCADO_ROTATION,
         movementDuration = AVOCADO_MVM_DURATION,
         movementRange = AVOCADO_MVM_RANGE,
-        testTag = "avocado")
+        testTag = AVOCADO)
     AnimatedImage(
         imageRes = R.drawable.tomato,
         initialOffsetX = TOMATO_X.dp,
@@ -235,7 +260,7 @@ private fun RecipesAnimation() {
         rotationSpeed = TOMATO_ROTATION,
         movementDuration = TOMATO_MVM_DURATION,
         movementRange = TOMATO_MVM_RANGE,
-        testTag = "tomato")
+        testTag = TOMATO)
     AnimatedImage(
         imageRes = R.drawable.pancakes,
         initialOffsetX = PANCAKES_X.dp,
@@ -243,7 +268,7 @@ private fun RecipesAnimation() {
         rotationSpeed = PANCAKES_ROTATION,
         movementDuration = PANCAKES_MVM_DURATION,
         movementRange = PANCAKES_MVM_RANGE,
-        testTag = "pancakes")
+        testTag = PANCAKES)
 
     AnimatedImage(
         imageRes = R.drawable.broccoli,
@@ -252,7 +277,7 @@ private fun RecipesAnimation() {
         rotationSpeed = BROCCOLI_ROTATION,
         movementDuration = BROCCOLI_MVM_DURATION,
         movementRange = BROCCOLI_MVM_RANGE,
-        testTag = "broccoli")
+        testTag = BROCCOLI)
 
     AnimatedImage(
         imageRes = R.drawable.pasta,
@@ -261,7 +286,7 @@ private fun RecipesAnimation() {
         rotationSpeed = PASTA_ROTATION,
         movementDuration = PASTA_MVM_DURATION,
         movementRange = PASTA_MVM_RANGE,
-        testTag = "pasta")
+        testTag = PASTA)
 
     AnimatedImage(
         imageRes = R.drawable.salad,
@@ -270,7 +295,7 @@ private fun RecipesAnimation() {
         rotationSpeed = SALAD_ROTATION,
         movementDuration = SALAD_MVM_DURATION,
         movementRange = SALAD_MVM_RANGE,
-        testTag = "salad")
+        testTag = SALAD)
 
     AnimatedImage(
         imageRes = R.drawable.pepper,
@@ -279,7 +304,7 @@ private fun RecipesAnimation() {
         rotationSpeed = PEPPER_ROTATION,
         movementDuration = PEPPER_MVM_DURATION,
         movementRange = PEPPER_MVM_RANGE,
-        testTag = "pepper")
+        testTag = PEPPER)
   }
 }
 
@@ -312,7 +337,7 @@ private fun AnimatedImage(
   val ratioHeight = height / HEIGHT_BASE
   val iconSize = ORIGINAL_ICON_SIZE.dp * (ratioWidth + ratioHeight) / 2
 
-  val infiniteTransition = rememberInfiniteTransition(label = "transition")
+  val infiniteTransition = rememberInfiniteTransition(label = TRANSITION_LABEL)
 
   // Animate rotation
   val rotationAngle by
@@ -326,7 +351,7 @@ private fun AnimatedImage(
                           durationMillis = DURATION_ROTATION_LOOP / rotationSpeed,
                           easing = FastOutSlowInEasing),
                   repeatMode = RepeatMode.Reverse),
-          label = "rotation")
+          label = ROTATION_LABEL)
 
   // Movement animation using keyframes to return to start position
   val offsetX by
@@ -343,7 +368,7 @@ private fun AnimatedImage(
                               CubicBezierEasing(
                                   CUBE_EASING_A, CUBE_EASING_B, CUBE_EASING_C, CUBE_EASING_D)),
                   repeatMode = RepeatMode.Reverse),
-          label = "xTranslation")
+          label = X_TRANSLATION_LABEL)
 
   // manage vertical movement
   val offsetY by
@@ -362,7 +387,7 @@ private fun AnimatedImage(
                                   CUBE_EASING_C,
                                   CUBE_EASING_D)), // Smoother easing
                   repeatMode = RepeatMode.Reverse),
-          label = "yTranslation")
+          label = Y_TRANSLATION_LABEL)
 
   Image(
       painter = painterResource(id = imageRes),
@@ -398,8 +423,8 @@ private fun SignInContent(onSignInClick: () -> Unit) {
     ) {
       Image(
           painter = painterResource(id = R.drawable.cook), // Use the new logo
-          contentDescription = "cook image",
-          modifier = Modifier.fillMaxSize().testTag("cookImage"),
+          contentDescription = COOK_DESCRIPTION,
+          modifier = Modifier.fillMaxSize().testTag(COOK_IMAGE),
           contentScale = ContentScale.Crop)
     }
 
@@ -416,14 +441,14 @@ private fun SignInContent(onSignInClick: () -> Unit) {
 @Composable
 private fun PlateSwipeTitle(modifier: Modifier = Modifier) {
   Column(
-      modifier = modifier.fillMaxWidth().testTag("loginTitle"),
+      modifier = modifier.fillMaxWidth().testTag(LOGIN_TITLE),
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.Center) {
-        Spacer(modifier = Modifier.height(SPACE.dp))
+        Spacer(modifier = Modifier.height(PADDING.dp))
         Row(modifier = Modifier) {
           Text(
               text = PLATE,
-              modifier = Modifier.testTag("plateText"),
+              modifier = Modifier.testTag(PLATE_TEXT),
               style = MaterialTheme.typography.titleLarge,
               color = MaterialTheme.colorScheme.onPrimary,
               textAlign = TextAlign.Center)
@@ -434,7 +459,7 @@ private fun PlateSwipeTitle(modifier: Modifier = Modifier) {
           Spacer(modifier = Modifier.width(SHIFTING_SPACE_TITLE.dp))
           Text(
               text = SWIPE,
-              modifier = Modifier.testTag("swipeText"),
+              modifier = Modifier.testTag(SWIPE_TEXT),
               style = MaterialTheme.typography.titleLarge,
               color = MaterialTheme.colorScheme.onPrimary,
               textAlign = TextAlign.Center)
@@ -481,7 +506,7 @@ private suspend fun googleSignInRequest(
               FirebaseAuth.getInstance().signInWithCredential(firebaseCredential).await()
           onAuthComplete(authResult)
         } else {
-          onAuthError(Exception("Invalid credential type"))
+          onAuthError(Exception(SIGN_IN_ERROR_NO_CRED))
         }
       }
     }
@@ -507,9 +532,9 @@ fun GoogleSignInButton(onSignInClick: () -> Unit) {
       shape = RoundedCornerShape(100),
       border = BorderStroke(1.dp, MaterialTheme.colorScheme.onPrimaryContainer),
       modifier =
-          Modifier.padding(horizontal = (SPACE / 2).dp, vertical = (SPACE / 4).dp)
+          Modifier.padding(horizontal = (SMALL_PADDING).dp, vertical = (SMALL_PADDING / 4).dp)
               .wrapContentSize()
-              .testTag("loginButton")) {
+              .testTag(LOGIN_BUTTON)) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
@@ -517,8 +542,8 @@ fun GoogleSignInButton(onSignInClick: () -> Unit) {
               // Load the Google logo from resources
               Image(
                   painter = painterResource(id = R.drawable.google_logo),
-                  contentDescription = "Google Logo",
-                  modifier = Modifier.size(GOOGLE_LOGO_SIZE.dp).padding(end = (SPACE / 2).dp))
+                  contentDescription = GOOGLE_DESCRIPTION,
+                  modifier = Modifier.size(GOOGLE_LOGO_SIZE.dp).padding(end = SMALL_PADDING.dp))
 
               // Text for the button
               Text(
@@ -528,5 +553,5 @@ fun GoogleSignInButton(onSignInClick: () -> Unit) {
               )
             }
       }
-  Spacer(modifier = Modifier.height((SPACE * 2).dp))
+  Spacer(modifier = Modifier.height((PADDING * 2).dp))
 }
