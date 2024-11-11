@@ -16,9 +16,9 @@ import kotlinx.coroutines.flow.StateFlow
 class CreateRecipeViewModel(private val repository: FirestoreRecipesRepository) : ViewModel() {
 
   val recipeBuilder = RecipeBuilder()
-  private val _publishError = MutableStateFlow<String?>(null)
-  val publishError: StateFlow<String?>
-    get() = _publishError
+  private val _publishStatus = MutableStateFlow<String?>(null)
+  val publishStatus: StateFlow<String?>
+    get() = _publishStatus
 
   fun updateRecipeName(name: String) {
     require(name.isNotBlank()) { "Recipe name must not be blank." }
@@ -60,8 +60,61 @@ class CreateRecipeViewModel(private val repository: FirestoreRecipesRepository) 
     recipeBuilder.addIngredientAndMeasurement(ingredient, measurement)
   }
 
+  fun removeIngredientAndMeasurement(ingredient: String, measurement: String) {
+    recipeBuilder.deleteIngredientAndMeasurement(ingredient = ingredient, measurement = measurement)
+  }
+
+  fun updateIngredientAndMeasurement(
+      ingredient: String,
+      measurement: String,
+      newIngredient: String,
+      newMeasurement: String
+  ) {
+    recipeBuilder.updateIngredientAndMeasurement(
+        ingredient = ingredient,
+        measurement = measurement,
+        newIngredient = newIngredient,
+        newMeasurement = newMeasurement)
+  }
+
+  fun getIngredientsAndMeasurements(): List<Pair<String, String>> {
+    return recipeBuilder.getIngredientsAndMeasurements()
+  }
+
+  fun getRecipeName(): String {
+    return recipeBuilder.getName()
+  }
+
+  fun getRecipeInstructions(): String {
+    return recipeBuilder.getInstructions()
+  }
+
+  fun getRecipeCategory(): String? {
+    return recipeBuilder.getCategory()
+  }
+
+  fun getRecipeArea(): String? {
+    return recipeBuilder.getArea()
+  }
+
+  fun getRecipeThumbnail(): String {
+    return recipeBuilder.getPictureID()
+  }
+
+  fun getRecipeTime(): String? {
+    return recipeBuilder.getTime()
+  }
+
+  fun getRecipeDifficulty(): String? {
+    return recipeBuilder.getDifficulty()
+  }
+
+  fun getRecipePrice(): String? {
+    return recipeBuilder.getPrice()
+  }
+
   fun clearPublishError() {
-    _publishError.value = null
+    _publishStatus.value = null
   }
 
   fun publishRecipe() {
@@ -73,12 +126,15 @@ class CreateRecipeViewModel(private val repository: FirestoreRecipesRepository) 
       val recipe = recipeBuilder.build()
       repository.addRecipe(
           recipe,
-          onSuccess = { _publishError.value = RECIPE_PUBLISHED_SUCCESS_MESSAGE },
+          onSuccess = {
+            _publishStatus.value = RECIPE_PUBLISHED_SUCCESS_MESSAGE
+            recipeBuilder.clear()
+          },
           onFailure = { exception ->
-            _publishError.value = RECIPE_PUBLISH_ERROR_MESSAGE.format(exception.message)
+            _publishStatus.value = RECIPE_PUBLISH_ERROR_MESSAGE.format(exception.message)
           })
     } catch (e: IllegalArgumentException) {
-      _publishError.value = e.message
+      _publishStatus.value = e.message
     }
   }
 

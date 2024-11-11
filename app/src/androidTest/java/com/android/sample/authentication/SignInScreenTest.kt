@@ -9,6 +9,20 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.test.espresso.intent.Intents
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.android.sample.resources.C.TestTag.SignInScreen.AVOCADO
+import com.android.sample.resources.C.TestTag.SignInScreen.BROCCOLI
+import com.android.sample.resources.C.TestTag.SignInScreen.COOK_IMAGE
+import com.android.sample.resources.C.TestTag.SignInScreen.LOGIN_BUTTON
+import com.android.sample.resources.C.TestTag.SignInScreen.LOGIN_TITLE
+import com.android.sample.resources.C.TestTag.SignInScreen.PANCAKES
+import com.android.sample.resources.C.TestTag.SignInScreen.PASTA
+import com.android.sample.resources.C.TestTag.SignInScreen.PEPPER
+import com.android.sample.resources.C.TestTag.SignInScreen.PLATE_TEXT
+import com.android.sample.resources.C.TestTag.SignInScreen.SALAD
+import com.android.sample.resources.C.TestTag.SignInScreen.SUSHI
+import com.android.sample.resources.C.TestTag.SignInScreen.SWIPE_TEXT
+import com.android.sample.resources.C.TestTag.SignInScreen.TACO
+import com.android.sample.resources.C.TestTag.SignInScreen.TOMATO
 import com.android.sample.ui.authentication.SignInScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
@@ -48,50 +62,50 @@ class SignInTest : TestCase() {
 
   @Test
   fun titleAndButtonAreCorrectlyDisplayed() {
-    composeTestRule.onNodeWithTag("loginTitle", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(LOGIN_TITLE, useUnmergedTree = true).assertIsDisplayed()
 
-    composeTestRule.onNodeWithTag("plateText", useUnmergedTree = true).assertIsDisplayed()
-    composeTestRule.onNodeWithTag("plateText", useUnmergedTree = true).assertTextEquals("Plate")
-    composeTestRule.onNodeWithTag("swipeText", useUnmergedTree = true).assertIsDisplayed()
-    composeTestRule.onNodeWithTag("swipeText", useUnmergedTree = true).assertTextEquals("Swipe")
+    composeTestRule.onNodeWithTag(PLATE_TEXT, useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(PLATE_TEXT, useUnmergedTree = true).assertTextEquals("Plate")
+    composeTestRule.onNodeWithTag(SWIPE_TEXT, useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(SWIPE_TEXT, useUnmergedTree = true).assertTextEquals("Swipe")
 
-    composeTestRule.onNodeWithTag("loginButton", useUnmergedTree = true).assertIsDisplayed()
-    composeTestRule.onNodeWithTag("loginButton", useUnmergedTree = true).assertHasClickAction()
+    composeTestRule.onNodeWithTag(LOGIN_BUTTON, useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(LOGIN_BUTTON, useUnmergedTree = true).assertHasClickAction()
   }
 
   @Test
   fun imagesDisplayCorrectly() {
-    composeTestRule.onNodeWithTag("taco", useUnmergedTree = true).assertIsDisplayed()
-    composeTestRule.onNodeWithTag("sushi", useUnmergedTree = true).assertIsDisplayed()
-    composeTestRule.onNodeWithTag("avocado", useUnmergedTree = true).assertIsDisplayed()
-    composeTestRule.onNodeWithTag("tomato", useUnmergedTree = true).assertIsDisplayed()
-    composeTestRule.onNodeWithTag("pancakes", useUnmergedTree = true).assertIsDisplayed()
-    composeTestRule.onNodeWithTag("broccoli", useUnmergedTree = true).assertIsDisplayed()
-    composeTestRule.onNodeWithTag("pasta", useUnmergedTree = true).assertIsDisplayed()
-    composeTestRule.onNodeWithTag("salad", useUnmergedTree = true).assertIsDisplayed()
-    composeTestRule.onNodeWithTag("pepper", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TACO, useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(SUSHI, useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AVOCADO, useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TOMATO, useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(PANCAKES, useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(BROCCOLI, useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(PASTA, useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(SALAD, useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(PEPPER, useUnmergedTree = true).assertIsDisplayed()
   }
 
   @OptIn(ExperimentalCoroutinesApi::class)
   @Test
   fun googleSignInReturnsInValidResult() = runTest {
     // Perform click on Google Sign-In button
-    composeTestRule.onNodeWithTag("loginButton", useUnmergedTree = true).assertIsEnabled()
+    composeTestRule.onNodeWithTag(LOGIN_BUTTON, useUnmergedTree = true).assertIsEnabled()
 
-    composeTestRule.onNodeWithTag("loginButton", useUnmergedTree = true).performClick()
+    composeTestRule.onNodeWithTag(LOGIN_BUTTON, useUnmergedTree = true).performClick()
 
     // Wait for idle
     composeTestRule.waitForIdle()
 
     advanceUntilIdle()
 
-    composeTestRule.onNodeWithTag("swipeText", useUnmergedTree = true).performClick()
+    composeTestRule.onNodeWithTag(SWIPE_TEXT, useUnmergedTree = true).performClick()
 
     verify(mockNavigationActions, never()).navigateTo(Screen.OVERVIEW_RECIPE)
   }
 
   @Test
   fun cookImageIsDisplayed() {
-    composeTestRule.onNodeWithTag("cookImage", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(COOK_IMAGE, useUnmergedTree = true).assertIsDisplayed()
   }
 }

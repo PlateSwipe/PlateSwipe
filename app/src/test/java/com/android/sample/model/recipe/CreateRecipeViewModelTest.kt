@@ -177,7 +177,7 @@ class CreateRecipeViewModelTest {
 
     onSuccessCaptor.firstValue.invoke()
 
-    assertEquals("Recipe published successfully!", createRecipeViewModel.publishError.value)
+    assertEquals("Recipe published successfully!", createRecipeViewModel.publishStatus.value)
   }
 
   @Test
@@ -204,7 +204,7 @@ class CreateRecipeViewModelTest {
     onFailureCaptor.firstValue.invoke(exception)
 
     assertEquals(
-        "Failed to publish recipe: Network error", createRecipeViewModel.publishError.value)
+        "Failed to publish recipe: Network error", createRecipeViewModel.publishStatus.value)
   }
 
   @Test
@@ -218,9 +218,9 @@ class CreateRecipeViewModelTest {
     createRecipeViewModel.publishRecipe()
     advanceUntilIdle()
 
-    assertNotNull(createRecipeViewModel.publishError.value)
+    assertNotNull(createRecipeViewModel.publishStatus.value)
     createRecipeViewModel.clearPublishError()
-    assertNull(createRecipeViewModel.publishError.value)
+    assertNull(createRecipeViewModel.publishStatus.value)
   }
 
   @Test
@@ -255,5 +255,64 @@ class CreateRecipeViewModelTest {
   @Test(expected = IllegalArgumentException::class)
   fun `test updateRecipeInstructions throws exception for blank instructions`() {
     createRecipeViewModel.updateRecipeInstructions("")
+  }
+
+  @Test
+  fun `test all getters`() {
+    val recipe = createDefaultRecipe()
+    createRecipeViewModel.updateRecipeName(recipe.strMeal)
+    createRecipeViewModel.updateRecipeInstructions(recipe.strInstructions)
+    createRecipeViewModel.updateRecipeThumbnail(recipe.strMealThumbUrl)
+    createRecipeViewModel.addIngredient("Banana", "3")
+    createRecipeViewModel.updateRecipeTime("30 minutes")
+    createRecipeViewModel.updateRecipeDifficulty("Medium")
+    createRecipeViewModel.updateRecipePrice("15.99")
+    createRecipeViewModel.updateRecipeCategory("Dessert")
+    createRecipeViewModel.updateRecipeArea("Italian")
+
+    assertEquals(recipe.strMeal, createRecipeViewModel.getRecipeName())
+    assertEquals(recipe.strInstructions, createRecipeViewModel.getRecipeInstructions())
+    assertEquals(recipe.strMealThumbUrl, createRecipeViewModel.getRecipeThumbnail())
+    assertEquals(listOf(Pair("Banana", "3")), createRecipeViewModel.getIngredientsAndMeasurements())
+    assertEquals("30 minutes", createRecipeViewModel.getRecipeTime())
+    assertEquals("Medium", createRecipeViewModel.getRecipeDifficulty())
+    assertEquals("15.99", createRecipeViewModel.getRecipePrice())
+    assertEquals("Dessert", createRecipeViewModel.getRecipeCategory())
+    assertEquals("Italian", createRecipeViewModel.getRecipeArea())
+  }
+
+  @Test
+  fun `test update ingredientAndMeasurement`() {
+    val recipe = createDefaultRecipe()
+    createRecipeViewModel.updateRecipeName(recipe.strMeal)
+    createRecipeViewModel.updateRecipeInstructions(recipe.strInstructions)
+    createRecipeViewModel.updateRecipeThumbnail(recipe.strMealThumbUrl)
+    createRecipeViewModel.addIngredient("Banana", "3")
+    createRecipeViewModel.updateRecipeTime("30 minutes")
+    createRecipeViewModel.updateRecipeDifficulty("Medium")
+    createRecipeViewModel.updateRecipePrice("15.99")
+    createRecipeViewModel.updateRecipeCategory("Dessert")
+    createRecipeViewModel.updateRecipeArea("Italian")
+
+    createRecipeViewModel.updateIngredientAndMeasurement("Banana", "3", "Apple", "4")
+    assertEquals(listOf(Pair("Apple", "4")), createRecipeViewModel.getIngredientsAndMeasurements())
+  }
+
+  @Test
+  fun `test remove ingredientAndMeasurement`() {
+    val recipe = createDefaultRecipe()
+    createRecipeViewModel.updateRecipeName(recipe.strMeal)
+    createRecipeViewModel.updateRecipeInstructions(recipe.strInstructions)
+    createRecipeViewModel.updateRecipeThumbnail(recipe.strMealThumbUrl)
+    createRecipeViewModel.addIngredient("Banana", "3")
+    createRecipeViewModel.updateRecipeTime("30 minutes")
+    createRecipeViewModel.updateRecipeDifficulty("Medium")
+    createRecipeViewModel.updateRecipePrice("15.99")
+    createRecipeViewModel.updateRecipeCategory("Dessert")
+    createRecipeViewModel.updateRecipeArea("Italian")
+
+    createRecipeViewModel.removeIngredientAndMeasurement("Banana", "3")
+    assertEquals(
+        emptyList<Pair<String, String>>(), createRecipeViewModel.getIngredientsAndMeasurements())
   }
 }

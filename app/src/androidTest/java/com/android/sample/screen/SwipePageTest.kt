@@ -15,6 +15,21 @@ import com.android.sample.model.filter.Difficulty
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.recipe.RecipesRepository
 import com.android.sample.model.recipe.RecipesViewModel
+import com.android.sample.resources.C.TestTag.SwipePage.CATEGORY_CHIP
+import com.android.sample.resources.C.TestTag.SwipePage.DELETE_SUFFIX
+import com.android.sample.resources.C.TestTag.SwipePage.DIFFICULTY_CHIP
+import com.android.sample.resources.C.TestTag.SwipePage.DRAGGABLE_ITEM
+import com.android.sample.resources.C.TestTag.SwipePage.FILTER_ROW
+import com.android.sample.resources.C.TestTag.SwipePage.PRICE_RANGE_CHIP
+import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_IMAGE_1
+import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_IMAGE_2
+import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_NAME
+import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_RATE
+import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_STAR
+import com.android.sample.resources.C.TestTag.SwipePage.TIME_RANGE_CHIP
+import com.android.sample.resources.C.TestTag.SwipePage.VIEW_RECIPE_BUTTON
+import com.android.sample.resources.C.TestTag.Utils.BOTTOM_BAR
+import com.android.sample.resources.C.TestTag.Utils.TOP_BAR
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
@@ -104,8 +119,8 @@ class SwipePageTest : TestCase() {
   /** This test checks if the BottomBar and the topBar of the swipe page are correctly displayed. */
   @Test
   fun swipePageCorrectlyDisplayed() = runTest {
-    composeTestRule.onNodeWithTag("bottomNavigationMenu").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("topBar").assertIsDisplayed()
+    composeTestRule.onNodeWithTag(BOTTOM_BAR).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TOP_BAR).assertIsDisplayed()
   }
 
   /**
@@ -114,20 +129,18 @@ class SwipePageTest : TestCase() {
    */
   @Test
   fun recipeAndDescriptionAreCorrectlyDisplayed() = runTest {
-    composeTestRule.onNodeWithTag("recipeName", useUnmergedTree = true).assertIsDisplayed()
-    composeTestRule.onNodeWithTag("recipeStar", useUnmergedTree = true).assertIsDisplayed()
-    composeTestRule.onNodeWithTag("recipeRate", useUnmergedTree = true).assertIsDisplayed()
-    composeTestRule.onNodeWithTag("recipeDescription", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(RECIPE_NAME, useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(RECIPE_STAR, useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(RECIPE_RATE, useUnmergedTree = true).assertIsDisplayed()
 
-    composeTestRule.onNodeWithTag("recipeImage1", useUnmergedTree = true).assertIsDisplayed()
-    composeTestRule.onNodeWithTag("recipeImage2", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(RECIPE_IMAGE_1, useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(RECIPE_IMAGE_2, useUnmergedTree = true).assertIsDisplayed()
   }
 
-  /**  */
   @Test
-  fun navigateToRecipeInfoWhenDescriptionIsPushed() = runTest {
-    composeTestRule.onNodeWithTag("recipeDescription", useUnmergedTree = true).assertIsDisplayed()
-    composeTestRule.onNodeWithTag("recipeDescription", useUnmergedTree = true).performClick()
+  fun shawRecipeButtonIsDisplayed() = runTest {
+    composeTestRule.onNodeWithTag(VIEW_RECIPE_BUTTON, useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(VIEW_RECIPE_BUTTON, useUnmergedTree = true).performClick()
     verify(mockNavigationActions).navigateTo(Screen.OVERVIEW_RECIPE)
   }
 
@@ -147,10 +160,10 @@ class SwipePageTest : TestCase() {
   fun testDraggingEventLeft() = runTest {
     val currentRecipe = recipesViewModel.currentRecipe.value
     // Make sure the screen is displayed
-    composeTestRule.onNodeWithTag("draggableItem").assertIsDisplayed()
+    composeTestRule.onNodeWithTag(DRAGGABLE_ITEM).assertIsDisplayed()
 
     // Simulate a drag event
-    composeTestRule.onNodeWithTag("draggableItem").performTouchInput { swipeLeft(0f, -10000f) }
+    composeTestRule.onNodeWithTag(DRAGGABLE_ITEM).performTouchInput { swipeLeft(0f, -10000f) }
 
     advanceUntilIdle()
 
@@ -164,10 +177,10 @@ class SwipePageTest : TestCase() {
   fun testDraggingEventRightWithoutJob() = runTest {
     val currentRecipe = recipesViewModel.currentRecipe.value
     // Make sure the screen is displayed
-    composeTestRule.onNodeWithTag("draggableItem").assertIsDisplayed()
+    composeTestRule.onNodeWithTag(DRAGGABLE_ITEM).assertIsDisplayed()
 
     // Simulate a drag event
-    composeTestRule.onNodeWithTag("draggableItem").performTouchInput { swipeRight(0f, 10000f) }
+    composeTestRule.onNodeWithTag(DRAGGABLE_ITEM).performTouchInput { swipeRight(0f, 10000f) }
 
     advanceUntilIdle()
 
@@ -182,10 +195,10 @@ class SwipePageTest : TestCase() {
   fun testDraggingNotEnough() = runTest {
     val currentRecipe = recipesViewModel.currentRecipe.value
     // Make sure the screen is displayed
-    composeTestRule.onNodeWithTag("draggableItem").assertIsDisplayed()
+    composeTestRule.onNodeWithTag(DRAGGABLE_ITEM).assertIsDisplayed()
 
     // Simulate a drag event
-    composeTestRule.onNodeWithTag("draggableItem").performTouchInput {
+    composeTestRule.onNodeWithTag(DRAGGABLE_ITEM).performTouchInput {
       swipeRight(0f, 1f)
       swipeLeft(0f, -1f)
     }
@@ -201,21 +214,23 @@ class SwipePageTest : TestCase() {
   fun timeRangeChipDisplaysAndHidesCorrectly() {
 
     // Check if time range chip exists in the hierarchy
-    composeTestRule.onNodeWithTag("timeRangeChip", useUnmergedTree = true).assertExists()
+    composeTestRule.onNodeWithTag(TIME_RANGE_CHIP, useUnmergedTree = true).assertExists()
 
     // Scroll to bring the time range chip into view if needed
     composeTestRule
-        .onNodeWithTag("filterRow", useUnmergedTree = true)
-        .performScrollToNode(hasTestTag("timeRangeChip"))
+        .onNodeWithTag(FILTER_ROW, useUnmergedTree = true)
+        .performScrollToNode(hasTestTag(TIME_RANGE_CHIP))
 
     // Verify the chip is visible after scrolling
-    composeTestRule.onNodeWithTag("timeRangeChip", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TIME_RANGE_CHIP, useUnmergedTree = true).assertIsDisplayed()
 
     // Click the close icon to hide the chip
-    composeTestRule.onNodeWithTag("timeRangeChipDelete", useUnmergedTree = true).performClick()
+    composeTestRule
+        .onNodeWithTag("timeRangeChip$DELETE_SUFFIX", useUnmergedTree = true)
+        .performClick()
 
     // Confirm that the chip is no longer visible in the hierarchy
-    composeTestRule.onNodeWithTag("timeRangeChip", useUnmergedTree = true).assertDoesNotExist()
+    composeTestRule.onNodeWithTag(TIME_RANGE_CHIP, useUnmergedTree = true).assertDoesNotExist()
 
     // Verify the ViewModel time range has been reset
     assertEquals(
@@ -229,21 +244,23 @@ class SwipePageTest : TestCase() {
   @Test
   fun priceRangeChipDisplaysAndHidesCorrectly() {
     // Check if price range chip exists in the hierarchy
-    composeTestRule.onNodeWithTag("priceRangeChip", useUnmergedTree = true).assertExists()
+    composeTestRule.onNodeWithTag(PRICE_RANGE_CHIP, useUnmergedTree = true).assertExists()
 
     // Scroll to bring the price range chip into view if needed
     composeTestRule
-        .onNodeWithTag("filterRow", useUnmergedTree = true)
-        .performScrollToNode(hasTestTag("priceRangeChip"))
+        .onNodeWithTag(FILTER_ROW, useUnmergedTree = true)
+        .performScrollToNode(hasTestTag(PRICE_RANGE_CHIP))
 
     // Verify the chip is visible after scrolling
-    composeTestRule.onNodeWithTag("priceRangeChip", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(PRICE_RANGE_CHIP, useUnmergedTree = true).assertIsDisplayed()
 
     // Click the close icon to hide the chip
-    composeTestRule.onNodeWithTag("priceRangeChipDelete", useUnmergedTree = true).performClick()
+    composeTestRule
+        .onNodeWithTag("priceRangeChip$DELETE_SUFFIX", useUnmergedTree = true)
+        .performClick()
 
     // Confirm that the chip is no longer visible in the hierarchy
-    composeTestRule.onNodeWithTag("priceRangeChip", useUnmergedTree = true).assertDoesNotExist()
+    composeTestRule.onNodeWithTag(PRICE_RANGE_CHIP, useUnmergedTree = true).assertDoesNotExist()
 
     // Verify the ViewModel price range has been reset
     assertEquals(
@@ -257,21 +274,23 @@ class SwipePageTest : TestCase() {
   @Test
   fun difficultyChipDisplaysAndHidesCorrectly() {
     // Check if difficulty chip exists in the hierarchy
-    composeTestRule.onNodeWithTag("difficultyChip", useUnmergedTree = true).assertExists()
+    composeTestRule.onNodeWithTag(DIFFICULTY_CHIP, useUnmergedTree = true).assertExists()
 
     // Scroll to bring the difficulty chip into view if needed
     composeTestRule
-        .onNodeWithTag("filterRow", useUnmergedTree = true)
-        .performScrollToNode(hasTestTag("difficultyChip"))
+        .onNodeWithTag(FILTER_ROW, useUnmergedTree = true)
+        .performScrollToNode(hasTestTag(DIFFICULTY_CHIP))
 
     // Verify the chip is visible after scrolling
-    composeTestRule.onNodeWithTag("difficultyChip", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(DIFFICULTY_CHIP, useUnmergedTree = true).assertIsDisplayed()
 
     // Click the close icon to hide the chip
-    composeTestRule.onNodeWithTag("difficultyChipDelete", useUnmergedTree = true).performClick()
+    composeTestRule
+        .onNodeWithTag("difficultyChip$DELETE_SUFFIX", useUnmergedTree = true)
+        .performClick()
 
     // Confirm that the chip is no longer visible in the hierarchy
-    composeTestRule.onNodeWithTag("difficultyChip", useUnmergedTree = true).assertDoesNotExist()
+    composeTestRule.onNodeWithTag(DIFFICULTY_CHIP, useUnmergedTree = true).assertDoesNotExist()
 
     // Verify the ViewModel difficulty has been reset
     assertEquals(recipesViewModel.filter.value.difficulty, Difficulty.Undefined)
@@ -280,21 +299,23 @@ class SwipePageTest : TestCase() {
   @Test
   fun categoryChipDisplaysAndHidesCorrectly() {
     // Check if category chip exists in the hierarchy
-    composeTestRule.onNodeWithTag("categoryChip", useUnmergedTree = true).assertExists()
+    composeTestRule.onNodeWithTag(CATEGORY_CHIP, useUnmergedTree = true).assertExists()
 
     // Scroll to bring the category chip into view if needed
     composeTestRule
-        .onNodeWithTag("filterRow", useUnmergedTree = true)
-        .performScrollToNode(hasTestTag("categoryChip"))
+        .onNodeWithTag(FILTER_ROW, useUnmergedTree = true)
+        .performScrollToNode(hasTestTag(CATEGORY_CHIP))
 
     // Verify the chip is visible after scrolling
-    composeTestRule.onNodeWithTag("categoryChip", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CATEGORY_CHIP, useUnmergedTree = true).assertIsDisplayed()
 
     // Click the close icon to hide the chip
-    composeTestRule.onNodeWithTag("categoryChipDelete", useUnmergedTree = true).performClick()
+    composeTestRule
+        .onNodeWithTag("categoryChip$DELETE_SUFFIX", useUnmergedTree = true)
+        .performClick()
 
     // Confirm that the chip is no longer visible in the hierarchy
-    composeTestRule.onNodeWithTag("categoryChip", useUnmergedTree = true).assertDoesNotExist()
+    composeTestRule.onNodeWithTag(CATEGORY_CHIP, useUnmergedTree = true).assertDoesNotExist()
 
     // Verify the ViewModel category has been reset
     assertNull(recipesViewModel.filter.value.category)
