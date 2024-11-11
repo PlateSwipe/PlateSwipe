@@ -83,6 +83,11 @@ class RecipeOverviewTest {
       onSuccess(mockedRecipesList)
       null
     }
+    `when`(mockRepository.searchByCategory(any(), any(), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.getArgument<(List<Recipe>) -> Unit>(1)
+      onSuccess(mockedRecipesList)
+      null
+    }
 
     recipesViewModel = RecipesViewModel(mockRepository)
     advanceUntilIdle()
