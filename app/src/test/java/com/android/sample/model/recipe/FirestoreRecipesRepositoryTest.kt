@@ -46,7 +46,6 @@ class FirestoreRecipesRepositoryTest {
   @Mock private lateinit var mockDocumentReference: DocumentReference
   @Mock private lateinit var mockCollectionReference: CollectionReference
   @Mock private lateinit var mockDocumentSnapshot: DocumentSnapshot
-  @Mock private lateinit var mockRecipeQuerySnapshot: QuerySnapshot
 
   private lateinit var firestoreFirebaseRepository: FirestoreRecipesRepository
 
@@ -466,5 +465,27 @@ class FirestoreRecipesRepositoryTest {
 
     // Ensure all asynchronous operations are completed
     shadowOf(Looper.getMainLooper()).idle()
+  }
+
+  @Test
+  fun testListCategories_Success() {
+    var list: List<String> = listOf()
+    firestoreFirebaseRepository.listCategories({ l -> list = l }, {})
+    assertEquals(
+        list,
+        listOf(
+            "Beef",
+            "Breakfast",
+            "Chicken",
+            "Dessert",
+            "Lamb",
+            "Miscellaneous",
+            "Pasta",
+            "Pork",
+            "Seafood",
+            "Side",
+            "Starter",
+            "Vegan",
+            "Vegetarian"))
   }
 }
