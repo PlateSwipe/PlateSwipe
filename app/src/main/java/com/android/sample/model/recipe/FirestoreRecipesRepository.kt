@@ -208,28 +208,8 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
         .addOnFailureListener { e -> onFailure(e) }
   }
 
-  /**
-   * Fetches the list of categories from the repository.
-   *
-   * @param onSuccess The callback to call if the operation is successful.
-   * @param onFailure The callback to call if the operation fails.
-   */
+  /** Will be deleted in next PR */
   override fun listCategories(onSuccess: (List<String>) -> Unit, onFailure: (Exception) -> Unit) {
-    // unused categories: "Goat",
-    onSuccess(
-        listOf(
-            "Beef",
-            "Breakfast",
-            "Chicken",
-            "Dessert",
-            "Lamb",
-            "Miscellaneous",
-            "Pasta",
-            "Pork",
-            "Seafood",
-            "Side",
-            "Starter",
-            "Vegan",
-            "Vegetarian"))
+    throw NotImplementedError("Not implemented")
   }
 }

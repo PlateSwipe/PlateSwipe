@@ -66,11 +66,7 @@ class RecipesViewModel(private val repository: RecipesRepository) :
 
   /** Fetches the list of categories from the repository. */
   override fun getCategoryList() {
-    repository.listCategories(
-        onSuccess = { categories -> _categories.value = categories },
-        onFailure = { exception ->
-          Log.e("RecipesViewModel", "Error fetching categories", exception)
-        })
+    _categories.value = Recipe.getCategories()
   }
 
   /**

@@ -10,6 +10,7 @@ import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_NAME
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_PICTURE_ID
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_PRICE
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_TIME
+import junit.framework.TestCase.assertEquals
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
@@ -104,6 +105,7 @@ class RecipeTest {
     assertThat(exception.message, `is`("Ingredients and measurements must not be empty"))
   }
 
+  @Test
   fun `convert Recipe to Firestore-compatible map`() {
     // Arrange
     val idMeal = "1"
@@ -148,5 +150,27 @@ class RecipeTest {
     assertThat(firestoreMap[FIRESTORE_RECIPE_TIME], `is`(time))
     assertThat(firestoreMap[FIRESTORE_RECIPE_DIFFICULTY], `is`(difficulty))
     assertThat(firestoreMap[FIRESTORE_RECIPE_PRICE], `is`(price))
+  }
+
+  @Test
+  fun testListCategories_Success() {
+    val list = Recipe.getCategories()
+
+    assertEquals(
+        list,
+        listOf(
+            "Beef",
+            "Breakfast",
+            "Chicken",
+            "Dessert",
+            "Lamb",
+            "Miscellaneous",
+            "Pasta",
+            "Pork",
+            "Seafood",
+            "Side",
+            "Starter",
+            "Vegan",
+            "Vegetarian"))
   }
 }

@@ -466,26 +466,4 @@ class FirestoreRecipesRepositoryTest {
     // Ensure all asynchronous operations are completed
     shadowOf(Looper.getMainLooper()).idle()
   }
-
-  @Test
-  fun testListCategories_Success() {
-    var list: List<String> = listOf()
-    firestoreFirebaseRepository.listCategories({ l -> list = l }, {})
-    assertEquals(
-        list,
-        listOf(
-            "Beef",
-            "Breakfast",
-            "Chicken",
-            "Dessert",
-            "Lamb",
-            "Miscellaneous",
-            "Pasta",
-            "Pork",
-            "Seafood",
-            "Side",
-            "Starter",
-            "Vegan",
-            "Vegetarian"))
-  }
 }
