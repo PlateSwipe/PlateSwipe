@@ -229,7 +229,7 @@ fun InstructionValue(
                             } else {
                               R.drawable.fire
                             }),
-                    contentDescription = "Fire",
+                    contentDescription = "Icon",
                     modifier = Modifier.size(ICON_SIZE.dp).testTag(RECIPE_LIST_INSTRUCTION_ICON))
 
                 Column(modifier = Modifier.testTag(INSTRUCTION_TEXT_SPACE)) {
