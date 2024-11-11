@@ -347,6 +347,11 @@ class FilterPageTest {
     // Verify that the ViewModel's category is updated to "Dessert"
     assertEquals("Dessert", recipesViewModel.filter.value.category)
 
+    composeTestRule
+        .onNodeWithTag("categoryCheckboxVegetarian", useUnmergedTree = true)
+        .performScrollTo()
+    composeTestRule.waitForIdle()
+
     // Select the "Main Course" checkbox
     composeTestRule
         .onNodeWithTag("categoryCheckboxVegetarian", useUnmergedTree = true)
