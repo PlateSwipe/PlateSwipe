@@ -35,7 +35,6 @@ import com.android.sample.ui.fridge.FridgeScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
-import com.android.sample.ui.recipe.CreateRecipeScreen
 import com.android.sample.ui.recipe.SearchRecipeScreen
 import com.android.sample.ui.recipeOverview.RecipeOverview
 import com.android.sample.ui.swipePage.SwipePage
@@ -130,7 +129,6 @@ fun PlateSwipeApp() {
             navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
       }
     }
-
     navigation(
         startDestination = Screen.ACCOUNT,
         route = Route.ACCOUNT,
