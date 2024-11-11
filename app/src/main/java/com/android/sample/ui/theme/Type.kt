@@ -60,4 +60,10 @@ val Typography =
                 fontSize = 11.sp,
                 lineHeight = 16.sp,
                 letterSpacing = 0.5.sp),
-    )
+        displayLarge =
+            TextStyle(
+                fontFamily = Montserrat,
+                fontWeight = FontWeight.Bold,
+                fontSize = 45.sp,
+                lineHeight = 40.sp,
+                letterSpacing = 2.sp))
