@@ -34,11 +34,11 @@ import com.android.sample.resources.C.Dimension.CameraScanCodeBarScreen.CHEF_HAT
 import com.android.sample.resources.C.Dimension.CameraScanCodeBarScreen.CHEF_HAT_ICON_SIZE
 import com.android.sample.resources.C.Dimension.CameraScanCodeBarScreen.TOP_BAR_HEIGHT
 import com.android.sample.resources.C.Dimension.CameraScanCodeBarScreen.TOP_BAR_TITLE_FONT_SIZE
-import com.android.sample.resources.C.TestTag.CameraScanCodeBarScreen.BACK_ARROW_ICON
-import com.android.sample.resources.C.TestTag.CameraScanCodeBarScreen.CHEF_HAT_ICON
-import com.android.sample.resources.C.TestTag.CameraScanCodeBarScreen.PLATESWIPE_SCAFFOLD
-import com.android.sample.resources.C.TestTag.CameraScanCodeBarScreen.TOP_BAR
-import com.android.sample.resources.C.TestTag.CameraScanCodeBarScreen.TOP_BAR_TITLE
+import com.android.sample.resources.C.TestTag.Utils.BACK_ARROW_ICON
+import com.android.sample.resources.C.TestTag.Utils.CHEF_HAT_ICON
+import com.android.sample.resources.C.TestTag.Utils.PLATESWIPE_SCAFFOLD
+import com.android.sample.resources.C.TestTag.Utils.TOP_BAR
+import com.android.sample.resources.C.TestTag.Utils.TOP_BAR_TITLE
 import com.android.sample.ui.navigation.BottomNavigationMenu
 import com.android.sample.ui.navigation.LIST_TOP_LEVEL_DESTINATIONS
 import com.android.sample.ui.navigation.NavigationActions

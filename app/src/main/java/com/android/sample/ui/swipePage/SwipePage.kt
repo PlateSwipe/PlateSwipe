@@ -110,14 +110,33 @@ import com.android.sample.resources.C.Dimension.SwipePage.THRESHOLD_INTENSITY
 import com.android.sample.resources.C.Tag.LOADING
 import com.android.sample.resources.C.Tag.PADDING
 import com.android.sample.resources.C.Tag.SMALL_PADDING
+import com.android.sample.resources.C.Tag.SwipePage.DISLIKE
 import com.android.sample.resources.C.Tag.SwipePage.END_ANIMATION
+import com.android.sample.resources.C.Tag.SwipePage.HAT
 import com.android.sample.resources.C.Tag.SwipePage.INITIAL_DISPLAY_CARD_1
 import com.android.sample.resources.C.Tag.SwipePage.INITIAL_DISPLAY_CARD_2
 import com.android.sample.resources.C.Tag.SwipePage.INITIAL_DISPLAY_DISLIKE
 import com.android.sample.resources.C.Tag.SwipePage.INITIAL_DISPLAY_LIKE
 import com.android.sample.resources.C.Tag.SwipePage.INITIAL_IS_CLICKING
 import com.android.sample.resources.C.Tag.SwipePage.INITIAL_RETRIEVE_NEXT_RECIPE
+import com.android.sample.resources.C.Tag.SwipePage.LIKE
+import com.android.sample.resources.C.Tag.SwipePage.OPACITY_LABEL
 import com.android.sample.resources.C.Tag.SwipePage.RATE_VALUE
+import com.android.sample.resources.C.Tag.SwipePage.SCALE_LABEL
+import com.android.sample.resources.C.TestTag.SwipePage.CATEGORY_CHIP
+import com.android.sample.resources.C.TestTag.SwipePage.DELETE_SUFFIX
+import com.android.sample.resources.C.TestTag.SwipePage.DIFFICULTY_CHIP
+import com.android.sample.resources.C.TestTag.SwipePage.DRAGGABLE_ITEM
+import com.android.sample.resources.C.TestTag.SwipePage.FILTER
+import com.android.sample.resources.C.TestTag.SwipePage.FILTER_ROW
+import com.android.sample.resources.C.TestTag.SwipePage.PRICE_RANGE_CHIP
+import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_IMAGE_1
+import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_IMAGE_2
+import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_NAME
+import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_RATE
+import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_STAR
+import com.android.sample.resources.C.TestTag.SwipePage.TIME_RANGE_CHIP
+import com.android.sample.resources.C.TestTag.SwipePage.VIEW_RECIPE_BUTTON
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.firebrickRed
@@ -233,7 +252,7 @@ fun RecipeDisplay(
                         painter = painterResource(R.drawable.filter),
                         contentDescription = stringResource(R.string.filter_icon),
                         modifier =
-                            Modifier.testTag("filter").size(FILTER_ICON_SIZE.dp).clickable {
+                            Modifier.testTag(FILTER).size(FILTER_ICON_SIZE.dp).clickable {
                               navigationActions.navigateTo(Screen.FILTER)
                             },
                         tint = graySlate)
@@ -242,7 +261,7 @@ fun RecipeDisplay(
                   horizontalArrangement = Arrangement.Start,
                   verticalAlignment = Alignment.CenterVertically,
                   modifier =
-                      Modifier.testTag("filterRow")
+                      Modifier.testTag(FILTER_ROW)
                           .fillMaxWidth()
                           .weight(CHIPS_WEIGHT)
                           .horizontalScroll(rememberScrollState())) {
@@ -268,7 +287,7 @@ fun RecipeDisplay(
                         },
                         label =
                             "${filter.timeRange.min.toInt()} - ${filter.timeRange.max.toInt()} min",
-                        testTag = "timeRangeChip",
+                        testTag = TIME_RANGE_CHIP,
                         contentDescription = stringResource(R.string.time_range_input_description))
 
                     FilterChip(
@@ -281,7 +300,7 @@ fun RecipeDisplay(
                         },
                         label =
                             "${filter.priceRange.min.toInt()} - ${filter.priceRange.max.toInt()} $",
-                        testTag = "priceRangeChip",
+                        testTag = PRICE_RANGE_CHIP,
                         contentDescription = stringResource(R.string.price_range_input_description))
 
                     FilterChip(
@@ -291,7 +310,7 @@ fun RecipeDisplay(
                           recipesViewModel.updateDifficulty(Difficulty.Undefined)
                         },
                         label = filter.difficulty.toString(),
-                        testTag = "difficultyChip",
+                        testTag = DIFFICULTY_CHIP,
                         contentDescription = stringResource(R.string.difficulty_input_description))
 
                     FilterChip(
@@ -301,7 +320,7 @@ fun RecipeDisplay(
                           recipesViewModel.updateCategory(null)
                         },
                         label = filter.category.orEmpty(),
-                        testTag = "categoryChip",
+                        testTag = CATEGORY_CHIP,
                         contentDescription = stringResource(R.string.category_input_description))
                   }
 
@@ -330,7 +349,7 @@ fun RecipeDisplay(
                                             if (displayCard1) currentRecipe?.strMealThumbUrl
                                             else nextRecipe?.strMealThumbUrl),
                                 contentDescription = stringResource(R.string.recipe_image),
-                                modifier = Modifier.fillMaxSize().testTag("recipeImage1"),
+                                modifier = Modifier.fillMaxSize().testTag(RECIPE_IMAGE_1),
                                 contentScale = ContentScale.Crop,
                             )
                           }
@@ -357,7 +376,7 @@ fun RecipeDisplay(
                                             if (displayCard2) currentRecipe?.strMealThumbUrl
                                             else nextRecipe?.strMealThumbUrl),
                                 contentDescription = stringResource(R.string.recipe_image),
-                                modifier = Modifier.fillMaxSize().testTag("recipeImage2"),
+                                modifier = Modifier.fillMaxSize().testTag(RECIPE_IMAGE_2),
                                 contentScale = ContentScale.Crop,
                             )
                           }
@@ -381,10 +400,10 @@ fun RecipeDisplay(
                         offsetX.value < -swipeThreshold -> -END_ANIMATION
                         else -> INITIAL_OFFSET_X
                       }
-                  if (abs(animationTarget) == END_ANIMATION) {
-                    displayCard1 = !displayCard1
-                    displayCard2 = !displayCard2
-                  }
+                    if (abs(animationTarget) == END_ANIMATION) {
+                        displayCard1 = !displayCard1
+                        displayCard2 = !displayCard2
+                    }
                   displayLike = animationTarget == END_ANIMATION
                   displayDisLike = animationTarget == -END_ANIMATION
 
@@ -417,7 +436,7 @@ private fun ShawRecipeButton(navigationActions: NavigationActions) {
       modifier =
           Modifier.padding(horizontal = SMALL_PADDING.dp, vertical = (SMALL_PADDING / 2).dp)
               .wrapContentSize()
-              .testTag("viewRecipeButton")) {
+              .testTag(VIEW_RECIPE_BUTTON)) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(BUTTON_PADDING.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -426,7 +445,7 @@ private fun ShawRecipeButton(navigationActions: NavigationActions) {
                     horizontal = SMALL_PADDING.dp, vertical = (SMALL_PADDING / 2).dp)) {
               Image(
                   painter = painterResource(id = R.drawable.chef_s_hat),
-                  contentDescription = "Chef's hat",
+                  contentDescription = HAT,
                   modifier = Modifier.size(BUTTON_COOK_SIZE.dp),
                   contentScale = ContentScale.Fit)
 
@@ -479,14 +498,14 @@ private fun ImageDescription(name: String, tag: String) {
   Column(modifier = Modifier.padding(PADDING.dp)) {
     Row(
         modifier =
-            Modifier.fillMaxWidth().testTag("draggableItem"), // Ensure the Row takes up full width
+            Modifier.fillMaxWidth().testTag(DRAGGABLE_ITEM), // Ensure the Row takes up full width
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween) {
 
           // Display Recipe Name
           Text(
               modifier =
-                  Modifier.testTag("recipeName")
+                  Modifier.testTag(RECIPE_NAME)
                       .weight(DESCRIPTION_WEIGHT), // Takes up 3 parts of the available space
               text = name,
               style = MaterialTheme.typography.bodyLarge.copy(fontSize = DESCRIPTION_FONT_SIZE.sp),
@@ -506,7 +525,7 @@ private fun ImageDescription(name: String, tag: String) {
                     painter = painterResource(R.drawable.star_rate),
                     contentDescription = stringResource(R.string.star_rate_description),
                     modifier =
-                        Modifier.testTag("recipeStar")
+                        Modifier.testTag(RECIPE_STAR)
                             .size(STAR_SIZE.dp), // Use fixed size for the icon
                     tint = starColor)
 
@@ -517,7 +536,7 @@ private fun ImageDescription(name: String, tag: String) {
                 // Rating Text
                 Text(
                     text = RATE_VALUE,
-                    modifier = Modifier.testTag("recipeRate"),
+                    modifier = Modifier.testTag(RECIPE_RATE),
                     style =
                         MaterialTheme.typography.bodyLarge.copy(
                             fontSize = DESCRIPTION_FONT_SIZE.sp),
@@ -567,9 +586,9 @@ fun FilterChip(
               Icons.Filled.Close,
               contentDescription = contentDescription,
               modifier =
-                  Modifier.testTag("${testTag}Delete").size(InputChipDefaults.IconSize).clickable {
-                    onDelete()
-                  },
+                  Modifier.testTag("${testTag}$DELETE_SUFFIX")
+                      .size(InputChipDefaults.IconSize)
+                      .clickable { onDelete() },
               tint = MaterialTheme.colorScheme.onSecondary)
         })
     Spacer(modifier = Modifier.width(SMALL_PADDING.dp))
@@ -608,13 +627,13 @@ fun LikeDislikeIconAnimation(
                 SCALE_MAX at SCALE_MAX_TIME
                 SCALE_END at SCALE_END_TIME
               },
-          label = "scale animation")
+          label = SCALE_LABEL)
 
   val iconOpacity by
       animateFloatAsState(
           targetValue = if (isDisplaying) ANIMATION_OPACITY_MAX else ANIMATION_OPACITY_MIN,
           animationSpec = tween(durationMillis = ANIMATION_OPACITY_TIME),
-          label = "opacity animation")
+          label = OPACITY_LABEL)
 
   // Display the animated icon
   if (isDisplaying) {
@@ -625,7 +644,7 @@ fun LikeDislikeIconAnimation(
                 .padding(start = padding.dp, end = padding.dp, top = ANIMATION_PADDING_TOP.dp)) {
           Icon(
               painter = painterResource(id = iconRes),
-              contentDescription = if (isLiked) "Like" else "Dislike",
+              contentDescription = if (isLiked) LIKE else DISLIKE,
               tint = iconColor,
               modifier = Modifier.scale(iconScale).alpha(iconOpacity).zIndex(BACKGROUND_ANIMATION))
         }

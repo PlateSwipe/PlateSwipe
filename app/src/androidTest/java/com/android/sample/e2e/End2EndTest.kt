@@ -11,18 +11,22 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.android.sample.model.recipe.CreateRecipeViewModel
+import com.android.sample.model.recipe.FirestoreRecipesRepository
 import com.android.sample.model.user.UserRepository
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.ui.account.AccountScreen
+import com.android.sample.ui.createRecipe.CreateRecipeScreen
 import com.android.sample.ui.fridge.FridgeScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.navigation.TopLevelDestinations
-import com.android.sample.ui.recipe.CreateRecipeScreen
 import com.android.sample.ui.recipe.SearchRecipeScreen
 import com.android.sample.ui.swipePage.SwipePage
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import io.mockk.mockk
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -39,6 +43,7 @@ class EndToEndTest {
   private lateinit var mockFirebaseAuth: FirebaseAuth
 
   private lateinit var userViewModel: UserViewModel
+  private lateinit var createRecipeViewModel: CreateRecipeViewModel
 
   @get:Rule val composeTestRule = createComposeRule()
 
@@ -48,6 +53,10 @@ class EndToEndTest {
     mockUserRepository = mock(UserRepository::class.java)
     mockFirebaseAuth = mock(FirebaseAuth::class.java)
     userViewModel = UserViewModel(mockUserRepository, mockFirebaseAuth)
+
+    val firestore = mockk<FirebaseFirestore>(relaxed = true)
+    val repository = FirestoreRecipesRepository(firestore)
+    createRecipeViewModel = CreateRecipeViewModel(repository)
   }
 
   @Test
@@ -58,7 +67,7 @@ class EndToEndTest {
     composeTestRule.setContent { SwipePage(navigationActions = navigationActions) }
 
     // Click on Create Recipe Icon
-    composeTestRule.onNodeWithTag("tabAddRecipe").assertExists().performClick()
+    composeTestRule.onNodeWithTag("tabAdd Recipe").assertExists().performClick()
     verify(navigationActions).navigateTo(TopLevelDestinations.ADD_RECIPE)
 
     // Click on Search Icon
@@ -83,14 +92,16 @@ class EndToEndTest {
 
     composeTestRule.setContent {
       val navController = rememberNavController()
-      FakeNavHost(navController, userViewModel)
+      FakeNavHost(navController, userViewModel, createRecipeViewModel)
     }
 
     composeTestRule.onNodeWithTag("tabSearch").assertExists().performClick()
     composeTestRule.onNodeWithText("Search Recipe Screen").assertExists()
 
-    composeTestRule.onNodeWithTag("tabAddRecipe").assertExists().performClick()
-    composeTestRule.onNodeWithText("Create Recipe Screen").assertExists()
+    composeTestRule.onNodeWithTag("tabAdd Recipe").assertExists().performClick()
+    composeTestRule.onNodeWithText("Create your recipe").assertExists()
+    composeTestRule.onNodeWithTag("tabAdd Recipe").assertExists().performClick()
+    composeTestRule.onNodeWithTag("RecipeTitle").assertExists()
 
     composeTestRule.onNodeWithTag("tabFridge").assertExists().performClick()
     composeTestRule.onNodeWithText("Fridge Screen").assertExists()
@@ -98,7 +109,11 @@ class EndToEndTest {
 }
 
 @Composable
-fun FakeNavHost(navController: NavHostController, userViewModel: UserViewModel) {
+fun FakeNavHost(
+    navController: NavHostController,
+    userViewModel: UserViewModel,
+    createRecipeViewModel: CreateRecipeViewModel
+) {
   val navigationActions = NavigationActions(navController)
   NavHost(navController = navController, startDestination = Route.SWIPE) {
     navigation(
@@ -124,7 +139,9 @@ fun FakeNavHost(navController: NavHostController, userViewModel: UserViewModel) 
         startDestination = Screen.CREATE_RECIPE,
         route = Route.CREATE_RECIPE,
     ) {
-      composable(Screen.CREATE_RECIPE) { CreateRecipeScreen(navigationActions) }
+      composable(Screen.CREATE_RECIPE) {
+        CreateRecipeScreen(navigationActions, createRecipeViewModel)
+      }
     }
     navigation(
         startDestination = Screen.ACCOUNT,

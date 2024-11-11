@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
@@ -16,18 +17,23 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import com.android.sample.model.ingredient.IngredientViewModel
+import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C
 import com.android.sample.ui.account.AccountScreen
 import com.android.sample.ui.authentication.SignInScreen
 import com.android.sample.ui.camera.CameraScanCodeBarScreen
+import com.android.sample.ui.createRecipe.AddInstructionStepScreen
+import com.android.sample.ui.createRecipe.CreateRecipeScreen
+import com.android.sample.ui.createRecipe.PublishRecipeScreen
+import com.android.sample.ui.createRecipe.RecipeIngredientsScreen
+import com.android.sample.ui.createRecipe.RecipeInstructionsScreen
 import com.android.sample.ui.filter.FilterPage
 import com.android.sample.ui.fridge.FridgeScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
-import com.android.sample.ui.recipe.CreateRecipeScreen
 import com.android.sample.ui.recipe.SearchRecipeScreen
 import com.android.sample.ui.recipeOverview.RecipeOverview
 import com.android.sample.ui.swipePage.SwipePage
@@ -56,6 +62,8 @@ fun PlateSwipeApp() {
   val ingredientViewModel: IngredientViewModel = viewModel(factory = IngredientViewModel.Factory)
 
   val userViewModel = UserViewModel.Factory.create(UserViewModel::class.java)
+  val createRecipeViewModel: CreateRecipeViewModel =
+      viewModel(factory = CreateRecipeViewModel.Factory)
 
   NavHost(navController = navController, startDestination = Route.AUTH) {
     navigation(
@@ -91,8 +99,31 @@ fun PlateSwipeApp() {
         startDestination = Screen.CREATE_RECIPE,
         route = Route.CREATE_RECIPE,
     ) {
-      composable(Screen.CREATE_RECIPE) { CreateRecipeScreen(navigationActions) }
+      composable(Screen.CREATE_RECIPE) { backStackEntry ->
+        remember(backStackEntry) { navController.getBackStackEntry(Route.CREATE_RECIPE) }
+
+        CreateRecipeScreen(
+            navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
+      }
+      composable(Screen.CREATE_RECIPE_INGREDIENTS) {
+        RecipeIngredientsScreen(
+            navigationActions = navigationActions,
+            createRecipeViewModel = createRecipeViewModel,
+            currentStep = 1)
+      }
+      composable(Screen.CREATE_RECIPE_INSTRUCTIONS) {
+        RecipeInstructionsScreen(navigationActions = navigationActions, currentStep = 2)
+      }
+      composable(Screen.CREATE_RECIPE_ADD_INSTRUCTION) {
+        AddInstructionStepScreen(
+            navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
+      }
+      composable(Screen.PUBLISH_CREATED_RECIPE) {
+        PublishRecipeScreen(
+            navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
+      }
     }
+
     navigation(
         startDestination = Screen.ACCOUNT,
         route = Route.ACCOUNT,

@@ -73,6 +73,25 @@ import com.android.sample.resources.C.Tag.LOADING
 import com.android.sample.resources.C.Tag.PADDING
 import com.android.sample.resources.C.Tag.SMALL_PADDING
 import com.android.sample.resources.C.Tag.SwipePage.RATE_VALUE
+import com.android.sample.resources.C.TestTag.RecipeOverview.ADD_SERVINGS
+import com.android.sample.resources.C.TestTag.RecipeOverview.COOK_TIME_TEXT
+import com.android.sample.resources.C.TestTag.RecipeOverview.DRAGGABLE_ITEM
+import com.android.sample.resources.C.TestTag.RecipeOverview.INGREDIENTS_VIEW
+import com.android.sample.resources.C.TestTag.RecipeOverview.INGREDIENT_CHECKBOX
+import com.android.sample.resources.C.TestTag.RecipeOverview.INGREDIENT_PREFIX
+import com.android.sample.resources.C.TestTag.RecipeOverview.INSTRUCTIONS_TEXT
+import com.android.sample.resources.C.TestTag.RecipeOverview.INSTRUCTIONS_VIEW
+import com.android.sample.resources.C.TestTag.RecipeOverview.NUMBER_SERVINGS
+import com.android.sample.resources.C.TestTag.RecipeOverview.PREP_TIME_TEXT
+import com.android.sample.resources.C.TestTag.RecipeOverview.RATING_ICON
+import com.android.sample.resources.C.TestTag.RecipeOverview.RECIPE_IMAGE
+import com.android.sample.resources.C.TestTag.RecipeOverview.RECIPE_RATE
+import com.android.sample.resources.C.TestTag.RecipeOverview.RECIPE_STAR
+import com.android.sample.resources.C.TestTag.RecipeOverview.RECIPE_TITLE
+import com.android.sample.resources.C.TestTag.RecipeOverview.REMOVE_SERVINGS
+import com.android.sample.resources.C.TestTag.RecipeOverview.SLIDING_BUTTON_INGREDIENTS
+import com.android.sample.resources.C.TestTag.RecipeOverview.SLIDING_BUTTON_INSTRUCTIONS
+import com.android.sample.resources.C.TestTag.RecipeOverview.TOTAL_TIME_TEXT
 import com.android.sample.resources.C.Values.RecipeOverview.INITIAL_NUMBER_PERSON_PER_RECIPE
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.theme.starColor
@@ -95,7 +114,7 @@ fun RecipeOverview(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.Start,
             modifier =
-                Modifier.testTag("draggableItem")
+                Modifier.testTag(DRAGGABLE_ITEM)
                     .fillMaxSize()
                     .padding(paddingValues)
                     .verticalScroll(rememberScrollState())) {
@@ -147,14 +166,14 @@ private fun RecipeInformation(currentRecipe: Recipe) {
               SlidingButton(
                   !isInstructionDisplay,
                   stringResource(R.string.ingredients),
-                  "ingredientButton",
+                  SLIDING_BUTTON_INGREDIENTS,
                   Modifier.weight(1f),
                   clickable = { isInstructionDisplay = true })
 
               SlidingButton(
                   isInstructionDisplay,
                   stringResource(R.string.instructions),
-                  "instructionsButton",
+                  SLIDING_BUTTON_INSTRUCTIONS,
                   Modifier.weight(1f),
                   clickable = { isInstructionDisplay = false })
             }
@@ -222,7 +241,7 @@ private fun RecipeImage(currentRecipe: Recipe) {
           Image(
               painter = rememberAsyncImagePainter(model = currentRecipe.strMealThumbUrl),
               contentDescription = stringResource(R.string.recipe_image),
-              modifier = Modifier.fillMaxWidth().height(height).testTag("recipeImage"),
+              modifier = Modifier.fillMaxWidth().height(height).testTag(RECIPE_IMAGE),
               contentScale = ContentScale.Crop,
           )
         }
@@ -239,7 +258,7 @@ private fun RecipeDescription(currentRecipe: Recipe) {
   Column(horizontalAlignment = Alignment.Start, modifier = Modifier.padding(start = PADDING.dp)) {
     Text(
         text = currentRecipe.strMeal,
-        modifier = Modifier.testTag("recipeTitle"),
+        modifier = Modifier.testTag(RECIPE_TITLE),
         style = MaterialTheme.typography.bodyLarge,
         color = MaterialTheme.colorScheme.onSecondary)
 
@@ -249,12 +268,12 @@ private fun RecipeDescription(currentRecipe: Recipe) {
     Row(
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.testTag("ratingIcon")) {
+        modifier = Modifier.testTag(RATING_ICON)) {
           // Display of the rating Icon
           Icon(
               painter = painterResource(R.drawable.star_rate),
               contentDescription = stringResource(R.string.star_rate_description),
-              modifier = Modifier.testTag("recipeStar").size(OVERVIEW_RECIPE_STAR_SIZE.dp),
+              modifier = Modifier.testTag(RECIPE_STAR).size(OVERVIEW_RECIPE_STAR_SIZE.dp),
               tint = starColor)
 
           Spacer(modifier = Modifier.size(SMALL_PADDING.dp))
@@ -262,7 +281,7 @@ private fun RecipeDescription(currentRecipe: Recipe) {
           // Rating Text
           Text(
               text = RATE_VALUE,
-              modifier = Modifier.testTag("recipeRate"),
+              modifier = Modifier.testTag(RECIPE_RATE),
               style = MaterialTheme.typography.bodyMedium,
               color = MaterialTheme.colorScheme.onSecondary)
         }
@@ -285,11 +304,11 @@ private fun PrepareCookTotalTimeDisplay() {
       horizontalArrangement = Arrangement.SpaceBetween,
       verticalAlignment = Alignment.CenterVertically) {
         // Display of the preparation time
-        RecipePropertyRowText(stringResource(R.string.prep_time), "30 min", "prepTimeText")
+        RecipePropertyRowText(stringResource(R.string.prep_time), "30 min", PREP_TIME_TEXT)
         // Display of the cooking time
-        RecipePropertyRowText(stringResource(R.string.cook_time), "20 min", "cookTimeText")
+        RecipePropertyRowText(stringResource(R.string.cook_time), "20 min", COOK_TIME_TEXT)
         // Display of the total time that it takes
-        RecipePropertyRowText(stringResource(R.string.total_time), "50 min", "totalTimeText")
+        RecipePropertyRowText(stringResource(R.string.total_time), "50 min", TOTAL_TIME_TEXT)
       }
 }
 
@@ -347,8 +366,7 @@ private fun IngredientView(
   var servingsCount by remember { mutableIntStateOf(initialServings) }
 
   Row(
-      modifier =
-          Modifier.fillMaxWidth().padding(horizontal = PADDING.dp).testTag("ingredientsView"),
+      modifier = Modifier.fillMaxWidth().padding(horizontal = PADDING.dp).testTag(INGREDIENTS_VIEW),
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.SpaceBetween) {
         // Text label on the left
@@ -393,7 +411,7 @@ private fun Counter(servingsCount: Int, onCounterChange: (Int) -> Unit) {
                 ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.onSecondaryContainer,
                     contentColor = MaterialTheme.colorScheme.background),
-            modifier = Modifier.size(COUNTER_MIN_MAX_SIZE.dp).testTag("removeServings"),
+            modifier = Modifier.size(COUNTER_MIN_MAX_SIZE.dp).testTag(REMOVE_SERVINGS),
             contentPadding = PaddingValues(OVERVIEW_RECIPE_COUNTER_PADDING.dp)) {
               Text(
                   stringResource(R.string.counter_min),
@@ -407,7 +425,7 @@ private fun Counter(servingsCount: Int, onCounterChange: (Int) -> Unit) {
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.background,
             textAlign = TextAlign.Center,
-            modifier = Modifier.testTag("numberServings").width(OVERVIEW_COUNTER_TEXT_SIZE.dp))
+            modifier = Modifier.testTag(NUMBER_SERVINGS).width(OVERVIEW_COUNTER_TEXT_SIZE.dp))
 
         // + button
         Button(
@@ -418,7 +436,7 @@ private fun Counter(servingsCount: Int, onCounterChange: (Int) -> Unit) {
                 ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.onSecondaryContainer,
                     contentColor = MaterialTheme.colorScheme.background),
-            modifier = Modifier.size(COUNTER_MIN_MAX_SIZE.dp).testTag("addServings"),
+            modifier = Modifier.size(COUNTER_MIN_MAX_SIZE.dp).testTag(ADD_SERVINGS),
             contentPadding = PaddingValues(OVERVIEW_RECIPE_COUNTER_PADDING.dp)) {
               Text(
                   stringResource(R.string.counter_max),
@@ -470,7 +488,7 @@ private fun IngredientsList(currentRecipe: Recipe, servingsCount: Int) {
                       checked = ticked,
                       onCheckedChange = { ticked = it },
                       modifier =
-                          Modifier.size(OVERVIEW_CHECKBOX_SIZE.dp).testTag("checkboxIngredient"))
+                          Modifier.size(OVERVIEW_CHECKBOX_SIZE.dp).testTag(INGREDIENT_CHECKBOX))
 
                   Text(
                       text = "$ingredient: $modifiedMeasurement",
@@ -478,7 +496,7 @@ private fun IngredientsList(currentRecipe: Recipe, servingsCount: Int) {
                       style = MaterialTheme.typography.bodyMedium,
                       color = MaterialTheme.colorScheme.onPrimary,
                       modifier =
-                          Modifier.testTag("ingredient$ingredient").semantics {
+                          Modifier.testTag("$INGREDIENT_PREFIX$ingredient").semantics {
                             contentDescription = "$ingredient, $modifiedMeasurement"
                           })
                 }
@@ -501,13 +519,13 @@ private fun InstructionView(currentRecipe: Recipe) {
                   end = OVERVIEW_INSTRUCTION_END.dp,
                   top = OVERVIEW_INSTRUCTION_TOP.dp,
                   bottom = OVERVIEW_INSTRUCTION_BOTTOM.dp)
-              .testTag("instructionsView")) {
+              .testTag(INSTRUCTIONS_VIEW)) {
         // Display of the instructions
 
         Text(
             text = currentRecipe.strInstructions,
             color = Color.Black,
             style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.testTag("instructionsText"))
+            modifier = Modifier.testTag(INSTRUCTIONS_TEXT))
       }
 }

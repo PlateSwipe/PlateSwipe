@@ -172,7 +172,7 @@ class CreateRecipeViewModelTest {
 
     onSuccessCaptor.firstValue.invoke()
 
-    assertEquals("Recipe published successfully!", createRecipeViewModel.publishError.value)
+    assertEquals("Recipe published successfully!", createRecipeViewModel.publishStatus.value)
   }
 
   @Test
@@ -199,7 +199,7 @@ class CreateRecipeViewModelTest {
     onFailureCaptor.firstValue.invoke(exception)
 
     assertEquals(
-        "Failed to publish recipe: Network error", createRecipeViewModel.publishError.value)
+        "Failed to publish recipe: Network error", createRecipeViewModel.publishStatus.value)
   }
 
   @Test
@@ -213,9 +213,9 @@ class CreateRecipeViewModelTest {
     createRecipeViewModel.publishRecipe()
     advanceUntilIdle()
 
-    assertNotNull(createRecipeViewModel.publishError.value)
+    assertNotNull(createRecipeViewModel.publishStatus.value)
     createRecipeViewModel.clearPublishError()
-    assertNull(createRecipeViewModel.publishError.value)
+    assertNull(createRecipeViewModel.publishStatus.value)
   }
 
   @Test
