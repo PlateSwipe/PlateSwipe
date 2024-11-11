@@ -1,5 +1,7 @@
 package com.android.sample.resources
 
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.android.sample.R
 
 // Like R, but C
@@ -197,6 +199,38 @@ object C {
     const val SCAN_THRESHOLD = 3
     const val LOG_TAG_CAMERA_UTILS = "CameraUtils"
     const val INVALID_BARCODE_MSG = "Invalid barcode"
+
+    // ChefImage composable
+    val CHEF_IMAGE_CORNER_RADIUS = 16.dp
+    val CHEF_IMAGE_STANDING_ORIGINAL_RATIO = 224 / 300f
+
+    // Initial step value for recipe creation flow
+    const val INITIAL_RECIPE_STEP = 0
+
+    // RecipeNameScreen Specific Constants
+    val RECIPE_NAME_BASE_PADDING = 16.dp
+    val RECIPE_NAME_FIELD_SPACING = 30.dp
+    val RECIPE_NAME_BUTTON_WIDTH = 261.dp
+    val RECIPE_NAME_BUTTON_HEIGHT = 46.dp
+    val RECIPE_NAME_FIELD_HEIGHT = 60.dp
+    val RECIPE_NAME_FONT_SPACING = 0.14.sp
+    val RECIPE_NAME_CHARACTER_LIMIT = 50
+    const val SCREEN_WIDTH_THRESHOLD = 400
+    const val SCREEN_HEIGHT_THRESHOLD = 865
+
+    // RecipeStepScreen
+    val BASE_PADDING = 16.dp
+
+    val BUTTON_WIDTH = 200.dp
+    val BUTTON_HEIGHT = 50.dp
+
+    // AddInstructionStepScreen
+    const val HORIZONTAL_PADDING = 16
+    const val SAVE_BUTTON_TAG = "saveButton"
+
+    // PublishRecipeScreen
+    val CHEF_IMAGE_DESCRIPTION = "Chef illustration inside an egg"
+    val CHEF_IN_EGG_ORIGINAL_RATIO = 412 / 500f
 
     // CreateRecipeViewModel
     const val RECIPE_PUBLISHED_SUCCESS_MESSAGE = "Recipe published successfully!"

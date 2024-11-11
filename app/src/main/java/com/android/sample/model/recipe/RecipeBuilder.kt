@@ -147,6 +147,20 @@ class RecipeBuilder {
         price = price)
   }
 
+  /** Clears all fields in the builder. */
+  fun clear() {
+    this.idMeal = ""
+    this.strMeal = ""
+    this.strCategory = null
+    this.strArea = null
+    this.strInstructions = ""
+    this.strMealThumbUrl = ""
+    this.ingredientsAndMeasurements.clear()
+    this.time = null
+    this.difficulty = null
+    this.price = null
+  }
+
   /** Returns the ID of the recipe. */
   fun getId(): String = idMeal
 
