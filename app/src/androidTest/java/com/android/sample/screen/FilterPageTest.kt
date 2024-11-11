@@ -62,7 +62,7 @@ class FilterPageTest {
           listOf(Pair("Ingredient 2", "Ingredient 2")))
   private val mockedRecipesList = listOf(recipe1, recipe2)
 
-  private val mockedCategoriesList = listOf("Dessert", "Vegetarian")
+  private val mockedCategoriesList = Recipe.getCategories()
 
   @get:Rule val composeTestRule = createComposeRule()
 
@@ -80,12 +80,6 @@ class FilterPageTest {
       null
     }
 
-    `when`(mockRepository.listCategories(any(), any())).thenAnswer { invocation ->
-      val onSuccess = invocation.getArgument<(List<String>) -> Unit>(0)
-      onSuccess(mockedCategoriesList)
-      null
-    }
-
     recipesViewModel = RecipesViewModel(mockRepository)
     advanceUntilIdle()
 
@@ -98,7 +92,6 @@ class FilterPageTest {
       FilterPage(mockNavigationActions, recipesViewModel) // Set up the SignInScreen directly
     }
     advanceUntilIdle()
-    Intents.init()
   }
 
   /** This method runs after the test execution. */

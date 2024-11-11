@@ -105,11 +105,9 @@ class RecipesViewModel(private val repository: RecipesRepository) :
    */
   override fun updateCategory(category: String?) {
     viewModelScope.launch {
-      // if (category == null) {
       _recipes.value = emptyList()
       _currentRecipe.value = null
       _nextRecipe.value = null
-      // }
       _filter.value.category = category
       fetchRandomRecipes(NUMBER_RECIPES_TO_FETCH)
       _loading.collect { isLoading ->
