@@ -10,7 +10,6 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipe
-import androidx.test.espresso.intent.Intents
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.sample.model.filter.Difficulty
 import com.android.sample.model.recipe.Recipe
@@ -22,7 +21,6 @@ import com.android.sample.ui.navigation.Route
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
-import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Before
@@ -93,9 +91,6 @@ class FilterPageTest {
     }
     advanceUntilIdle()
   }
-
-  /** This method runs after the test execution. */
-  @After fun tearDown() = runTest { Intents.release() }
 
   /** This test checks if the BottomBar and the topBar of the swipe page are correctly displayed. */
   @Test

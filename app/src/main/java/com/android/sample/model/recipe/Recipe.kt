@@ -59,6 +59,7 @@ data class Recipe(
         FIRESTORE_RECIPE_PRICE to price)
   }
 
+  /** object to get the list of categories. */
   companion object {
     // unused categories: "Goat" because have only 1 recipe
     private val listCategories =
