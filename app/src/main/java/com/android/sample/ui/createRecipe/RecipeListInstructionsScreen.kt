@@ -129,7 +129,8 @@ fun RecipeListInstructionsContent(
                             colors =
                                 listOf(MaterialTheme.colorScheme.background, Color.Transparent)))
                 .align(Alignment.CenterHorizontally)
-                // These parameters come from https://stackoverflow.com/questions/66762472/how-to-add-fading-edge-effect-to-android-jetpack-compose-column-or-row
+                // These parameters come from
+                // https://stackoverflow.com/questions/66762472/how-to-add-fading-edge-effect-to-android-jetpack-compose-column-or-row
                 .fadingEdge(
                     Brush.verticalGradient(
                         0f to Color.Transparent,
@@ -145,31 +146,16 @@ fun RecipeListInstructionsContent(
            * InstructionValue(index, recipeBuilder.getTime(), 0,
            * {navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_INSTRUCTION)}) }
            */
-          //
-
-          items(10) { index ->
+          item {
             InstructionValue(
-                index = index,
+                index = 0,
                 time = createRecipeViewModel.getRecipeTime(),
                 icon = 0,
-                onClick = {
+                onClick = { index ->
                   createRecipeViewModel.selectDescription(index = index)
                   navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_INSTRUCTION)
                 })
           }
-
-          /*
-            item {
-              InstructionValue(
-                  index = 0,
-                  time = createRecipeViewModel.getRecipeTime(),
-                  icon = 0,
-                  onClick = { index ->
-                    createRecipeViewModel.selectDescription(index = index)
-                    navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_INSTRUCTION)
-                  })
-            }
-          */
         }
 
     // Fixed button at the bottom
@@ -230,11 +216,10 @@ fun InstructionValue(index: Int, time: String?, icon: Int, onClick: (Int) -> Uni
               modifier = Modifier.fillMaxWidth(ROW_SIZE).testTag(RECIPE_LIST_ITEM_THUMBNAIL),
               horizontalArrangement = Arrangement.SpaceBetween,
               verticalAlignment = Alignment.CenterVertically) {
-
-              Image(
-                  painter = painterResource(id = R.drawable.fire),
-                  contentDescription = "Fire",
-                  modifier = Modifier.size(ICON_SIZE.dp).testTag(RECIPE_LIST_INSTRUCTION_ICON))
+                Image(
+                    painter = painterResource(id = R.drawable.fire),
+                    contentDescription = "Fire",
+                    modifier = Modifier.size(ICON_SIZE.dp).testTag(RECIPE_LIST_INSTRUCTION_ICON))
 
                 Column(modifier = Modifier.testTag(INSTRUCTION_TEXT_SPACE)) {
                   Text(
