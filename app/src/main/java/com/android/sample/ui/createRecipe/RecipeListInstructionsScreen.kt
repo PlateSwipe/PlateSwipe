@@ -191,7 +191,12 @@ fun NextStepButton(
 }
 
 @Composable
-fun InstructionValue(createRecipeViewModel: CreateRecipeViewModel, index: Int, time: String?, onClick: (Int) -> Unit) {
+fun InstructionValue(
+    createRecipeViewModel: CreateRecipeViewModel,
+    index: Int,
+    time: String?,
+    onClick: (Int) -> Unit
+) {
   val officialStep = index + 1
   Card(
       modifier =
@@ -217,10 +222,13 @@ fun InstructionValue(createRecipeViewModel: CreateRecipeViewModel, index: Int, t
               horizontalArrangement = Arrangement.SpaceBetween,
               verticalAlignment = Alignment.CenterVertically) {
                 Image(
-                    painter = painterResource(
-                        if(createRecipeViewModel.getIcon(index)!=null){
-                            createRecipeViewModel.getIcon(index)!!.iconResId}
-                        else {R.drawable.fire}),
+                    painter =
+                        painterResource(
+                            if (createRecipeViewModel.getIcon(index) != null) {
+                              createRecipeViewModel.getIcon(index)!!.iconResId
+                            } else {
+                              R.drawable.fire
+                            }),
                     contentDescription = "Fire",
                     modifier = Modifier.size(ICON_SIZE.dp).testTag(RECIPE_LIST_INSTRUCTION_ICON))
 
