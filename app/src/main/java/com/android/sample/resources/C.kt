@@ -425,6 +425,9 @@ object C {
       const val LIST_HEIGHT_FRACTION = 0.8899f
       const val ROUNDED_CORNER_SHAPE = 4
       const val CARD_BORDER_THICKNESS = 1
+      const val CARD_BORDER_ROUND = 8
+      const val CARD_CORNER_RADIUS = 8
+      const val CARD_SHADOW_ELEVATION = 8
       const val ICON_SIZE = 24
       const val ROW_SIZE = 1f
       const val SPACER_SIZE = 1f
