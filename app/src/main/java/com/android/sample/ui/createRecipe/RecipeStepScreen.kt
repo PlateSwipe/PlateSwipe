@@ -59,7 +59,7 @@ fun RecipeStepScreen(
                 // Title text
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.titleLarge,
+                    style = MaterialTheme.typography.displayLarge,
                     color = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier.fillMaxWidth().padding(horizontal = BASE_PADDING * 2),
                     textAlign = TextAlign.Center)
@@ -72,18 +72,21 @@ fun RecipeStepScreen(
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimary,
                     modifier =
-                        Modifier.padding(horizontal = BASE_PADDING * 2).width(260.dp).height(63.dp),
+                        Modifier.padding(horizontal = BASE_PADDING * 2)
+                            .width(260.dp)
+                            .height(63.dp)
+                            .zIndex(1f),
                     textAlign = TextAlign.Center)
 
                 Spacer(modifier = Modifier.weight(0.05f))
 
                 // Row to hold the chef image and change its position horizontally
                 Row(
-                    modifier = Modifier.fillMaxWidth().weight(1f),
+                    modifier = Modifier.weight(1f),
                     verticalAlignment = Alignment.CenterVertically) {
-                      Spacer(modifier = Modifier.weight(0.25f))
-
-                      ChefImage(modifier = Modifier.fillMaxHeight().weight(0.8f))
+                      Spacer(modifier = Modifier.weight(0.05f))
+                      ChefImage(modifier = Modifier.weight(0.9f).zIndex(-1f))
+                      Spacer(modifier = Modifier.weight(0.05f))
                     }
                 Spacer(modifier = Modifier.weight(0.1f))
               }
