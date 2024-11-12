@@ -186,7 +186,7 @@ fun RecipeDisplay(
     navigationActions: NavigationActions,
     paddingValues: PaddingValues,
     recipesViewModel: RecipesViewModel = viewModel(factory = RecipesViewModel.Factory),
-    userViewModel: UserViewModel = viewModel(factory = UserViewModel.Factory)
+    userViewModel: UserViewModel
 ) {
   var retrieveNextRecipe by remember { mutableStateOf(INITIAL_RETRIEVE_NEXT_RECIPE) }
   var displayCard1 by remember { mutableStateOf(INITIAL_DISPLAY_CARD_1) }
