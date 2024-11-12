@@ -93,7 +93,7 @@ fun AddInstructionStepContent(
                     verticalAlignment = Alignment.CenterVertically) {
                       // Time input field
                       OutlinedTextField(
-                          value = if (stepTime.isNullOrEmpty()) "" else stepTime.toString(),
+                          value = stepTime?: "",
                           onValueChange = { stepTime = it },
                           label = {
                             Text(stringResource(R.string.time_label), style = Typography.bodySmall)
@@ -106,7 +106,7 @@ fun AddInstructionStepContent(
 
                       // Category input field
                       OutlinedTextField(
-                          value = if (stepCategory.isNullOrEmpty()) "" else stepCategory.toString(),
+                          value = stepCategory?: "",
                           onValueChange = { stepCategory = it },
                           label = {
                             Text(
