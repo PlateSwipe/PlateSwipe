@@ -161,20 +161,10 @@ fun AddInstructionStepContent(
         Button(
             onClick = {
               showError = stepDescription.isEmpty() // Set error if instructions are empty
-              if (stepDescription.isNotEmpty()) {
-                createRecipeViewModel.updateRecipeInstructions(stepDescription)
-                if (!stepTime.isNullOrEmpty()) {
-                  createRecipeViewModel.updateRecipeTime(stepTime.toString())
-                }
-                if (!stepCategory.isNullOrEmpty()) {
-                  createRecipeViewModel.updateRecipeCategory(stepCategory.toString())
-                }
-                if (selectedIcon != null) {
-                  createRecipeViewModel.selectIcon(selectedIcon!!)
-                }
-
-                navigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INSTRUCTIONS)
-              }
+              confirmAndAssignStep(
+                  stepDescription, stepTime, stepCategory, selectedIcon, createRecipeViewModel) {
+                    navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_INSTRUCTION)
+                  }
             },
             modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp).testTag(SAVE_BUTTON_TAG),
             colors =
@@ -197,4 +187,37 @@ fun AddInstructionStepContent(
  */
 fun verifyStepDescription(showError: Boolean, stepDescription: String): Boolean {
   return showError && stepDescription.isEmpty()
+}
+
+/**
+ * Confirms the step and assigns the step details to the view model.
+ *
+ * @param stepDescription The description of the step.
+ * @param stepTime The time required for the step.
+ * @param stepCategory The category of the step.
+ * @param selectedIcon The icon selected for the step.
+ * @param createRecipeViewModel ViewModel for managing the recipe creation process.
+ * @param onSuccess Callback to be executed if the step is confirmed.
+ */
+fun confirmAndAssignStep(
+    stepDescription: String,
+    stepTime: String?,
+    stepCategory: String?,
+    selectedIcon: IconType?,
+    createRecipeViewModel: CreateRecipeViewModel,
+    onSuccess: () -> Unit
+) {
+  if (stepDescription.isNotEmpty()) {
+    createRecipeViewModel.updateRecipeInstructions(stepDescription)
+    if (!stepTime.isNullOrEmpty()) {
+      createRecipeViewModel.updateRecipeTime(stepTime.toString())
+    }
+    if (!stepCategory.isNullOrEmpty()) {
+      createRecipeViewModel.updateRecipeCategory(stepCategory.toString())
+    }
+    if (selectedIcon != null) {
+      createRecipeViewModel.selectIcon(selectedIcon!!)
+    }
+    onSuccess()
+  }
 }
