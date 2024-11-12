@@ -14,6 +14,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.android.sample.R
+import com.android.sample.resources.C.Tag.INITIAL_RECIPE_STEP
 import com.android.sample.ui.theme.Orange80
 import com.android.sample.ui.theme.graySlate
 import com.android.sample.ui.theme.lightCream
@@ -31,7 +32,7 @@ fun RecipeProgressBar(currentStep: Int) {
           R.drawable.chef_s_hat, R.drawable.whisk, R.drawable.assignment, R.drawable.crop_original)
 
   // Ensure currentStep is within bounds
-  val safeCurrentStep = currentStep.coerceIn(0, stepIcons.size - 1)
+  val safeCurrentStep = currentStep.coerceIn(INITIAL_RECIPE_STEP, stepIcons.size - 1)
 
   Row(
       modifier = Modifier.fillMaxWidth().padding(16.dp).testTag("progressBar"),

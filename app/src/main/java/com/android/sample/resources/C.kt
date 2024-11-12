@@ -204,8 +204,10 @@ object C {
     val CHEF_IMAGE_CORNER_RADIUS = 16.dp
     val CHEF_IMAGE_STANDING_ORIGINAL_RATIO = 224 / 300f
 
-    // Initial step value for recipe creation flow
+    // RecipeProgressBar
     const val INITIAL_RECIPE_STEP = 0
+    const val SECOND_STEP_OF_THE_CREATION = 1
+    const val THIRD_STEP_OF_THE_CREATION = 2
 
     // RecipeNameScreen Specific Constants
     val RECIPE_NAME_BASE_PADDING = 16.dp
