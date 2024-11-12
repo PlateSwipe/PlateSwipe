@@ -495,5 +495,11 @@ object C {
       const val SWIPE_TEXT = "swipeText"
       const val LOGIN_BUTTON = "loginButton"
     }
+
+    object SearchScreen {
+      const val SEARCH_SCREEN = "search screen"
+      const val SEARCH_BAR = "searchBar"
+      const val SEARCH_LIST = "searchList"
+    }
   }
 }

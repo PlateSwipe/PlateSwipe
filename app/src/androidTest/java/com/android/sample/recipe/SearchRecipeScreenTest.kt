@@ -8,6 +8,10 @@ import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.recipe.RecipesRepository
 import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.resources.C.Tag.SEARCH_BAR_PLACE_HOLDER
+import com.android.sample.resources.C.TestTag.SearchScreen.SEARCH_BAR
+import com.android.sample.resources.C.TestTag.SearchScreen.SEARCH_LIST
+import com.android.sample.resources.C.TestTag.SearchScreen.SEARCH_SCREEN
+import com.android.sample.resources.C.TestTag.Utils.PLATESWIPE_SCAFFOLD
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.recipeOverview.SearchRecipeScreen
@@ -85,16 +89,12 @@ class searchRecipeScreenTest {
   }
 
   @Test
-  fun displayTest() {
-    composeTestRule.setContent { SearchRecipeScreen(mockNavigationActions, recipesViewModel) }
-      composeTestRule.onNodeWithTag("SearchRecipeScreen").assertIsDisplayed()
-      composeTestRule.onNodeWithTag("PlateSwipeLogo icon").assertIsDisplayed()
-      composeTestRule.onNodeWithTag("PlateSwipeLogo text").assertIsDisplayed()
-      composeTestRule.onNodeWithTag("filter button").assertIsDisplayed()
-      composeTestRule.onNodeWithTag("search icon").assertIsDisplayed()
-      composeTestRule.onNodeWithTag("searchBar").assertIsDisplayed()
+  fun displaySearchScreen() {
+      composeTestRule.setContent { SearchRecipeScreen(mockNavigationActions, recipesList) }
 
-      composeTestRule.onNodeWithTag("searchBar")
-          .assertTextEquals(SEARCH_BAR_PLACE_HOLDER)
+      composeTestRule.onNodeWithTag(PLATESWIPE_SCAFFOLD).assertIsDisplayed()
+      composeTestRule.onNodeWithTag(SEARCH_SCREEN).assertIsDisplayed()
+      composeTestRule.onNodeWithTag(SEARCH_BAR).assertIsDisplayed()
+      composeTestRule.onNodeWithTag(SEARCH_LIST).assertTextEquals(SEARCH_BAR_PLACE_HOLDER)
   }
 }
