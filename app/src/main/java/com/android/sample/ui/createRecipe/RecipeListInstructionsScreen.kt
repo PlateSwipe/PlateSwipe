@@ -12,13 +12,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ModeEdit
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -38,7 +35,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.android.sample.R
 import com.android.sample.model.recipe.CreateRecipeViewModel
@@ -50,11 +46,8 @@ import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScre
 import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScreen.ICON_SIZE
 import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScreen.MEDIUM_PADDING
 import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScreen.REALLY_SMALL_PADDING
-import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScreen.ROUNDED_CORNER_SHAPE
 import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScreen.ROW_SIZE
 import com.android.sample.resources.C.Tag.RECIPE_NAME_BASE_PADDING
-import com.android.sample.resources.C.Tag.RECIPE_NAME_BUTTON_HEIGHT
-import com.android.sample.resources.C.Tag.RECIPE_NAME_BUTTON_WIDTH
 import com.android.sample.resources.C.Tag.SMALL_PADDING
 import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.EDIT_INSTRUCTION_ICON
 import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.INSTRUCTION_LIST
@@ -72,6 +65,7 @@ import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
+import com.android.sample.ui.utils.PlateSwipeButton
 import com.android.sample.ui.utils.PlateSwipeScaffold
 
 @Composable
@@ -111,14 +105,14 @@ fun RecipeListInstructionsContent(
     Text(
         modifier = Modifier.testTag(RECIPE_NAME_TEXT),
         text = createRecipeViewModel.getRecipeName(),
-        style = MaterialTheme.typography.titleLarge,
+        style = MaterialTheme.typography.titleMedium,
         color = MaterialTheme.colorScheme.onPrimary,
     )
     // This text represents the "Instructions" title"
     Text(
         modifier = Modifier.testTag(INSTRUCTION_TEXT),
         text = stringResource(R.string.RecipeListInstructionsScreen_Instructions),
-        style = MaterialTheme.typography.titleMedium,
+        style = MaterialTheme.typography.titleSmall,
         color = MaterialTheme.colorScheme.onPrimary,
     )
     // LazyColumn for the scrollable list of instructions
@@ -163,35 +157,12 @@ fun RecipeListInstructionsContent(
         }
 
     // Fixed button at the bottom
-    NextStepButton(
-        modifier = Modifier.align(Alignment.CenterHorizontally),
-        navigationActions = navigationActions,
+    PlateSwipeButton(
+        text = stringResource(R.string.next_step),
+        modifier = Modifier.align(Alignment.CenterHorizontally).testTag(NEXT_STEP_BUTTON),
+        onClick = { navigationActions.navigateTo(Screen.PUBLISH_CREATED_RECIPE) },
     )
   }
-}
-
-@Composable
-fun NextStepButton(
-    modifier: Modifier,
-    navigationActions: NavigationActions,
-) {
-  Button(
-      onClick = { navigationActions.navigateTo(Screen.PUBLISH_CREATED_RECIPE) },
-      modifier =
-          modifier
-              .width(RECIPE_NAME_BUTTON_WIDTH)
-              .height(RECIPE_NAME_BUTTON_HEIGHT)
-              .background(
-                  color = MaterialTheme.colorScheme.primary,
-                  shape = RoundedCornerShape(size = ROUNDED_CORNER_SHAPE.dp))
-              .testTag(NEXT_STEP_BUTTON),
-      colors =
-          ButtonDefaults.buttonColors(
-              MaterialTheme.colorScheme.primary,
-              contentColor = MaterialTheme.colorScheme.onPrimary),
-      shape = RoundedCornerShape(ROUNDED_CORNER_SHAPE.dp)) {
-        Text(text = stringResource(R.string.next_step), textAlign = TextAlign.Center)
-      }
 }
 
 @Composable
