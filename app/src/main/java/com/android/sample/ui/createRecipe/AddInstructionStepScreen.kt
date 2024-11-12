@@ -162,9 +162,14 @@ fun AddInstructionStepContent(
             onClick = {
               showError = stepDescription.isEmpty() // Set error if instructions are empty
               confirmAndAssignStep(
-                  stepDescription, stepTime, stepCategory, selectedIcon, createRecipeViewModel) {
-                    navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_INSTRUCTION)
-                  }
+                  stepDescription,
+                  stepTime,
+                  stepCategory,
+                  selectedIcon,
+                  createRecipeViewModel,
+                  onSuccess = {
+                    navigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INSTRUCTIONS)
+                  })
             },
             modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp).testTag(SAVE_BUTTON_TAG),
             colors =
