@@ -1,8 +1,7 @@
 package com.android.sample.ui.recipeOverview
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.backgroundcomm
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -146,26 +145,3 @@ fun SearchingBar(recipes: List<Recipe>) {
       }
 }
 
-@Composable
-fun FilterChip(text: String) {
-  OutlinedButton(
-      onClick = { /* Apply filter logic */},
-      modifier = Modifier,
-      colors =
-          ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
-      border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface)) {
-        Text(text, fontSize = 12.sp)
-      }
-}
-
-@Composable
-fun ClearAllChip() {
-  Button(
-      onClick = { /* Clear all filters logic */},
-      colors =
-          ButtonDefaults.buttonColors(
-              containerColor = MaterialTheme.colorScheme.surfaceVariant,
-              contentColor = MaterialTheme.colorScheme.onSurface)) {
-        Text("Clear All", fontSize = 12.sp)
-      }
-}
