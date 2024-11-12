@@ -106,12 +106,15 @@ fun RecipeListInstructionsContent(
     RecipeProgressBar(currentStep = CURRENT_STEP)
     Spacer(
         modifier = Modifier.height(BIG_PADDING.dp).testTag(RECIPE_LIST_INSTRUCTIONS_SCREEN_SPACER1))
+
+    // This text represents the name of the recipe
     Text(
         modifier = Modifier.testTag(RECIPE_NAME_TEXT),
         text = createRecipeViewModel.getRecipeName(),
         style = MaterialTheme.typography.titleLarge,
         color = MaterialTheme.colorScheme.onPrimary,
     )
+    // This text represents the "Instructions" title"
     Text(
         modifier = Modifier.testTag(INSTRUCTION_TEXT),
         text = stringResource(R.string.RecipeListInstructionsScreen_Instructions),
@@ -143,7 +146,8 @@ fun RecipeListInstructionsContent(
            * This Part will be later improved by adding the list of instructions
            *
            * items(createRecipeViewModel.getInstructions().length) { index ->
-           * InstructionValue(index, recipeBuilder.getTime(), 0,
+           * InstructionValue(createRecipeViewModel = createRecipeViewModel, index = index, time =
+           * recipeBuilder.getTime(), onClick =
            * {navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_INSTRUCTION)}) }
            */
           item {
@@ -233,6 +237,7 @@ fun InstructionValue(
                     modifier = Modifier.size(ICON_SIZE.dp).testTag(RECIPE_LIST_INSTRUCTION_ICON))
 
                 Column(modifier = Modifier.testTag(INSTRUCTION_TEXT_SPACE)) {
+                  // This text represents the "Step $nb_of_the_step"
                   Text(
                       modifier = Modifier.testTag(INSTRUCTION_TEXT_IN_CARD),
                       text =
@@ -240,6 +245,7 @@ fun InstructionValue(
                       style = MaterialTheme.typography.bodyMedium,
                       fontWeight = FontWeight.Bold)
 
+                  // This text represents the time that it takes to do the step
                   if (!time.isNullOrBlank()) {
                     Text(
                         text =
