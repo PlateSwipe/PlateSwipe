@@ -165,6 +165,14 @@ fun RecipeListInstructionsContent(
   }
 }
 
+/**
+ * This function represents the item of the list of instructions
+ *
+ * @param createRecipeViewModel The ViewModel that contains the instructions
+ * @param index The index of the instruction
+ * @param time The time that it takes to do the instruction
+ * @param onClick The action to do when the instruction is clicked
+ */
 @Composable
 fun InstructionValue(
     createRecipeViewModel: CreateRecipeViewModel,
