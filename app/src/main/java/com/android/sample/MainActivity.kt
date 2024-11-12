@@ -26,6 +26,7 @@ import com.android.sample.ui.authentication.SignInScreen
 import com.android.sample.ui.camera.CameraScanCodeBarScreen
 import com.android.sample.ui.createRecipe.AddInstructionStepScreen
 import com.android.sample.ui.createRecipe.CreateRecipeScreen
+import com.android.sample.ui.createRecipe.IngredientSearchScreen
 import com.android.sample.ui.createRecipe.PublishRecipeScreen
 import com.android.sample.ui.createRecipe.RecipeIngredientsScreen
 import com.android.sample.ui.createRecipe.RecipeInstructionsScreen
@@ -96,6 +97,7 @@ fun PlateSwipeApp() {
       composable(Screen.SEARCH) { SearchRecipeScreen(navigationActions) }
     }
     navigation(
+        // startDestination = Screen.CREATE_RECIPE_SEARCH_INGREDIENTS,
         startDestination = Screen.CREATE_RECIPE,
         route = Route.CREATE_RECIPE,
     ) {
@@ -121,6 +123,13 @@ fun PlateSwipeApp() {
       composable(Screen.PUBLISH_CREATED_RECIPE) {
         PublishRecipeScreen(
             navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
+      }
+
+      composable(Screen.CREATE_RECIPE_SEARCH_INGREDIENTS) {
+        IngredientSearchScreen(navigationActions, ingredientViewModel)
+      }
+      composable(Screen.CAMERA_SCAN_CODE_BAR) {
+        CameraScanCodeBarScreen(navigationActions, ingredientViewModel)
       }
     }
 

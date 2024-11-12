@@ -22,6 +22,10 @@ class IngredientViewModel(private val repository: IngredientRepository) : ViewMo
   val ingredient: StateFlow<Ingredient?>
     get() = _ingredient
 
+  private val _ingredientList = MutableStateFlow<List<Ingredient>>(emptyList())
+  val ingredientList: StateFlow<List<Ingredient>>
+    get() = _ingredientList
+
   fun fetchIngredient(barCode: Long) {
     if (_ingredient.value?.barCode == barCode) {
       return
@@ -30,6 +34,17 @@ class IngredientViewModel(private val repository: IngredientRepository) : ViewMo
         barCode,
         onSuccess = { ingredient -> _ingredient.value = ingredient },
         onFailure = { _ingredient.value = null })
+  }
+
+  fun addBarCodeIngredient(ingredient: Ingredient) {
+    _ingredientList.value += ingredient
+  }
+
+  fun fetchIngredientByName(name: String) {
+    repository.search(
+        name,
+        onSuccess = { ingredientList -> _ingredientList.value = ingredientList },
+        onFailure = { _ingredientList.value = emptyList() })
   }
 
   // create factory

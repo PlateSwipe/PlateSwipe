@@ -40,6 +40,7 @@ import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.ingredient.IngredientViewModel
 import com.android.sample.resources.C
 import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.navigation.Screen
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 
@@ -59,7 +60,7 @@ fun CameraScanCodeBarScreen(
             contentAlignment = Alignment.Center,
         ) {
           CameraSection(ingredientViewModel)
-          IngredientOverlay(ingredientViewModel)
+          IngredientOverlay(ingredientViewModel, navigationActions)
         }
       })
 }
@@ -115,7 +116,10 @@ fun BarCodeFrame() {
 }
 /** Display the ingredient overlay */
 @Composable
-fun IngredientOverlay(viewModel: IngredientViewModel) {
+fun IngredientOverlay(
+    viewModel: IngredientViewModel,
+    navigationActions: NavigationActions,
+) {
   val ingredient by viewModel.ingredient.collectAsState()
   if (ingredient != null) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
@@ -128,7 +132,7 @@ fun IngredientOverlay(viewModel: IngredientViewModel) {
                           .dp)
                   .wrapContentHeight()) {
             // Display the ingredient details
-            IngredientDisplay(ingredient = ingredient!!)
+            IngredientDisplay(ingredient = ingredient!!, viewModel, navigationActions)
           }
     }
   }
@@ -140,7 +144,11 @@ fun IngredientOverlay(viewModel: IngredientViewModel) {
  * @param ingredient the ingredient to display
  */
 @Composable
-fun IngredientDisplay(ingredient: Ingredient?) {
+fun IngredientDisplay(
+    ingredient: Ingredient?,
+    viewModel: IngredientViewModel,
+    navigationActions: NavigationActions
+) {
   Row(
       modifier =
           Modifier.fillMaxSize()
@@ -216,7 +224,10 @@ fun IngredientDisplay(ingredient: Ingredient?) {
                                 .INGREDIENT_DISPLAY_TEXT_BRAND_PADDING_H
                                 .dp))
             Button(
-                onClick = { /*TODO*/},
+                onClick = {
+                  viewModel.addBarCodeIngredient(ingredient)
+                  navigationActions.navigateTo(Screen.CREATE_RECIPE_SEARCH_INGREDIENTS)
+                },
                 modifier =
                     Modifier.padding(
                         vertical =
