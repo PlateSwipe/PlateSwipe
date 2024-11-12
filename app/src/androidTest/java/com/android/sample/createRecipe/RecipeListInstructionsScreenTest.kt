@@ -53,7 +53,7 @@ class RecipeListInstructionsScreenTest {
   fun recipeListInstructionsScreen_allFieldsDisplayed() {
     composeTestRule.setContent {
       RecipeListInstructionsScreen(
-        navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
+          navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
     }
 
     composeTestRule.onNodeWithTag(SCREEN_COLUMN).assertIsDisplayed()
@@ -66,7 +66,7 @@ class RecipeListInstructionsScreenTest {
   fun recipeListInstructionsScreen_allFieldsClickable_and_navigatesCorrectly() {
     composeTestRule.setContent {
       RecipeListInstructionsScreen(
-        navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
+          navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
     }
 
     // Perform clicks on items
