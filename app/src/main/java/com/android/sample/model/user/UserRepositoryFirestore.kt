@@ -61,7 +61,7 @@ class UserRepositoryFirestore(private val db: FirebaseFirestore) : UserRepositor
     return try {
       val userName = snapshot["userName"] as String
       val profilePictureUrl = snapshot["profilePictureUrl"] as String
-      val fridge = snapshot["fridge"] as List<String>
+      val fridge = snapshot["fridge"] as List<Pair<String, Int>>
       val likedRecipes = snapshot["likedRecipes"] as List<String>
       val createdRecipes = snapshot["createdRecipes"] as List<String>
 
