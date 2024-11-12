@@ -14,7 +14,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.android.sample.R
@@ -119,7 +118,7 @@ fun RecipeNameScreen(
                         onRecipeNameChange = { recipeName = it },
                         onShowErrorChange = { showError = it })
                   },
-                  label = getLabelText(recipeName),
+                  placeholder = getLabelText(recipeName),
                   shape = RoundedCornerShape(8.dp),
                   modifier =
                       Modifier.fillMaxWidth()
@@ -258,20 +257,4 @@ fun handleOnClick(
     onUpdateRecipeName(recipeName.text)
     onNavigateToNextScreen()
   }
-}
-
-@Preview(showBackground = false)
-@Composable
-fun PreviewRecipeTitle() {
-  Text(
-      text =
-          "Create Your Recipe", // Replace with stringResource(R.string.create_your_recipe) if you
-      // have the resource
-      style = Typography.displayLarge,
-      color = MaterialTheme.colorScheme.onPrimary,
-      modifier =
-          Modifier.fillMaxWidth()
-              .padding(horizontal = 16.dp) // Replace with RECIPE_NAME_BASE_PADDING * 2 if defined
-              .testTag("RecipeTitle"),
-      textAlign = TextAlign.Center)
 }
