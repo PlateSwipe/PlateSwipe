@@ -35,6 +35,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.android.sample.R
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.navigation.TopLevelDestinations
 import com.android.sample.ui.utils.PlateSwipeScaffold
 import com.android.sample.ui.utils.RecipeList
@@ -65,7 +66,7 @@ fun AccountScreen(navigationActions: NavigationActions, userViewModel: UserViewM
               style = MaterialTheme.typography.titleMedium,
               color = MaterialTheme.colorScheme.onPrimary)
 
-          ListSelection(userViewModel, modifier = Modifier.weight(.8f))
+          ListSelection(navigationActions, userViewModel, modifier = Modifier.weight(.8f))
         }
       })
 }
@@ -92,7 +93,11 @@ private fun ListSelectionButton(
 }
 
 @Composable
-private fun ListSelection(userViewModel: UserViewModel, modifier: Modifier = Modifier) {
+private fun ListSelection(
+    navigationActions: NavigationActions,
+    userViewModel: UserViewModel,
+    modifier: Modifier = Modifier
+) {
   val likedRecipes = userViewModel.likedRecipes.collectAsState()
   val createdRecipes = userViewModel.createdRecipes.collectAsState()
 
@@ -128,7 +133,13 @@ private fun ListSelection(userViewModel: UserViewModel, modifier: Modifier = Mod
         thickness = 2.dp,
         color = MaterialTheme.colorScheme.onTertiary)
 
-    RecipeList(list = selectedList.value, modifier = Modifier.weight(1f).fillMaxWidth())
+    RecipeList(
+        list = selectedList.value,
+        modifier = Modifier.weight(1f).fillMaxWidth(),
+        { recipe ->
+          userViewModel.selectRecipe(recipe)
+          navigationActions.navigateTo(Screen.OVERVIEW_RECIPE_ACCOUNT)
+        })
   }
 }
 

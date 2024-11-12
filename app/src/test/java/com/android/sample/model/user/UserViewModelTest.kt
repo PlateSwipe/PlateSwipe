@@ -1,6 +1,8 @@
 package com.android.sample.model.user
 
+import com.android.sample.model.ingredient.FirestoreIngredientRepository
 import com.android.sample.model.ingredient.Ingredient
+import com.android.sample.model.recipe.FirestoreRecipesRepository
 import com.android.sample.model.recipe.Recipe
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -31,6 +33,8 @@ class UserViewModelTest {
   private lateinit var mockUserRepository: UserRepository
   private lateinit var mockFirebaseAuth: FirebaseAuth
   private lateinit var mockCurrentUser: FirebaseUser
+  private lateinit var mockIngredientRepository: FirestoreIngredientRepository
+  private lateinit var mockRecipeRepository: FirestoreRecipesRepository
 
   private lateinit var userViewModel: UserViewModel
 
@@ -66,11 +70,15 @@ class UserViewModelTest {
     mockUserRepository = mock(UserRepository::class.java)
     mockFirebaseAuth = mock(FirebaseAuth::class.java)
     mockCurrentUser = mock(FirebaseUser::class.java)
+    mockIngredientRepository = mock(FirestoreIngredientRepository::class.java)
+    mockRecipeRepository = mock(FirestoreRecipesRepository::class.java)
 
     `when`(mockFirebaseAuth.currentUser).thenReturn(mockCurrentUser)
     `when`(mockCurrentUser.uid).thenReturn("001")
 
-    userViewModel = UserViewModel(mockUserRepository, mockFirebaseAuth)
+    userViewModel =
+        UserViewModel(
+            mockUserRepository, mockFirebaseAuth, mockRecipeRepository, mockIngredientRepository)
   }
 
   @Test

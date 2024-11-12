@@ -1,9 +1,13 @@
 package com.android.sample.model.user
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.android.sample.model.ingredient.FirestoreIngredientRepository
 import com.android.sample.model.ingredient.Ingredient
+import com.android.sample.model.recipe.FirestoreRecipesRepository
 import com.android.sample.model.recipe.Recipe
+import com.android.sample.model.recipe.RecipeOverviewViewModel
 import com.android.sample.resources.C.Tag.REMOVED_INGREDIENT_NOT_IN_FRIDGE_ERROR
 import com.android.sample.resources.C.Tag.REMOVED_TOO_MANY_INGREDIENTS_ERROR
 import com.google.firebase.auth.FirebaseAuth
@@ -15,8 +19,12 @@ import kotlinx.coroutines.flow.StateFlow
 
 class UserViewModel(
     private val userRepository: UserRepository,
-    private val firebaseAuth: FirebaseAuth = Firebase.auth
-) : ViewModel() {
+    private val firebaseAuth: FirebaseAuth = Firebase.auth,
+    private val recipesRepository: FirestoreRecipesRepository =
+        FirestoreRecipesRepository(Firebase.firestore),
+    private val ingredientRepository: FirestoreIngredientRepository =
+        FirestoreIngredientRepository(Firebase.firestore)
+) : ViewModel(), RecipeOverviewViewModel {
 
   private val _userName: MutableStateFlow<String?> = MutableStateFlow(null)
   val userName: StateFlow<String?> = _userName
@@ -32,6 +40,10 @@ class UserViewModel(
 
   private val _createdRecipes: MutableStateFlow<List<Recipe>> = MutableStateFlow(emptyList())
   val createdRecipes: StateFlow<List<Recipe>> = _createdRecipes
+
+  private val _currentRecipe = MutableStateFlow<Recipe?>(null)
+  override val currentRecipe: StateFlow<Recipe?>
+    get() = _currentRecipe
 
   init {
     userRepository.init { getCurrentUser() }
@@ -61,8 +73,36 @@ class UserViewModel(
           _userName.value = user.userName
           _profilePictureUrl.value = user.profilePictureUrl
           _fridge.value = emptyList()
-          _likedRecipes.value = emptyList()
-          _createdRecipes.value = emptyList()
+          user.fridge.forEach { (barcode, ingredientCount) ->
+            ingredientRepository.get(
+                barcode.toLong(),
+                onSuccess = { ingredient ->
+                  if (ingredient != null) {
+                    addIngredientToUserFridge(ingredient, ingredientCount)
+                  } else {
+                    Log.e("UserViewModel", "Ingredient not found in the database")
+                  }
+                },
+                onFailure = { e ->
+                  Log.e("UserViewModel", "Failed to fetch ingredient from the database.", e)
+                })
+          }
+          user.likedRecipes.forEach { uid ->
+            recipesRepository.search(
+                uid,
+                onSuccess = { recipe -> addRecipeToUserLikedRecipes(recipe) },
+                onFailure = { e ->
+                  Log.e("UserViewModel", "Failed to fetch liked recipes from the database.", e)
+                })
+          }
+          user.createdRecipes.forEach { uid ->
+            recipesRepository.search(
+                uid,
+                onSuccess = { recipe -> addRecipeToUserCreatedRecipes(recipe) },
+                onFailure = { e ->
+                  Log.e("UserViewModel", "Failed to fetch created recipes from the database.", e)
+                })
+          }
         },
         onFailure = {
           userRepository.addUser(
@@ -219,5 +259,9 @@ class UserViewModel(
    */
   fun removeRecipeFromUserCreatedRecipes(recipe: Recipe) {
     updateList(_createdRecipes, recipe, false)
+  }
+
+  fun selectRecipe(recipe: Recipe) {
+    _currentRecipe.value = recipe
   }
 }
