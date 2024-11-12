@@ -65,7 +65,7 @@ fun RecipeList(
 ) {
   LazyColumn(
       modifier = modifier.testTag("recipeList"),
-      verticalArrangement = Arrangement.Center,
+      verticalArrangement = Arrangement.Top,
       horizontalAlignment = Alignment.CenterHorizontally,
   ) {
     items(list) { recipe ->
@@ -171,15 +171,7 @@ private fun RecipeCategories(recipe: Recipe) {
       horizontalArrangement = Arrangement.spacedBy(4.dp)) {
         if (recipe.strCategory?.isNotEmpty() == true) {
           for (category in recipe.strCategory.split(",")) {
-            Text(
-                modifier =
-                    Modifier.background(
-                            color = MaterialTheme.colorScheme.secondary,
-                            shape = RoundedCornerShape(RECIPE_LIST_CORNER_RADIUS.dp / 2))
-                        .padding(4.dp),
-                text = category,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurface)
+            Tag(category)
           }
         }
       }

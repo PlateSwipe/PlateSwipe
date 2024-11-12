@@ -1,6 +1,7 @@
 package com.android.sample.model.recipe
 
 import android.util.Log
+import com.android.sample.resources.C.Tag.CHARACTERS
 import com.android.sample.resources.C.Tag.FIRESTORE_COLLECTION_NAME
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_AREA
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_CATEGORY
@@ -13,9 +14,9 @@ import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_PICTURE_ID
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_PRICE
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_TIME
 import com.android.sample.resources.C.Tag.LIMIT_MUST_BE_POSITIVE_MESSAGE
-import com.android.sample.resources.C.Tag.UNSUPPORTED_MESSAGE
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 
 class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRepository {
@@ -121,14 +122,49 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
     }
   }
 
-  /** ****************************************** */
+  /** @return A random identifier for a recipe. */
+  private fun generateRandomUID(): String {
+    val characters = CHARACTERS
+    val uidLength = 20
+
+    return (1..uidLength).map { characters.random() }.joinToString("")
+  }
+
   override fun random(
       nbOfElements: Int,
       onSuccess: (List<Recipe>) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
     require(nbOfElements > 0) { LIMIT_MUST_BE_POSITIVE_MESSAGE }
-    // TODO("Not yet implemented")
+
+    // Generate a random UID
+    val randomUID = generateRandomUID()
+    Log.d("TestRecipeRepo", "generateRandomUID :$randomUID")
+
+    Log.d("TestRecipeRepo", (nbOfElements / 2).toString())
+    // Query for UIDs greater than or equal to the random UID
+
+    db.collection(FIRESTORE_COLLECTION_NAME)
+        .whereGreaterThanOrEqualTo(FieldPath.documentId(), randomUID)
+        .limit(nbOfElements.toLong())
+        .get()
+        .addOnCompleteListener { task ->
+          if (task.isSuccessful) {
+            val recipes = mutableListOf<Recipe>()
+            task.result?.documents?.forEach { document ->
+              val recipe = documentToRecipe(document)
+              if (recipe != null) {
+                recipes.add(recipe)
+              }
+            }
+            onSuccess(recipes)
+          } else {
+            task.exception?.let { e ->
+              Log.e("FirestoreRecipesRepository", "Error getting documents", e)
+              onFailure(e)
+            }
+          }
+        }
   }
 
   override fun search(mealID: String, onSuccess: (Recipe) -> Unit, onFailure: (Exception) -> Unit) {
@@ -141,7 +177,7 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
         } else onFailure(Exception("Recipe not found"))
       } else {
         task.exception?.let { e ->
-          Log.e("FirestoreRecipesRepository", "Error search document : idMeal " + mealID, e)
+          Log.e("FirestoreRecipesRepository", "Error search document : idMeal $mealID", e)
           onFailure(e)
         }
       }
@@ -172,8 +208,8 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
         .addOnFailureListener { e -> onFailure(e) }
   }
 
-  /** This method will not be in the interface anymore in the future * */
+  /** Will be deleted in next PR */
   override fun listCategories(onSuccess: (List<String>) -> Unit, onFailure: (Exception) -> Unit) {
-    throw UnsupportedOperationException(UNSUPPORTED_MESSAGE)
+    throw NotImplementedError("Not implemented")
   }
 }

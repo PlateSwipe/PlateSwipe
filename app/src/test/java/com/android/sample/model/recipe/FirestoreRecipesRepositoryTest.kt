@@ -17,6 +17,7 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.util.Assert.fail
@@ -45,7 +46,6 @@ class FirestoreRecipesRepositoryTest {
   @Mock private lateinit var mockDocumentReference: DocumentReference
   @Mock private lateinit var mockCollectionReference: CollectionReference
   @Mock private lateinit var mockDocumentSnapshot: DocumentSnapshot
-  @Mock private lateinit var mockRecipeQuerySnapshot: QuerySnapshot
 
   private lateinit var firestoreFirebaseRepository: FirestoreRecipesRepository
 
@@ -395,6 +395,75 @@ class FirestoreRecipesRepositoryTest {
           assertEquals("Recipe not found", exception.message)
         })
 
+    shadowOf(Looper.getMainLooper()).idle()
+  }
+
+  @Test
+  fun random_withValidNumberOfElements_returnsRecipes() {
+    // Arrange: Prepare mock documents and set up expectations for random UID generation
+    val mockQuerySnapshot = mock(QuerySnapshot::class.java)
+    val mockDocumentSnapshot = mock(DocumentSnapshot::class.java)
+
+    // Set up a mock recipe document
+    `when`(mockDocumentSnapshot.id).thenReturn("random_id_1")
+    `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_NAME)).thenReturn("Test Recipe")
+    `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_INSTRUCTIONS)).thenReturn("Instructions")
+    `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_PICTURE_ID)).thenReturn("ThumbUrl")
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INGREDIENTS)).thenReturn(listOf("Ingredient1"))
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_MEASUREMENTS)).thenReturn(listOf("1 tsp"))
+
+    // Mock Firestore query
+    `when`(mockQuerySnapshot.documents).thenReturn(listOf(mockDocumentSnapshot))
+    `when`(mockCollectionReference.whereGreaterThanOrEqualTo(any<FieldPath>(), any<String>()))
+        .thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.limit(5)).thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
+
+    // Act: Call the random function
+    firestoreFirebaseRepository.random(
+        nbOfElements = 5,
+        onSuccess = { recipes ->
+          assertNotNull(recipes)
+          assertEquals(1, recipes.size)
+          assertEquals("Test Recipe", recipes[0].strMeal)
+        },
+        onFailure = { fail("Failure callback should not be called") })
+
+    // Ensure all asynchronous operations are completed
+    shadowOf(Looper.getMainLooper()).idle()
+  }
+
+  @Test
+  fun random_withZeroElements_throwsException() {
+    // Act and Assert: Verify that calling `random` with zero elements throws an
+    // IllegalArgumentException
+    assertThrows(IllegalArgumentException::class.java) {
+      firestoreFirebaseRepository.random(
+          nbOfElements = 0,
+          onSuccess = { fail("Success callback should not be called") },
+          onFailure = { fail("Failure callback should not be called") })
+    }
+  }
+
+  @Test
+  fun random_withFirestoreFailure_callsOnFailure() {
+    // Arrange: Simulate a Firestore exception
+    val exception = Exception("Firestore error")
+    `when`(mockCollectionReference.whereGreaterThanOrEqualTo(any<FieldPath>(), any<String>()))
+        .thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.limit(5)).thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.get()).thenReturn(Tasks.forException(exception))
+
+    // Act: Call the random function
+    firestoreFirebaseRepository.random(
+        nbOfElements = 5,
+        onSuccess = { fail("Success callback should not be called") },
+        onFailure = { e ->
+          assertNotNull(e)
+          assertEquals("Firestore error", e.message)
+        })
+
+    // Ensure all asynchronous operations are completed
     shadowOf(Looper.getMainLooper()).idle()
   }
 }

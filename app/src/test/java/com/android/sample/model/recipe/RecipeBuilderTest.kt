@@ -1,6 +1,7 @@
 package com.android.sample.model.recipe
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
@@ -16,14 +17,13 @@ class RecipeBuilderTest {
 
   @Test
   fun `test addIngredient adds ingredient and measurement`() {
-    builder.addIngredientAndMeasurement("Flour", "200g")
-    builder.addIngredientAndMeasurement("Sugar", "100g")
-
     val recipe =
         builder
             .apply {
               setName("Cake")
               setInstructions("Mix all ingredients")
+              addIngredientAndMeasurement("Flour", "200g")
+              addIngredientAndMeasurement("Sugar", "100g")
             }
             .build()
 
@@ -53,7 +53,7 @@ class RecipeBuilderTest {
     builder.addIngredientAndMeasurement("Ingredient", "Measurement")
 
     val exception = assertThrows(IllegalArgumentException::class.java) { builder.build() }
-    assertEquals("Recipe name cannot be blank", exception.message)
+    assertEquals("Recipe name is required and cannot be blank.", exception.message)
   }
 
   @Test
@@ -62,7 +62,7 @@ class RecipeBuilderTest {
     builder.addIngredientAndMeasurement("Ingredient", "Measurement")
 
     val exception = assertThrows(IllegalArgumentException::class.java) { builder.build() }
-    assertEquals("Recipe instructions cannot be blank", exception.message)
+    assertEquals("Recipe instructions are required and cannot be blank.", exception.message)
   }
 
   @Test
@@ -71,7 +71,7 @@ class RecipeBuilderTest {
     builder.setInstructions("Recipe instructions")
 
     val exception = assertThrows(IllegalArgumentException::class.java) { builder.build() }
-    assertEquals("Ingredients and measurements must not be empty", exception.message)
+    assertEquals("At least one ingredient is required.", exception.message)
   }
 
   @Test
@@ -97,5 +97,84 @@ class RecipeBuilderTest {
     assertEquals("15 mins", recipe.time)
     assertEquals("Easy", recipe.difficulty)
     assertEquals("5.00", recipe.price)
+  }
+
+  @Test
+  fun `test clear function successfully clears all fields`() {
+    // Set initial values for all fields
+    builder.setId("1")
+    builder.setName("Salad")
+    builder.setInstructions("Mix ingredients")
+    builder.addIngredientAndMeasurement("Lettuce", "100g")
+    builder.setCategory("Vegetarian")
+    builder.setArea("French")
+    builder.setPictureID("http://example.com/image.jpg")
+    builder.setTime("15 mins")
+    builder.setDifficulty("Easy")
+    builder.setPrice("5.00")
+
+    // Build and clear
+    builder.build()
+    builder.clear()
+
+    // Assertions to verify each field was cleared
+    assertEquals("", builder.getId())
+    assertEquals("", builder.getName())
+    assertEquals("", builder.getInstructions())
+    assertEquals(emptyList<Pair<String, String>>(), builder.getIngredientsAndMeasurements())
+    assertNull(builder.getCategory())
+    assertNull(builder.getArea())
+    assertEquals("", builder.getPictureID())
+    assertNull(builder.getTime())
+    assertNull(builder.getDifficulty())
+    assertNull(builder.getPrice())
+
+    // Verify that attempting to build throws an exception
+    assertThrows(IllegalArgumentException::class.java) { builder.build() }
+        .apply { assertEquals("Recipe name is required and cannot be blank.", message) }
+  }
+
+  @Test
+  fun `test all getters`() {
+    builder.apply {
+      setName("Salad")
+      setInstructions("Mix ingredients")
+      addIngredientAndMeasurement("Lettuce", "100g")
+      setCategory("Vegetarian")
+      setArea("French")
+      setPictureID("http://example.com/image.jpg")
+      setTime("15 mins")
+      setDifficulty("Easy")
+      setPrice("5.00")
+      setId("1")
+    }
+    assertEquals("Salad", builder.getName())
+    assertEquals("Mix ingredients", builder.getInstructions())
+    assertEquals("Vegetarian", builder.getCategory())
+    assertEquals("French", builder.getArea())
+    assertEquals("http://example.com/image.jpg", builder.getPictureID())
+    assertEquals("15 mins", builder.getTime())
+    assertEquals("Easy", builder.getDifficulty())
+    assertEquals("5.00", builder.getPrice())
+    assertEquals(listOf("Lettuce" to "100g"), builder.getIngredientsAndMeasurements())
+    assertEquals("1", builder.getId())
+  }
+
+  @Test
+  fun `test update ingredient and measurement`() {
+    builder.addIngredientAndMeasurement("Flour", "200g")
+    builder.addIngredientAndMeasurement("Sugar", "100g")
+    builder.updateIngredientAndMeasurement("Flour", "200g", "Flour", "300g")
+    val listOfIngredients = builder.getIngredientsAndMeasurements().toList()
+    assertEquals(listOf("Flour" to "300g", "Sugar" to "100g"), listOfIngredients)
+  }
+
+  @Test
+  fun `test delete ingredient and measurement`() {
+    builder.addIngredientAndMeasurement("Flour", "200g")
+    builder.addIngredientAndMeasurement("Sugar", "100g")
+    builder.deleteIngredientAndMeasurement("Flour", "200g")
+    val listOfIngredients = builder.getIngredientsAndMeasurements()
+    assertEquals(listOf("Sugar" to "100g"), listOfIngredients)
   }
 }

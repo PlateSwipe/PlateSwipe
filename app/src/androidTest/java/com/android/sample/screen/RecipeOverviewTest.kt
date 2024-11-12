@@ -1,103 +1,255 @@
 package com.android.sample.screen
 
-import androidx.compose.ui.test.assertHasClickAction
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsOff
+import androidx.compose.ui.test.assertIsOn
+import androidx.compose.ui.test.assertTextContains
+import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performTouchInput
-import androidx.compose.ui.test.swipeRight
-import androidx.test.espresso.intent.Intents
+import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performScrollToNode
+import com.android.sample.model.filter.Difficulty
+import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.recipe.RecipesRepository
 import com.android.sample.model.recipe.RecipesViewModel
+import com.android.sample.resources.C.TestTag.RecipeOverview.ADD_SERVINGS
+import com.android.sample.resources.C.TestTag.RecipeOverview.COOK_TIME_TEXT
+import com.android.sample.resources.C.TestTag.RecipeOverview.DRAGGABLE_ITEM
+import com.android.sample.resources.C.TestTag.RecipeOverview.INGREDIENTS_VIEW
+import com.android.sample.resources.C.TestTag.RecipeOverview.INGREDIENT_CHECKBOX
+import com.android.sample.resources.C.TestTag.RecipeOverview.INSTRUCTIONS_VIEW
+import com.android.sample.resources.C.TestTag.RecipeOverview.NUMBER_SERVINGS
+import com.android.sample.resources.C.TestTag.RecipeOverview.PREP_TIME_TEXT
+import com.android.sample.resources.C.TestTag.RecipeOverview.RECIPE_IMAGE
+import com.android.sample.resources.C.TestTag.RecipeOverview.RECIPE_RATE
+import com.android.sample.resources.C.TestTag.RecipeOverview.RECIPE_STAR
+import com.android.sample.resources.C.TestTag.RecipeOverview.RECIPE_TITLE
+import com.android.sample.resources.C.TestTag.RecipeOverview.REMOVE_SERVINGS
+import com.android.sample.resources.C.TestTag.RecipeOverview.SLIDING_BUTTON_INGREDIENTS
+import com.android.sample.resources.C.TestTag.RecipeOverview.SLIDING_BUTTON_INSTRUCTIONS
+import com.android.sample.resources.C.TestTag.RecipeOverview.TOTAL_TIME_TEXT
+import com.android.sample.resources.C.TestTag.Utils.BOTTOM_BAR
+import com.android.sample.resources.C.TestTag.Utils.TOP_BAR
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.recipeOverview.RecipeOverview
-import org.junit.After
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.ArgumentMatchers.eq
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
-import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.any
 
 class RecipeOverviewTest {
-  private lateinit var navigationActions: NavigationActions
-  private lateinit var repository: RecipesRepository
+  private lateinit var mockNavigationActions: NavigationActions
+  private lateinit var mockRepository: RecipesRepository
   private lateinit var recipesViewModel: RecipesViewModel
+
+  private val recipe1 =
+      Recipe(
+          "Recipe 1",
+          "Recipe 1",
+          "url1",
+          "Instructions 1",
+          "Category 1",
+          "Area 1",
+          listOf(
+              Pair("Ingredient 1", "Ingredient 1x"),
+              Pair("Ingredient 2", "Ingredient 1x"),
+              Pair("Ingredient 3", "Ingredient 2x")))
+  private val mockedRecipesList = listOf(recipe1)
 
   @get:Rule val composeTestRule = createComposeRule()
 
+  @OptIn(ExperimentalCoroutinesApi::class)
   @Before
-  fun setUp() {
-    navigationActions = mock(NavigationActions::class.java)
-    repository = mock(RecipesRepository::class.java)
-    recipesViewModel = RecipesViewModel(repository)
-    `when`(navigationActions.currentRoute()).thenReturn(Route.SEARCH)
-    `when`(repository.random(eq(1), anyOrNull(), anyOrNull())).then {}
-    Intents.init()
-  }
+  fun setUp() = runTest {
+    mockNavigationActions = mock(NavigationActions::class.java)
+    mockRepository = mock(RecipesRepository::class.java)
 
-  @After
-  fun tearDown() {
-    Intents.release()
+    // Setup the mock to trigger onSuccess
+    `when`(mockRepository.random(any(), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.getArgument<(List<Recipe>) -> Unit>(1)
+      onSuccess(mockedRecipesList)
+      null
+    }
+    `when`(mockRepository.searchByCategory(any(), any(), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.getArgument<(List<Recipe>) -> Unit>(1)
+      onSuccess(mockedRecipesList)
+      null
+    }
+
+    recipesViewModel = RecipesViewModel(mockRepository)
+    advanceUntilIdle()
+
+    `when`(mockNavigationActions.currentRoute()).thenReturn(Route.SWIPE)
+    `when`(mockNavigationActions.navigateTo(Route.AUTH)).then {}
+
+    // Init the filter
+    recipesViewModel.updateTimeRange(0f, 100f)
+    recipesViewModel.updateTimeRange(5f, 99f)
+    recipesViewModel.updatePriceRange(0f, 100f)
+    recipesViewModel.updatePriceRange(5f, 52f)
+    recipesViewModel.updateDifficulty(Difficulty.Easy)
+    recipesViewModel.updateCategory("Dessert")
+
+    composeTestRule.setContent {
+      RecipeOverview(mockNavigationActions, recipesViewModel) // Set up the SignInScreen directly
+    }
   }
 
   @Test
-  fun screenDisplayedCorrectlyTest() {
-    composeTestRule.setContent { RecipeOverview(navigationActions, recipesViewModel) }
+  fun screenDisplayedCorrectlyTest() = runTest {
     // Checking if the main components of the screen are displayed
-    composeTestRule.onNodeWithTag("topBar").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("draggableItem").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("bottomNavigationMenu").assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TOP_BAR, useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(BOTTOM_BAR, useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(DRAGGABLE_ITEM, useUnmergedTree = true).assertIsDisplayed()
   }
 
   @Test
-  fun recipeImageIsDisplayedTest() {
-    composeTestRule.setContent { RecipeOverview(navigationActions, recipesViewModel) }
-    // Checking if the image is displayed
-    composeTestRule.onNodeWithTag("recipeImage").assertIsDisplayed()
-  }
-
-  @Test
-  fun ratingIconAndTextIsDisplayedTest() {
-    composeTestRule.setContent { RecipeOverview(navigationActions, recipesViewModel) }
-    // Checking if the recipe description is displayed
-    composeTestRule.onNodeWithTag("ratingIcon").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("ratingText").assertIsDisplayed()
-  }
-
-  @Test
-  fun timeToCookDescriptionIsDisplayedTest() {
-    composeTestRule.setContent { RecipeOverview(navigationActions, recipesViewModel) }
-    // Checking if the times are displayed
-    composeTestRule.onNodeWithTag("prepTimeText").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("cookTimeText").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("totalTimeText").assertIsDisplayed()
-  }
-
-  @Test
-  fun ingredientAndInstructionButtonClickTest() {
-    composeTestRule.setContent { RecipeOverview(navigationActions, recipesViewModel) }
-    // Checking is the Ingredients tab button is displayed and if it works
-    composeTestRule.onNodeWithTag("ingredientsButton").assertHasClickAction()
-    composeTestRule.onNodeWithTag("ingredientsButton").performClick()
-
-    // Checking is the Instructions tab button is displayed and if it works
-    composeTestRule.onNodeWithTag("instructionsButton").assertHasClickAction()
-    composeTestRule.onNodeWithTag("instructionsButton").performClick()
-  }
-
-  @Test
-  fun testDraggingEventRight() {
-    composeTestRule.setContent { RecipeOverview(navigationActions, recipesViewModel) }
-
-    // Make sure the screen is displayed
-    composeTestRule.onNodeWithTag("draggableItem").assertIsDisplayed()
-
-    // Simulate a drag event
-    composeTestRule.onNodeWithTag("draggableItem").performTouchInput { swipeRight() }
+  fun testIngredientAndInstructionSwitch() {
+    composeTestRule
+        .onNodeWithTag(DRAGGABLE_ITEM, useUnmergedTree = true)
+        .performScrollToNode(hasTestTag(INGREDIENTS_VIEW))
     composeTestRule.waitForIdle()
+    // Initial state should show ingredients view
+    composeTestRule.onNodeWithTag(INGREDIENTS_VIEW, useUnmergedTree = true).assertIsDisplayed()
+
+    // Switch to instructions view and check if instructions are displayed
+    composeTestRule
+        .onNodeWithTag(SLIDING_BUTTON_INSTRUCTIONS, useUnmergedTree = true)
+        .performClick()
+    composeTestRule.onNodeWithTag(INSTRUCTIONS_VIEW, useUnmergedTree = true).assertIsDisplayed()
+  }
+
+  @Test
+  fun testServingsCountButtons() {
+    // Check initial servings count
+    composeTestRule
+        .onNodeWithTag(DRAGGABLE_ITEM, useUnmergedTree = true)
+        .performScrollToNode(hasTestTag(NUMBER_SERVINGS))
+
+    composeTestRule.onNodeWithTag(NUMBER_SERVINGS, useUnmergedTree = true).assertTextEquals("1")
+
+    // Click the add button and verify if the count increases
+    composeTestRule.onNodeWithTag(ADD_SERVINGS, useUnmergedTree = true).performClick()
+    composeTestRule.onNodeWithTag(NUMBER_SERVINGS, useUnmergedTree = true).assertTextEquals("2")
+
+    // Click the remove button and verify if the count decreases
+    composeTestRule.onNodeWithTag(REMOVE_SERVINGS, useUnmergedTree = true).performClick()
+    composeTestRule.onNodeWithTag(NUMBER_SERVINGS, useUnmergedTree = true).assertTextEquals("1")
+  }
+
+  @Test
+  fun testIngredientsListCheckboxes() {
+    composeTestRule
+        .onNodeWithTag(DRAGGABLE_ITEM, useUnmergedTree = true)
+        .performScrollToNode(hasTestTag(INGREDIENTS_VIEW))
+    // Check if ingredient list is displayed with checkboxes
+    composeTestRule.onNodeWithTag(INGREDIENTS_VIEW, useUnmergedTree = true).assertIsDisplayed()
+
+    // Scroll to the third checkbox to ensure it's visible before performing actions
+    composeTestRule
+        .onAllNodesWithTag(INGREDIENT_CHECKBOX, useUnmergedTree = true)[2]
+        .performScrollTo()
+
+    composeTestRule.waitForIdle()
+
+    composeTestRule.onAllNodesWithTag(INGREDIENT_CHECKBOX, useUnmergedTree = true).apply {
+      assertCountEquals(3)
+      get(0).assertIsOff()
+      get(1).assertIsOff()
+      get(2).assertIsOff()
+    }
+
+    // Check if each ingredient has a checkbox and can be checked
+    composeTestRule.onAllNodesWithTag(INGREDIENT_CHECKBOX, useUnmergedTree = true).apply {
+      assertCountEquals(3) // Assuming 3 ingredients for this test
+      get(0).performClick()
+      get(1).performClick()
+      get(2).performClick()
+    }
+    composeTestRule.waitForIdle()
+
+    composeTestRule.onAllNodesWithTag(INGREDIENT_CHECKBOX, useUnmergedTree = true).apply {
+      assertCountEquals(3) // Assuming 3 ingredients for this test
+      get(0).assertIsOn()
+      get(1).assertIsOn()
+      get(2).assertIsOn()
+    }
+  }
+
+  @Test
+  fun testPrepareCookTotalTimeDisplay() {
+    // Check if each time property is displayed correctly
+    composeTestRule
+        .onNodeWithTag(DRAGGABLE_ITEM, useUnmergedTree = true)
+        .performScrollToNode(hasTestTag(PREP_TIME_TEXT))
+    composeTestRule.onNodeWithTag(PREP_TIME_TEXT, useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(COOK_TIME_TEXT, useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TOTAL_TIME_TEXT, useUnmergedTree = true).assertIsDisplayed()
+  }
+
+  @Test
+  fun testRecipeImageDisplayed() {
+    // Check if the recipe image is displayed
+    composeTestRule.onNodeWithTag(RECIPE_IMAGE, useUnmergedTree = true).assertIsDisplayed()
+  }
+
+  @Test
+  fun testRecipeTitleDisplayed() {
+    // Check if the recipe title is displayed
+    composeTestRule.onNodeWithTag(RECIPE_TITLE, useUnmergedTree = true).assertIsDisplayed()
+  }
+
+  @Test
+  fun testRatingComponentsDisplayed() {
+    // Check if the rating star and rate text are displayed
+    composeTestRule.onNodeWithTag(RECIPE_STAR, useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(RECIPE_RATE, useUnmergedTree = true).assertIsDisplayed()
+  }
+
+  @Test
+  fun testIngredientQuantityIncreasedOnServingsChange() {
+    // Initially check for ingredient quantity with 1 serving
+
+    composeTestRule
+        .onNodeWithTag(DRAGGABLE_ITEM, useUnmergedTree = true)
+        .performScrollToNode(hasTestTag(SLIDING_BUTTON_INGREDIENTS))
+    composeTestRule.waitForIdle()
+
+    // Check if ingredient list is displayed with checkboxes
+    composeTestRule
+        .onNodeWithTag(SLIDING_BUTTON_INGREDIENTS, useUnmergedTree = true)
+        .assertIsDisplayed()
+
+    composeTestRule
+        .onAllNodesWithTag(INGREDIENT_CHECKBOX, useUnmergedTree = true)
+        .assertCountEquals(3)
+
+    composeTestRule
+        .onNodeWithTag(DRAGGABLE_ITEM, useUnmergedTree = true)
+        .performScrollToNode(hasTestTag("ingredientIngredient 1"))
+    composeTestRule.waitForIdle()
+
+    composeTestRule
+        .onNodeWithTag("ingredientIngredient 1", useUnmergedTree = true)
+        .assertTextContains("Ingredient 1: Ingredient 1x")
+
+    // Increase servings and verify ingredient quantities are updated
+    composeTestRule.onNodeWithTag(ADD_SERVINGS, useUnmergedTree = true).performClick()
+
+    composeTestRule
+        .onNodeWithTag("ingredientIngredient 1", useUnmergedTree = true)
+        .assertTextContains(
+            "Ingredient 1: Ingredient 2x") // Assuming the ingredient quantity doubles
   }
 }

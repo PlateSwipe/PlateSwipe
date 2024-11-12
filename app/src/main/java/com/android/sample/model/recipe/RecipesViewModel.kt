@@ -6,19 +6,22 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.android.sample.model.filter.Difficulty
 import com.android.sample.model.filter.Filter
+import com.android.sample.model.filter.FilterPageViewModel
 import com.android.sample.resources.C.Tag.MINIMUM_RECIPES_BEFORE_FETCH
 import com.android.sample.resources.C.Tag.NUMBER_RECIPES_TO_FETCH
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import okhttp3.OkHttpClient
 
 /**
  * ViewModel for managing recipes.
  *
  * @property repository The repository used to fetch recipe data.
  */
-open class RecipesViewModel(private val repository: RecipesRepository) : ViewModel() {
+class RecipesViewModel(private val repository: RecipesRepository) :
+    ViewModel(), FilterPageViewModel, RecipeOverviewViewModel {
 
   // StateFlow to monitor the list of recipes
   private val _recipes = MutableStateFlow<List<Recipe>>(emptyList())
@@ -32,7 +35,7 @@ open class RecipesViewModel(private val repository: RecipesRepository) : ViewMod
 
   // StateFlow for the current selected recipe
   private val _currentRecipe = MutableStateFlow<Recipe?>(null)
-  val currentRecipe: StateFlow<Recipe?>
+  override val currentRecipe: StateFlow<Recipe?>
     get() = _currentRecipe
 
   private val _nextRecipe = MutableStateFlow<Recipe?>(null)
@@ -40,11 +43,11 @@ open class RecipesViewModel(private val repository: RecipesRepository) : ViewMod
     get() = _nextRecipe
 
   private val _filter = MutableStateFlow(Filter())
-  val filter: StateFlow<Filter>
+  override val filter: StateFlow<Filter>
     get() = _filter
 
   private val _categories = MutableStateFlow<List<String>>(emptyList())
-  val categories: StateFlow<List<String>>
+  override val categories: StateFlow<List<String>>
     get() = _categories
 
   init {
@@ -62,12 +65,8 @@ open class RecipesViewModel(private val repository: RecipesRepository) : ViewMod
   }
 
   /** Fetches the list of categories from the repository. */
-  private fun getCategoryList() {
-    repository.listCategories(
-        onSuccess = { categories -> _categories.value = categories },
-        onFailure = { exception ->
-          Log.e("RecipesViewModel", "Error fetching categories", exception)
-        })
+  override fun getCategoryList() {
+    _categories.value = Recipe.getCategories()
   }
 
   /**
@@ -75,8 +74,8 @@ open class RecipesViewModel(private val repository: RecipesRepository) : ViewMod
    *
    * @param difficulty The difficulty to filter by.
    */
-  fun updateDifficulty(difficulty: Difficulty) {
-    _filter.value.difficulty = difficulty
+  override fun updateDifficulty(difficulty: Difficulty) {
+    filter.value.difficulty = difficulty
   }
 
   /**
@@ -85,8 +84,8 @@ open class RecipesViewModel(private val repository: RecipesRepository) : ViewMod
    * @param min The minimum price.
    * @param max The maximum price.
    */
-  fun updatePriceRange(min: Float, max: Float) {
-    _filter.value.priceRange.update(min, max)
+  override fun updatePriceRange(min: Float, max: Float) {
+    filter.value.priceRange.update(min, max)
   }
 
   /**
@@ -95,8 +94,8 @@ open class RecipesViewModel(private val repository: RecipesRepository) : ViewMod
    * @param min The minimum time.
    * @param max The maximum time.
    */
-  fun updateTimeRange(min: Float, max: Float) {
-    _filter.value.timeRange.update(min, max)
+  override fun updateTimeRange(min: Float, max: Float) {
+    filter.value.timeRange.update(min, max)
   }
 
   /**
@@ -104,11 +103,11 @@ open class RecipesViewModel(private val repository: RecipesRepository) : ViewMod
    *
    * @param category The category to filter by.
    */
-  fun updateCategory(category: String?) {
+  override fun updateCategory(category: String?) {
     viewModelScope.launch {
-      if (category == null) {
-        _recipes.value = emptyList()
-      }
+      _recipes.value = emptyList()
+      _currentRecipe.value = null
+      _nextRecipe.value = null
       _filter.value.category = category
       fetchRandomRecipes(NUMBER_RECIPES_TO_FETCH)
       _loading.collect { isLoading ->
@@ -129,28 +128,29 @@ open class RecipesViewModel(private val repository: RecipesRepository) : ViewMod
     require(numberOfRecipes >= 1) { "Number of fetched recipes must be at least 1" }
     _loading.value = true // Set loading to true while fetching
     // uncomment when backend is ready. Tested with hardcoded mealDB data
-    /*if (_filter.value.category != null) {
+    if (_filter.value.category != null) {
       repository.searchByCategory(
           _filter.value.category!!,
           onSuccess = { recipes ->
-            _recipes.value = recipes
+            _recipes.value += recipes
             _loading.value = false
           },
           onFailure = { exception ->
             _loading.value = false
             Log.e("RecipesViewModel", "Error fetching recipes", exception)
           })
-    }*/
-    repository.random(
-        nbOfElements = numberOfRecipes,
-        onSuccess = { randomRecipes ->
-          _recipes.value += randomRecipes // Add to the list of recipes
-          _loading.value = false // Set loading to false after fetching
-        },
-        onFailure = { exception ->
-          _loading.value = false // Set loading to false on failure
-          Log.e("RecipesViewModel", "Error fetching recipes", exception)
-        })
+    } else {
+      repository.random(
+          nbOfElements = numberOfRecipes,
+          onSuccess = { randomRecipes ->
+            _recipes.value += randomRecipes // Add to the list of recipes
+            _loading.value = false // Set loading to false after fetching
+          },
+          onFailure = { exception ->
+            _loading.value = false // Set loading to false on failure
+            Log.e("RecipesViewModel", "Error fetching recipes", exception)
+          })
+    }
   }
 
   /**
@@ -231,8 +231,7 @@ open class RecipesViewModel(private val repository: RecipesRepository) : ViewMod
         object : ViewModelProvider.Factory {
           @Suppress("UNCHECKED_CAST")
           override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            val okHttpClient = OkHttpClient()
-            val repository = MealDBRecipesRepository(okHttpClient)
+            val repository = FirestoreRecipesRepository(Firebase.firestore)
             return RecipesViewModel(repository) as T
           }
         }

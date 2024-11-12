@@ -31,10 +31,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.sample.model.filter.Difficulty
+import com.android.sample.model.filter.FilterPageViewModel
 import com.android.sample.model.filter.FloatRange
-import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.resources.C.Tag.CATEGORY_NAME
 import com.android.sample.resources.C.Tag.DIFFICULTY_NAME
 import com.android.sample.resources.C.Tag.MAX_ITEM_IN_ROW
@@ -49,29 +48,32 @@ import com.android.sample.resources.C.Tag.TIME_RANGE_UNIT
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.utils.PlateSwipeScaffold
 
+/**
+ * Composable function to display the filter page.
+ *
+ * @param navigationActions The navigation actions.
+ * @param filterViewModel The view model to manage the filter options.
+ */
 @Composable
-fun FilterPage(
-    navigationActions: NavigationActions,
-    recipesViewModel: RecipesViewModel = viewModel(factory = RecipesViewModel.Factory)
-) {
+fun FilterPage(navigationActions: NavigationActions, filterViewModel: FilterPageViewModel) {
   val selectedItem = navigationActions.currentRoute()
   PlateSwipeScaffold(
       navigationActions = navigationActions,
       selectedItem = selectedItem,
       showBackArrow = true,
-      content = { paddingValues -> FilterBox(paddingValues, recipesViewModel) })
+      content = { paddingValues -> FilterBox(paddingValues, filterViewModel) })
 }
 
 /**
  * Composable function to display the filter options.
  *
  * @param paddingValues Padding values to apply to the composable.
- * @param recipesViewModel The view model to manage recipes.
+ * @param filterViewModel The view model to manage the filter options.
  */
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun FilterBox(paddingValues: PaddingValues, recipesViewModel: RecipesViewModel) {
-  val filter by recipesViewModel.filter.collectAsState()
+fun FilterBox(paddingValues: PaddingValues, filterViewModel: FilterPageViewModel) {
+  val filter by filterViewModel.filter.collectAsState()
   Column(
       modifier =
           Modifier.padding(paddingValues).fillMaxSize().verticalScroll(rememberScrollState())) {
@@ -81,8 +83,8 @@ fun FilterBox(paddingValues: PaddingValues, recipesViewModel: RecipesViewModel) 
             min = TIME_RANGE_MIN,
             max = TIME_RANGE_MAX,
             unit = TIME_RANGE_UNIT,
-            range = recipesViewModel.filter.value.timeRange,
-            updateRange = { newMin, newMax -> recipesViewModel.updateTimeRange(newMin, newMax) })
+            range = filter.timeRange,
+            updateRange = { newMin, newMax -> filterViewModel.updateTimeRange(newMin, newMax) })
         ValueRangeSlider(
             modifier = Modifier.testTag("priceRangeSlider"),
             name = PRICE_RANGE_NAME,
@@ -90,7 +92,7 @@ fun FilterBox(paddingValues: PaddingValues, recipesViewModel: RecipesViewModel) 
             max = PRICE_RANGE_MAX,
             unit = PRICE_RANGE_UNIT,
             range = filter.priceRange,
-            updateRange = { newMin, newMax -> recipesViewModel.updatePriceRange(newMin, newMax) })
+            updateRange = { newMin, newMax -> filterViewModel.updatePriceRange(newMin, newMax) })
 
         val difficultyLevels = listOf(Difficulty.Easy, Difficulty.Medium, Difficulty.Hard)
         val selectedDifficulty = filter.difficulty
@@ -100,11 +102,11 @@ fun FilterBox(paddingValues: PaddingValues, recipesViewModel: RecipesViewModel) 
             title = DIFFICULTY_NAME,
             items = difficultyLevels,
             selectedItem = selectedDifficulty,
-            onItemSelect = { newDifficulty -> recipesViewModel.updateDifficulty(newDifficulty) },
+            onItemSelect = { newDifficulty -> filterViewModel.updateDifficulty(newDifficulty) },
             testTagPrefix = "difficulty",
             emptyValue = emptyDifficulty)
 
-        val categories = recipesViewModel.categories.value
+        val categories = filterViewModel.categories.value
         val selectedCategory = filter.category
         val emptyCategory: String? = null
 
@@ -112,7 +114,7 @@ fun FilterBox(paddingValues: PaddingValues, recipesViewModel: RecipesViewModel) 
             title = CATEGORY_NAME,
             items = categories,
             selectedItem = selectedCategory,
-            onItemSelect = { newCategory -> recipesViewModel.updateCategory(newCategory) },
+            onItemSelect = { newCategory -> filterViewModel.updateCategory(newCategory) },
             testTagPrefix = "category",
             emptyValue = emptyCategory)
       }
