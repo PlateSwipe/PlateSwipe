@@ -199,11 +199,7 @@ fun InstructionValue(
                 Image(
                     painter =
                         painterResource(
-                            if (createRecipeViewModel.getIcon(index) != null) {
-                              createRecipeViewModel.getIcon(index)!!.iconResId
-                            } else {
-                              R.drawable.fire
-                            }),
+                            createRecipeViewModel.getIcon(index)?.iconResId ?: R.drawable.fire),
                     contentDescription = "Icon",
                     modifier = Modifier.size(ICON_SIZE.dp).testTag(RECIPE_LIST_INSTRUCTION_ICON))
 
