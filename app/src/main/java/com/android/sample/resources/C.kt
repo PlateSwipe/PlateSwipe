@@ -325,6 +325,7 @@ object C {
     }
 
     object SignInScreen {
+      const val SWIPE = "Swipe"
       const val ORIGINAL_ICON_SIZE = 70
       const val TACO_X = -(250)
       const val TACO_Y = 400

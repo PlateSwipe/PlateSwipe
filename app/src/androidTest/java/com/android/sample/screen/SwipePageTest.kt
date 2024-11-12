@@ -9,7 +9,6 @@ import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeLeft
 import androidx.compose.ui.test.swipeRight
-import androidx.test.espresso.intent.Intents
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.sample.model.filter.Difficulty
 import com.android.sample.model.recipe.Recipe
@@ -38,7 +37,6 @@ import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
-import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNull
@@ -93,6 +91,12 @@ class SwipePageTest : TestCase() {
       null
     }
 
+    `when`(mockRepository.searchByCategory(any(), any(), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.getArgument<(List<Recipe>) -> Unit>(1)
+      onSuccess(mockedRecipesList)
+      null
+    }
+
     recipesViewModel = RecipesViewModel(mockRepository)
     advanceUntilIdle()
 
@@ -110,11 +114,7 @@ class SwipePageTest : TestCase() {
     composeTestRule.setContent {
       SwipePage(mockNavigationActions, recipesViewModel) // Set up the SignInScreen directly
     }
-    Intents.init()
   }
-
-  /** This method runs after the test execution. */
-  @After fun tearDown() = runTest { Intents.release() }
 
   /** This test checks if the BottomBar and the topBar of the swipe page are correctly displayed. */
   @Test
@@ -145,12 +145,14 @@ class SwipePageTest : TestCase() {
   }
 
   /** This test checks if nextRecipe called update the current correctly */
+  @OptIn(ExperimentalCoroutinesApi::class)
   @Test
   fun testNextRecipeWithoutJobAndWaitForIdle() = runTest {
     val currentRecipe = recipesViewModel.currentRecipe.value
 
     // Simulate a drag event
     recipesViewModel.nextRecipe()
+    advanceUntilIdle()
     assertNotEquals(currentRecipe, recipesViewModel.currentRecipe.value)
   }
 
