@@ -39,6 +39,7 @@ import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.navigation.TopLevelDestinations
 import com.android.sample.ui.utils.PlateSwipeScaffold
 import com.android.sample.ui.utils.RecipeList
+import com.android.sample.ui.utils.TopCornerLikeButton
 
 @Composable
 fun AccountScreen(navigationActions: NavigationActions, userViewModel: UserViewModel) {
@@ -136,9 +137,12 @@ private fun ListSelection(
     RecipeList(
         list = selectedList.value,
         modifier = Modifier.weight(1f).fillMaxWidth(),
-        { recipe ->
+        onRecipeSelected = { recipe ->
           userViewModel.selectRecipe(recipe)
           navigationActions.navigateTo(Screen.OVERVIEW_RECIPE_ACCOUNT)
+        },
+        topCornerButton = { recipe ->
+          if (selectedListIndex == 0) TopCornerLikeButton(recipe, userViewModel)
         })
   }
 }

@@ -39,10 +39,12 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.android.sample.R
 import com.android.sample.model.recipe.Recipe
+import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C.Tag.RECIPE_LIST_CORNER_RADIUS
 import com.android.sample.ui.theme.goldenBronze
 import com.android.sample.ui.theme.valencia
@@ -106,7 +108,7 @@ private fun RecipeCard(
                     modifier = Modifier.fillMaxWidth().weight(1f),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically) {
-                      RecipeTitle(recipe)
+                      RecipeTitle(recipe, Modifier.weight(3f))
                       topCornerButton(recipe)
                     }
 
@@ -190,13 +192,14 @@ private fun RecipeImage(recipe: Recipe) {
 }
 
 @Composable
-private fun RecipeTitle(recipe: Recipe) {
+private fun RecipeTitle(recipe: Recipe, modifier: Modifier) {
   Text(
-      modifier = Modifier.testTag("recipeTitle"),
+      modifier = modifier.testTag("recipeTitle"),
       text = recipe.strMeal,
       style = MaterialTheme.typography.titleMedium,
       fontWeight = FontWeight.Bold,
-  )
+      maxLines = 1,
+      overflow = TextOverflow.Ellipsis)
 }
 
 /**
@@ -207,12 +210,15 @@ private fun RecipeTitle(recipe: Recipe) {
  * @param recipe the recipe to like.
  */
 @Composable
-fun TopCornerLikeButton(recipe: Recipe) {
+fun TopCornerLikeButton(recipe: Recipe, userViewModel: UserViewModel) {
   var isLiked by remember { mutableStateOf(true) }
   Icon(
       imageVector = if (isLiked) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
       contentDescription = "like",
       modifier =
-          Modifier.padding(4.dp).testTag("recipeFavoriteIcon").clickable { isLiked = !isLiked },
+          Modifier.padding(4.dp).testTag("recipeFavoriteIcon").clickable {
+            isLiked = !isLiked
+            userViewModel.removeRecipeFromUserLikedRecipes(recipe)
+          },
       tint = valencia)
 }

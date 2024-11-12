@@ -72,7 +72,6 @@ class UserViewModel(
         onSuccess = { user ->
           _userName.value = user.userName
           _profilePictureUrl.value = user.profilePictureUrl
-          _fridge.value = emptyList()
           user.fridge.forEach { (barcode, ingredientCount) ->
             ingredientRepository.get(
                 barcode.toLong(),
@@ -261,6 +260,11 @@ class UserViewModel(
     updateList(_createdRecipes, recipe, false)
   }
 
+  /**
+   * Selects a specific recipe to be shown on the overview screen of the account
+   *
+   * @param recipe the recipe to select
+   */
   fun selectRecipe(recipe: Recipe) {
     _currentRecipe.value = recipe
   }
