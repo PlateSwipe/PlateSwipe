@@ -42,7 +42,8 @@ class RecipeBuilder {
   fun setArea(strArea: String) = apply { this.strArea = strArea }
 
   /**
-   * Sets the instructions for the recipe.
+   * Sets the instructions for the recipe. WARNING : This method should be updated in the next
+   * version of the instruction implementation.
    *
    * @param strInstructions The instructions for the recipe.
    */
@@ -57,7 +58,8 @@ class RecipeBuilder {
   fun setPictureID(strMealThumbUrl: String) = apply { this.strMealThumbUrl = strMealThumbUrl }
 
   /**
-   * Sets the time required to prepare the recipe.
+   * Sets the time required to prepare the recipe. WARNING : This method should be updated in the
+   * next version of the instruction implementation.
    *
    * @param time The time required to prepare the recipe.
    */
@@ -162,34 +164,85 @@ class RecipeBuilder {
     this.price = null
   }
 
-  /** Returns the ID of the recipe. */
+  /**
+   * Returns the ID of the recipe.
+   *
+   * @return The ID of the recipe.
+   */
   fun getId(): String = idMeal
 
-  /** Returns the name of the recipe. */
+  /**
+   * Returns the name of the recipe.
+   *
+   * @return The name of the recipe.
+   */
   fun getName(): String = strMeal
 
-  /** Returns the category of the recipe. */
+  /**
+   * Returns the category of the recipe.
+   *
+   * @return The category of the recipe.
+   */
   fun getCategory(): String? = strCategory
 
-  /** Returns the area of the recipe. */
+  /**
+   * Returns the area of the recipe.
+   *
+   * @return The area of the recipe.
+   */
   fun getArea(): String? = strArea
 
-  /** Returns the instructions for the recipe. */
+  /**
+   * Returns the instructions for the recipe.
+   *
+   * @return The instructions for the recipe.
+   */
   fun getInstructions(): String = strInstructions
 
-  /** Returns the URL of the thumbnail image for the recipe. */
+  /**
+   * Returns the URL of the thumbnail image for the recipe.
+   *
+   * @return The URL of the thumbnail image for the recipe.
+   */
   fun getPictureID(): String = strMealThumbUrl
 
-  /** Returns the time required to prepare the recipe. */
+  /**
+   * Returns the time required to prepare the recipe. WARNING : This method should be updated in the
+   * next version of the instruction implementation.
+   *
+   * @return The time required to prepare the recipe.
+   */
   fun getTime(): String? = time
 
-  /** Returns the difficulty level of the recipe. */
+  /**
+   * Returns the difficulty level of the recipe.
+   *
+   * @return The difficulty level of the recipe.
+   */
   fun getDifficulty(): String? = difficulty
 
-  /** Returns the price of the recipe. */
+  /**
+   * Returns the price of the recipe.
+   *
+   * @return The price of the recipe.
+   */
   fun getPrice(): String? = price
 
-  /** Returns the ingredients and their measurements for the recipe. */
+  /**
+   * Returns the ingredients and their measurements for the recipe.
+   *
+   * @return The ingredients and their measurements for the recipe.
+   */
   fun getIngredientsAndMeasurements(): List<Pair<String, String>> =
       ingredientsAndMeasurements.toList()
+
+  /**
+   * Gets the i th instruction of the recipe. WARNING : This method should be updated in the next
+   * version of the instruction implementation.
+   *
+   * @param i The index of the instruction.
+   */
+  fun getInstruction(i: Int): String {
+    return strInstructions
+  }
 }
