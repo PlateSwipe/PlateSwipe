@@ -123,6 +123,7 @@ object C {
     const val USER_IMAGE_DIR = "images/user/"
     const val RECIPE_IMAGE_DIR = "images/recipe/"
     const val INGREDIENTS_IMAGE_DIR = "images/ingredient/"
+    const val TEST_IMAGE_DIR = "images/test/"
 
     // RecipeList
     const val RECIPE_LIST_CORNER_RADIUS = 12

@@ -283,7 +283,7 @@ class CreateRecipeViewModel(
         repoImg.uploadImage(
             newUid,
             C.Tag.FIRESTORE_RECIPE_IMAGE_NAME,
-            ImageDirectoryType.USER,
+            ImageDirectoryType.TEST,
             _photo.value!!.asImageBitmap(),
             onSuccess = {
               // Set the Image UID to the Builder
