@@ -49,9 +49,10 @@ class RecipeBuilder {
   fun setInstructions(strInstructions: String) = apply { this.strInstructions = strInstructions }
 
   /**
-   * Sets the URL of the thumbnail image for the recipe.
+   * Sets the UID of the thumbnail image for the recipe.
    *
-   * @param strMealThumbUrl The URL of the thumbnail image for the recipe.
+   * @param strMealThumbUrl The UID of the thumbnail image for the recipe, it correspond to the
+   *   FireBase Image Store UID.
    */
   fun setPictureID(strMealThumbUrl: String) = apply { this.strMealThumbUrl = strMealThumbUrl }
 
@@ -133,7 +134,7 @@ class RecipeBuilder {
       "Recipe instructions are required and cannot be blank."
     }
     require(ingredientsAndMeasurements.isNotEmpty()) { "At least one ingredient is required." }
-
+    require(strMealThumbUrl.isNotBlank()) { "Recipe thumbnail is required and cannot be blank." }
     return Recipe(
         idMeal = idMeal,
         strMeal = strMeal,

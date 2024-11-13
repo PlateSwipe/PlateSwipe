@@ -24,6 +24,7 @@ class RecipeBuilderTest {
               setInstructions("Mix all ingredients")
               addIngredientAndMeasurement("Flour", "200g")
               addIngredientAndMeasurement("Sugar", "100g")
+              setPictureID("http://example.com/image.jpg")
             }
             .build()
 
@@ -39,6 +40,7 @@ class RecipeBuilderTest {
               setInstructions("Boil water, cook pasta")
               addIngredientAndMeasurement("Pasta", "200g")
               addIngredientAndMeasurement("Salt", "1 tsp")
+              setPictureID("http://example.com/image.jpg")
             }
             .build()
 
