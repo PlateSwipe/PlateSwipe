@@ -175,7 +175,7 @@ class CreateRecipeViewModelTest {
     `when`(mockRepository.getNewUid()).thenReturn(defaultRecipe.idMeal)
     createRecipeViewModel.publishRecipe()
 
-    assertEquals("Image must not be blank.", createRecipeViewModel.publishStatus.value)
+    assertEquals("Image is null", createRecipeViewModel.publishStatus.value)
   }
 
   @Test
@@ -204,7 +204,9 @@ class CreateRecipeViewModelTest {
           (it.arguments[5] as (Exception) -> Unit).invoke(Exception("Failed to upload image"))
         }
     createRecipeViewModel.publishRecipe()
-    assertEquals("Image upload failed.", createRecipeViewModel.publishStatus.value)
+    assertEquals(
+        "Failed to publish recipe: Failed to upload image",
+        createRecipeViewModel.publishStatus.value)
   }
 
   @Test

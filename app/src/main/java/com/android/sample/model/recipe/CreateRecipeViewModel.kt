@@ -9,12 +9,14 @@ import com.android.sample.model.image.ImageDirectoryType
 import com.android.sample.model.image.ImageRepository
 import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.resources.C
+import com.android.sample.resources.C.Tag.ERROR_NULL_IMAGE
 import com.android.sample.resources.C.Tag.RECIPE_PUBLISHED_SUCCESS_MESSAGE
 import com.android.sample.resources.C.Tag.RECIPE_PUBLISH_ERROR_MESSAGE
 import com.android.sample.ui.createRecipe.IconType
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.storage
+import kotlin.NullPointerException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -276,7 +278,6 @@ class CreateRecipeViewModel(
   /** Publishes the recipe to the repository. */
   fun publishRecipe() {
     val newUid = repository.getNewUid()
-    require(newUid.isNotBlank()) { "Recipe ID must not be blank." }
     recipeBuilder.setId(newUid)
     try {
       if (_photo.value != null) {
@@ -299,14 +300,13 @@ class CreateRecipeViewModel(
                     _publishStatus.value = RECIPE_PUBLISH_ERROR_MESSAGE.format(exception.message)
                   })
             },
-            onFailure = {
-              // Throw an error if the image upload fails
-              throw IllegalArgumentException("Image upload failed.")
+            onFailure = { exception ->
+              _publishStatus.value = RECIPE_PUBLISH_ERROR_MESSAGE.format(exception.message)
             })
       } else {
-        throw IllegalArgumentException("Image must not be blank.")
+        throw NullPointerException(ERROR_NULL_IMAGE)
       }
-    } catch (e: IllegalArgumentException) {
+    } catch (e: NullPointerException) {
       _publishStatus.value = e.message
     }
   }
