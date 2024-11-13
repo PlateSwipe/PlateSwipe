@@ -150,7 +150,7 @@ object C {
     const val MEAL_DB_CATEGORY_ARRAY = "categories"
 
     // FirestoreRecipeRepository
-    const val FIRESTORE_COLLECTION_NAME = "test"
+    const val FIRESTORE_COLLECTION_NAME = "recipes with images"
     // Values for storage
     const val FIRESTORE_RECIPE_NAME = "name"
     const val FIRESTORE_RECIPE_CATEGORY = "category"
@@ -162,6 +162,7 @@ object C {
     const val FIRESTORE_RECIPE_TIME = "time"
     const val FIRESTORE_RECIPE_DIFFICULTY = "difficulty"
     const val FIRESTORE_RECIPE_PRICE = "price"
+    const val FIRESTORE_RECIPE_URL = "url"
     const val CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
     const val FIRESTORE_RECIPE_IMAGE_NAME = "Main"
 

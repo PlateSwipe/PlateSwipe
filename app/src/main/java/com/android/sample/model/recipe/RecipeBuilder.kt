@@ -12,6 +12,7 @@ class RecipeBuilder {
   private var time: String? = null
   private var difficulty: String? = null
   private var price: String? = null
+  private var url: String? = null
 
   /**
    * Sets the ID of the recipe.
@@ -78,6 +79,13 @@ class RecipeBuilder {
    * @param price The price of the recipe.
    */
   fun setPrice(price: String) = apply { this.price = price }
+
+  /**
+   * Sets the URL of the thumbnail image for the recipe.
+   *
+   * @param url The URL of the thumbnail image for the recipe.
+   */
+  fun setUrl(url: String) = apply { this.url = url }
 
   /**
    * Adds an ingredient and its measurement to the recipe.
@@ -147,7 +155,8 @@ class RecipeBuilder {
         ingredientsAndMeasurements = ingredientsAndMeasurements,
         time = time,
         difficulty = difficulty,
-        price = price)
+        price = price,
+        url = url)
   }
 
   /** Clears all fields in the builder. */
@@ -162,6 +171,7 @@ class RecipeBuilder {
     this.time = null
     this.difficulty = null
     this.price = null
+    this.url = null
   }
 
   /**
@@ -227,6 +237,13 @@ class RecipeBuilder {
    * @return The price of the recipe.
    */
   fun getPrice(): String? = price
+
+  /**
+   * Returns the URL of the thumbnail image for the recipe.
+   *
+   * @return The URL of the thumbnail image for the recipe.
+   */
+  fun getUrl(): String? = url
 
   /**
    * Returns the ingredients and their measurements for the recipe.
