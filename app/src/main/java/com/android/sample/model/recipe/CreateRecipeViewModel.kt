@@ -1,7 +1,6 @@
 package com.android.sample.model.recipe
 
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
