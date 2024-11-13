@@ -16,7 +16,7 @@ import com.android.sample.resources.C.TestTag.SearchScreen.SEARCH_SCREEN
 import com.android.sample.resources.C.TestTag.Utils.PLATESWIPE_SCAFFOLD
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
-import com.android.sample.ui.recipeOverview.SearchRecipeScreen
+import com.android.sample.ui.recipe.SearchRecipeScreen
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
