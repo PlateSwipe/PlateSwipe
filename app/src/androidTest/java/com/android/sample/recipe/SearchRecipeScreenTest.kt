@@ -43,69 +43,68 @@ class searchRecipeScreenTest {
     `when`(mockRepository.random(eq(1), anyOrNull(), anyOrNull())).then {}
     `when`(mockNavigationActions.currentRoute()).thenReturn(Screen.SEARCH)
 
-    recipesList = listOf(
-          Recipe(
-              "0",
-              "Meal1",
-              "Meal1cat",
-              "Meal1Area",
-              "Meals 1 instructions",
-              "https://img.jakpost.net/c/2016/09/29/2016_09_29_12990_1475116504._large.jpg",
-              listOf(Pair("1", "peu"), Pair("2", "beaucoup"), Pair("3", "peu")),
-          ),
-          Recipe(
-              "1",
-              "Meal2",
-              "Meal2cat",
-              "Meal2Area",
-              "Meals 2 instructions",
-              "https://img.jakpost.net/c/2016/09/29/2016_09_29_12990_1475116504._large.jpg",
-              listOf(Pair("1", "peu"), Pair("2", "beaucoup"), Pair("3", "peu")),
-          ),
-          Recipe(
-              "2",
-              "Meal3",
-              "Meal3cat",
-              "Meal3Area",
-              "Meals 3 instructions",
-              "https://img.jakpost.net/c/2016/09/29/2016_09_29_12990_1475116504._large.jpg",
-              listOf(Pair("1", "peu"), Pair("2", "beaucoup"), Pair("3", "peu")),
-          ),
-          Recipe(
-              "3",
-              "Meal4",
-              "Meal4cat",
-              "Meal4Area",
-              "Meals 4 instructions",
-              "https://img.jakpost.net/c/2016/09/29/2016_09_29_12990_1475116504._large.jpg",
-              listOf(Pair("1", "peu"), Pair("2", "beaucoup"), Pair("3", "peu")),
-          ),
-          Recipe(
-              "4",
-              "Meal5",
-              "Meal5cat",
-              "Meal5Area",
-              "Meals 5 instructions",
-              "https://img.jakpost.net/c/2016/09/29/2016_09_29_12990_1475116504._large.jpg",
-              listOf(Pair("1", "peu"), Pair("2", "beaucoup"), Pair("3", "peu")),
-          ))
+    recipesList =
+        listOf(
+            Recipe(
+                "0",
+                "Meal1",
+                "Meal1cat",
+                "Meal1Area",
+                "Meals 1 instructions",
+                "https://img.jakpost.net/c/2016/09/29/2016_09_29_12990_1475116504._large.jpg",
+                listOf(Pair("1", "peu"), Pair("2", "beaucoup"), Pair("3", "peu")),
+            ),
+            Recipe(
+                "1",
+                "Meal2",
+                "Meal2cat",
+                "Meal2Area",
+                "Meals 2 instructions",
+                "https://img.jakpost.net/c/2016/09/29/2016_09_29_12990_1475116504._large.jpg",
+                listOf(Pair("1", "peu"), Pair("2", "beaucoup"), Pair("3", "peu")),
+            ),
+            Recipe(
+                "2",
+                "Meal3",
+                "Meal3cat",
+                "Meal3Area",
+                "Meals 3 instructions",
+                "https://img.jakpost.net/c/2016/09/29/2016_09_29_12990_1475116504._large.jpg",
+                listOf(Pair("1", "peu"), Pair("2", "beaucoup"), Pair("3", "peu")),
+            ),
+            Recipe(
+                "3",
+                "Meal4",
+                "Meal4cat",
+                "Meal4Area",
+                "Meals 4 instructions",
+                "https://img.jakpost.net/c/2016/09/29/2016_09_29_12990_1475116504._large.jpg",
+                listOf(Pair("1", "peu"), Pair("2", "beaucoup"), Pair("3", "peu")),
+            ),
+            Recipe(
+                "4",
+                "Meal5",
+                "Meal5cat",
+                "Meal5Area",
+                "Meals 5 instructions",
+                "https://img.jakpost.net/c/2016/09/29/2016_09_29_12990_1475116504._large.jpg",
+                listOf(Pair("1", "peu"), Pair("2", "beaucoup"), Pair("3", "peu")),
+            ))
   }
 
   @Test
   fun displaySearchScreen() {
-      composeTestRule.setContent { SearchRecipeScreen(mockNavigationActions, recipesList) }
-      composeTestRule.onNodeWithTag(PLATESWIPE_SCAFFOLD).assertIsDisplayed()
-      composeTestRule.onNodeWithTag(SEARCH_SCREEN).assertIsDisplayed()
-      composeTestRule.onNodeWithTag(SEARCH_BAR).assertIsDisplayed()
-      composeTestRule.onNodeWithTag(SEARCH_LIST).assertTextEquals(SEARCH_BAR_PLACE_HOLDER)
+    composeTestRule.setContent { SearchRecipeScreen(mockNavigationActions, recipesList) }
+    composeTestRule.onNodeWithTag(PLATESWIPE_SCAFFOLD).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(SEARCH_SCREEN).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(SEARCH_BAR).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(SEARCH_LIST).assertTextEquals(SEARCH_BAR_PLACE_HOLDER)
   }
 
   @Test
-    fun navigateToRecipeOverview(){
-        composeTestRule.setContent { SearchRecipeScreen(mockNavigationActions, recipesList) }
-        composeTestRule.onNodeWithTag(SEARCH_BAR).performClick().performTextInput("Burger")
-        verify(mockNavigationActions).navigateTo(Screen.OVERVIEW_RECIPE)
-    }
-
-
+  fun navigateToRecipeOverview() {
+    composeTestRule.setContent { SearchRecipeScreen(mockNavigationActions, recipesList) }
+    composeTestRule.onNodeWithTag(SEARCH_BAR).performClick().performTextInput("Burger")
+    verify(mockNavigationActions).navigateTo(Screen.OVERVIEW_RECIPE)
+  }
 }
