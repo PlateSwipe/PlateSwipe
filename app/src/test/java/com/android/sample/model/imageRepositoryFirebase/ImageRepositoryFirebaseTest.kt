@@ -1,11 +1,14 @@
 package com.android.sample.model.imageRepositoryFirebase
 
 import android.graphics.BitmapFactory
+import android.net.Uri
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import com.android.sample.model.image.ImageDirectoryType
 import com.android.sample.model.image.ImageRepositoryFirebase
 import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.OnFailureListener
+import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.storage.FileDownloadTask
 import com.google.firebase.storage.FirebaseStorage
@@ -14,6 +17,7 @@ import com.google.firebase.storage.UploadTask
 import java.io.File
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotNull
+import junit.framework.TestCase.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -35,6 +39,7 @@ class ImageRepositoryFirebase {
   @Mock private lateinit var mockUpload: UploadTask
   @Mock private lateinit var mockDownload: FileDownloadTask
   @Mock private lateinit var mockTaskVoid: Task<Void>
+  @Mock private lateinit var mockTaskUri: Task<Uri>
 
   @Captor
   private lateinit var onCompleteUploadTaskListenerCaptor:
@@ -65,6 +70,60 @@ class ImageRepositoryFirebase {
     imageStorage = ImageRepositoryFirebase(mockFirebaseStorage)
     testFilePath = "app/src/test/resources/images/Muscle mice sticker.jpg"
     imageBitmap = BitmapFactory.decodeFile(testFilePath).asImageBitmap()
+  }
+
+  @Test
+  fun getImageUrlSuccessful() {
+    val testUri = Uri.parse("https://example.com/test.jpg")
+    `when`(mockImageRef.downloadUrl).thenReturn(mockTaskUri)
+
+    // Ensure `mockTaskUri` returns itself for both success and failure listeners
+    `when`(mockTaskUri.addOnSuccessListener(any())).thenAnswer { invocation ->
+      val listener = invocation.arguments[0] as OnSuccessListener<Uri>
+      listener.onSuccess(Uri.parse("https://example.com/test.jpg"))
+      mockTaskUri
+    }
+
+    var resultUri: Uri? = null
+    imageStorage.getImageUrl(
+        testImageDirectoryUID,
+        testName,
+        ImageDirectoryType.USER,
+        onSuccess = { uri -> resultUri = uri },
+        onFailure = {})
+
+    assertEquals(testUri, resultUri)
+  }
+
+  @Test
+  fun getImageUrlFail() {
+    var failureException: Exception? = null
+    `when`(mockImageRef.downloadUrl).thenReturn(mockTaskUri)
+
+    // Ensure `mockTaskUri` returns itself for both success and failure listeners
+    `when`(mockTaskUri.addOnSuccessListener(any())).thenAnswer { invocation ->
+      val listener = invocation.arguments[0] as OnSuccessListener<Uri>
+      listener.onSuccess(Uri.parse("https://example.com/test.jpg"))
+      mockTaskUri
+    }
+
+    `when`(mockTaskUri.addOnFailureListener(any())).thenAnswer { invocation ->
+      val listener = invocation.arguments[0] as OnFailureListener
+      listener.onFailure(Exception("Image download failed"))
+      mockTaskUri
+    }
+
+    imageStorage.getImageUrl(
+        testImageDirectoryUID,
+        testName,
+        ImageDirectoryType.USER,
+        onSuccess = {},
+        onFailure = { e -> failureException = e })
+
+    assertTrue(failureException is Exception)
+    assertEquals(
+        "Image download from Firebase storage has failed or image does not exist",
+        failureException?.message)
   }
 
   @Test
