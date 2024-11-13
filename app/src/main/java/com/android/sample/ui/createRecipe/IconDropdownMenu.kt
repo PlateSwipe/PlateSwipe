@@ -43,23 +43,33 @@ fun IconDropdownMenu(
       modifier =
           modifier
               .background(Color.White, shape = RoundedCornerShape(4.dp))
-              .border(1.dp, Color.Gray, shape = RoundedCornerShape(4.dp))
+              .border(1.dp, Color.DarkGray, shape = RoundedCornerShape(4.dp))
               .clickable { isDropDownExpanded.value = true }
-              .padding(horizontal = 8.dp, vertical = 12.dp)
+              .padding(horizontal = 8.dp, vertical = 18.dp)
               .testTag("IconDropdownTrigger")) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxWidth()) {
               if (selectedIcon != null) {
+                Spacer(modifier = Modifier.weight(0.1f))
                 Image(
                     painter = painterResource(id = selectedIcon.iconResId),
                     contentDescription = stringResource(id = selectedIcon.descriptionResId),
                     modifier = Modifier.size(24.dp))
+                Spacer(modifier = Modifier.weight(0.1f))
+                Text(
+                    text = stringResource(id = selectedIcon.descriptionResId),
+                    style = Typography.bodyMedium,
+                    // color of the text is black
+                    color = Color.Black,
+                    modifier = Modifier.weight(1f))
               } else {
+                Spacer(modifier = Modifier.weight(0.05f))
                 Text(
                     text = stringResource(R.string.add_icon),
                     style = Typography.bodyMedium,
+                    color = Color.DarkGray,
                     modifier = Modifier.weight(1f))
               }
               Spacer(modifier = Modifier.width(4.dp))
