@@ -1,9 +1,14 @@
 package com.android.sample.account
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.hasAnySibling
+import androidx.compose.ui.test.hasContentDescription
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.user.UserViewModel
@@ -15,6 +20,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 
 class AccountScreenTest {
@@ -107,5 +113,35 @@ class AccountScreenTest {
         .onNodeWithTag("recipeTitle", useUnmergedTree = true)
         .assertIsDisplayed()
         .assertTextEquals(dummyRecipes[0].strMeal)
+  }
+
+  @Test
+  fun testSelectALikedRecipe() {
+    composeTestRule.setContent {
+      SampleAppTheme { AccountScreen(mockNavigationActions, userViewModel) }
+    }
+
+    composeTestRule
+        .onNodeWithText("Spicy Arrabiata Penne", useUnmergedTree = true)
+        .assertIsDisplayed()
+        .performClick()
+    verify(mockNavigationActions).navigateTo(Screen.OVERVIEW_RECIPE_ACCOUNT)
+  }
+
+  @Test
+  fun testRemoveALikedRecipe() {
+    composeTestRule.setContent {
+      SampleAppTheme { AccountScreen(mockNavigationActions, userViewModel) }
+    }
+
+    composeTestRule
+        .onNode(
+            hasAnySibling(hasText("Spicy Arrabiata Penne")).and(hasContentDescription("like")),
+            useUnmergedTree = true)
+        .assertIsDisplayed()
+        .performClick()
+    assert(userViewModel.likedRecipes.value.isEmpty())
+    assert(dummyRecipes != userViewModel.likedRecipes.value)
+    composeTestRule.onNodeWithText("Spicy Arrabiata Penne").assertIsNotDisplayed()
   }
 }
