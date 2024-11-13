@@ -303,6 +303,27 @@ class UserViewModelTest {
   }
 
   @Test
+  fun `test parsing of each element in fridge but not found in the database`() {
+    val onSuccessCaptor: ArgumentCaptor<Function1<User, Unit>> =
+        ArgumentCaptor.forClass(onSuccessClass)
+    val onSuccessCaptorFridge: ArgumentCaptor<Function1<Ingredient?, Unit>> =
+        ArgumentCaptor.forClass(onSuccessClassFridge)
+
+    doNothing().`when`(mockUserRepository).getUserById(any(), capture(onSuccessCaptor), any())
+
+    doNothing().`when`(mockIngredientRepository).get(any(), capture(onSuccessCaptorFridge), any())
+
+    mockStatic(Log::class.java).use { mockedLog ->
+      userViewModel.getCurrentUser()
+
+      onSuccessCaptor.value.invoke(userExample2)
+      onSuccessCaptorFridge.value.invoke(null)
+
+      mockedLog.verify { Log.e(eq("UserViewModel"), eq("Ingredient not found in the database")) }
+    }
+  }
+
+  @Test
   fun `test failed to parse each element in fridge`() {
     val onSuccessCaptor: ArgumentCaptor<Function1<User, Unit>> =
         ArgumentCaptor.forClass(onSuccessClass)
