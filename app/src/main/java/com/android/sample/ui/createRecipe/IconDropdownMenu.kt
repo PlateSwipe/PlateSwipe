@@ -20,14 +20,14 @@ import androidx.compose.ui.unit.dp
 import com.android.sample.R
 import com.android.sample.ui.theme.Typography
 
-sealed class IconType(val iconResId: Int, val description: String) {
-  object Fire : IconType(R.drawable.fire, "Fire")
+sealed class IconType(val iconResId: Int, val descriptionResId: Int) {
+  object Fire : IconType(R.drawable.fire, R.string.fire_icon_description)
 
-  object Salt : IconType(R.drawable.salt, "Salt")
+  object Salt : IconType(R.drawable.salt, R.string.salt_icon_description)
 
-  object Mortar : IconType(R.drawable.mortar, "Mortar")
+  object Mortar : IconType(R.drawable.mortar, R.string.mortar_icon_description)
 
-  object Axe : IconType(R.drawable.axe, "Axe")
+  object Axe : IconType(R.drawable.axe, R.string.axe_icon_description)
 }
 
 @Composable
@@ -54,7 +54,7 @@ fun IconDropdownMenu(
               if (selectedIcon != null) {
                 Image(
                     painter = painterResource(id = selectedIcon.iconResId),
-                    contentDescription = selectedIcon.description,
+                    contentDescription = stringResource(id = selectedIcon.descriptionResId),
                     modifier = Modifier.size(24.dp))
               } else {
                 Text(
@@ -65,7 +65,7 @@ fun IconDropdownMenu(
               Spacer(modifier = Modifier.width(4.dp))
               Image(
                   painter = painterResource(id = R.drawable.arrow_down),
-                  contentDescription = "DropDown Icon",
+                  contentDescription = stringResource(R.string.dropdown_icon),
                   modifier = Modifier.size(24.dp))
             }
 
@@ -74,7 +74,11 @@ fun IconDropdownMenu(
             onDismissRequest = { isDropDownExpanded.value = false }) {
               iconOptions.forEach { iconType ->
                 DropdownMenuItem(
-                    text = { Text(iconType.description, style = Typography.bodyMedium) },
+                    text = {
+                      Text(
+                          stringResource(id = iconType.descriptionResId),
+                          style = Typography.bodyMedium)
+                    },
                     onClick = {
                       onIconSelected(iconType)
                       isDropDownExpanded.value = false
@@ -82,8 +86,10 @@ fun IconDropdownMenu(
                     leadingIcon = {
                       Image(
                           painter = painterResource(id = iconType.iconResId),
-                          contentDescription = iconType.description,
-                          modifier = Modifier.size(24.dp).testTag(iconType.description))
+                          contentDescription = stringResource(id = iconType.descriptionResId),
+                          modifier =
+                              Modifier.size(24.dp)
+                                  .testTag(stringResource(id = iconType.descriptionResId)))
                     })
               }
             }
