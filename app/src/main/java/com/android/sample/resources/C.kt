@@ -169,7 +169,7 @@ object C {
     const val AGGREGATOR_TAG_ON_INGREDIENT_ADDED = "Ingredient added successfully"
 
     // OpenFoodFactsIngredientRepository
-    const val OPEN_FOOD_FACTS_URL = "https://world.openfoodfacts.net"
+    const val OPEN_FOOD_FACTS_URL = "https://world.openfoodfacts.org"
     const val OPEN_FOOD_FACTS_INGREDIENT_REPOSITORY_TAG = "OpenFoodFactsIngredientRepository"
     const val PRODUCT_NAME = "product_name"
     const val PRODUCT_BRAND = "brands"
@@ -184,6 +184,8 @@ object C {
     const val PRODUCT_FRONT_IMAGE_SMALL = "display_small"
     const val INGREDIENT_IMAGE_ADDED_SUCCESSFULLY =
         "Ingredient image added successfully to the storage"
+    const val OPEN_FOOD_FACTS_FIELDS =
+        "&fields=$PRODUCT_ID,$PRODUCT_NAME,$PRODUCT_BRAND,$PRODUCT_QUANTITY,$PRODUCT_CATEGORIES,$PRODUCT_FRONT_IMAGE_URL,$PRODUCT_FRONT_IMAGE_THUMBNAIL_URL,$PRODUCT_FRONT_IMAGE_SMALL_URL"
 
     // EXCEPTION MESSAGES
     const val LIMIT_MUST_BE_POSITIVE_MESSAGE = "Limit must be greater than 0"
