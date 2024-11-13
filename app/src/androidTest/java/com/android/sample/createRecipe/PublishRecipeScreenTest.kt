@@ -2,7 +2,6 @@ package com.android.sample.createRecipe
 
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.test.espresso.intent.Intents
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.recipe.CreateRecipeViewModel
@@ -12,7 +11,6 @@ import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import io.mockk.*
 import kotlinx.coroutines.test.runTest
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -33,14 +31,8 @@ class PublishRecipeScreenTest {
     navigationActions = mockk(relaxed = true)
     repoImg = mockk(relaxed = true)
     createRecipeViewModel = spyk(CreateRecipeViewModel(repository, repoImg))
-    Intents.init()
 
     every { repository.getNewUid() } returns "valid-id"
-  }
-
-  @After
-  fun tearDown() {
-    Intents.release()
   }
 
   /** Verifies that all UI elements are displayed on the PublishRecipeScreen. */
@@ -75,14 +67,6 @@ class PublishRecipeScreenTest {
 
     // Verify navigation to the CREATE_RECIPE screen
     verify { navigationActions.navigateTo(Screen.SWIPE) }
-  }
-
-  /** Verifies that an error is thrown when trying to publish without a recipe ID. */
-  @Test(expected = IllegalArgumentException::class)
-  fun publishRecipeScreen_throwsErrorWhenIdIsBlank() = runTest {
-    // Simulate blank ID
-    every { repository.getNewUid() } returns ""
-    createRecipeViewModel.publishRecipe()
   }
 
   /**

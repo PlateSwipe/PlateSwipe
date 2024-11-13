@@ -6,8 +6,6 @@ import com.android.sample.R
 
 // Like R, but C
 object C {
-  const val ZERO = 0
-
   object Tag {
 
     const val main_screen_container = "main_screen_container"
@@ -17,6 +15,12 @@ object C {
     const val PADDING = 16
     const val SMALL_PADDING = 8
 
+    // Error
+    const val ERROR_NULL_IMAGE = "Image is null"
+    const val ERROR_STR_MEAL_BLANK = "Recipe name is required and cannot be blank."
+    const val ERROR_STR_INSTR_BLANK = "Recipe instructions are required and cannot be blank."
+    const val ERROR_LIST_INGREDIENT_EMPTY = "At least one ingredient is required."
+    const val ERROR_STR_THUMBNAIL = "Recipe thumbnail is required and cannot be blank."
     // PlateSwipeButton
     object PlateSwipeButton {
       val BUTTON_WIDTH = 261.dp
@@ -150,7 +154,7 @@ object C {
     const val MEAL_DB_CATEGORY_ARRAY = "categories"
 
     // FirestoreRecipeRepository
-    const val FIRESTORE_COLLECTION_NAME = "test"
+    const val FIRESTORE_COLLECTION_NAME = "recipes with images"
     // Values for storage
     const val FIRESTORE_RECIPE_NAME = "name"
     const val FIRESTORE_RECIPE_CATEGORY = "category"
@@ -575,6 +579,21 @@ object C {
       const val RECIPE_LIST_INSTRUCTIONS_SCREEN_SPACER2 = "RecipeListInstructionsScreenSpacer2"
       const val RECIPE_LIST_ITEM_THUMBNAIL = "InstructionThumbnail"
       const val RECIPE_LIST_INSTRUCTION_ICON = "InstructionIcon"
+    }
+
+    object RecipeAddImageScreen {
+      const val BOX_IMAGE = "box for image"
+      const val DISPLAY_IMAGE = "display_image"
+      const val DISPLAY_IMAGE_DEFAULT = "display_image_default"
+      const val ROW_BUTTON = "row for buttons"
+      const val CAMERA_BUTTON = "camera button"
+      const val GALLERY_BUTTON = "gallery button"
+      const val BOX_NEXT_BUTTON = "box for next button"
+      const val ROW_FOR_CHEF = "row for chef image"
+      const val MAIN_COL = "main column"
+      const val MAIN_BOX = "main box"
+      const val COL_2 = "col 2"
+      const val TITLE_COL = "title col"
     }
   }
 }
