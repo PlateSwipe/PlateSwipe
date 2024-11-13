@@ -1,6 +1,7 @@
 package com.android.sample.model.recipe
 
 import android.graphics.Bitmap
+import android.net.Uri
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.sample.feature.camera.rotateBitmap
 import com.android.sample.model.image.ImageRepositoryFirebase
@@ -208,7 +209,7 @@ class CreateRecipeViewModelTest {
   }
 
   @Test
-  fun `test publisRecipe() with correct image call addRecipe`() = runTest {
+  fun `test publisRecipe() with correct image call getImageUrl`() = runTest {
     val defaultRecipe = createDefaultRecipe()
     val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
     createRecipeViewModel.updateRecipeName(defaultRecipe.strMeal)
@@ -231,7 +232,7 @@ class CreateRecipeViewModelTest {
     // Ensure all coroutines have completed
     advanceUntilIdle()
 
-    verify(mockRepository, times(1)).addRecipe(any(), any(), any())
+    verify(mockImageRepository, times(1)).getImageUrl(any(), any(), any(), any(), any())
   }
 
   @Test
@@ -252,6 +253,14 @@ class CreateRecipeViewModelTest {
         .thenAnswer { invocation ->
           val onSuccessCallback = invocation.arguments[4] as () -> Unit
           onSuccessCallback()
+        }
+
+    `when`(
+            mockImageRepository.getImageUrl(
+                any(), any(), any(), onSuccess = any(), onFailure = any()))
+        .thenAnswer { invocation ->
+          val onSuccessCallback = invocation.arguments[3] as (Uri) -> Unit
+          onSuccessCallback(Uri.EMPTY)
         }
 
     val recipeCaptor = argumentCaptor<Recipe>()
@@ -278,9 +287,7 @@ class CreateRecipeViewModelTest {
   }
 
   @Test
-  fun `test publishRecipe handles failure correctly`() = runTest {
-    val exception = Exception("Network error")
-
+  fun `test publishRecipe getImageUrl handles failure correctly`() = runTest {
     val defaultRecipe = createDefaultRecipe()
     val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
 
@@ -299,20 +306,54 @@ class CreateRecipeViewModelTest {
           onSuccessCallback()
         }
 
-    val recipeCaptor = argumentCaptor<Recipe>()
-    val onSuccessCaptor = argumentCaptor<() -> Unit>()
-    val onFailureCaptor = argumentCaptor<(Exception) -> Unit>()
+    `when`(
+            mockImageRepository.getImageUrl(
+                any(), any(), any(), onSuccess = any(), onFailure = any()))
+        .thenAnswer {
+          (it.arguments[4] as (Exception) -> Unit).invoke(Exception("Failed to get Image Url"))
+        }
 
     createRecipeViewModel.publishRecipe()
-    advanceUntilIdle()
-
-    verify(mockRepository)
-        .addRecipe(recipeCaptor.capture(), onSuccessCaptor.capture(), onFailureCaptor.capture())
-
-    onFailureCaptor.firstValue.invoke(exception)
-
     assertEquals(
-        "Failed to publish recipe: Network error", createRecipeViewModel.publishStatus.value)
+        "Failed to publish recipe: Failed to get Image Url",
+        createRecipeViewModel.publishStatus.value)
+  }
+
+  @Test
+  fun `test publishRecipe addRecipe handles failure correctly`() = runTest {
+    val defaultRecipe = createDefaultRecipe()
+    val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+
+    createRecipeViewModel.updateRecipeName(defaultRecipe.strMeal)
+    createRecipeViewModel.updateRecipeInstructions(defaultRecipe.strInstructions)
+    createRecipeViewModel.addIngredient("Banana", "3")
+    createRecipeViewModel.setBitmap(bitmap, 90)
+
+    `when`(mockRepository.getNewUid()).thenReturn(defaultRecipe.idMeal)
+
+    `when`(
+            mockImageRepository.uploadImage(
+                any(), any(), any(), any(), onSuccess = any(), onFailure = any()))
+        .thenAnswer { invocation ->
+          val onSuccessCallback = invocation.arguments[4] as () -> Unit
+          onSuccessCallback()
+        }
+
+    `when`(
+            mockImageRepository.getImageUrl(
+                any(), any(), any(), onSuccess = any(), onFailure = any()))
+        .thenAnswer { invocation ->
+          val onSuccessCallback = invocation.arguments[3] as (Uri) -> Unit
+          onSuccessCallback(Uri.EMPTY)
+        }
+
+    `when`(mockRepository.addRecipe(any(), onSuccess = any(), onFailure = any())).thenAnswer {
+      (it.arguments[2] as (Exception) -> Unit).invoke(Exception("Failed to add Recipe"))
+    }
+
+    createRecipeViewModel.publishRecipe()
+    assertEquals(
+        "Failed to publish recipe: Failed to add Recipe", createRecipeViewModel.publishStatus.value)
   }
 
   @Test
