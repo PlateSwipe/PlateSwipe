@@ -143,7 +143,7 @@ object C {
     const val MEAL_DB_CATEGORY_ARRAY = "categories"
 
     // FirestoreRecipeRepository
-    const val FIRESTORE_COLLECTION_NAME = "recipes"
+    const val FIRESTORE_COLLECTION_NAME = "test"
 
     // Values for storage
     const val FIRESTORE_RECIPE_NAME = "name"
@@ -244,6 +244,9 @@ object C {
         "Cannot remove more ingredients than there are in the fridge."
     const val REMOVED_INGREDIENT_NOT_IN_FRIDGE_ERROR =
         "Cannot remove an ingredient that is not in the fridge."
+
+    // Create Recipe Add Image
+    const val ADD_IMAGE_STEP = 4
   }
 
   object Values {
@@ -253,6 +256,13 @@ object C {
   }
 
   object Dimension {
+
+    const val PADDING_4 = 4
+    const val PADDING_8 = 8
+    const val PADDING_16 = 16
+    const val PADDING_24 = 24
+    const val PADDING_32 = 32
+
     object SwipePage {
       const val FILTER_ICON_SIZE = 30
       const val FILTER_ICON_WEIGHT = 1f
@@ -428,6 +438,15 @@ object C {
     object CameraTakePhotoScreen {
       const val BUTTON_SIZE = 0.1f
       const val BUTTON_PADDING = 0.05f
+    }
+
+    object RecipeAddImageScreen {
+      const val CONTENT_WIDTH = 0.8f
+      const val TEXT_HEIGHT = 0.05f
+      const val SPACER = 0.03f
+      const val IMAGE = 0.3f
+      const val ICON_WEIGHT = 0.5f
+      const val ICON_SIZE = 0.1f
     }
   }
 
