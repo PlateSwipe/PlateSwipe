@@ -2,8 +2,10 @@ package com.android.sample.ui.createRecipe
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.android.sample.R
 import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.resources.C.Tag.HORIZONTAL_PADDING
+import com.android.sample.resources.C.Tag.MINLINES_VISIBLE_FOR_INSTRUCTION
 import com.android.sample.resources.C.Tag.SAVE_BUTTON_TAG
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
@@ -60,7 +63,6 @@ fun AddInstructionStepContent(
 ) {
   var stepDescription by remember { mutableStateOf(createRecipeViewModel.getRecipeInstructions()) }
   var stepTime by remember { mutableStateOf(createRecipeViewModel.getRecipeTime()) }
-  var stepCategory by remember { mutableStateOf(createRecipeViewModel.getRecipeCategory()) }
   var selectedIcon by remember {
     mutableStateOf<IconType?>(createRecipeViewModel.getSelectedIcon())
   }
@@ -105,29 +107,34 @@ fun AddInstructionStepContent(
                           keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                           colors =
                               TextFieldDefaults.outlinedTextFieldColors(
-                                  containerColor = Color.White),
-                          modifier = Modifier.weight(1f).heightIn(min = 56.dp).testTag("TimeInput"))
-
-                      // Category input field
-                      OutlinedTextField(
-                          value = stepCategory ?: "",
-                          onValueChange = { stepCategory = it },
-                          label = {
-                            Text(
-                                stringResource(R.string.category_label),
-                                style = Typography.bodySmall)
-                          },
-                          colors =
-                              TextFieldDefaults.outlinedTextFieldColors(
-                                  containerColor = Color.White),
-                          modifier =
-                              Modifier.weight(1f).heightIn(min = 56.dp).testTag("CategoryInput"))
+                                  containerColor = Color.White,
+                                  focusedLabelColor = Color.DarkGray,
+                                  unfocusedLabelColor = Color.DarkGray,
+                                  focusedBorderColor = Color.DarkGray,
+                                  unfocusedBorderColor = Color.DarkGray),
+                          modifier = Modifier.weight(1f).testTag("TimeInput"),
+                          maxLines = 1)
+                      /*
+                        // Category input field
+                        OutlinedTextField(
+                            value = stepCategory ?: "",
+                            onValueChange = { stepCategory = it },
+                            label = {
+                              Text(
+                                  stringResource(R.string.category_label),
+                                  style = Typography.bodySmall)
+                            },
+                            colors =
+                                TextFieldDefaults.outlinedTextFieldColors(
+                                    containerColor = Color.White),
+                            modifier =
+                                Modifier.weight(1f).heightIn(min = 56.dp).testTag("CategoryInput"))
+                      */
                       // Icon dropdown menu
                       IconDropdownMenu(
                           selectedIcon = selectedIcon,
                           onIconSelected = { selectedIcon = it },
-                          modifier =
-                              Modifier.weight(1f).heightIn(min = 56.dp).testTag("IconDropdown"))
+                          modifier = Modifier.weight(1f).testTag("IconDropdown"))
                     }
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -140,13 +147,20 @@ fun AddInstructionStepContent(
                           stringResource(R.string.instruction_label), style = Typography.bodyMedium)
                     },
                     colors =
-                        TextFieldDefaults.outlinedTextFieldColors(containerColor = Color.White),
+                        TextFieldDefaults.outlinedTextFieldColors(
+                            containerColor = Color.White,
+                            focusedLabelColor = Color.DarkGray,
+                            unfocusedLabelColor = Color.DarkGray,
+                            focusedBorderColor = Color.DarkGray,
+                            unfocusedBorderColor = Color.DarkGray),
                     modifier =
                         Modifier.fillMaxWidth()
-                            .heightIn(min = 200.dp)
                             .padding(vertical = 8.dp)
+                            .verticalScroll(rememberScrollState())
                             .testTag("InstructionInput"),
-                    isError = verifyStepDescription(showError, stepDescription))
+                    isError = verifyStepDescription(showError, stepDescription),
+                    textStyle = Typography.bodySmall,
+                    minLines = MINLINES_VISIBLE_FOR_INSTRUCTION)
 
                 // Error message for empty instruction
                 if (verifyStepDescription(showError, stepDescription)) {
@@ -168,7 +182,6 @@ fun AddInstructionStepContent(
               confirmAndAssignStep(
                   stepDescription,
                   stepTime,
-                  stepCategory,
                   selectedIcon,
                   createRecipeViewModel,
                   onSuccess = {
@@ -211,7 +224,6 @@ fun verifyStepDescription(showError: Boolean, stepDescription: String): Boolean 
 fun confirmAndAssignStep(
     stepDescription: String,
     stepTime: String?,
-    stepCategory: String?,
     selectedIcon: IconType?,
     createRecipeViewModel: CreateRecipeViewModel,
     onSuccess: () -> Unit
@@ -220,9 +232,6 @@ fun confirmAndAssignStep(
     createRecipeViewModel.updateRecipeInstructions(stepDescription)
     if (!stepTime.isNullOrEmpty()) {
       createRecipeViewModel.updateRecipeTime(stepTime.toString())
-    }
-    if (!stepCategory.isNullOrEmpty()) {
-      createRecipeViewModel.updateRecipeCategory(stepCategory.toString())
     }
     if (selectedIcon != null) {
       createRecipeViewModel.selectIcon(selectedIcon!!)
