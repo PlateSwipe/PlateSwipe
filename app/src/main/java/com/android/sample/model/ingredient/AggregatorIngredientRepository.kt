@@ -66,8 +66,6 @@ class AggregatorIngredientRepository(
       onFailure: (Exception) -> Unit,
       count: Int
   ) {
-    Log.i("test", "search")
-
     openFoodFactsIngredientRepository.search(
         name,
         onSuccess = { ingredientsOpenFoodFacts ->
@@ -86,16 +84,15 @@ class AggregatorIngredientRepository(
       onSuccess: (List<Ingredient>) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
+    var confirmedCount = 0
     val foundIngredients = mutableListOf<Ingredient>()
 
     for (ingredient in ingredientsOpenFoodFacts) {
-      Log.i("test", ingredient.name + "  " + ingredient.barCode)
       if (ingredient.barCode != null) {
         firestoreIngredientRepository.get(
             ingredient.barCode,
             onSuccess = { ingredientFirestore ->
               if (ingredientFirestore != null) {
-                Log.i("test", "found " + ingredientFirestore.name)
                 foundIngredients.add(ingredientFirestore)
               } else {
                 foundIngredients.add(ingredient)
@@ -106,14 +103,17 @@ class AggregatorIngredientRepository(
                       Log.i(
                           C.Tag.AGGREGATOR_TAG_ON_INGREDIENT_ADDED,
                           ingredientsOpenFoodFacts.toString())
-                      Log.i("test", "added" + ingredientsOpenFoodFacts.toString())
                     },
                     onFailure = onFailure)
+              }
+
+              confirmedCount++
+              if (confirmedCount == ingredientsOpenFoodFacts.size) {
+                onSuccess(foundIngredients)
               }
             },
             onFailure = onFailure)
       }
     }
-    onSuccess(foundIngredients)
   }
 }
