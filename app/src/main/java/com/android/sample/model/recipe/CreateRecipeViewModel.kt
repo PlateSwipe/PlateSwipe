@@ -9,10 +9,11 @@ import com.android.sample.feature.camera.rotateBitmap
 import com.android.sample.model.image.ImageDirectoryType
 import com.android.sample.model.image.ImageRepository
 import com.android.sample.model.image.ImageRepositoryFirebase
+import com.android.sample.resources.C
 import com.android.sample.resources.C.Tag.RECIPE_PUBLISHED_SUCCESS_MESSAGE
 import com.android.sample.resources.C.Tag.RECIPE_PUBLISH_ERROR_MESSAGE
-import com.google.firebase.Firebase
 import com.android.sample.ui.createRecipe.IconType
+import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.storage
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -282,15 +283,13 @@ class CreateRecipeViewModel(
       if (_photo.value != null) {
         repoImg.uploadImage(
             newUid,
-            "BOSS",
+            C.Tag.FIRESTORE_RECIPE_IMAGE_NAME,
             ImageDirectoryType.USER,
             _photo.value!!.asImageBitmap(),
             onSuccess = {
               // Set the Image UID to the Builder
               recipeBuilder.setPictureID(newUid)
               val recipe = recipeBuilder.build()
-              Log.d(
-                  "CreateRecipeViewModel", "Recipe built successfully : ${recipe.strMealThumbUrl}")
               repository.addRecipe(
                   recipe,
                   onSuccess = {
