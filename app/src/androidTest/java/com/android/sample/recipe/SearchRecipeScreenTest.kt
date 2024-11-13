@@ -5,6 +5,7 @@ import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextInput
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.recipe.RecipesRepository
 import com.android.sample.model.recipe.RecipesViewModel
@@ -93,17 +94,18 @@ class searchRecipeScreenTest {
   @Test
   fun displaySearchScreen() {
       composeTestRule.setContent { SearchRecipeScreen(mockNavigationActions, recipesList) }
-
       composeTestRule.onNodeWithTag(PLATESWIPE_SCAFFOLD).assertIsDisplayed()
       composeTestRule.onNodeWithTag(SEARCH_SCREEN).assertIsDisplayed()
       composeTestRule.onNodeWithTag(SEARCH_BAR).assertIsDisplayed()
       composeTestRule.onNodeWithTag(SEARCH_LIST).assertTextEquals(SEARCH_BAR_PLACE_HOLDER)
   }
 
-    @Test
+  @Test
     fun navigateToRecipeOverview(){
         composeTestRule.setContent { SearchRecipeScreen(mockNavigationActions, recipesList) }
-        composeTestRule.onNodeWithTag("Meal4").performClick()
+        composeTestRule.onNodeWithTag(SEARCH_BAR).performClick().performTextInput("Burger")
         verify(mockNavigationActions).navigateTo(Screen.OVERVIEW_RECIPE)
     }
+
+
 }
