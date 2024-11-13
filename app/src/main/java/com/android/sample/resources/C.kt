@@ -15,6 +15,12 @@ object C {
     const val PADDING = 16
     const val SMALL_PADDING = 8
 
+    // PlateSwipeButton
+    object PlateSwipeButton {
+      val BUTTON_WIDTH = 261.dp
+      val BUTTON_HEIGHT = 46.dp
+    }
+
     // SwipePage
     object SwipePage {
       const val END_ANIMATION = 1500f

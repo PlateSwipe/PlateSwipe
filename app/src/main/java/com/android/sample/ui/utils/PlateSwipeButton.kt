@@ -12,9 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.android.sample.resources.C
 import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScreen.ROUNDED_CORNER_SHAPE
-import com.android.sample.resources.C.Tag.RECIPE_NAME_BUTTON_HEIGHT
-import com.android.sample.resources.C.Tag.RECIPE_NAME_BUTTON_WIDTH
 
 @Composable
 fun PlateSwipeButton(
@@ -26,8 +25,8 @@ fun PlateSwipeButton(
       onClick = { onClick() },
       modifier =
           modifier
-              .width(RECIPE_NAME_BUTTON_WIDTH)
-              .height(RECIPE_NAME_BUTTON_HEIGHT)
+              .width(C.Tag.PlateSwipeButton.BUTTON_WIDTH)
+              .height(C.Tag.PlateSwipeButton.BUTTON_HEIGHT)
               .background(
                   color = MaterialTheme.colorScheme.primary,
                   shape = RoundedCornerShape(size = ROUNDED_CORNER_SHAPE.dp)),
