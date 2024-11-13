@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.android.sample.R
 import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.resources.C.Tag.HORIZONTAL_PADDING
+import com.android.sample.resources.C.Tag.MAXLINES_VISIBLE_FOR_INSTRUCTION
 import com.android.sample.resources.C.Tag.MINLINES_VISIBLE_FOR_INSTRUCTION
 import com.android.sample.resources.C.Tag.SAVE_BUTTON_TAG
 import com.android.sample.ui.navigation.NavigationActions
@@ -93,6 +94,7 @@ fun AddInstructionStepContent(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically) {
+
                       // Time input field
                       OutlinedTextField(
                           value = stepTime ?: "",
@@ -114,22 +116,7 @@ fun AddInstructionStepContent(
                                   unfocusedBorderColor = Color.DarkGray),
                           modifier = Modifier.weight(1f).testTag("TimeInput"),
                           maxLines = 1)
-                      /*
-                        // Category input field
-                        OutlinedTextField(
-                            value = stepCategory ?: "",
-                            onValueChange = { stepCategory = it },
-                            label = {
-                              Text(
-                                  stringResource(R.string.category_label),
-                                  style = Typography.bodySmall)
-                            },
-                            colors =
-                                TextFieldDefaults.outlinedTextFieldColors(
-                                    containerColor = Color.White),
-                            modifier =
-                                Modifier.weight(1f).heightIn(min = 56.dp).testTag("CategoryInput"))
-                      */
+
                       // Icon dropdown menu
                       IconDropdownMenu(
                           selectedIcon = selectedIcon,
@@ -139,6 +126,7 @@ fun AddInstructionStepContent(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
+                // Instruction input field
                 OutlinedTextField(
                     value = stepDescription,
                     onValueChange = { stepDescription = it },
@@ -160,7 +148,8 @@ fun AddInstructionStepContent(
                             .testTag("InstructionInput"),
                     isError = verifyStepDescription(showError, stepDescription),
                     textStyle = Typography.bodySmall,
-                    minLines = MINLINES_VISIBLE_FOR_INSTRUCTION)
+                    minLines = MINLINES_VISIBLE_FOR_INSTRUCTION,
+                    maxLines = MAXLINES_VISIBLE_FOR_INSTRUCTION)
 
                 // Error message for empty instruction
                 if (verifyStepDescription(showError, stepDescription)) {
@@ -216,7 +205,6 @@ fun verifyStepDescription(showError: Boolean, stepDescription: String): Boolean 
  *
  * @param stepDescription The description of the step.
  * @param stepTime The time required for the step.
- * @param stepCategory The category of the step.
  * @param selectedIcon The icon selected for the step.
  * @param createRecipeViewModel ViewModel for managing the recipe creation process.
  * @param onSuccess Callback to be executed if the step is confirmed.

@@ -236,6 +236,7 @@ object C {
     const val HORIZONTAL_PADDING = 16
     const val SAVE_BUTTON_TAG = "saveButton"
     const val MINLINES_VISIBLE_FOR_INSTRUCTION = 10
+    const val MAXLINES_VISIBLE_FOR_INSTRUCTION = 10
 
     // PublishRecipeScreen
     val CHEF_IMAGE_DESCRIPTION = "Chef illustration inside an egg"

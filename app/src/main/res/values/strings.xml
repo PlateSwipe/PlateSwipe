@@ -51,7 +51,6 @@
     <string name="instruction_label">Instruction</string>
     <string name="save_label">Save</string>
     <string name="add_step">Add Step</string>
-    <string name="category_label">Category</string>
     <string name="error_message_empty_instruction">Please enter an instruction</string>
 
     //IconDropDownMenu
