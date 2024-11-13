@@ -1,5 +1,6 @@
 package com.android.sample.model.user
 
+import android.util.Log
 import com.android.sample.model.ingredient.FirestoreIngredientRepository
 import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.recipe.FirestoreRecipesRepository
@@ -13,11 +14,13 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.ArgumentCaptor
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.mockStatic
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
 import org.mockito.kotlin.capture
 import org.mockito.kotlin.doNothing
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
 
 class UserViewModelTest {
@@ -25,6 +28,18 @@ class UserViewModelTest {
   @Suppress("UNCHECKED_CAST")
   private val onSuccessClass: Class<Function1<User, Unit>> =
       Function1::class.java as Class<Function1<User, Unit>>
+
+  @Suppress("UNCHECKED_CAST")
+  private val onSuccessClassFridge: Class<Function1<Ingredient?, Unit>> =
+      Function1::class.java as Class<Function1<Ingredient?, Unit>>
+
+  @Suppress("UNCHECKED_CAST")
+  private val onSuccessClassLikedRecipes: Class<Function1<Recipe, Unit>> =
+      Function1::class.java as Class<Function1<Recipe, Unit>>
+
+  @Suppress("UNCHECKED_CAST")
+  private val onSuccessClassCreatedRecipes: Class<Function1<Recipe, Unit>> =
+      Function1::class.java as Class<Function1<Recipe, Unit>>
 
   @Suppress("UNCHECKED_CAST")
   private val onFailureClass: Class<Function1<Exception, Unit>> =
@@ -43,6 +58,15 @@ class UserViewModelTest {
   private val userExample: User =
       User("001", "Gigel Frone", "", emptyList(), emptyList(), emptyList())
 
+  private val userExample2: User =
+      User("001", "Gigelica Frone", "", listOf(Pair("133", 1)), emptyList(), emptyList())
+
+  private val userExample3: User =
+      User("001", "Florica Frone", "", emptyList(), listOf("123"), emptyList())
+
+  private val userExample4: User =
+      User("001", "Calcev Frone", "", emptyList(), emptyList(), listOf("456"))
+
   private val ingredientExample: Ingredient =
       Ingredient(
           barCode = 133L,
@@ -55,6 +79,17 @@ class UserViewModelTest {
       Recipe(
           "123",
           "recipe1",
+          null,
+          null,
+          "instructions",
+          "thumb",
+          listOf(Pair("2134", "4231")),
+      )
+
+  private val createdRecipeExample: Recipe =
+      Recipe(
+          "456",
+          "recipe2",
           null,
           null,
           "instructions",
@@ -85,6 +120,12 @@ class UserViewModelTest {
   fun `test get current user calls repository`() {
     userViewModel.getCurrentUser()
     verify(mockUserRepository).getUserById(any(), any(), any())
+  }
+
+  @Test
+  fun `test select recipe`() {
+    userViewModel.selectRecipe(recipe = recipeExample)
+    assertEquals(userViewModel.currentRecipe.value, recipeExample)
   }
 
   @Test
@@ -235,6 +276,161 @@ class UserViewModelTest {
 
     assertThrows(IllegalArgumentException::class.java) {
       userViewModel.removeIngredientFromUserFridge(ingredientExample)
+    }
+  }
+
+  @Test
+  fun `test parsing of each element in fridge`() {
+    val onSuccessCaptor: ArgumentCaptor<Function1<User, Unit>> =
+        ArgumentCaptor.forClass(onSuccessClass)
+    val onSuccessCaptorFridge: ArgumentCaptor<Function1<Ingredient?, Unit>> =
+        ArgumentCaptor.forClass(onSuccessClassFridge)
+
+    doNothing().`when`(mockUserRepository).getUserById(any(), capture(onSuccessCaptor), any())
+
+    doNothing().`when`(mockIngredientRepository).get(any(), capture(onSuccessCaptorFridge), any())
+
+    userViewModel.getCurrentUser()
+
+    onSuccessCaptor.value.invoke(userExample2)
+    onSuccessCaptorFridge.value.invoke(ingredientExample)
+
+    assertEquals(userExample2.userName, userViewModel.userName.value)
+    assertEquals(userExample2.profilePictureUrl, userViewModel.profilePictureUrl.value)
+    assertEquals(listOf(Pair(ingredientExample, 1)), userViewModel.fridge.value)
+    assertEquals(userExample2.likedRecipes, userViewModel.likedRecipes.value)
+    assertEquals(userExample2.createdRecipes, userViewModel.createdRecipes.value)
+  }
+
+  @Test
+  fun `test failed to parse each element in fridge`() {
+    val onSuccessCaptor: ArgumentCaptor<Function1<User, Unit>> =
+        ArgumentCaptor.forClass(onSuccessClass)
+    val onFailureCaptorFridge: ArgumentCaptor<Function1<Exception, Unit>> =
+        ArgumentCaptor.forClass(onFailureClass)
+
+    doNothing().`when`(mockUserRepository).getUserById(any(), capture(onSuccessCaptor), any())
+
+    doNothing().`when`(mockIngredientRepository).get(any(), any(), capture(onFailureCaptorFridge))
+
+    mockStatic(Log::class.java).use { mockedLog ->
+      userViewModel.getCurrentUser()
+
+      onSuccessCaptor.value.invoke(userExample2)
+      onFailureCaptorFridge.value.invoke(Exception())
+
+      mockedLog.verify {
+        Log.e(
+            eq("UserViewModel"),
+            eq("Failed to fetch ingredient from the database."),
+            any<Exception>())
+      }
+    }
+  }
+
+  @Test
+  fun `test parsing of each element in liked recipes`() {
+    val onSuccessCaptor: ArgumentCaptor<Function1<User, Unit>> =
+        ArgumentCaptor.forClass(onSuccessClass)
+    val onSuccessCaptorLikedRecipe: ArgumentCaptor<Function1<Recipe, Unit>> =
+        ArgumentCaptor.forClass(onSuccessClassLikedRecipes)
+
+    doNothing().`when`(mockUserRepository).getUserById(any(), capture(onSuccessCaptor), any())
+
+    doNothing()
+        .`when`(mockRecipeRepository)
+        .search(any(), capture(onSuccessCaptorLikedRecipe), any())
+
+    userViewModel.getCurrentUser()
+
+    onSuccessCaptor.value.invoke(userExample3)
+    onSuccessCaptorLikedRecipe.value.invoke(recipeExample)
+
+    assertEquals(userExample3.userName, userViewModel.userName.value)
+    assertEquals(userExample3.profilePictureUrl, userViewModel.profilePictureUrl.value)
+    assertEquals(userExample3.fridge, userViewModel.fridge.value)
+    assertEquals(listOf(recipeExample), userViewModel.likedRecipes.value)
+    assertEquals(userExample3.createdRecipes, userViewModel.createdRecipes.value)
+  }
+
+  @Test
+  fun `test failed to parse each element in liked recipes`() {
+    val onSuccessCaptor: ArgumentCaptor<Function1<User, Unit>> =
+        ArgumentCaptor.forClass(onSuccessClass)
+    val onFailureCaptorLikedRecipe: ArgumentCaptor<Function1<Exception, Unit>> =
+        ArgumentCaptor.forClass(onFailureClass)
+
+    doNothing().`when`(mockUserRepository).getUserById(any(), capture(onSuccessCaptor), any())
+
+    doNothing()
+        .`when`(mockRecipeRepository)
+        .search(any(), any(), capture(onFailureCaptorLikedRecipe))
+
+    mockStatic(Log::class.java).use { mockedLog ->
+      userViewModel.getCurrentUser()
+
+      onSuccessCaptor.value.invoke(userExample3)
+      onFailureCaptorLikedRecipe.value.invoke(Exception())
+
+      mockedLog.verify {
+        Log.e(
+            eq("UserViewModel"),
+            eq("Failed to fetch liked recipes from the database."),
+            any<Exception>())
+      }
+    }
+  }
+
+  @Test
+  fun `test parsing of each element in created recipes`() {
+    val onSuccessCaptor: ArgumentCaptor<Function1<User, Unit>> =
+        ArgumentCaptor.forClass(onSuccessClass)
+    val onSuccessCaptorCreatedRecipe: ArgumentCaptor<Function1<Recipe, Unit>> =
+        ArgumentCaptor.forClass(onSuccessClassCreatedRecipes)
+
+    doNothing().`when`(mockUserRepository).getUserById(any(), capture(onSuccessCaptor), any())
+
+    doNothing()
+        .`when`(mockRecipeRepository)
+        .search(any(), capture(onSuccessCaptorCreatedRecipe), any())
+
+    userViewModel.getCurrentUser()
+
+    onSuccessCaptor.value.invoke(userExample4)
+    onSuccessCaptorCreatedRecipe.value.invoke(createdRecipeExample)
+
+    assertEquals(userExample4.userName, userViewModel.userName.value)
+    assertEquals(userExample4.profilePictureUrl, userViewModel.profilePictureUrl.value)
+    assertEquals(userExample4.fridge, userViewModel.fridge.value)
+    assertEquals(userExample4.likedRecipes, userViewModel.likedRecipes.value)
+    assertEquals(listOf(createdRecipeExample), userViewModel.createdRecipes.value)
+  }
+
+  @Test
+  fun `test failed to parse each element in created recipes`() {
+    val onSuccessCaptor: ArgumentCaptor<Function1<User, Unit>> =
+        ArgumentCaptor.forClass(onSuccessClass)
+    val onFailureCaptorCreatedRecipe: ArgumentCaptor<Function1<Exception, Unit>> =
+        ArgumentCaptor.forClass(onFailureClass)
+
+    doNothing().`when`(mockUserRepository).getUserById(any(), capture(onSuccessCaptor), any())
+
+    doNothing()
+        .`when`(mockRecipeRepository)
+        .search(any(), any(), capture(onFailureCaptorCreatedRecipe))
+
+    mockStatic(Log::class.java).use { mockedLog ->
+      userViewModel.getCurrentUser()
+
+      onSuccessCaptor.value.invoke(userExample4)
+      onFailureCaptorCreatedRecipe.value.invoke(Exception())
+
+      mockedLog.verify {
+        Log.e(
+            eq("UserViewModel"),
+            eq("Failed to fetch created recipes from the database."),
+            any<Exception>())
+      }
     }
   }
 }
