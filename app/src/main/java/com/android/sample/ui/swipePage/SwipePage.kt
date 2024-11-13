@@ -578,7 +578,7 @@ fun FilterChip(
               text = label,
               style = MaterialTheme.typography.bodySmall,
               color = MaterialTheme.colorScheme.onSecondary,
-          )
+              modifier = Modifier.testTag(testTag + "text"))
         },
         trailingIcon = {
           Icon(
