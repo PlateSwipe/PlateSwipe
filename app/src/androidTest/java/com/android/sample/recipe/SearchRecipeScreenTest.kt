@@ -1,15 +1,15 @@
 package com.android.sample.utils
 
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performTextInput
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.recipe.RecipesRepository
 import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.resources.C.Tag.SEARCH_BAR_PLACE_HOLDER
+import com.android.sample.resources.C.TestTag.SearchScreen.FILTER
 import com.android.sample.resources.C.TestTag.SearchScreen.SEARCH_BAR
 import com.android.sample.resources.C.TestTag.SearchScreen.SEARCH_LIST
 import com.android.sample.resources.C.TestTag.SearchScreen.SEARCH_SCREEN
@@ -97,14 +97,25 @@ class searchRecipeScreenTest {
     composeTestRule.setContent { SearchRecipeScreen(mockNavigationActions, recipesList) }
     composeTestRule.onNodeWithTag(PLATESWIPE_SCAFFOLD).assertIsDisplayed()
     composeTestRule.onNodeWithTag(SEARCH_SCREEN).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(SEARCH_BAR).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(SEARCH_LIST).assertTextEquals(SEARCH_BAR_PLACE_HOLDER)
+    composeTestRule
+        .onNodeWithTag(SEARCH_BAR)
+        .assertIsDisplayed()
+        .assertTextContains(SEARCH_BAR_PLACE_HOLDER)
+    composeTestRule.onNodeWithTag(SEARCH_LIST).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(FILTER).assertIsDisplayed()
   }
 
   @Test
   fun navigateToRecipeOverview() {
     composeTestRule.setContent { SearchRecipeScreen(mockNavigationActions, recipesList) }
-    composeTestRule.onNodeWithTag(SEARCH_BAR).performClick().performTextInput("Burger")
+    composeTestRule.onNodeWithTag("recipeCard3").performClick()
     verify(mockNavigationActions).navigateTo(Screen.OVERVIEW_RECIPE)
+  }
+
+  @Test
+  fun navigateToFilter() {
+    composeTestRule.setContent { SearchRecipeScreen(mockNavigationActions, recipesList) }
+    composeTestRule.onNodeWithTag(FILTER).performClick()
+    verify(mockNavigationActions).navigateTo(Screen.FILTER)
   }
 }

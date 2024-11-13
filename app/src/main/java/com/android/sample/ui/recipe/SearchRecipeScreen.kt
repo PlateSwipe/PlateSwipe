@@ -13,6 +13,7 @@ import com.android.sample.R
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.resources.C.Tag.PADDING
 import com.android.sample.resources.C.Tag.SMALL_PADDING
+import com.android.sample.resources.C.TestTag.SearchScreen.SEARCH_LIST
 import com.android.sample.resources.C.TestTag.SearchScreen.SEARCH_SCREEN
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
@@ -64,11 +65,9 @@ fun SearchScreenContent(
 
         RecipeList(
             list = recipeList,
-            onRecipeSelected = { _ -> navigationActions.navigateTo("Overview Recipe Screen") },
+            onRecipeSelected = { navigationActions.navigateTo(Screen.OVERVIEW_RECIPE) },
             topCornerButton = { recipe -> TopCornerLikeButton(recipe) },
             modifier =
-                Modifier.fillMaxSize()
-                    .padding(top = 16.dp, bottom = 16.dp)
-                    .testTag("SearchRecipeList"))
+                Modifier.fillMaxSize().padding(top = 16.dp, bottom = 16.dp).testTag(SEARCH_LIST))
       }
 }
