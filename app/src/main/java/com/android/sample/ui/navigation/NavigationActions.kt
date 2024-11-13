@@ -32,6 +32,8 @@ object Screen {
 
   const val CREATE_RECIPE_ADD_INSTRUCTION = "Add One Recipe Instruction"
 
+  const val CREATE_RECIPE_LIST_INSTRUCTIONS = "List Recipe Instructions"
+
   const val PUBLISH_CREATED_RECIPE = "Publish Created Recipe"
 
   const val ACCOUNT = "Account Screen"

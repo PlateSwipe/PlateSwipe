@@ -33,6 +33,7 @@
 
 
 
+
     //RecipeNameScreen
     <string name="create_your_recipe">Create your recipe</string>
     <string name="create_recipe_description">Create a recipe that others can discover and enjoy. Start by giving your dish a name!</string>
@@ -46,7 +47,7 @@
 
     //AddInstructionStepScreen
     <string name="step_label">Step</string>
-    <string name="time_label">Time</string>
+    <string name="time_label">Time (min)</string>
     <string name="instruction_label">Instruction</string>
     <string name="save_label">Save</string>
     <string name="add_step">Add Step</string>
@@ -75,6 +76,12 @@
     //RecipeInstructionsScreen
     <string name="add_instructions">Add Instructions</string>
     <string name="describe_instructions">Describe each step of how to prepare your dish.</string>
+
+    //RecipeListInstructionsScreen
+    <string name="RecipeListInstructionsScreen_Instructions">Instructions</string>
+    <string name="RecipeListInstructionsScreen_Step">Step</string>
+    <string name="RecipeListInstructionsScreen_Minutes">min</string>
+
 
 
 </resources>
