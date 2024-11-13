@@ -72,17 +72,18 @@ fun PublishRecipeContent(
       modifier = modifier,
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.SpaceBetween) {
-        Spacer(modifier = Modifier.weight(0.05f))
+        Spacer(modifier = Modifier.weight(0.15f))
         // Display the done text
         Text(
             text = stringResource(R.string.done_text),
             style = Typography.titleLarge,
-            modifier = Modifier.weight(0.4f).padding(bottom = 16.dp).testTag("DoneText"))
-        Spacer(modifier = Modifier.weight(0.1f))
+            modifier = Modifier.weight(0.2f).zIndex(1f).testTag("DoneText"),
+            color = MaterialTheme.colorScheme.onPrimary)
+        Spacer(modifier = Modifier.weight(0.05f))
 
         // Display the chef in egg image
         Image(
-            painter = painterResource(id = R.drawable.chef_image_in_egg),
+            painter = painterResource(id = R.drawable.chef_image_in_egg1),
             contentDescription = CHEF_IMAGE_DESCRIPTION,
             modifier =
                 Modifier.weight(1f)
@@ -90,8 +91,6 @@ fun PublishRecipeContent(
                     .aspectRatio(CHEF_IN_EGG_ORIGINAL_RATIO)
                     .zIndex(-1f)
                     .testTag("ChefImage"))
-
-        Spacer(modifier = Modifier.weight(0.1f))
 
         // Display the publish button
         Button(
@@ -105,7 +104,7 @@ fun PublishRecipeContent(
             modifier =
                 Modifier.padding(horizontal = 16.dp)
                     .fillMaxWidth(0.7f)
-                    .weight(0.2f)
+                    .weight(0.15f)
                     .testTag("PublishButton")) {
               Text(
                   text = stringResource(R.string.publish_recipe_button),

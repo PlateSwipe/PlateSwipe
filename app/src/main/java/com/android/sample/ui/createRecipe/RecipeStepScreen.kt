@@ -1,9 +1,7 @@
 package com.android.sample.ui.createRecipe
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -12,11 +10,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.android.sample.resources.C.Tag.BASE_PADDING
-import com.android.sample.resources.C.Tag.BUTTON_HEIGHT
-import com.android.sample.resources.C.Tag.BUTTON_WIDTH
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
-import com.android.sample.ui.theme.lightCream
+import com.android.sample.ui.utils.PlateSwipeButton
 import com.android.sample.ui.utils.PlateSwipeScaffold
 
 /**
@@ -92,17 +88,10 @@ fun RecipeStepScreen(
               }
 
           // Action button
-          Button(
-              onClick = onButtonClick,
-              modifier =
-                  Modifier.width(BUTTON_WIDTH)
-                      .height(BUTTON_HEIGHT)
-                      .background(color = lightCream, shape = RoundedCornerShape(size = 4.dp))
-                      .align(Alignment.BottomCenter)
-                      .zIndex(1f),
-              shape = RoundedCornerShape(4.dp)) {
-                Text(buttonText)
-              }
+          PlateSwipeButton(
+              buttonText,
+              modifier = Modifier.align(Alignment.BottomCenter),
+              onClick = onButtonClick)
         }
       })
 }

@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.android.sample.R
@@ -27,6 +26,7 @@ import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.Typography
 import com.android.sample.ui.theme.lightCream
+import com.android.sample.ui.utils.PlateSwipeButton
 import com.android.sample.ui.utils.PlateSwipeScaffold
 
 @Composable
@@ -165,7 +165,9 @@ fun AddInstructionStepContent(
         Spacer(modifier = Modifier.height(16.dp))
 
         // Save Button
-        Button(
+        PlateSwipeButton(
+            stringResource(R.string.save_label),
+            modifier = Modifier.fillMaxWidth().testTag(SAVE_BUTTON_TAG),
             onClick = {
               showError = stepDescription.isEmpty() // Set error if instructions are empty
               confirmAndAssignStep(
@@ -176,16 +178,7 @@ fun AddInstructionStepContent(
                   onSuccess = {
                     navigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INSTRUCTIONS)
                   })
-            },
-            modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp).testTag(SAVE_BUTTON_TAG),
-            colors =
-                ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-            shape = RoundedCornerShape(size = 4.dp),
-        ) {
-          Text(
-              text = stringResource(R.string.save_label),
-              style = Typography.bodyMedium.copy(fontWeight = FontWeight.Bold))
-        }
+            })
       }
 }
 

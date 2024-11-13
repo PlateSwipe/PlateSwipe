@@ -19,7 +19,6 @@ import androidx.compose.ui.zIndex
 import com.android.sample.R
 import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.resources.C.Tag.RECIPE_NAME_BASE_PADDING
-import com.android.sample.resources.C.Tag.RECIPE_NAME_BUTTON_HEIGHT
 import com.android.sample.resources.C.Tag.RECIPE_NAME_BUTTON_WIDTH
 import com.android.sample.resources.C.Tag.RECIPE_NAME_CHARACTER_LIMIT
 import com.android.sample.resources.C.Tag.RECIPE_NAME_FIELD_HEIGHT
@@ -29,6 +28,7 @@ import com.android.sample.resources.C.Tag.SCREEN_WIDTH_THRESHOLD
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.*
+import com.android.sample.ui.utils.PlateSwipeButton
 
 /**
  * Composable function that displays the screen for entering a recipe name.
@@ -149,7 +149,9 @@ fun RecipeNameScreen(
             }
 
         // Button to proceed to the next step
-        Button(
+        PlateSwipeButton(
+            stringResource(R.string.next_step),
+            modifier = Modifier.align(Alignment.BottomCenter),
             onClick = {
               handleOnClick(
                   recipeName = recipeName,
@@ -158,16 +160,7 @@ fun RecipeNameScreen(
                   onNavigateToNextScreen = {
                     navigationActions.navigateTo(Screen.CREATE_RECIPE_INGREDIENTS)
                   })
-            },
-            modifier =
-                Modifier.align(Alignment.BottomCenter)
-                    .width(RECIPE_NAME_BUTTON_WIDTH)
-                    .height(RECIPE_NAME_BUTTON_HEIGHT)
-                    .background(color = lightCream, shape = RoundedCornerShape(size = 4.dp))
-                    .testTag("NextStepButton"),
-            shape = RoundedCornerShape(4.dp)) {
-              Text(stringResource(R.string.next_step))
-            }
+            })
       }
 }
 
