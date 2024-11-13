@@ -128,9 +128,7 @@ fun PlateSwipeApp() {
 
       composable(Screen.CREATE_RECIPE_SEARCH_INGREDIENTS) {
         IngredientSearchScreen(
-            navigationActions = navigationActions,
-            ingredientViewModel = ingredientViewModel,
-            createRecipeViewModel = createRecipeViewModel)
+            navigationActions = navigationActions, ingredientViewModel = ingredientViewModel)
       }
 
       composable(Screen.CREATE_RECIPE_LIST_INGREDIENTS) {
