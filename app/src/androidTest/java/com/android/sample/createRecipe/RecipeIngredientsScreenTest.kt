@@ -46,6 +46,6 @@ class RecipeIngredientsScreenTest {
     }
 
     composeTestRule.onNodeWithText(buttonText).assertExists().performClick()
-    verify(mockNavigationActions).navigateTo(Screen.CREATE_RECIPE_INSTRUCTIONS)
+    verify(mockNavigationActions).navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
   }
 }
