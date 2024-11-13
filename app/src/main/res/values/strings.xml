@@ -47,7 +47,7 @@
 
     //AddInstructionStepScreen
     <string name="step_label">Step</string>
-    <string name="time_label">Time</string>
+    <string name="time_label">Time (min)</string>
     <string name="instruction_label">Instruction</string>
     <string name="save_label">Save</string>
     <string name="add_step">Add Step</string>
