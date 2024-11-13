@@ -93,20 +93,20 @@ fun AddInstructionStepContent(
                     verticalAlignment = Alignment.CenterVertically) {
                       // Time input field
                       OutlinedTextField(
-                              value = stepTime ?: "",
-                              onValueChange = {
-                                  if (it.all { char -> char.isDigit() }) {
-                                      stepTime = it
-                                  }
-                              },
-                              label = {
-                                  Text(stringResource(R.string.time_label), style = Typography.bodySmall)
-                              },
-                              keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                              colors =
+                          value = stepTime ?: "",
+                          onValueChange = {
+                            if (it.all { char -> char.isDigit() }) {
+                              stepTime = it
+                            }
+                          },
+                          label = {
+                            Text(stringResource(R.string.time_label), style = Typography.bodySmall)
+                          },
+                          keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                          colors =
                               TextFieldDefaults.outlinedTextFieldColors(
                                   containerColor = Color.White),
-                              modifier = Modifier.weight(1f).heightIn(min = 56.dp).testTag("TimeInput"))
+                          modifier = Modifier.weight(1f).heightIn(min = 56.dp).testTag("TimeInput"))
 
                       // Category input field
                       OutlinedTextField(

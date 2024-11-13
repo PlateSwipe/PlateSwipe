@@ -227,7 +227,8 @@ fun InstructionValue(
                   // This text represents the time that it takes to do the step
                   if (!time.isNullOrBlank()) {
                     Text(
-                        text = "$time ${stringResource(R.string.RecipeListInstructionsScreen_Minutes)}",
+                        text =
+                            "$time ${stringResource(R.string.RecipeListInstructionsScreen_Minutes)}",
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.testTag(INSTRUCTION_TIME))
                   }
