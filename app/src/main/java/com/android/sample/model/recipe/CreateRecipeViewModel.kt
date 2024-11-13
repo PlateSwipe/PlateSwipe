@@ -1,10 +1,19 @@
 package com.android.sample.model.recipe
 
+import android.graphics.Bitmap
+import android.util.Log
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.android.sample.feature.camera.rotateBitmap
+import com.android.sample.model.image.ImageDirectoryType
+import com.android.sample.model.image.ImageRepository
+import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.resources.C.Tag.RECIPE_PUBLISHED_SUCCESS_MESSAGE
 import com.android.sample.resources.C.Tag.RECIPE_PUBLISH_ERROR_MESSAGE
+import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.storage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -13,12 +22,34 @@ import kotlinx.coroutines.flow.StateFlow
  *
  * @property repository The repository used to add the recipe to Firestore.
  */
-class CreateRecipeViewModel(private val repository: FirestoreRecipesRepository) : ViewModel() {
+class CreateRecipeViewModel(
+    private val repository: RecipesRepository,
+    private val repoImg: ImageRepository
+) : ViewModel() {
 
   val recipeBuilder = RecipeBuilder()
   private val _publishStatus = MutableStateFlow<String?>(null)
   val publishStatus: StateFlow<String?>
     get() = _publishStatus
+
+  // MutableStateFlow to hold the Bitmap photo
+  private val _photo = MutableStateFlow<Bitmap?>(null)
+
+  /** StateFlow to expose the photo as an immutable state. */
+  val photo: StateFlow<Bitmap?>
+    get() = _photo
+
+  /**
+   * Sets the Bitmap photo and rotate it if needed.
+   *
+   * @param bitmap The Bitmap to set.
+   * @param rotation The rotation needed for the bitmap to be in the right orientation.
+   */
+  fun setBitmap(bitmap: Bitmap, rotation: Int) {
+    if (_photo.value != bitmap) {
+      rotateBitmap(bitmap, rotation).let { rotatedBitmap -> _photo.value = rotatedBitmap }
+    }
+  }
 
   fun updateRecipeName(name: String) {
     require(name.isNotBlank()) { "Recipe name must not be blank." }
@@ -121,18 +152,37 @@ class CreateRecipeViewModel(private val repository: FirestoreRecipesRepository) 
     val newUid = repository.getNewUid()
     require(newUid.isNotBlank()) { "Recipe ID must not be blank." }
     recipeBuilder.setId(newUid)
-
+    println("CreateRecipeViewModel: publishRecipe: newUid: $newUid")
     try {
-      val recipe = recipeBuilder.build()
-      repository.addRecipe(
-          recipe,
-          onSuccess = {
-            _publishStatus.value = RECIPE_PUBLISHED_SUCCESS_MESSAGE
-            recipeBuilder.clear()
-          },
-          onFailure = { exception ->
-            _publishStatus.value = RECIPE_PUBLISH_ERROR_MESSAGE.format(exception.message)
-          })
+      if (_photo.value != null) {
+        repoImg.uploadImage(
+            newUid,
+            "BOSS",
+            ImageDirectoryType.USER,
+            _photo.value!!.asImageBitmap(),
+            onSuccess = {
+              // Set the Image UID to the Builder
+              recipeBuilder.setPictureID(newUid)
+              val recipe = recipeBuilder.build()
+              Log.d(
+                  "CreateRecipeViewModel", "Recipe built successfully : ${recipe.strMealThumbUrl}")
+              repository.addRecipe(
+                  recipe,
+                  onSuccess = {
+                    _publishStatus.value = RECIPE_PUBLISHED_SUCCESS_MESSAGE
+                    recipeBuilder.clear()
+                  },
+                  onFailure = { exception ->
+                    _publishStatus.value = RECIPE_PUBLISH_ERROR_MESSAGE.format(exception.message)
+                  })
+            },
+            onFailure = {
+              // Throw an error if the image upload fails
+              throw IllegalArgumentException("Image upload failed.")
+            })
+      } else {
+        throw IllegalArgumentException("Image must not be blank.")
+      }
     } catch (e: IllegalArgumentException) {
       _publishStatus.value = e.message
     }
@@ -145,7 +195,8 @@ class CreateRecipeViewModel(private val repository: FirestoreRecipesRepository) 
           override fun <T : ViewModel> create(modelClass: Class<T>): T {
             val firestore = FirebaseFirestore.getInstance()
             val repository = FirestoreRecipesRepository(firestore)
-            return CreateRecipeViewModel(repository) as T
+            val repoImg = ImageRepositoryFirebase(Firebase.storage)
+            return CreateRecipeViewModel(repository, repoImg) as T
           }
         }
   }

@@ -21,7 +21,7 @@ import com.android.sample.feature.camera.CameraView
 import com.android.sample.feature.camera.RequestCameraPermission
 import com.android.sample.feature.camera.createImageCapture
 import com.android.sample.feature.camera.takePhoto
-import com.android.sample.model.takePhoto.TakePhotoViewModel
+import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.resources.C
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
@@ -32,14 +32,14 @@ import com.google.accompanist.permissions.rememberPermissionState
  * Composable function to display the camera screen and handle photo capture.
  *
  * @param navigationActions Actions to navigate between screens.
- * @param takePhotoViewModel ViewModel to manage the state of the photo and its rotation.
+ * @param createRecipeViewModel ViewModel to manage the state of the photo and its rotation.
  */
 @androidx.annotation.OptIn(ExperimentalGetImage::class)
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun CameraTakePhotoScreen(
     navigationActions: NavigationActions,
-    takePhotoViewModel: TakePhotoViewModel
+    createRecipeViewModel: CreateRecipeViewModel
 ) {
   // Remember the state of the camera permission
   val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
@@ -61,11 +61,9 @@ fun CameraTakePhotoScreen(
                 context,
                 imageCapture,
                 onPhotoTaken = { image ->
-                  // Set the captured photo and its rotation in the ViewModel
-                  takePhotoViewModel.setBitmap(image.toBitmap())
-                  takePhotoViewModel.setRotation(image.imageInfo.rotationDegrees)
+                  createRecipeViewModel.setBitmap(image.toBitmap(), image.imageInfo.rotationDegrees)
                   // Navigate to the display image screen
-                  navigationActions.navigateTo(Screen.DISPLAY_IMAGE)
+                  navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_IMAGE)
                 })
           }
         }
