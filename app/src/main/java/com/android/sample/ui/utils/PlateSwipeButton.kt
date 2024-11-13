@@ -15,6 +15,14 @@ import androidx.compose.ui.unit.dp
 import com.android.sample.resources.C
 import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScreen.ROUNDED_CORNER_SHAPE
 
+/**
+ * Composable function that displays a button for the PlateSwipe app. This button is used for any
+ * big button on the UI screens of the PlateSwipe app.
+ *
+ * @param text The text to be displayed on the button.
+ * @param modifier The modifier to be applied to the button.
+ * @param onClick The callback to be invoked when the button is clicked.
+ */
 @Composable
 fun PlateSwipeButton(
     text: String,
