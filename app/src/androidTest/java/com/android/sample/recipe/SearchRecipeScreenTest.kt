@@ -4,6 +4,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performClick
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.recipe.RecipesRepository
 import com.android.sample.model.recipe.RecipesViewModel
@@ -20,6 +21,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.mockito.ArgumentMatchers.eq
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.anyOrNull
 
@@ -97,4 +99,11 @@ class searchRecipeScreenTest {
       composeTestRule.onNodeWithTag(SEARCH_BAR).assertIsDisplayed()
       composeTestRule.onNodeWithTag(SEARCH_LIST).assertTextEquals(SEARCH_BAR_PLACE_HOLDER)
   }
+
+    @Test
+    fun navigateToRecipeOverview(){
+        composeTestRule.setContent { SearchRecipeScreen(mockNavigationActions, recipesList) }
+        composeTestRule.onNodeWithTag("Meal4").performClick()
+        verify(mockNavigationActions).navigateTo(Screen.OVERVIEW_RECIPE)
+    }
 }
