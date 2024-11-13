@@ -34,6 +34,11 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.android.sample.R
 import com.android.sample.model.user.UserViewModel
+import com.android.sample.resources.C.Tag.AccountScreen.PROFILE_PICTURE_CONTENT_DESCRIPTION
+import com.android.sample.resources.C.TestTag.AccountScreen.CREATED_RECIPES_BUTTON_TEST_TAG
+import com.android.sample.resources.C.TestTag.AccountScreen.LIKED_RECIPES_BUTTON_TEST_TAG
+import com.android.sample.resources.C.TestTag.AccountScreen.PROFILE_PICTURE_TEST_TAG
+import com.android.sample.resources.C.TestTag.AccountScreen.USERNAME_TEST_TAG
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.navigation.TopLevelDestinations
@@ -63,7 +68,7 @@ fun AccountScreen(navigationActions: NavigationActions, userViewModel: UserViewM
 
           Text(
               text = userName.value ?: stringResource(R.string.account_screen_default_user_name),
-              modifier = Modifier.weight(.1f).testTag("userName"),
+              modifier = Modifier.weight(.1f).testTag(USERNAME_TEST_TAG),
               style = MaterialTheme.typography.titleMedium,
               color = MaterialTheme.colorScheme.onPrimary)
 
@@ -112,7 +117,7 @@ private fun ListSelection(
   ) {
     Row(modifier = Modifier.height(30.dp).fillMaxWidth()) {
       ListSelectionButton(
-          modifier = Modifier.weight(1f).testTag("likedRecipesButton"),
+          modifier = Modifier.weight(1f).testTag(LIKED_RECIPES_BUTTON_TEST_TAG),
           onClick = {
             selectedList = likedRecipes
             selectedListIndex = 0
@@ -120,7 +125,7 @@ private fun ListSelection(
           title = stringResource(R.string.account_screen_liked_recipe_button_title),
           isSelected = selectedListIndex == 0)
       ListSelectionButton(
-          modifier = Modifier.weight(1f).testTag("createdRecipesButton"),
+          modifier = Modifier.weight(1f).testTag(CREATED_RECIPES_BUTTON_TEST_TAG),
           onClick = {
             selectedList = createdRecipes
             selectedListIndex = 1
@@ -157,8 +162,8 @@ private fun ProfilePicture(profilePictureUrl: String?, modifier: Modifier = Modi
             } else {
               rememberAsyncImagePainter(model = profilePictureUrl)
             },
-        contentDescription = "profilePicture",
+        contentDescription = PROFILE_PICTURE_CONTENT_DESCRIPTION,
         contentScale = ContentScale.Crop,
-        modifier = Modifier.fillMaxSize().testTag("profilePicture"))
+        modifier = Modifier.fillMaxSize().testTag(PROFILE_PICTURE_TEST_TAG))
   }
 }

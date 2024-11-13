@@ -8,8 +8,13 @@ import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.recipe.FirestoreRecipesRepository
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.recipe.RecipeOverviewViewModel
-import com.android.sample.resources.C.Tag.REMOVED_INGREDIENT_NOT_IN_FRIDGE_ERROR
-import com.android.sample.resources.C.Tag.REMOVED_TOO_MANY_INGREDIENTS_ERROR
+import com.android.sample.resources.C.Tag.UserViewModel.FAILED_TO_FETCH_CREATED_RECIPE_FROM_DATABASE_ERROR
+import com.android.sample.resources.C.Tag.UserViewModel.FAILED_TO_FETCH_INGREDIENT_FROM_DATABASE_ERROR
+import com.android.sample.resources.C.Tag.UserViewModel.FAILED_TO_FETCH_LIKED_RECIPE_FROM_DATABASE_ERROR
+import com.android.sample.resources.C.Tag.UserViewModel.LOG_TAG
+import com.android.sample.resources.C.Tag.UserViewModel.NOT_FOUND_INGREDIENT_IN_DATABASE_ERROR
+import com.android.sample.resources.C.Tag.UserViewModel.REMOVED_INGREDIENT_NOT_IN_FRIDGE_ERROR
+import com.android.sample.resources.C.Tag.UserViewModel.REMOVED_TOO_MANY_INGREDIENTS_ERROR
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
@@ -79,11 +84,11 @@ class UserViewModel(
                   if (ingredient != null) {
                     addIngredientToUserFridge(ingredient, ingredientCount)
                   } else {
-                    Log.e("UserViewModel", "Ingredient not found in the database")
+                    Log.e(LOG_TAG, NOT_FOUND_INGREDIENT_IN_DATABASE_ERROR)
                   }
                 },
                 onFailure = { e ->
-                  Log.e("UserViewModel", "Failed to fetch ingredient from the database.", e)
+                  Log.e(LOG_TAG, FAILED_TO_FETCH_INGREDIENT_FROM_DATABASE_ERROR, e)
                 })
           }
           user.likedRecipes.forEach { uid ->
@@ -91,7 +96,7 @@ class UserViewModel(
                 uid,
                 onSuccess = { recipe -> addRecipeToUserLikedRecipes(recipe) },
                 onFailure = { e ->
-                  Log.e("UserViewModel", "Failed to fetch liked recipes from the database.", e)
+                  Log.e(LOG_TAG, FAILED_TO_FETCH_LIKED_RECIPE_FROM_DATABASE_ERROR, e)
                 })
           }
           user.createdRecipes.forEach { uid ->
@@ -99,7 +104,7 @@ class UserViewModel(
                 uid,
                 onSuccess = { recipe -> addRecipeToUserCreatedRecipes(recipe) },
                 onFailure = { e ->
-                  Log.e("UserViewModel", "Failed to fetch created recipes from the database.", e)
+                  Log.e(LOG_TAG, FAILED_TO_FETCH_CREATED_RECIPE_FROM_DATABASE_ERROR, e)
                 })
           }
         },

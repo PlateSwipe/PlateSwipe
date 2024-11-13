@@ -5,6 +5,11 @@ import com.android.sample.model.ingredient.FirestoreIngredientRepository
 import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.recipe.FirestoreRecipesRepository
 import com.android.sample.model.recipe.Recipe
+import com.android.sample.resources.C.Tag.UserViewModel.FAILED_TO_FETCH_CREATED_RECIPE_FROM_DATABASE_ERROR
+import com.android.sample.resources.C.Tag.UserViewModel.FAILED_TO_FETCH_INGREDIENT_FROM_DATABASE_ERROR
+import com.android.sample.resources.C.Tag.UserViewModel.FAILED_TO_FETCH_LIKED_RECIPE_FROM_DATABASE_ERROR
+import com.android.sample.resources.C.Tag.UserViewModel.LOG_TAG
+import com.android.sample.resources.C.Tag.UserViewModel.NOT_FOUND_INGREDIENT_IN_DATABASE_ERROR
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import okhttp3.Call
@@ -319,7 +324,7 @@ class UserViewModelTest {
       onSuccessCaptor.value.invoke(userExample2)
       onSuccessCaptorFridge.value.invoke(null)
 
-      mockedLog.verify { Log.e(eq("UserViewModel"), eq("Ingredient not found in the database")) }
+      mockedLog.verify { Log.e(eq(LOG_TAG), eq(NOT_FOUND_INGREDIENT_IN_DATABASE_ERROR)) }
     }
   }
 
@@ -341,10 +346,7 @@ class UserViewModelTest {
       onFailureCaptorFridge.value.invoke(Exception())
 
       mockedLog.verify {
-        Log.e(
-            eq("UserViewModel"),
-            eq("Failed to fetch ingredient from the database."),
-            any<Exception>())
+        Log.e(eq(LOG_TAG), eq(FAILED_TO_FETCH_INGREDIENT_FROM_DATABASE_ERROR), any<Exception>())
       }
     }
   }
@@ -394,10 +396,7 @@ class UserViewModelTest {
       onFailureCaptorLikedRecipe.value.invoke(Exception())
 
       mockedLog.verify {
-        Log.e(
-            eq("UserViewModel"),
-            eq("Failed to fetch liked recipes from the database."),
-            any<Exception>())
+        Log.e(eq(LOG_TAG), eq(FAILED_TO_FETCH_LIKED_RECIPE_FROM_DATABASE_ERROR), any<Exception>())
       }
     }
   }
@@ -447,10 +446,7 @@ class UserViewModelTest {
       onFailureCaptorCreatedRecipe.value.invoke(Exception())
 
       mockedLog.verify {
-        Log.e(
-            eq("UserViewModel"),
-            eq("Failed to fetch created recipes from the database."),
-            any<Exception>())
+        Log.e(eq(LOG_TAG), eq(FAILED_TO_FETCH_CREATED_RECIPE_FROM_DATABASE_ERROR), any<Exception>())
       }
     }
   }

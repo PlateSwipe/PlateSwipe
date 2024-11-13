@@ -12,6 +12,10 @@ import com.android.sample.model.recipe.FirestoreRecipesRepository
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.user.UserRepository
 import com.android.sample.model.user.UserViewModel
+import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_CARD_TEST_TAG
+import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_FAVORITE_ICON_TEST_TAG
+import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_IMAGE_TEST_TAG
+import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_TITLE_TEST_TAG
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.utils.RecipeList
@@ -124,16 +128,16 @@ class RecipeListTest {
     }
 
     composeTestRule
-        .onAllNodesWithTag("recipeCard", useUnmergedTree = true)
+        .onAllNodesWithTag(RECIPE_CARD_TEST_TAG, useUnmergedTree = true)
         .assertCountEquals(recipesList.count())
     composeTestRule
-        .onAllNodesWithTag("recipeTitle", useUnmergedTree = true)
+        .onAllNodesWithTag(RECIPE_TITLE_TEST_TAG, useUnmergedTree = true)
         .assertCountEquals(recipesList.count())
     composeTestRule
-        .onAllNodesWithTag("recipeImage", useUnmergedTree = true)
+        .onAllNodesWithTag(RECIPE_IMAGE_TEST_TAG, useUnmergedTree = true)
         .assertCountEquals(recipesList.count())
     composeTestRule
-        .onAllNodesWithTag("recipeFavoriteIcon", useUnmergedTree = true)
+        .onAllNodesWithTag(RECIPE_FAVORITE_ICON_TEST_TAG, useUnmergedTree = true)
         .assertCountEquals(recipesList.count())
   }
 
@@ -150,7 +154,7 @@ class RecipeListTest {
       RecipeList(listOf(testRecipe), onRecipeSelected = onRecipeSelected)
     }
 
-    composeTestRule.onNodeWithTag("recipeCard", useUnmergedTree = true).performClick()
+    composeTestRule.onNodeWithTag(RECIPE_CARD_TEST_TAG, useUnmergedTree = true).performClick()
     composeTestRule.waitForIdle()
     assert(selected)
   }

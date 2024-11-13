@@ -12,6 +12,13 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.user.UserViewModel
+import com.android.sample.resources.C.Tag.RECIPE_FAVORITE_ICON_CONTENT_DESCRIPTION
+import com.android.sample.resources.C.TestTag.AccountScreen.CREATED_RECIPES_BUTTON_TEST_TAG
+import com.android.sample.resources.C.TestTag.AccountScreen.LIKED_RECIPES_BUTTON_TEST_TAG
+import com.android.sample.resources.C.TestTag.AccountScreen.PROFILE_PICTURE_TEST_TAG
+import com.android.sample.resources.C.TestTag.AccountScreen.USERNAME_TEST_TAG
+import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_LIST_TEST_TAG
+import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_TITLE_TEST_TAG
 import com.android.sample.ui.account.AccountScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
@@ -85,11 +92,11 @@ class AccountScreenTest {
       SampleAppTheme { AccountScreen(mockNavigationActions, userViewModel) }
     }
 
-    composeTestRule.onNodeWithTag("profilePicture").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("userName").assertIsDisplayed().assertTextEquals(userName)
-    composeTestRule.onNodeWithTag("recipeList").assertIsDisplayed()
+    composeTestRule.onNodeWithTag(PROFILE_PICTURE_TEST_TAG).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(USERNAME_TEST_TAG).assertIsDisplayed().assertTextEquals(userName)
+    composeTestRule.onNodeWithTag(RECIPE_LIST_TEST_TAG).assertIsDisplayed()
     composeTestRule
-        .onNodeWithTag("recipeTitle", useUnmergedTree = true)
+        .onNodeWithTag(RECIPE_TITLE_TEST_TAG, useUnmergedTree = true)
         .assertIsDisplayed()
         .assertTextEquals(dummyRecipes[0].strMeal)
   }
@@ -100,17 +107,17 @@ class AccountScreenTest {
       SampleAppTheme { AccountScreen(mockNavigationActions, userViewModel) }
     }
 
-    composeTestRule.onNodeWithTag("createdRecipesButton").performClick()
+    composeTestRule.onNodeWithTag(CREATED_RECIPES_BUTTON_TEST_TAG).performClick()
     composeTestRule.waitForIdle()
     composeTestRule
-        .onNodeWithTag("recipeTitle", useUnmergedTree = true)
+        .onNodeWithTag(RECIPE_TITLE_TEST_TAG, useUnmergedTree = true)
         .assertIsDisplayed()
         .assertTextEquals(dummyRecipes[1].strMeal)
 
-    composeTestRule.onNodeWithTag("likedRecipesButton").performClick()
+    composeTestRule.onNodeWithTag(LIKED_RECIPES_BUTTON_TEST_TAG).performClick()
     composeTestRule.waitForIdle()
     composeTestRule
-        .onNodeWithTag("recipeTitle", useUnmergedTree = true)
+        .onNodeWithTag(RECIPE_TITLE_TEST_TAG, useUnmergedTree = true)
         .assertIsDisplayed()
         .assertTextEquals(dummyRecipes[0].strMeal)
   }
@@ -136,7 +143,8 @@ class AccountScreenTest {
 
     composeTestRule
         .onNode(
-            hasAnySibling(hasText("Spicy Arrabiata Penne")).and(hasContentDescription("like")),
+            hasAnySibling(hasText("Spicy Arrabiata Penne"))
+                .and(hasContentDescription(RECIPE_FAVORITE_ICON_CONTENT_DESCRIPTION)),
             useUnmergedTree = true)
         .assertIsDisplayed()
         .performClick()
