@@ -4,6 +4,7 @@ import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.espresso.intent.Intents
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.model.recipe.FirestoreRecipesRepository
 import com.android.sample.resources.C.Tag.SAVE_BUTTON_TAG
@@ -26,14 +27,16 @@ class AddInstructionStepScreenTest {
   private lateinit var navigationActions: NavigationActions
   private lateinit var createRecipeViewModel: CreateRecipeViewModel
   private val firestore = mockk<FirebaseFirestore>(relaxed = true)
+  private lateinit var repoImg: ImageRepositoryFirebase
   private val repository = mockk<FirestoreRecipesRepository>(relaxed = true)
 
   @get:Rule val composeTestRule = createComposeRule()
 
   @Before
   fun setUp() {
+    repoImg = mockk(relaxed = true)
     navigationActions = mockk(relaxed = true)
-    createRecipeViewModel = spyk(CreateRecipeViewModel(repository))
+    createRecipeViewModel = spyk(CreateRecipeViewModel(repository, repoImg))
     Intents.init()
   }
 
@@ -99,7 +102,7 @@ class AddInstructionStepScreenTest {
     composeTestRule.onNodeWithTag("InstructionInput").performTextInput("Preheat oven to 180°C...")
     composeTestRule.onNodeWithTag(SAVE_BUTTON_TAG).performClick()
     advanceUntilIdle()
-    verify { navigationActions.navigateTo(Screen.PUBLISH_CREATED_RECIPE) }
+    verify { navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_IMAGE) }
   }
 
   /** Verifies that an error message is displayed when attempting to save without instructions. */

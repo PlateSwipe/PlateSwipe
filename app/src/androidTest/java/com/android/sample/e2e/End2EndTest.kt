@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.model.recipe.FirestoreRecipesRepository
 import com.android.sample.model.user.UserRepository
@@ -44,6 +45,7 @@ class EndToEndTest {
 
   private lateinit var userViewModel: UserViewModel
   private lateinit var createRecipeViewModel: CreateRecipeViewModel
+  private lateinit var mockImageRepo: ImageRepositoryFirebase
 
   @get:Rule val composeTestRule = createComposeRule()
 
@@ -52,11 +54,12 @@ class EndToEndTest {
     navigationActions = mock(NavigationActions::class.java)
     mockUserRepository = mock(UserRepository::class.java)
     mockFirebaseAuth = mock(FirebaseAuth::class.java)
+    mockImageRepo = mockk<ImageRepositoryFirebase>(relaxed = true)
     userViewModel = UserViewModel(mockUserRepository, mockFirebaseAuth)
 
     val firestore = mockk<FirebaseFirestore>(relaxed = true)
     val repository = FirestoreRecipesRepository(firestore)
-    createRecipeViewModel = CreateRecipeViewModel(repository)
+    createRecipeViewModel = CreateRecipeViewModel(repository, mockImageRepo)
   }
 
   @Test

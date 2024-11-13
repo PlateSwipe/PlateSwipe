@@ -168,7 +168,7 @@ fun AddInstructionStepContent(
                   createRecipeViewModel.updateRecipeCategory(stepCategory)
                 }
 
-                navigationActions.navigateTo(Screen.PUBLISH_CREATED_RECIPE)
+                navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_IMAGE)
               }
             },
             modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp).testTag(SAVE_BUTTON_TAG),

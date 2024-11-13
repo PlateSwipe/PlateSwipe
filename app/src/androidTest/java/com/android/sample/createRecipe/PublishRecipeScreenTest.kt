@@ -4,6 +4,7 @@ import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.espresso.intent.Intents
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.model.recipe.FirestoreRecipesRepository
 import com.android.sample.ui.createRecipe.PublishRecipeScreen
@@ -22,6 +23,7 @@ class PublishRecipeScreenTest {
 
   private lateinit var navigationActions: NavigationActions
   private lateinit var createRecipeViewModel: CreateRecipeViewModel
+  private lateinit var repoImg: ImageRepositoryFirebase
   private val repository = mockk<FirestoreRecipesRepository>(relaxed = true)
 
   @get:Rule val composeTestRule = createComposeRule()
@@ -29,7 +31,8 @@ class PublishRecipeScreenTest {
   @Before
   fun setUp() {
     navigationActions = mockk(relaxed = true)
-    createRecipeViewModel = spyk(CreateRecipeViewModel(repository))
+    repoImg = mockk(relaxed = true)
+    createRecipeViewModel = spyk(CreateRecipeViewModel(repository, repoImg))
     Intents.init()
 
     every { repository.getNewUid() } returns "valid-id"
