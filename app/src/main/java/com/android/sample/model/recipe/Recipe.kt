@@ -37,13 +37,14 @@ data class Recipe(
     val difficulty: String? = null,
     val price: String? = null
 ) {
+
   init {
     require(ingredientsAndMeasurements.isNotEmpty()) {
       "Ingredients and measurements must not be empty"
     }
   }
 
-  // Method to convert Recipe to a Firestore-compatible map with custom field names
+  /** Returns the list of ingredients and measurements. */
   fun toFirestoreMap(): Map<String, Any?> {
     return mapOf(
         FIRESTORE_RECIPE_NAME to strMeal,
@@ -56,5 +57,30 @@ data class Recipe(
         FIRESTORE_RECIPE_TIME to time,
         FIRESTORE_RECIPE_DIFFICULTY to difficulty,
         FIRESTORE_RECIPE_PRICE to price)
+  }
+
+  /** object to get the list of categories. */
+  companion object {
+    // unused categories: "Goat" because have only 1 recipe
+    private val listCategories =
+        listOf(
+            "Beef",
+            "Breakfast",
+            "Chicken",
+            "Dessert",
+            "Lamb",
+            "Miscellaneous",
+            "Pasta",
+            "Pork",
+            "Seafood",
+            "Side",
+            "Starter",
+            "Vegan",
+            "Vegetarian")
+
+    /** Returns the list of categories. */
+    fun getCategories(): List<String> {
+      return listCategories
+    }
   }
 }

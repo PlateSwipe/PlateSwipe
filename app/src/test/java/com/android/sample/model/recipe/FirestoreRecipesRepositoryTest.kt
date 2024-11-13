@@ -46,7 +46,6 @@ class FirestoreRecipesRepositoryTest {
   @Mock private lateinit var mockDocumentReference: DocumentReference
   @Mock private lateinit var mockCollectionReference: CollectionReference
   @Mock private lateinit var mockDocumentSnapshot: DocumentSnapshot
-  @Mock private lateinit var mockRecipeQuerySnapshot: QuerySnapshot
 
   private lateinit var firestoreFirebaseRepository: FirestoreRecipesRepository
 
