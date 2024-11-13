@@ -53,7 +53,9 @@ class CameraScanCodeBarScreenTest {
             brands = "Test Brand",
             categories = listOf(""),
             images = listOf(""))
-    composeTestRule.setContent { IngredientDisplay(ingredient) }
+    composeTestRule.setContent {
+      IngredientDisplay(ingredient, mockIngredientViewModel, mockNavigationActions)
+    }
 
     composeTestRule.onNodeWithText("Test Ingredient").assertIsDisplayed()
     composeTestRule.onNodeWithText("Test Brand").assertIsDisplayed()

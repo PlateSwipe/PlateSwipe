@@ -41,6 +41,8 @@ object Screen {
   const val OVERVIEW_RECIPE = "Overview Recipe Screen"
 
   const val CAMERA_SCAN_CODE_BAR = "Camera Scan Code Bar Screen"
+
+  const val CREATE_RECIPE_LIST_INGREDIENTS = "List Ingredients Screen"
 }
 
 data class TopLevelDestination(val route: String, val iconId: Int, val textId: String)

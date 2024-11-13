@@ -26,6 +26,7 @@ import com.android.sample.ui.authentication.SignInScreen
 import com.android.sample.ui.camera.CameraScanCodeBarScreen
 import com.android.sample.ui.createRecipe.AddInstructionStepScreen
 import com.android.sample.ui.createRecipe.CreateRecipeScreen
+import com.android.sample.ui.createRecipe.IngredientListScreen
 import com.android.sample.ui.createRecipe.IngredientSearchScreen
 import com.android.sample.ui.createRecipe.PublishRecipeScreen
 import com.android.sample.ui.createRecipe.RecipeIngredientsScreen
@@ -66,7 +67,7 @@ fun PlateSwipeApp() {
   val createRecipeViewModel: CreateRecipeViewModel =
       viewModel(factory = CreateRecipeViewModel.Factory)
 
-  NavHost(navController = navController, startDestination = Route.AUTH) {
+  NavHost(navController = navController, startDestination = Route.CREATE_RECIPE) {
     navigation(
         startDestination = Screen.AUTH,
         route = Route.AUTH,
@@ -126,10 +127,21 @@ fun PlateSwipeApp() {
       }
 
       composable(Screen.CREATE_RECIPE_SEARCH_INGREDIENTS) {
-        IngredientSearchScreen(navigationActions, ingredientViewModel)
+        IngredientSearchScreen(
+            navigationActions = navigationActions,
+            ingredientViewModel = ingredientViewModel,
+            createRecipeViewModel = createRecipeViewModel)
+      }
+
+      composable(Screen.CREATE_RECIPE_LIST_INGREDIENTS) {
+        IngredientListScreen(
+            navigationActions = navigationActions,
+            ingredientViewModel = ingredientViewModel,
+            createRecipeViewModel = createRecipeViewModel)
       }
       composable(Screen.CAMERA_SCAN_CODE_BAR) {
-        CameraScanCodeBarScreen(navigationActions, ingredientViewModel)
+        CameraScanCodeBarScreen(
+            navigationActions = navigationActions, ingredientViewModel = ingredientViewModel)
       }
     }
 

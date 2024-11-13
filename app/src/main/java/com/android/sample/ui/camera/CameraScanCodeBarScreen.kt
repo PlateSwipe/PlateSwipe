@@ -226,7 +226,7 @@ fun IngredientDisplay(
             Button(
                 onClick = {
                   viewModel.addBarCodeIngredient(ingredient)
-                  navigationActions.navigateTo(Screen.CREATE_RECIPE_SEARCH_INGREDIENTS)
+                  navigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
                 },
                 modifier =
                     Modifier.padding(

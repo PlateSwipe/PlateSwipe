@@ -12,13 +12,12 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.android.sample.model.ingredient.IngredientViewModel
+import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.resources.C.Tag.PADDING
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
@@ -29,9 +28,9 @@ import com.android.sample.ui.utils.SearchBar
 @Composable
 fun IngredientSearchScreen(
     navigationActions: NavigationActions,
-    ingredientViewModel: IngredientViewModel
+    ingredientViewModel: IngredientViewModel,
+    createRecipeViewModel: CreateRecipeViewModel
 ) {
-  val ingredientList by ingredientViewModel.ingredientList.collectAsState()
   PlateSwipeScaffold(
       navigationActions = navigationActions,
       selectedItem = navigationActions.currentRoute(),
@@ -54,11 +53,6 @@ fun IngredientSearchScreen(
                   modifier = Modifier.fillMaxWidth(1f / 2f).fillMaxHeight(1f / 10f)) {
                     Text("Add with camera")
                   }
-
-              for (ingredients in ingredientList) {
-                // Display the ingredient
-                Text(text = ingredients.name)
-              }
             }
       })
 }
