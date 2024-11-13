@@ -2,9 +2,8 @@ package com.android.sample.utils
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import com.android.sample.model.recipe.Recipe
@@ -99,18 +98,20 @@ class RecipeListTest {
           topCornerButton = { recipe -> TopCornerLikeButton(recipe = recipe) })
     }
 
-    composeTestRule
-        .onAllNodesWithTag("recipeCard", useUnmergedTree = true)
-        .assertCountEquals(recipesList.count())
-    composeTestRule
-        .onAllNodesWithTag("recipeTitle", useUnmergedTree = true)
-        .assertCountEquals(recipesList.count())
-    composeTestRule
-        .onAllNodesWithTag("recipeImage", useUnmergedTree = true)
-        .assertCountEquals(recipesList.count())
-    composeTestRule
-        .onAllNodesWithTag("recipeFavoriteIcon", useUnmergedTree = true)
-        .assertCountEquals(recipesList.count())
+    for (recipe in recipesList) {
+      composeTestRule
+          .onNodeWithTag("recipeCard${recipe.idMeal}", useUnmergedTree = true)
+          .assertIsDisplayed()
+      composeTestRule
+          .onNodeWithTag("recipeTitle${recipe.idMeal}", useUnmergedTree = true)
+          .assertIsDisplayed()
+      composeTestRule
+          .onNodeWithTag("recipeImage${recipe.idMeal}", useUnmergedTree = true)
+          .assertIsDisplayed()
+      composeTestRule
+          .onNodeWithTag("recipeFavoriteIcon${recipe.idMeal}", useUnmergedTree = true)
+          .assertIsDisplayed()
+    }
   }
 
   @Test
@@ -126,7 +127,7 @@ class RecipeListTest {
       RecipeList(listOf(testRecipe), onRecipeSelected = onRecipeSelected)
     }
 
-    composeTestRule.onNodeWithTag("recipeCard", useUnmergedTree = true).performClick()
+    composeTestRule.onNodeWithTag("recipeCard12345", useUnmergedTree = true).performClick()
     composeTestRule.waitForIdle()
     assert(selected)
   }
