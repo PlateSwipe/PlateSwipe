@@ -13,7 +13,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -24,7 +23,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android.sample.R
 import com.android.sample.resources.C.Tag.SEARCH_BAR_CORNER_RADIUS
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 
 /**
@@ -43,45 +41,52 @@ fun SearchBar(
     onDebounce: (String) -> Unit = {},
     debounceTime: Long = 1000L
 ) {
-    var searchText by remember { mutableStateOf("") }
+  var searchText by remember { mutableStateOf("") }
 
-    LaunchedEffect(searchText) {
-        val lastSearchText = searchText
+  LaunchedEffect(searchText) {
+    val lastSearchText = searchText
 
-        delay(debounceTime)
+    delay(debounceTime)
 
-        if (lastSearchText == searchText) {
-            onDebounce(searchText)
-        }
+    if (lastSearchText == searchText) {
+      onDebounce(searchText)
     }
+  }
 
-    TextField(value = searchText, onValueChange = {
+  TextField(
+      value = searchText,
+      onValueChange = {
         searchText = it
         onValueChange(it)
-    }, modifier = modifier
-        .testTag("searchBar")
-        .shadow(
-            elevation = 8.dp,
-            shape = RoundedCornerShape(SEARCH_BAR_CORNER_RADIUS.dp),
-        ), shape = RoundedCornerShape(SEARCH_BAR_CORNER_RADIUS.dp), leadingIcon = {
+      },
+      modifier =
+          modifier
+              .testTag("searchBar")
+              .shadow(
+                  elevation = 8.dp,
+                  shape = RoundedCornerShape(SEARCH_BAR_CORNER_RADIUS.dp),
+              ),
+      shape = RoundedCornerShape(SEARCH_BAR_CORNER_RADIUS.dp),
+      leadingIcon = {
         Icon(
             imageVector = Icons.Filled.Search,
             contentDescription = "searchIcon",
-            tint = MaterialTheme.colorScheme.onPrimary
-        )
-    }, placeholder = {
+            tint = MaterialTheme.colorScheme.onPrimary)
+      },
+      placeholder = {
         Text(
             text = stringResource(R.string.search_bar_place_holder),
             color = MaterialTheme.colorScheme.onPrimary,
-            style = MaterialTheme.typography.bodyMedium
-        )
-    }, colors = TextFieldDefaults.colors(
-        focusedContainerColor = MaterialTheme.colorScheme.onSecondary,
+            style = MaterialTheme.typography.bodySmall)
+      },
+      colors =
+          TextFieldDefaults.colors(
+              focusedContainerColor = MaterialTheme.colorScheme.onSecondary,
+              unfocusedContainerColor = MaterialTheme.colorScheme.secondary,
 
-        // we need to make these transparent or a weird line appears
-        focusedIndicatorColor = Color.Transparent,
-        disabledIndicatorColor = Color.Transparent,
-        unfocusedIndicatorColor = Color.Transparent,
-    )
-    )
+              // we need to make these transparent or a weird line appears
+              focusedIndicatorColor = Color.Transparent,
+              disabledIndicatorColor = Color.Transparent,
+              unfocusedIndicatorColor = Color.Transparent,
+          ))
 }

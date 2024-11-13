@@ -60,10 +60,28 @@ class IngredientViewModel(private val repository: IngredientRepository) : ViewMo
    * @param name
    */
   fun fetchIngredientByName(name: String) {
-    repository.search(
-        name,
-        onSuccess = { ingredientList -> _searchingIngredientList.value = ingredientList },
-        onFailure = { _searchingIngredientList.value = emptyList() })
+    _searchingIngredientList.value =
+        listOf(
+            Ingredient("012", 1325L, "name1", null, "2", emptyList(), emptyList()),
+            Ingredient("012", 1325L, "name2", null, "2", emptyList(), emptyList()),
+            Ingredient("012", 1325L, "name3", null, "2", emptyList(), emptyList()),
+            Ingredient("012", 1325L, "name4", null, "2", emptyList(), emptyList()),
+            Ingredient("012", 1325L, "name1", null, "2", emptyList(), emptyList()),
+            Ingredient("012", 1325L, "name2", null, "2", emptyList(), emptyList()),
+            Ingredient("012", 1325L, "name3", null, "2", emptyList(), emptyList()),
+            Ingredient("012", 1325L, "name4", null, "2", emptyList(), emptyList()))
+    /*repository.search(
+    name,
+    onSuccess = { ingredientList -> _searchingIngredientList.value = ingredientList },
+    onFailure = { _searchingIngredientList.value = emptyList() })*/
+  }
+
+  fun removeIngredient(ingredient: Ingredient) {
+    _ingredientList.value = _ingredientList.value.filter { it != ingredient }
+  }
+
+  fun clearSearch() {
+    _searchingIngredientList.value = emptyList()
   }
 
   // create factory
