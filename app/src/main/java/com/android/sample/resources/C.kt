@@ -234,9 +234,14 @@ object C {
 
     // AddInstructionStepScreen
     const val HORIZONTAL_PADDING = 16
+    const val CONTAINER_PADDING = 16
+    const val SPACE_BETWEEN_ELEMENTS = 16
+    const val INSTRUCTION_VERTICAL_PADDING = 8
     const val SAVE_BUTTON_TAG = "saveButton"
+    const val MAXLINES_TIME_FIELD = 1
     const val MINLINES_VISIBLE_FOR_INSTRUCTION = 10
     const val MAXLINES_VISIBLE_FOR_INSTRUCTION = 10
+    const val TIME_CHARACTER_LIMIT = 4
 
     // PublishRecipeScreen
     val CHEF_IMAGE_DESCRIPTION = "Chef illustration inside an egg"
