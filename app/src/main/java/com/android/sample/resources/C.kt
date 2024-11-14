@@ -6,6 +6,8 @@ import com.android.sample.R
 
 // Like R, but C
 object C {
+  const val ZERO = 0
+
   object Tag {
 
     const val main_screen_container = "main_screen_container"
@@ -166,6 +168,7 @@ object C {
     const val FIRESTORE_RECIPE_TIME = "time"
     const val FIRESTORE_RECIPE_DIFFICULTY = "difficulty"
     const val FIRESTORE_RECIPE_PRICE = "price"
+    const val FIRESTORE_RECIPE_URL = "url"
     const val CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
     const val FIRESTORE_RECIPE_IMAGE_NAME = "Main"
 

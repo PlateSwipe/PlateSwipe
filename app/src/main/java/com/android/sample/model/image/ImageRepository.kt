@@ -1,5 +1,6 @@
 package com.android.sample.model.image
 
+import android.net.Uri
 import androidx.compose.ui.graphics.ImageBitmap
 
 /**
@@ -31,6 +32,27 @@ interface ImageRepository {
       imageName: String,
       imageDirectoryType: ImageDirectoryType,
       onSuccess: (ImageBitmap) -> Unit,
+      onFailure: (Exception) -> Unit
+  )
+
+  /**
+   * Retrieves the download URL of an image from Firebase Storage.
+   *
+   * @param imageDirectoryUID The UID of the image directory, which corresponds to the UID of either
+   *   the user, ingredient, or recipe.
+   * @param imageName The name of the image to be retrieved.
+   * @param imageDirectoryType The type of the image directory. See [ImageDirectoryType] for more
+   *   details.
+   * @param onSuccess Callback function to be invoked with the image's download URL upon successful
+   *   retrieval.
+   * @param onFailure Callback function to be invoked with an exception if the image retrieval
+   *   fails.
+   */
+  fun getImageUrl(
+      imageDirectoryUID: String,
+      imageName: String,
+      imageDirectoryType: ImageDirectoryType,
+      onSuccess: (Uri) -> Unit,
       onFailure: (Exception) -> Unit
   )
 
