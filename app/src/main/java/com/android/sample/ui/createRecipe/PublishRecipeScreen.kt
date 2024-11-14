@@ -22,6 +22,8 @@ import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C.Tag.CHEF_IMAGE_DESCRIPTION
 import com.android.sample.resources.C.Tag.CHEF_IN_EGG_ORIGINAL_RATIO
+import com.android.sample.resources.C.Tag.CORNER_SHAPE_PUBLISH_BUTTON
+import com.android.sample.resources.C.Tag.HORIZONTAL_PADDING
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
@@ -114,9 +116,9 @@ fun PublishRecipeContent(
             },
             colors =
                 ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-            shape = RoundedCornerShape(8.dp),
+            shape = RoundedCornerShape(CORNER_SHAPE_PUBLISH_BUTTON.dp),
             modifier =
-                Modifier.padding(horizontal = 16.dp)
+                Modifier.padding(horizontal = HORIZONTAL_PADDING.dp)
                     .fillMaxWidth(0.7f)
                     .weight(0.15f)
                     .testTag("PublishButton")) {
