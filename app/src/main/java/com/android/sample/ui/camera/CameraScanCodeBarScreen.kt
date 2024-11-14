@@ -15,8 +15,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -40,6 +40,7 @@ import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.ingredient.IngredientViewModel
 import com.android.sample.resources.C
 import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.navigation.Screen
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 
@@ -59,7 +60,7 @@ fun CameraScanCodeBarScreen(
             contentAlignment = Alignment.Center,
         ) {
           CameraSection(ingredientViewModel)
-          IngredientOverlay(ingredientViewModel)
+          IngredientOverlay(ingredientViewModel, navigationActions)
         }
       })
 }
@@ -113,22 +114,23 @@ fun BarCodeFrame() {
               .testTag(C.TestTag.CameraScanCodeBarScreen.BARCODE_FRAME),
       contentAlignment = Alignment.Center) {}
 }
+
 /** Display the ingredient overlay */
 @Composable
-fun IngredientOverlay(viewModel: IngredientViewModel) {
+fun IngredientOverlay(
+    viewModel: IngredientViewModel,
+    navigationActions: NavigationActions,
+) {
   val ingredient by viewModel.ingredient.collectAsState()
   if (ingredient != null) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
       Box(
           modifier =
               Modifier.fillMaxWidth()
-                  .height(
-                      (C.Dimension.CameraScanCodeBarScreen.INGREDIENT_OVERLAY_HEIGHT *
-                              LocalConfiguration.current.screenWidthDp)
-                          .dp)
+                  .height((C.Dimension.CameraScanCodeBarScreen.INGREDIENT_OVERLAY_HEIGHT).dp)
                   .wrapContentHeight()) {
             // Display the ingredient details
-            IngredientDisplay(ingredient = ingredient!!)
+            IngredientDisplay(ingredient = ingredient!!, viewModel, navigationActions)
           }
     }
   }
@@ -140,7 +142,11 @@ fun IngredientOverlay(viewModel: IngredientViewModel) {
  * @param ingredient the ingredient to display
  */
 @Composable
-fun IngredientDisplay(ingredient: Ingredient?) {
+fun IngredientDisplay(
+    ingredient: Ingredient?,
+    viewModel: IngredientViewModel,
+    navigationActions: NavigationActions
+) {
   Row(
       modifier =
           Modifier.fillMaxSize()
@@ -191,7 +197,7 @@ fun IngredientDisplay(ingredient: Ingredient?) {
           verticalArrangement = Arrangement.Center) {
             Text(
                 text = ingredient.name,
-                style = MaterialTheme.typography.h6,
+                style = MaterialTheme.typography.titleSmall,
                 modifier =
                     Modifier.padding(
                         vertical =
@@ -204,7 +210,7 @@ fun IngredientDisplay(ingredient: Ingredient?) {
                                 .dp))
             Text(
                 text = ingredient.brands ?: "",
-                style = MaterialTheme.typography.body2,
+                style = MaterialTheme.typography.bodySmall,
                 modifier =
                     Modifier.padding(
                         vertical =
@@ -216,7 +222,10 @@ fun IngredientDisplay(ingredient: Ingredient?) {
                                 .INGREDIENT_DISPLAY_TEXT_BRAND_PADDING_H
                                 .dp))
             Button(
-                onClick = { /*TODO*/},
+                onClick = {
+                  viewModel.addIngredient(ingredient)
+                  navigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
+                },
                 modifier =
                     Modifier.padding(
                         vertical =
@@ -227,7 +236,11 @@ fun IngredientDisplay(ingredient: Ingredient?) {
                             C.Dimension.CameraScanCodeBarScreen
                                 .INGREDIENT_DISPLAY_TEXT_BUTTON_PADDING_H
                                 .dp)) {
-                  Text(text = stringResource(R.string.add_to_fridge))
+                  Text(
+                      text = stringResource(R.string.add_to_fridge),
+                      style = MaterialTheme.typography.bodySmall,
+                      color = MaterialTheme.colorScheme.onPrimary,
+                  )
                 }
           }
     }

@@ -2,6 +2,7 @@ package com.android.sample.fridge
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import com.android.sample.ui.fridge.FridgeScreen
 import com.android.sample.ui.navigation.NavigationActions
@@ -28,6 +29,7 @@ class FridgeScreenTest {
   fun mainTextIsDisplayed() {
     composeTestRule.setContent { FridgeScreen(navigationActions = navigationActions) }
     composeTestRule.onNodeWithText("Fridge Screen").assertIsDisplayed()
-    composeTestRule.onNodeWithText("Scan Barcode").assertIsDisplayed()
+    composeTestRule.onNodeWithText("Work in progress…stay tuned!").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("Chef Image").assertIsDisplayed()
   }
 }

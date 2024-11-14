@@ -21,7 +21,7 @@ import com.android.sample.resources.C.Dimension.LoadingCook.ROTATION_MAX
 import com.android.sample.resources.C.Dimension.LoadingCook.ROTATION_MIN
 
 @Composable
-fun LoadingCook() {
+fun LoadingCook(modifier: Modifier = Modifier, size: Int = COOK_SIZE) {
   // Infinite rotation using rememberInfiniteTransition
   val infiniteTransition = rememberInfiniteTransition(label = "Rotation transition")
   val rotation by
@@ -44,5 +44,5 @@ fun LoadingCook() {
   Image(
       painter = painter,
       contentDescription = "Rotating Image",
-      modifier = Modifier.size(COOK_SIZE.dp).rotate(rotation))
+      modifier = modifier.size(size.dp).rotate(rotation))
 }

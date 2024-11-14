@@ -3,9 +3,12 @@ package com.android.sample.resources
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.sample.R
+import com.android.sample.resources.C.Tag.PADDING
 
 // Like R, but C
 object C {
+  const val ZERO = 0
+
   object Tag {
 
     const val main_screen_container = "main_screen_container"
@@ -14,6 +17,18 @@ object C {
     const val LOADING = "Loading..."
     const val PADDING = 16
     const val SMALL_PADDING = 8
+
+    // Error
+    const val ERROR_NULL_IMAGE = "Image is null"
+    const val ERROR_STR_MEAL_BLANK = "Recipe name is required and cannot be blank."
+    const val ERROR_STR_INSTR_BLANK = "Recipe instructions are required and cannot be blank."
+    const val ERROR_LIST_INGREDIENT_EMPTY = "At least one ingredient is required."
+    const val ERROR_STR_THUMBNAIL = "Recipe thumbnail is required and cannot be blank."
+    // PlateSwipeButton
+    object PlateSwipeButton {
+      val BUTTON_WIDTH = 261.dp
+      val BUTTON_HEIGHT = 46.dp
+    }
 
     // SwipePage
     object SwipePage {
@@ -33,7 +48,6 @@ object C {
     }
 
     object SignInScreen {
-      const val NONCE = "WhyShouldIUseThis"
       const val PLATE = "Plate"
       const val SWIPE = "Swipe"
       const val SHIFTING_SPACE_TITLE = 50
@@ -51,6 +65,11 @@ object C {
       const val COOK_DESCRIPTION = "cook image"
       const val GOOGLE_DESCRIPTION = "Google Logo"
       const val SIGN_IN_ERROR_NO_CRED = "Invalid credential type"
+    }
+
+    object IngredientSearchScreen {
+      const val DO_NOT_SHOW_CONFIRMATION = false
+      const val INITIAL_LOADING_STATE = false
     }
 
     // Filter
@@ -115,6 +134,7 @@ object C {
     const val USER_IMAGE_DIR = "images/user/"
     const val RECIPE_IMAGE_DIR = "images/recipe/"
     const val INGREDIENTS_IMAGE_DIR = "images/ingredient/"
+    const val TEST_IMAGE_DIR = "images/test/"
 
     // RecipeList
     const val RECIPE_LIST_CORNER_RADIUS = 12
@@ -122,7 +142,6 @@ object C {
     const val RECIPE_FAVORITE_ICON_CONTENT_DESCRIPTION = "like"
 
     // SearchBar
-    const val SEARCH_BAR_PLACE_HOLDER = "Search"
     const val SEARCH_BAR_CORNER_RADIUS = 16
     const val MAXIMUM_RECIPES_TO_FETCH_MEAL_DB = 5
     const val MAX_NB_OF_INGREDIENTS_IN_A_RECIPE_MEAL_DB = 20
@@ -143,7 +162,8 @@ object C {
     const val MEAL_DB_CATEGORY_ARRAY = "categories"
 
     // FirestoreRecipeRepository
-    const val FIRESTORE_COLLECTION_NAME = "recipes"
+    const val FIRESTORE_COLLECTION_NAME = "recipes with images"
+
     // Values for storage
     const val FIRESTORE_RECIPE_NAME = "name"
     const val FIRESTORE_RECIPE_CATEGORY = "category"
@@ -155,7 +175,9 @@ object C {
     const val FIRESTORE_RECIPE_TIME = "time"
     const val FIRESTORE_RECIPE_DIFFICULTY = "difficulty"
     const val FIRESTORE_RECIPE_PRICE = "price"
+    const val FIRESTORE_RECIPE_URL = "url"
     const val CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+    const val FIRESTORE_RECIPE_IMAGE_NAME = "Main"
 
     // FirestoreIngredientRepository
     const val FIRESTORE_INGREDIENT_COLLECTION_NAME = "ingredients"
@@ -171,7 +193,7 @@ object C {
     const val AGGREGATOR_TAG_ON_INGREDIENT_ADDED = "Ingredient added successfully"
 
     // OpenFoodFactsIngredientRepository
-    const val OPEN_FOOD_FACTS_URL = "https://world.openfoodfacts.net"
+    const val OPEN_FOOD_FACTS_URL = "https://world.openfoodfacts.org"
     const val OPEN_FOOD_FACTS_INGREDIENT_REPOSITORY_TAG = "OpenFoodFactsIngredientRepository"
     const val PRODUCT_NAME = "product_name"
     const val PRODUCT_BRAND = "brands"
@@ -258,6 +280,9 @@ object C {
     object AccountScreen {
       const val PROFILE_PICTURE_CONTENT_DESCRIPTION = "profilePicture"
     }
+
+    // Create Recipe Add Image
+    const val ADD_IMAGE_STEP = 4
   }
 
   object Values {
@@ -267,6 +292,13 @@ object C {
   }
 
   object Dimension {
+
+    const val PADDING_4 = 4
+    const val PADDING_8 = 8
+    const val PADDING_16 = 16
+    const val PADDING_24 = 24
+    const val PADDING_32 = 32
+
     object SwipePage {
       const val FILTER_ICON_SIZE = 30
       const val FILTER_ICON_WEIGHT = 1f
@@ -401,15 +433,19 @@ object C {
       const val GOOGLE_LOGO_SIZE = 30
     }
 
+    const val PAD_4 = 4
+    const val PAD_8 = 8
+    const val PAD_16 = 16
     // CameraScanCodeBarScreen
     object CameraScanCodeBarScreen {
 
       // PLATE SWIPE SCAFFOLD
-      const val TOP_BAR_HEIGHT = 40
+      const val TOP_BAR_HEIGHT = 50
       const val TOP_BAR_TITLE_FONT_SIZE = 28
       const val BACK_ARROW_ICON_SIZE = 26
       const val CHEF_HAT_ICON_SIZE = 35
       const val CHEF_HAT_ICON_END_PADDING = 8
+      const val BOTTOM_BAR_HEIGHT = 60
 
       // BARCODE FRAME
       const val BARCODE_FRAME_WIDTH = 1f
@@ -419,13 +455,12 @@ object C {
       const val BARCODE_FRAME_BORDER_RADIUS = 8
 
       // INGREDIENT OVERLAY
-      const val INGREDIENT_OVERLAY_HEIGHT = 0.4f
+      const val INGREDIENT_OVERLAY_HEIGHT = 170
 
       // INGREDIENT DISPLAY
       const val INGREDIENT_DISPLAY_BORDER_RADIUS = 10
       const val INGREDIENT_DISPLAY_PADDING = 8
       const val INGREDIENT_DISPLAY_IMAGE_WEIGHT = 0.3f
-      const val INGREDIENT_DISPLAY_IMAGE_PADDING = 8
       const val INGREDIENT_DISPLAY_IMAGE_WIDTH = 100
       const val INGREDIENT_DISPLAY_IMAGE_HEIGHT = 100
       const val INGREDIENT_DISPLAY_IMAGE_BORDER_RADIUS = 8
@@ -439,15 +474,82 @@ object C {
       const val INGREDIENT_DISPLAY_TEXT_BUTTON_PADDING_V = 4
       const val INGREDIENT_DISPLAY_TEXT_BUTTON_PADDING_H = 8
     }
+
+    object CameraTakePhotoScreen {
+      const val BUTTON_SIZE = 0.1f
+      const val BUTTON_PADDING = 0.05f
+    }
+
+    object RecipeAddImageScreen {
+      const val CONTENT_WIDTH = 0.8f
+      const val TEXT_HEIGHT = 0.05f
+      const val SPACER = 0.03f
+      const val IMAGE = 0.3f
+      const val ICON_WEIGHT = 0.5f
+      const val ICON_SIZE = 0.1f
+    }
+
+    object CreateRecipeListInstructionsScreen {
+      const val REALLY_SMALL_PADDING = 4
+      const val BIG_PADDING = 32
+      const val MEDIUM_PADDING = 16
+      const val ROUNDED_CORNER_SHAPE = 4
+      const val CARD_BORDER_ROUND = 8
+      const val CARD_CORNER_RADIUS = 8
+      const val CARD_SHADOW_ELEVATION = 8
+      const val ICON_SIZE = 24
+      const val ROW_SIZE = 1f
+
+      // progress bar value
+      const val CURRENT_STEP = 2
+    }
+
+    object IngredientSearchScreen {
+      const val SPACER_WEIGHT = 1f
+      const val IMAGE_WEIGHT = 4f
+      const val ICON_SCANNER_SIZE = 40
+      const val ICON_SCANNER_WEIGHT = 1f
+      const val RESULT_FONT_SIZE = 20
+      const val LOADING_COOK_WEIGHT = 1f
+      const val LOADING_COOK_SIZE = 150
+      const val POP_UP_ELEVATION = 4
+      const val POP_UP_CLIP = true
+      const val INGREDIENT_ITEM_ELEVATION = 4
+      const val INGREDIENT_ITEM_CORNER = 8
+      const val INGREDIENT_ITEM_MAX_LINE = 2
+    }
+
+    object IngredientListScreen {
+      const val NAME_SIZE = 30
+      const val INGREDIENT_LIST_SIZE = 20
+      const val INGREDIENT_LIST_WEIGHT = 6f
+      const val INGREDIENT_PREVIEW_ELEVATION = 4
+      const val INGREDIENT_PREVIEW_CORNER = 8
+      const val IMAGE_SPACER = PADDING.times(6)
+      const val INPUT_MAX_LINE = 1
+      const val BUTTON_ROUND = 4
+      const val BUTTON_Z = 1f
+    }
   }
 
   object TestTag {
+
     object CameraScanCodeBarScreen {
       const val BARCODE_FRAME = "Barcode frame"
     }
 
+    object CameraTakePhotoScreen {
+      const val BUTTON_BOX = "Take photo button box"
+      const val BUTTON = "Take photo button"
+    }
+
+    object CameraPreview {
+      const val PREVIEW = "camera_preview"
+    }
+
     object Utils {
       // PLATE SWIPE SCAFFOLD
+      const val SEARCH_BAR = "searchBar"
       const val TOP_BAR = "topBar"
       const val TOP_BAR_TITLE = "topBarTitle"
       const val BACK_ARROW_ICON = "backArrowIcon"
@@ -528,6 +630,55 @@ object C {
       const val LIKED_RECIPES_BUTTON_TEST_TAG = "likedRecipesButton"
       const val CREATED_RECIPES_BUTTON_TEST_TAG = "createdRecipesButton"
       const val PROFILE_PICTURE_TEST_TAG = "profilePicture"
+    }
+
+    object CreateRecipeListInstructionsScreen {
+      const val SCREEN_COLUMN = "ScreenColumn"
+      const val INSTRUCTION_TEXT_SPACE = "InstructionTextSpace"
+      const val INSTRUCTION_TEXT_IN_CARD = "InstructionTextInCard"
+      const val INSTRUCTION_TIME = "InstructionTime"
+      const val EDIT_INSTRUCTION_ICON = "EditInstructionIcon"
+      const val INSTRUCTION_TEXT = "InstructionsText"
+      const val RECIPE_NAME_TEXT = "RecipeNameText"
+      const val INSTRUCTION_LIST = "InstructionList"
+      const val INSTRUCTION_LIST_ITEM = "InstructionListItem"
+      const val NEXT_STEP_BUTTON = "NextStepButton"
+      const val RECIPE_LIST_INSTRUCTIONS_SCREEN_SPACER1 = "RecipeListInstructionsScreenSpacer1"
+      const val RECIPE_LIST_ITEM_THUMBNAIL = "InstructionThumbnail"
+      const val RECIPE_LIST_INSTRUCTION_ICON = "InstructionIcon"
+    }
+
+    object RecipeAddImageScreen {
+      const val BOX_IMAGE = "box for image"
+      const val DISPLAY_IMAGE = "display_image"
+      const val DISPLAY_IMAGE_DEFAULT = "display_image_default"
+      const val ROW_BUTTON = "row for buttons"
+      const val CAMERA_BUTTON = "camera button"
+      const val GALLERY_BUTTON = "gallery button"
+      const val BOX_NEXT_BUTTON = "box for next button"
+      const val ROW_FOR_CHEF = "row for chef image"
+      const val MAIN_COL = "main column"
+      const val MAIN_BOX = "main box"
+      const val COL_2 = "col 2"
+      const val TITLE_COL = "title col"
+    }
+
+    object ChefImage {
+      const val CHEF_IMAGE = "Chef Image"
+    }
+
+    object IngredientSearchScreen {
+      const val DRAGGABLE_ITEM = "DraggableItem"
+      const val SCANNER_ICON = "scannerIcon"
+      const val CONFIRMATION_POPUP = "confirmationPopUp"
+      const val CONFIRMATION_BUTTON = "confirmButton"
+      const val CANCEL_BUTTON = "cancelButton"
+    }
+
+    object IngredientListScreen {
+      const val RECIPE_NAME = "recipeName"
+      const val ADD_INGREDIENT_ICON = "addIngredientIcon"
+      const val NEXT_STEP_BUTTON = "nextStepButton"
     }
   }
 }

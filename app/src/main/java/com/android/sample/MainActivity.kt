@@ -24,11 +24,16 @@ import com.android.sample.resources.C
 import com.android.sample.ui.account.AccountScreen
 import com.android.sample.ui.authentication.SignInScreen
 import com.android.sample.ui.camera.CameraScanCodeBarScreen
+import com.android.sample.ui.camera.CameraTakePhotoScreen
 import com.android.sample.ui.createRecipe.AddInstructionStepScreen
 import com.android.sample.ui.createRecipe.CreateRecipeScreen
+import com.android.sample.ui.createRecipe.IngredientListScreen
+import com.android.sample.ui.createRecipe.IngredientSearchScreen
 import com.android.sample.ui.createRecipe.PublishRecipeScreen
+import com.android.sample.ui.createRecipe.RecipeAddImageScreen
 import com.android.sample.ui.createRecipe.RecipeIngredientsScreen
 import com.android.sample.ui.createRecipe.RecipeInstructionsScreen
+import com.android.sample.ui.createRecipe.RecipeListInstructionsScreen
 import com.android.sample.ui.filter.FilterPage
 import com.android.sample.ui.fridge.FridgeScreen
 import com.android.sample.ui.navigation.NavigationActions
@@ -88,6 +93,9 @@ fun PlateSwipeApp() {
       composable(Screen.CAMERA_SCAN_CODE_BAR) {
         CameraScanCodeBarScreen(navigationActions, ingredientViewModel)
       }
+      composable(Screen.CAMERA_TAKE_PHOTO) {
+        CameraTakePhotoScreen(navigationActions, createRecipeViewModel)
+      }
     }
     navigation(
         startDestination = Screen.SEARCH,
@@ -118,12 +126,38 @@ fun PlateSwipeApp() {
         AddInstructionStepScreen(
             navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
       }
+
+      composable(Screen.CREATE_RECIPE_LIST_INSTRUCTIONS) {
+        RecipeListInstructionsScreen(
+            navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
+      }
+      composable(Screen.CREATE_RECIPE_ADD_IMAGE) {
+        RecipeAddImageScreen(navigationActions, createRecipeViewModel)
+      }
+      composable(Screen.CAMERA_TAKE_PHOTO) {
+        CameraTakePhotoScreen(navigationActions, createRecipeViewModel)
+      }
       composable(Screen.PUBLISH_CREATED_RECIPE) {
         PublishRecipeScreen(
             navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
       }
-    }
 
+      composable(Screen.CREATE_RECIPE_SEARCH_INGREDIENTS) {
+        IngredientSearchScreen(
+            navigationActions = navigationActions, ingredientViewModel = ingredientViewModel)
+      }
+
+      composable(Screen.CREATE_RECIPE_LIST_INGREDIENTS) {
+        IngredientListScreen(
+            navigationActions = navigationActions,
+            ingredientViewModel = ingredientViewModel,
+            createRecipeViewModel = createRecipeViewModel)
+      }
+      composable(Screen.CAMERA_SCAN_CODE_BAR) {
+        CameraScanCodeBarScreen(
+            navigationActions = navigationActions, ingredientViewModel = ingredientViewModel)
+      }
+    }
     navigation(
         startDestination = Screen.ACCOUNT,
         route = Route.ACCOUNT,

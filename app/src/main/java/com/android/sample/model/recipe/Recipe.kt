@@ -10,6 +10,7 @@ import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_NAME
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_PICTURE_ID
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_PRICE
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_TIME
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_URL
 
 /**
  * Data class representing a recipe.
@@ -35,7 +36,8 @@ data class Recipe(
     val ingredientsAndMeasurements: List<Pair<String, String>>,
     val time: String? = null,
     val difficulty: String? = null,
-    val price: String? = null
+    val price: String? = null,
+    var url: String? = null
 ) {
 
   init {
@@ -56,7 +58,8 @@ data class Recipe(
         FIRESTORE_RECIPE_MEASUREMENTS to ingredientsAndMeasurements.map { it.second },
         FIRESTORE_RECIPE_TIME to time,
         FIRESTORE_RECIPE_DIFFICULTY to difficulty,
-        FIRESTORE_RECIPE_PRICE to price)
+        FIRESTORE_RECIPE_PRICE to price,
+        FIRESTORE_RECIPE_URL to url)
   }
 
   /** object to get the list of categories. */

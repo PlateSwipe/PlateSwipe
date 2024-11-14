@@ -345,8 +345,8 @@ fun RecipeDisplay(
                                 painter =
                                     rememberAsyncImagePainter(
                                         model =
-                                            if (displayCard1) currentRecipe?.strMealThumbUrl
-                                            else nextRecipe?.strMealThumbUrl),
+                                            if (displayCard1) currentRecipe?.url
+                                            else nextRecipe?.url),
                                 contentDescription = stringResource(R.string.recipe_image),
                                 modifier = Modifier.fillMaxSize().testTag(RECIPE_IMAGE_1),
                                 contentScale = ContentScale.Crop,
@@ -372,8 +372,8 @@ fun RecipeDisplay(
                                 painter =
                                     rememberAsyncImagePainter(
                                         model =
-                                            if (displayCard2) currentRecipe?.strMealThumbUrl
-                                            else nextRecipe?.strMealThumbUrl),
+                                            if (displayCard2) currentRecipe?.url
+                                            else nextRecipe?.url),
                                 contentDescription = stringResource(R.string.recipe_image),
                                 modifier = Modifier.fillMaxSize().testTag(RECIPE_IMAGE_2),
                                 contentScale = ContentScale.Crop,

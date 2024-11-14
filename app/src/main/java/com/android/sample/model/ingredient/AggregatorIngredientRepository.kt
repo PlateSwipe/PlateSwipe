@@ -3,7 +3,7 @@ package com.android.sample.model.ingredient
 import android.util.Log
 import com.android.sample.resources.C
 
-class AggregatorIngredientRepository(
+open class AggregatorIngredientRepository(
     private val firestoreIngredientRepository: FirestoreIngredientRepository,
     private val openFoodFactsIngredientRepository: OpenFoodFactsIngredientRepository
 ) : IngredientRepository {
@@ -66,33 +66,54 @@ class AggregatorIngredientRepository(
       onFailure: (Exception) -> Unit,
       count: Int
   ) {
-    firestoreIngredientRepository.search(
+    openFoodFactsIngredientRepository.search(
         name,
-        onSuccess = { ingredientsFirestore ->
-          val countOpenFoodFacts = count - ingredientsFirestore.size
-
-          if (countOpenFoodFacts > 0) {
-            openFoodFactsIngredientRepository.search(
-                name,
-                onSuccess = { ingredientsOpenFoodFacts ->
-                  val ingredients = ingredientsFirestore + ingredientsOpenFoodFacts
-                  firestoreIngredientRepository.add(
-                      ingredientsOpenFoodFacts,
-                      onSuccess = {
-                        Log.i(
-                            C.Tag.AGGREGATOR_TAG_ON_INGREDIENT_ADDED,
-                            ingredientsOpenFoodFacts.toString())
-                      },
-                      onFailure = onFailure)
-                  onSuccess(ingredients)
-                },
-                onFailure = onFailure,
-                count = countOpenFoodFacts)
-          } else {
-            onSuccess(ingredientsFirestore)
-          }
+        onSuccess = { ingredientsOpenFoodFacts ->
+          checkFirestoreIngredients(
+              ingredientsOpenFoodFacts,
+              onSuccess = { ingredientsFirestore -> onSuccess(ingredientsFirestore) },
+              onFailure = onFailure)
+          onSuccess(ingredientsOpenFoodFacts)
         },
         onFailure = onFailure,
         count = count)
+  }
+
+  private fun checkFirestoreIngredients(
+      ingredientsOpenFoodFacts: List<Ingredient>,
+      onSuccess: (List<Ingredient>) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    var confirmedCount = 0
+    val foundIngredients = mutableListOf<Ingredient>()
+
+    for (ingredient in ingredientsOpenFoodFacts) {
+      if (ingredient.barCode != null) {
+        firestoreIngredientRepository.get(
+            ingredient.barCode,
+            onSuccess = { ingredientFirestore ->
+              if (ingredientFirestore != null) {
+                foundIngredients.add(ingredientFirestore)
+              } else {
+                foundIngredients.add(ingredient)
+
+                firestoreIngredientRepository.add(
+                    ingredientsOpenFoodFacts,
+                    onSuccess = {
+                      Log.i(
+                          C.Tag.AGGREGATOR_TAG_ON_INGREDIENT_ADDED,
+                          ingredientsOpenFoodFacts.toString())
+                    },
+                    onFailure = onFailure)
+              }
+
+              confirmedCount++
+              if (confirmedCount == ingredientsOpenFoodFacts.size) {
+                onSuccess(foundIngredients)
+              }
+            },
+            onFailure = onFailure)
+      }
+    }
   }
 }

@@ -1,8 +1,9 @@
-package com.android.sample.ui.createRecipe
+package com.android.sample.createRecipe
 
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import com.android.sample.model.recipe.CreateRecipeViewModel
+import com.android.sample.ui.createRecipe.CreateRecipeScreen
 import com.android.sample.ui.navigation.LIST_TOP_LEVEL_DESTINATIONS
 import com.android.sample.ui.navigation.NavigationActions
 import io.mockk.mockk
