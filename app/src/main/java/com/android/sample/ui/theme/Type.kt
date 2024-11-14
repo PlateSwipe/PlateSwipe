@@ -14,6 +14,12 @@ val Montserrat =
         Font(R.font.montserrat_bold, FontWeight.Bold),
         Font(R.font.montserrat_light, FontWeight.Light))
 
+val Roboto =
+    FontFamily(
+        Font(R.font.roboto_regular, FontWeight.Normal), Font(R.font.roboto_bold, FontWeight.Bold))
+
+val MeeraInimai = FontFamily(Font(R.font.meera_inimai_regular, FontWeight.Normal))
+
 val Typography =
     Typography(
         bodySmall =
@@ -37,7 +43,7 @@ val Typography =
             TextStyle(
                 fontFamily = Montserrat,
                 fontWeight = FontWeight.SemiBold,
-                fontSize = 20.sp,
+                fontSize = 30.sp,
                 lineHeight = 16.sp,
                 letterSpacing = 0.sp),
         titleSmall =
@@ -54,4 +60,10 @@ val Typography =
                 fontSize = 11.sp,
                 lineHeight = 16.sp,
                 letterSpacing = 0.5.sp),
-    )
+        displayLarge =
+            TextStyle(
+                fontFamily = Montserrat,
+                fontWeight = FontWeight.Bold,
+                fontSize = 45.sp,
+                lineHeight = 40.sp,
+                letterSpacing = 2.sp))

@@ -1,6 +1,7 @@
 package com.android.sample.model.recipe
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
@@ -16,14 +17,14 @@ class RecipeBuilderTest {
 
   @Test
   fun `test addIngredient adds ingredient and measurement`() {
-    builder.addIngredientAndMeasurement("Flour", "200g")
-    builder.addIngredientAndMeasurement("Sugar", "100g")
-
     val recipe =
         builder
             .apply {
               setName("Cake")
               setInstructions("Mix all ingredients")
+              addIngredientAndMeasurement("Flour", "200g")
+              addIngredientAndMeasurement("Sugar", "100g")
+              setPictureID("http://example.com/image.jpg")
             }
             .build()
 
@@ -39,6 +40,7 @@ class RecipeBuilderTest {
               setInstructions("Boil water, cook pasta")
               addIngredientAndMeasurement("Pasta", "200g")
               addIngredientAndMeasurement("Salt", "1 tsp")
+              setPictureID("http://example.com/image.jpg")
             }
             .build()
 
@@ -97,6 +99,41 @@ class RecipeBuilderTest {
     assertEquals("15 mins", recipe.time)
     assertEquals("Easy", recipe.difficulty)
     assertEquals("5.00", recipe.price)
+  }
+
+  @Test
+  fun `test clear function successfully clears all fields`() {
+    // Set initial values for all fields
+    builder.setId("1")
+    builder.setName("Salad")
+    builder.setInstructions("Mix ingredients")
+    builder.addIngredientAndMeasurement("Lettuce", "100g")
+    builder.setCategory("Vegetarian")
+    builder.setArea("French")
+    builder.setPictureID("http://example.com/image.jpg")
+    builder.setTime("15 mins")
+    builder.setDifficulty("Easy")
+    builder.setPrice("5.00")
+
+    // Build and clear
+    builder.build()
+    builder.clear()
+
+    // Assertions to verify each field was cleared
+    assertEquals("", builder.getId())
+    assertEquals("", builder.getName())
+    assertEquals("", builder.getInstructions())
+    assertEquals(emptyList<Pair<String, String>>(), builder.getIngredientsAndMeasurements())
+    assertNull(builder.getCategory())
+    assertNull(builder.getArea())
+    assertEquals("", builder.getPictureID())
+    assertNull(builder.getTime())
+    assertNull(builder.getDifficulty())
+    assertNull(builder.getPrice())
+
+    // Verify that attempting to build throws an exception
+    assertThrows(IllegalArgumentException::class.java) { builder.build() }
+        .apply { assertEquals("Recipe name is required and cannot be blank.", message) }
   }
 
   @Test

@@ -17,4 +17,11 @@ val goldenBronze = Color(0xFFD6A55C)
 val starColor = Color(0xFFFFAC4B)
 val tagBackground = Color.Gray
 
+val Orange80 = Color(0xFFFE8160)
+val C4: Color = Color(0xFF0E0E0E)
+
 val valencia = Color(0xFFE94D4D)
+val redSwipe = Color(0xFFFF6F61)
+val greenSwipe = Color(0xFF4CAF50)
+val jungleGreen = Color(0xFF43A047)
+val firebrickRed = Color(0xFFD32F2F)

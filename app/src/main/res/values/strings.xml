@@ -4,10 +4,9 @@
     <string name="title_activity_second">SecondActivity</string>
     <string name="default_web_client_id">308109588643-14cdmrd4mgdqns8sn27i9p25cm2b0mlq.apps.googleusercontent.com</string>
     <string name="recipe_image">Recipe Image</string>
-    <string name="rate">4.5</string>
     <string name="star_rate_description">Star rate</string>
 
-    <string name="plate_swipe_title">PlateSwipe</string>
+    <string name="plate_swipe_title">Plate Swipe</string>
 
     <string name="search_bar_place_holder">Search</string>
     <string name="scan_barcode">Scan Barcode</string>
@@ -25,6 +24,17 @@
     <string name="imported_image_from_the_gallery">Imported image from the Gallery</string>
     <string name="no_image_selected_yet">No image selected yet.</string>
 
+    <string name="photo_capture_failed">Photo capture failed: %1$s</string>
+    <string name="take_photo">Take Photo</string>
+
+    <string name="filter_icon">Filter Icon</string>
+    <string name="time_range_input_description">Time Range</string>
+    <string name="price_range_input_description">Price Range</string>
+    <string name="difficulty_input_description">Difficulty</string>
+    <string name="category_input_description">Category</string>
+
+
+
     <string name="prep_time">Prep time</string>
     <string name="cook_time">Cook time</string>
     <string name="total_time">Total time</string>
@@ -33,6 +43,57 @@
     <string name="instructions">Instructions</string>
     <string name="counter_min">-</string>
     <string name="counter_max">+</string>
+
+
+
+
+    //RecipeNameScreen
+    <string name="create_your_recipe">Create your recipe</string>
+    <string name="create_recipe_description">Create a recipe that others can discover and enjoy. Start by giving your dish a name!</string>
+    <string name="recipe_name_label">Name of the recipe</string>
+    <string name="recipe_name_hint">Choose a catchy title that reflects your dish</string>
+    <string name="recipe_name_error">Please enter a recipe name</string>
+    <string name="next_step">Next Step</string>
+
+    //ChefImage
+    <string name="chef_standing_description">Chef standing</string>
+
+    //AddInstructionStepScreen
+    <string name="step_label">Step</string>
+    <string name="time_label">Time (min)</string>
+    <string name="instruction_label">Instruction</string>
+    <string name="save_label">Save</string>
+    <string name="add_step">Add Step</string>
+    <string name="category_label">Category</string>
+    <string name="error_message_empty_instruction">Please enter an instruction</string>
+
+    //IconDropDownMenu
+    <string name="add_icon">Add Icon</string>
+
+    //PublishRecipeScreen
+    <string name="done_text">Done !</string>
+    <string name="publish_recipe_button">Publish Recipe</string>
+
+    //RecipeIngredientScreen
+    <string name="list_ingredients">List the ingredients needed for your recipe. Add as many as you need.</string>
+    <string name="add_ingredient">Add Ingredients</string>
+    <string name="no_ingredients">No Ingredients</string>
+
+    //RecipeInstructionsScreen
+    <string name="add_instructions">Add Instructions</string>
+    <string name="describe_instructions">Describe each step of how to prepare your dish.</string>
+    <string name="next">Next</string>
+    <string name="gallery">Gallery</string>
+    <string name="camera">Camera</string>
+    <string name="no_image">No Image</string>
+    <string name="image_taken_from_camera">Image taken from camera</string>
+    <string name="add_image">Add Image</string>
+
+    //RecipeListInstructionsScreen
+    <string name="RecipeListInstructionsScreen_Instructions">Instructions</string>
+    <string name="RecipeListInstructionsScreen_Step">Step</string>
+    <string name="RecipeListInstructionsScreen_Minutes">min</string>
+
 
 
     <dimen name="paddingBasic">16dp</dimen>

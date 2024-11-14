@@ -189,7 +189,7 @@ class UserViewModelTest {
 
     assertEquals(userViewModel.userName.value, userExample.userName)
     assertEquals(userViewModel.profilePictureUrl.value, userExample.profilePictureUrl)
-    assertEquals(userViewModel.fridge.value[0].name, "apple")
+    assertEquals(userViewModel.fridge.value[0].first.name, "apple")
     assertEquals(userViewModel.likedRecipes.value[0].idMeal, "123")
     assertEquals(userViewModel.createdRecipes.value[0].idMeal, "123")
 
@@ -200,5 +200,33 @@ class UserViewModelTest {
     assertEquals(userViewModel.fridge.value.count(), 0)
     assertEquals(userViewModel.likedRecipes.value.count(), 0)
     assertEquals(userViewModel.createdRecipes.value.count(), 0)
+  }
+
+  @Test
+  fun `test correctly adds and removes existing ingredient to count pairs in fridge`() {
+    userViewModel.addIngredientToUserFridge(ingredientExample, 2)
+
+    assertEquals(userViewModel.fridge.value[0].first.name, "apple")
+    assertEquals(userViewModel.fridge.value[0].second, 2)
+
+    userViewModel.addIngredientToUserFridge(ingredientExample)
+
+    assertEquals(userViewModel.fridge.value[0].second, 3)
+
+    userViewModel.removeIngredientFromUserFridge(ingredientExample, 2)
+
+    assertEquals(userViewModel.fridge.value[0].second, 1)
+
+    assertThrows(IllegalArgumentException::class.java) {
+      userViewModel.removeIngredientFromUserFridge(ingredientExample, 2)
+    }
+
+    userViewModel.removeIngredientFromUserFridge(ingredientExample)
+
+    assertEquals(userViewModel.fridge.value.count(), 0)
+
+    assertThrows(IllegalArgumentException::class.java) {
+      userViewModel.removeIngredientFromUserFridge(ingredientExample)
+    }
   }
 }

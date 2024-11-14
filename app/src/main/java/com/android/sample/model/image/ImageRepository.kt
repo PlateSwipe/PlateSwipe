@@ -9,7 +9,8 @@ import androidx.compose.ui.graphics.ImageBitmap
 enum class ImageDirectoryType {
   USER,
   RECIPE,
-  INGREDIENT
+  INGREDIENT,
+  TEST
 }
 
 /** Interface for interacting with the Firebase storage */

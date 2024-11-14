@@ -26,6 +26,16 @@ object Screen {
 
   const val CREATE_RECIPE = "AddRecipe Screen"
 
+  const val CREATE_RECIPE_INGREDIENTS = "Add Recipe Ingredients"
+
+  const val CREATE_RECIPE_INSTRUCTIONS = "Add Recipe Instructions"
+
+  const val CREATE_RECIPE_ADD_INSTRUCTION = "Add One Recipe Instruction"
+
+  const val CREATE_RECIPE_LIST_INSTRUCTIONS = "List Recipe Instructions"
+
+  const val PUBLISH_CREATED_RECIPE = "Publish Created Recipe"
+
   const val ACCOUNT = "Account Screen"
 
   const val OVERVIEW_RECIPE = "Overview Recipe Screen"
@@ -37,6 +47,12 @@ object Screen {
   const val DISPLAY_IMAGE = "Display Image Screen"
 
   const val CAMERA_IMPORT_PHOTO = "Camera Import Photo Screen"
+
+  const val CAMERA_TAKE_PHOTO = "Camera Take Photo Screen"
+
+  const val DISPLAY_IMAGE = "Display Image Screen"
+
+  const val CREATE_RECIPE_ADD_IMAGE = "Create Recipe Add Image Screen"
 }
 
 data class TopLevelDestination(val route: String, val iconId: Int, val textId: String)
@@ -46,7 +62,7 @@ object TopLevelDestinations {
   val SWIPE = TopLevelDestination(Route.SWIPE, R.drawable.mainpageicon, "Swipe")
   val FRIDGE = TopLevelDestination(Route.FRIDGE, R.drawable.fridgeicon, "Fridge")
   val SEARCH = TopLevelDestination(Route.SEARCH, R.drawable.searchicon, "Search")
-  val ADD_RECIPE = TopLevelDestination(Route.CREATE_RECIPE, R.drawable.addicon, "AddRecipe")
+  val ADD_RECIPE = TopLevelDestination(Route.CREATE_RECIPE, R.drawable.addicon, "Add Recipe")
   val ACCOUNT = TopLevelDestination(Route.ACCOUNT, R.drawable.account, "Account")
 }
 

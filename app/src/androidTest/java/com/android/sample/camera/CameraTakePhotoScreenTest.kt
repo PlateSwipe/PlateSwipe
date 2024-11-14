@@ -8,24 +8,29 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
-import com.android.sample.model.takePhoto.TakePhotoViewModel
+import com.android.sample.model.image.ImageRepositoryFirebase
+import com.android.sample.model.recipe.CreateRecipeViewModel
+import com.android.sample.model.recipe.FirestoreRecipesRepository
 import com.android.sample.ui.camera.CameraTakePhotoScreen
 import com.android.sample.ui.camera.TakePhotoButton
 import com.android.sample.ui.navigation.NavigationActions
-import com.android.sample.ui.navigation.Screen
+import com.google.firebase.firestore.FirebaseFirestore
+import io.mockk.mockk
+import io.mockk.spyk
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.`when`
 
 @RunWith(AndroidJUnit4::class)
 class CameraTakePhotoScreenTest {
 
-  private lateinit var mockNavigationActions: NavigationActions
-  private lateinit var takePhotoViewModel: TakePhotoViewModel
   private lateinit var context: Context
+  private lateinit var navigationActions: NavigationActions
+  private lateinit var createRecipeViewModel: CreateRecipeViewModel
+  private lateinit var firestore: FirebaseFirestore
+  private lateinit var repoImg: ImageRepositoryFirebase
+  private lateinit var repoRecipe: FirestoreRecipesRepository
 
   private val preview = "camera_preview"
   private val buttonBox = "Take photo button box"
@@ -38,11 +43,12 @@ class CameraTakePhotoScreenTest {
 
   @Before
   fun setUp() {
-    mockNavigationActions = mock(NavigationActions::class.java)
-    takePhotoViewModel = TakePhotoViewModel()
-    context = mock(Context::class.java)
-
-    `when`(mockNavigationActions.currentRoute()).thenReturn(Screen.CAMERA_TAKE_PHOTO)
+    repoRecipe = mockk<FirestoreRecipesRepository>(relaxed = true)
+    firestore = mockk<FirebaseFirestore>(relaxed = true)
+    repoImg = mockk<ImageRepositoryFirebase>(relaxed = true)
+    navigationActions = mockk<NavigationActions>(relaxed = true)
+    createRecipeViewModel = spyk(CreateRecipeViewModel(repoRecipe, repoImg))
+    context = mockk<Context>(relaxed = true)
   }
 
   @Test
@@ -62,7 +68,7 @@ class CameraTakePhotoScreenTest {
 
   @Test
   fun takePhotoScreenDisplayEveryComponent() {
-    composeTestRule.setContent { CameraTakePhotoScreen(mockNavigationActions, takePhotoViewModel) }
+    composeTestRule.setContent { CameraTakePhotoScreen(navigationActions, createRecipeViewModel) }
 
     // Check if the camera preview is displayed
     composeTestRule.onNodeWithTag(preview).assertExists()

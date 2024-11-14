@@ -29,6 +29,8 @@ private val LightColorScheme =
         onPrimary = Color.Black,
         onSecondary = graySlate,
         onTertiary = Color.Gray,
+        onPrimaryContainer = lightCream,
+        onSecondaryContainer = goldenBronze,
         onBackground = goldenBronze
 
         /* Other default colors to override
