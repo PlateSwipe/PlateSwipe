@@ -8,6 +8,7 @@ import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import com.android.sample.resources.C.Tag.INGREDIENTS_IMAGE_DIR
 import com.android.sample.resources.C.Tag.RECIPE_IMAGE_DIR
+import com.android.sample.resources.C.Tag.TEST_IMAGE_DIR
 import com.android.sample.resources.C.Tag.USER_IMAGE_DIR
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -117,6 +118,7 @@ class ImageRepositoryFirebase(storage: FirebaseStorage) : ImageRepository {
           ImageDirectoryType.USER -> USER_IMAGE_DIR
           ImageDirectoryType.RECIPE -> RECIPE_IMAGE_DIR
           ImageDirectoryType.INGREDIENT -> INGREDIENTS_IMAGE_DIR
+          ImageDirectoryType.TEST -> TEST_IMAGE_DIR
         }
     return storageRef.child(dir + imageDirectoryUID + "/$imageName" + ".jpg")
   }
