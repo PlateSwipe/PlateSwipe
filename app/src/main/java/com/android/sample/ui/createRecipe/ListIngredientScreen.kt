@@ -73,7 +73,7 @@ fun IngredientListScreen(
                     text = createRecipeViewModel.recipeBuilder.getName(),
                     style = MaterialTheme.typography.titleLarge.copy(fontSize = 30.sp),
                     color = MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier.padding(PADDING.dp))
+                    modifier = Modifier.padding(PADDING.dp).testTag("recipeName"))
                 Row(
                     modifier =
                         Modifier.fillMaxWidth() // Changed to fill the available width
@@ -90,7 +90,7 @@ fun IngredientListScreen(
                           painter = painterResource(id = R.drawable.add),
                           contentDescription = "Add",
                           modifier =
-                              Modifier.clickable {
+                              Modifier.testTag("addIngredientIcon").clickable {
                                 ingredientViewModel.clearSearch()
                                 navigationActions.navigateTo(
                                     Screen.CREATE_RECIPE_SEARCH_INGREDIENTS)
@@ -128,7 +128,8 @@ fun IngredientListScreen(
                                 .background(
                                     color = lightCream, shape = RoundedCornerShape(size = 4.dp))
                                 .align(Alignment.BottomCenter)
-                                .zIndex(1f),
+                                .zIndex(1f)
+                                .testTag("nextStepButton"),
                         shape = RoundedCornerShape(4.dp),
                         colors =
                             ButtonDefaults.buttonColors(
@@ -180,6 +181,7 @@ fun IngredientPreview(ingredient: Ingredient, ingredientViewModel: IngredientVie
                 Modifier.align(Alignment.TopEnd)
                     .padding(end = SMALL_PADDING.dp, top = SMALL_PADDING.dp)) {
               Icon(
+                  modifier = Modifier.testTag("removeIngredientIcon${ingredient.name}"),
                   imageVector = Icons.Filled.Close,
                   contentDescription = "Close",
                   tint = MaterialTheme.colorScheme.onPrimary)

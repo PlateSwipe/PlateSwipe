@@ -47,8 +47,7 @@ class IngredientSearchScreenTest {
     // Mocking the ViewModel's flow
 
     mockNavigationActions = mock(NavigationActions::class.java)
-    `when`(mockNavigationActions.currentRoute()).thenReturn(Route.SWIPE)
-    `when`(mockNavigationActions.navigateTo(Route.AUTH)).then {}
+    `when`(mockNavigationActions.currentRoute()).thenReturn(Route.CREATE_RECIPE)
     aggregatorIngredientRepository = mock(AggregatorIngredientRepository::class.java)
 
     `when`(aggregatorIngredientRepository.search(any(), any(), any(), any())).thenAnswer {
