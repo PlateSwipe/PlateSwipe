@@ -174,6 +174,7 @@ class CreateRecipeViewModelTest {
     val defaultRecipe = createDefaultRecipe()
     // Check that the exception is thrown with the correct message
     `when`(mockRepository.getNewUid()).thenReturn(defaultRecipe.idMeal)
+
     createRecipeViewModel.publishRecipe()
 
     assertEquals("Image is null", createRecipeViewModel.publishStatus.value)
@@ -205,7 +206,9 @@ class CreateRecipeViewModelTest {
           (it.arguments[5] as (Exception) -> Unit).invoke(Exception("Failed to upload image"))
         }
     createRecipeViewModel.publishRecipe()
-    assertEquals("Failed to publish recipe: Failed to upload image", createRecipeViewModel.publishStatus.value)
+    assertEquals(
+        "Failed to publish recipe: Failed to upload image",
+        createRecipeViewModel.publishStatus.value)
   }
 
   @Test

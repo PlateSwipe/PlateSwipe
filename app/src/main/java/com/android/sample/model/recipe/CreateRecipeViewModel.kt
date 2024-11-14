@@ -337,12 +337,12 @@ class CreateRecipeViewModel(
             },
             onFailure = { exception ->
               // Throw an error if the image upload fails
-                _publishStatus.value = RECIPE_PUBLISH_ERROR_MESSAGE.format(exception.message)
+              _publishStatus.value = RECIPE_PUBLISH_ERROR_MESSAGE.format(exception.message)
             })
       } else {
-          throw NullPointerException(ERROR_NULL_IMAGE)
+        throw NullPointerException(ERROR_NULL_IMAGE)
       }
-    } catch (e: IllegalArgumentException) {
+    } catch (e: NullPointerException) {
       _publishStatus.value = e.message
     }
   }
