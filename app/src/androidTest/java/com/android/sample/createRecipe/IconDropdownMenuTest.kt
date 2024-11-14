@@ -43,10 +43,10 @@ class IconDropdownMenuTest {
     composeTestRule.waitForIdle() // Ensure the dropdown is fully expanded
 
     // Verify that each icon option is displayed
-    composeTestRule.onNodeWithText("Fire", useUnmergedTree = true).assertIsDisplayed()
-    composeTestRule.onNodeWithText("Salt", useUnmergedTree = true).assertIsDisplayed()
-    composeTestRule.onNodeWithText("Mortar", useUnmergedTree = true).assertIsDisplayed()
-    composeTestRule.onNodeWithText("Axe", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithText("Cook", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithText("Season", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithText("Mix", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithText("Prep", useUnmergedTree = true).assertIsDisplayed()
   }
 
   @Test
@@ -55,12 +55,12 @@ class IconDropdownMenuTest {
     composeTestRule.onNodeWithTag("IconDropdownTrigger").performClick()
     composeTestRule.waitForIdle()
 
-    // Select an icon, e.g., "Salt"
-    composeTestRule.onNodeWithText("Salt", useUnmergedTree = true).performClick()
+    // Select an icon, e.g., "Season"
+    composeTestRule.onNodeWithText("Season", useUnmergedTree = true).performClick()
     advanceUntilIdle() // Wait for UI updates after selection
 
-    // Verify that the dropdown has collapsed and the "Salt" option is no longer visible
-    composeTestRule.onNodeWithText("Salt", useUnmergedTree = true).assertDoesNotExist()
+    // Verify that the dropdown has collapsed and the "Season" option is no longer visible
+    composeTestRule.onNodeWithText("Season", useUnmergedTree = true).assertDoesNotExist()
   }
 
   @Test
@@ -71,16 +71,16 @@ class IconDropdownMenuTest {
 
     // Step 2: Verify that each option is displayed within the popup
     composeTestRule
-        .onNode(hasText("Fire").and(hasAnyAncestor(keyIsDefined(SemanticsProperties.IsPopup))))
+        .onNode(hasText("Cook").and(hasAnyAncestor(keyIsDefined(SemanticsProperties.IsPopup))))
         .assertIsDisplayed()
     composeTestRule
-        .onNode(hasText("Salt").and(hasAnyAncestor(keyIsDefined(SemanticsProperties.IsPopup))))
+        .onNode(hasText("Season").and(hasAnyAncestor(keyIsDefined(SemanticsProperties.IsPopup))))
         .assertIsDisplayed()
     composeTestRule
-        .onNode(hasText("Mortar").and(hasAnyAncestor(keyIsDefined(SemanticsProperties.IsPopup))))
+        .onNode(hasText("Mix").and(hasAnyAncestor(keyIsDefined(SemanticsProperties.IsPopup))))
         .assertIsDisplayed()
     composeTestRule
-        .onNode(hasText("Axe").and(hasAnyAncestor(keyIsDefined(SemanticsProperties.IsPopup))))
+        .onNode(hasText("Prep").and(hasAnyAncestor(keyIsDefined(SemanticsProperties.IsPopup))))
         .assertIsDisplayed()
   }
 
@@ -94,18 +94,9 @@ class IconDropdownMenuTest {
     composeTestRule.onNodeWithTag("IconDropdownTrigger").assertExists()
     Espresso.pressBack() // Close the dropdown
 
-    // Step 3: Assert dropdown is closed by verifying "Fire" is not displayed
+    // Step 3: Assert dropdown is closed by verifying "Cook" is not displayed
     composeTestRule
-        .onNode(hasText("Fire").and(hasAnyAncestor(keyIsDefined(SemanticsProperties.IsPopup))))
+        .onNode(hasText("Cook").and(hasAnyAncestor(keyIsDefined(SemanticsProperties.IsPopup))))
         .assertDoesNotExist()
   }
-
-  /*
-  @Test
-  fun dropdownMenu_loggingNodeTreeForDebugging() {
-      composeTestRule.onNodeWithTag("IconDropdownTrigger").performClick()
-      composeTestRule.waitForIdle()
-
-      composeTestRule.onRoot(useUnmergedTree = true).printToLog("DropdownTree")
-  }*/
 }

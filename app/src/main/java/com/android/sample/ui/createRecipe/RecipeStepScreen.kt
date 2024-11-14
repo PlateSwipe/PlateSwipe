@@ -1,22 +1,17 @@
 package com.android.sample.ui.createRecipe
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.android.sample.resources.C.Tag.BASE_PADDING
-import com.android.sample.resources.C.Tag.BUTTON_HEIGHT
-import com.android.sample.resources.C.Tag.BUTTON_WIDTH
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
-import com.android.sample.ui.theme.lightCream
+import com.android.sample.ui.utils.PlateSwipeButton
 import com.android.sample.ui.utils.PlateSwipeScaffold
 
 /**
@@ -59,7 +54,7 @@ fun RecipeStepScreen(
                 // Title text
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.titleLarge,
+                    style = MaterialTheme.typography.displayLarge,
                     color = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier.fillMaxWidth().padding(horizontal = BASE_PADDING * 2),
                     textAlign = TextAlign.Center)
@@ -71,35 +66,27 @@ fun RecipeStepScreen(
                     text = subtitle,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimary,
-                    modifier =
-                        Modifier.padding(horizontal = BASE_PADDING * 2).width(260.dp).height(63.dp),
+                    modifier = Modifier.padding(horizontal = BASE_PADDING * 2).zIndex(1f),
                     textAlign = TextAlign.Center)
 
                 Spacer(modifier = Modifier.weight(0.05f))
 
                 // Row to hold the chef image and change its position horizontally
                 Row(
-                    modifier = Modifier.fillMaxWidth().weight(1f),
+                    modifier = Modifier.weight(1f),
                     verticalAlignment = Alignment.CenterVertically) {
-                      Spacer(modifier = Modifier.weight(0.25f))
-
-                      ChefImage(modifier = Modifier.fillMaxHeight().weight(0.8f))
+                      Spacer(modifier = Modifier.weight(0.05f))
+                      ChefImage(modifier = Modifier.weight(0.9f).zIndex(-1f))
+                      Spacer(modifier = Modifier.weight(0.05f))
                     }
                 Spacer(modifier = Modifier.weight(0.1f))
               }
 
           // Action button
-          Button(
-              onClick = onButtonClick,
-              modifier =
-                  Modifier.width(BUTTON_WIDTH)
-                      .height(BUTTON_HEIGHT)
-                      .background(color = lightCream, shape = RoundedCornerShape(size = 4.dp))
-                      .align(Alignment.BottomCenter)
-                      .zIndex(1f),
-              shape = RoundedCornerShape(4.dp)) {
-                Text(buttonText)
-              }
+          PlateSwipeButton(
+              buttonText,
+              modifier = Modifier.align(Alignment.BottomCenter),
+              onClick = onButtonClick)
         }
       })
 }

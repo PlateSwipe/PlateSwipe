@@ -56,11 +56,17 @@
     <string name="instruction_label">Instruction</string>
     <string name="save_label">Save</string>
     <string name="add_step">Add Step</string>
-    <string name="category_label">Category</string>
     <string name="error_message_empty_instruction">Please enter an instruction</string>
 
     //IconDropDownMenu
     <string name="add_icon">Add Icon</string>
+    <string name="dropdown_icon">DropDown Icon</string>
+    <string name="fire_icon_description">Cook</string>
+    <string name="salt_icon_description">Season</string>
+    <string name="mortar_icon_description">Mix</string>
+    <string name="axe_icon_description">Prep</string>
+
+
 
     //PublishRecipeScreen
     <string name="done_text">Done !</string>

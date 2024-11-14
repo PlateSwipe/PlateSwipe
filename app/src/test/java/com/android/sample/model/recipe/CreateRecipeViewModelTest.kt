@@ -17,6 +17,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
+import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -57,8 +58,9 @@ class CreateRecipeViewModelTest {
         strCategory = "Dessert",
         strArea = "Italian",
         strInstructions = "Some instructions",
-        strMealThumbUrl = "https://example.com/image.jpg",
-        ingredientsAndMeasurements = listOf(Pair("Banana", "3")))
+        strMealThumbUrl = "unique-id",
+        ingredientsAndMeasurements = listOf(Pair("Banana", "3")),
+        url = null)
   }
 
   @Test
@@ -175,7 +177,7 @@ class CreateRecipeViewModelTest {
     // Check that the exception is thrown with the correct message
     `when`(mockRepository.getNewUid()).thenReturn(defaultRecipe.idMeal)
 
-    createRecipeViewModel.publishRecipe()
+    createRecipeViewModel.publishRecipe(onSuccess = {}, onFailure = {})
 
     assertEquals("Image is null", createRecipeViewModel.publishStatus.value)
   }
@@ -187,7 +189,7 @@ class CreateRecipeViewModelTest {
     `when`(mockRepository.getNewUid()).thenReturn(defaultRecipe.idMeal)
     val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
     createRecipeViewModel.setBitmap(bitmap, 90)
-    createRecipeViewModel.publishRecipe()
+    createRecipeViewModel.publishRecipe(onSuccess = {}, onFailure = {})
     verify(mockImageRepository, times(1))
         .uploadImage(any(), any(), any(), any(), onSuccess = any(), onFailure = any())
   }
@@ -205,7 +207,7 @@ class CreateRecipeViewModelTest {
         .thenAnswer {
           (it.arguments[5] as (Exception) -> Unit).invoke(Exception("Failed to upload image"))
         }
-    createRecipeViewModel.publishRecipe()
+    createRecipeViewModel.publishRecipe(onSuccess = {}, onFailure = {})
     assertEquals(
         "Failed to publish recipe: Failed to upload image",
         createRecipeViewModel.publishStatus.value)
@@ -230,7 +232,7 @@ class CreateRecipeViewModelTest {
           onSuccessCallback()
         }
 
-    createRecipeViewModel.publishRecipe()
+    createRecipeViewModel.publishRecipe(onSuccess = {}, onFailure = {})
 
     // Ensure all coroutines have completed
     advanceUntilIdle()
@@ -247,6 +249,8 @@ class CreateRecipeViewModelTest {
     createRecipeViewModel.updateRecipeInstructions(defaultRecipe.strInstructions)
     createRecipeViewModel.updateRecipeThumbnail(defaultRecipe.strMealThumbUrl)
     createRecipeViewModel.addIngredient("Banana", "3")
+    defaultRecipe.strCategory?.let { createRecipeViewModel.updateRecipeCategory(it) }
+    defaultRecipe.strArea?.let { createRecipeViewModel.updateRecipeArea(it) }
     createRecipeViewModel.setBitmap(bitmap, 90)
 
     `when`(mockRepository.getNewUid()).thenReturn(defaultRecipe.idMeal)
@@ -271,7 +275,12 @@ class CreateRecipeViewModelTest {
     val onSuccessCaptor = argumentCaptor<() -> Unit>()
     val onFailureCaptor = argumentCaptor<(Exception) -> Unit>()
 
-    createRecipeViewModel.publishRecipe()
+    // Define the onSuccess callback to validate if it was called correctly
+    var onSuccessCalled = false
+    createRecipeViewModel.publishRecipe(
+        onSuccess = { recipe -> onSuccessCalled = true },
+        onFailure = { fail("Expected onSuccess, but onFailure was called instead.") })
+
     advanceUntilIdle()
 
     verify(mockRepository)
@@ -317,7 +326,7 @@ class CreateRecipeViewModelTest {
           (it.arguments[4] as (Exception) -> Unit).invoke(Exception("Failed to get Image Url"))
         }
 
-    createRecipeViewModel.publishRecipe()
+    createRecipeViewModel.publishRecipe(onSuccess = {}, onFailure = {})
     assertEquals(
         "Failed to publish recipe: Failed to get Image Url",
         createRecipeViewModel.publishStatus.value)
@@ -335,6 +344,16 @@ class CreateRecipeViewModelTest {
 
     `when`(mockRepository.getNewUid()).thenReturn(defaultRecipe.idMeal)
     createRecipeViewModel.setBitmap(bitmap, 90)
+    // Define the onFailure callback to validate if it was called correctly
+    var onFailureCalled = false
+    createRecipeViewModel.publishRecipe(
+        onSuccess = { fail("Expected onFailure, but onSuccess was called instead.") },
+        onFailure = { errorMessage ->
+          onFailureCalled = true
+          assertEquals("Network error", errorMessage.message)
+        })
+
+    advanceUntilIdle()
 
     `when`(
             mockImageRepository.uploadImage(
@@ -357,7 +376,7 @@ class CreateRecipeViewModelTest {
       (it.arguments[2] as (Exception) -> Unit).invoke(Exception("Failed to add Recipe"))
     }
 
-    createRecipeViewModel.publishRecipe()
+    createRecipeViewModel.publishRecipe(onSuccess = {}, onFailure = {})
     assertEquals(
         "Failed to publish recipe: Failed to add Recipe", createRecipeViewModel.publishStatus.value)
   }
@@ -366,11 +385,22 @@ class CreateRecipeViewModelTest {
   fun `test clearPublishError resets publish error`() = runTest {
     `when`(mockRepository.getNewUid()).thenReturn("unique-id")
 
-    try {
-      createRecipeViewModel.updateRecipeName("")
-    } catch (e: IllegalArgumentException) {}
+    // Call publishRecipe with onSuccess and onFailure callbacks
+    createRecipeViewModel.publishRecipe(
+        onSuccess = {
+          fail(
+              "Expected onFailure to be called due to invalid recipe, but onSuccess was called instead.")
+        },
+        onFailure = { exception ->
+          // Check if the publishStatus is set with the error message
+          assertNotNull(
+              "Expected publishStatus to be set on failure, but it was null.",
+              createRecipeViewModel.publishStatus.value)
+          assertEquals(
+              "Recipe name is required and cannot be blank.",
+              createRecipeViewModel.publishStatus.value)
+        })
 
-    createRecipeViewModel.publishRecipe()
     advanceUntilIdle()
 
     assertNotNull(createRecipeViewModel.publishStatus.value)

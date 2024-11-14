@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
@@ -21,6 +20,8 @@ import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C
+import com.android.sample.resources.C.Tag.SECOND_STEP_OF_THE_CREATION
+import com.android.sample.resources.C.Tag.THIRD_STEP_OF_THE_CREATION
 import com.android.sample.ui.account.AccountScreen
 import com.android.sample.ui.authentication.SignInScreen
 import com.android.sample.ui.camera.CameraScanCodeBarScreen
@@ -107,9 +108,7 @@ fun PlateSwipeApp() {
         startDestination = Screen.CREATE_RECIPE,
         route = Route.CREATE_RECIPE,
     ) {
-      composable(Screen.CREATE_RECIPE) { backStackEntry ->
-        remember(backStackEntry) { navController.getBackStackEntry(Route.CREATE_RECIPE) }
-
+      composable(Screen.CREATE_RECIPE) {
         CreateRecipeScreen(
             navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
       }
@@ -117,10 +116,11 @@ fun PlateSwipeApp() {
         RecipeIngredientsScreen(
             navigationActions = navigationActions,
             createRecipeViewModel = createRecipeViewModel,
-            currentStep = 1)
+            currentStep = SECOND_STEP_OF_THE_CREATION)
       }
       composable(Screen.CREATE_RECIPE_INSTRUCTIONS) {
-        RecipeInstructionsScreen(navigationActions = navigationActions, currentStep = 2)
+        RecipeInstructionsScreen(
+            navigationActions = navigationActions, currentStep = THIRD_STEP_OF_THE_CREATION)
       }
       composable(Screen.CREATE_RECIPE_ADD_INSTRUCTION) {
         AddInstructionStepScreen(
@@ -139,7 +139,9 @@ fun PlateSwipeApp() {
       }
       composable(Screen.PUBLISH_CREATED_RECIPE) {
         PublishRecipeScreen(
-            navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
+            navigationActions = navigationActions,
+            createRecipeViewModel = createRecipeViewModel,
+            userViewModel = userViewModel)
       }
 
       composable(Screen.CREATE_RECIPE_SEARCH_INGREDIENTS) {

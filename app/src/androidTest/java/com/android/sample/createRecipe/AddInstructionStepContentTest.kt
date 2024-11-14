@@ -46,7 +46,6 @@ class AddInstructionStepScreenTest {
     }
     composeTestRule.onNodeWithTag("StepLabel").assertIsDisplayed()
     composeTestRule.onNodeWithTag("TimeInput").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("CategoryInput").assertIsDisplayed()
     composeTestRule.onNodeWithTag("IconDropdown").assertIsDisplayed()
     composeTestRule.onNodeWithTag("InstructionInput").assertIsDisplayed()
     composeTestRule.onNodeWithTag(SAVE_BUTTON_TAG).assertIsDisplayed()
@@ -60,10 +59,8 @@ class AddInstructionStepScreenTest {
           navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
     }
     composeTestRule.onNodeWithTag("TimeInput").performTextInput("10")
-    composeTestRule.onNodeWithTag("CategoryInput").performTextInput("Main Course")
     composeTestRule.onNodeWithTag("InstructionInput").performTextInput("Preheat oven to 180°C...")
     composeTestRule.onNodeWithText("10").assertIsDisplayed()
-    composeTestRule.onNodeWithText("Main Course").assertIsDisplayed()
     composeTestRule.onNodeWithText("Preheat oven to 180°C...").assertIsDisplayed()
   }
 
@@ -76,8 +73,8 @@ class AddInstructionStepScreenTest {
     }
     composeTestRule.onNodeWithTag("IconDropdown").performClick()
     composeTestRule.waitForIdle()
-    composeTestRule.onNodeWithText("Fire").performClick()
-    composeTestRule.onNodeWithContentDescription("Fire").assertIsDisplayed()
+    composeTestRule.onNodeWithText("Cook").performClick()
+    composeTestRule.onNodeWithContentDescription("Cook").assertIsDisplayed()
   }
 
   /**
@@ -90,7 +87,6 @@ class AddInstructionStepScreenTest {
           navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
     }
     composeTestRule.onNodeWithTag("TimeInput").performTextInput("10")
-    composeTestRule.onNodeWithTag("CategoryInput").performTextInput("Main Course")
     composeTestRule.onNodeWithTag("InstructionInput").performTextInput("Preheat oven to 180°C...")
     composeTestRule.onNodeWithTag(SAVE_BUTTON_TAG).performClick()
     advanceUntilIdle()
@@ -111,7 +107,7 @@ class AddInstructionStepScreenTest {
 
   /** Verifies that `time` and `category` are only updated when they are not empty. */
   @Test
-  fun addInstructionStepScreen_onlyUpdatesTimeAndCategoryWhenNotEmpty() = runTest {
+  fun addInstructionStepScreen_onlyUpdatesTimeWhenNotEmpty() = runTest {
     composeTestRule.setContent {
       AddInstructionStepScreen(
           navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
@@ -128,12 +124,10 @@ class AddInstructionStepScreenTest {
 
     // Now enter values for time and category and save again
     composeTestRule.onNodeWithTag("TimeInput").performTextInput("10")
-    composeTestRule.onNodeWithTag("CategoryInput").performTextInput("Main Course")
     composeTestRule.onNodeWithTag(SAVE_BUTTON_TAG).performClick()
     advanceUntilIdle()
 
     // Verify time and category were updated with the new values
     verify { createRecipeViewModel.updateRecipeTime("10") }
-    verify { createRecipeViewModel.updateRecipeCategory("Main Course") }
   }
 }
