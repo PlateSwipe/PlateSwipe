@@ -1,5 +1,6 @@
 package com.android.sample.account
 
+import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertTextEquals
@@ -17,6 +18,9 @@ import com.android.sample.resources.C.TestTag.AccountScreen.CREATED_RECIPES_BUTT
 import com.android.sample.resources.C.TestTag.AccountScreen.LIKED_RECIPES_BUTTON_TEST_TAG
 import com.android.sample.resources.C.TestTag.AccountScreen.PROFILE_PICTURE_TEST_TAG
 import com.android.sample.resources.C.TestTag.AccountScreen.USERNAME_TEST_TAG
+import com.android.sample.resources.C.TestTag.RecipeList.CANCEL_BUTTON
+import com.android.sample.resources.C.TestTag.RecipeList.CONFIRMATION_BUTTON
+import com.android.sample.resources.C.TestTag.RecipeList.CONFIRMATION_POP_UP
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_LIST_TEST_TAG
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_TITLE_TEST_TAG
 import com.android.sample.ui.account.AccountScreen
@@ -136,11 +140,10 @@ class AccountScreenTest {
   }
 
   @Test
-  fun testRemoveALikedRecipe() {
+  fun testRemoveLikedRecipePopUpDisplayed() {
     composeTestRule.setContent {
       SampleAppTheme { AccountScreen(mockNavigationActions, userViewModel) }
     }
-
     composeTestRule
         .onNode(
             hasAnySibling(hasText("Spicy Arrabiata Penne"))
@@ -148,8 +151,50 @@ class AccountScreenTest {
             useUnmergedTree = true)
         .assertIsDisplayed()
         .performClick()
+    composeTestRule.onNodeWithTag(CONFIRMATION_POP_UP).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CONFIRMATION_BUTTON).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CONFIRMATION_BUTTON).assertHasClickAction()
+    composeTestRule.onNodeWithTag(CANCEL_BUTTON).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CANCEL_BUTTON).assertHasClickAction()
+  }
+
+  @Test
+  fun testRemoveALikedRecipe() {
+    composeTestRule.setContent {
+      SampleAppTheme { AccountScreen(mockNavigationActions, userViewModel) }
+    }
+    composeTestRule
+        .onNode(
+            hasAnySibling(hasText("Spicy Arrabiata Penne"))
+                .and(hasContentDescription(RECIPE_FAVORITE_ICON_CONTENT_DESCRIPTION)),
+            useUnmergedTree = true)
+        .assertIsDisplayed()
+        .performClick()
+    composeTestRule.onNodeWithTag(CONFIRMATION_POP_UP).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CONFIRMATION_BUTTON).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CONFIRMATION_BUTTON).performClick()
     assert(userViewModel.likedRecipes.value.isEmpty())
     assert(dummyRecipes != userViewModel.likedRecipes.value)
     composeTestRule.onNodeWithText("Spicy Arrabiata Penne").assertIsNotDisplayed()
+  }
+
+  @Test
+  fun testNotRemoveALikedRecipe() {
+    composeTestRule.setContent {
+      SampleAppTheme { AccountScreen(mockNavigationActions, userViewModel) }
+    }
+    composeTestRule
+        .onNode(
+            hasAnySibling(hasText("Spicy Arrabiata Penne"))
+                .and(hasContentDescription(RECIPE_FAVORITE_ICON_CONTENT_DESCRIPTION)),
+            useUnmergedTree = true)
+        .assertIsDisplayed()
+        .performClick()
+    composeTestRule.onNodeWithTag(CONFIRMATION_POP_UP).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CANCEL_BUTTON).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CANCEL_BUTTON).performClick()
+    assert(userViewModel.likedRecipes.value.isNotEmpty())
+    assert(userViewModel.likedRecipes.value.contains(dummyRecipes[0]))
+    composeTestRule.onNodeWithText("Spicy Arrabiata Penne").assertIsDisplayed()
   }
 }
