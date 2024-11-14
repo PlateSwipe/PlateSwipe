@@ -7,6 +7,8 @@ import com.android.sample.resources.C.Tag.PADDING
 
 // Like R, but C
 object C {
+  const val ZERO = 0
+
   object Tag {
 
     const val main_screen_container = "main_screen_container"
@@ -160,7 +162,7 @@ object C {
     // FirestoreRecipeRepository
     const val FIRESTORE_COLLECTION_NAME = "recipes with images"
 
-      // Values for storage
+    // Values for storage
     const val FIRESTORE_RECIPE_NAME = "name"
     const val FIRESTORE_RECIPE_CATEGORY = "category"
     const val FIRESTORE_RECIPE_AREA = "area"
