@@ -601,5 +601,9 @@ object C {
       const val COL_2 = "col 2"
       const val TITLE_COL = "title col"
     }
+
+    object ChefImage {
+      const val CHEF_IMAGE = "Chef Image"
+    }
   }
 }
