@@ -12,6 +12,7 @@ import com.android.sample.ui.createRecipe.IngredientSearchScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Before
@@ -83,8 +84,12 @@ class IngredientSearchScreenTest {
   }
 
   @Test
-  fun testSearchBarDisplaysIngredients() {
+  fun testSearchBarDisplaysIngredients() = runTest {
     composeTestRule.onNodeWithTag("searchBar", useUnmergedTree = true).performTextInput("To")
+
+    composeTestRule.waitUntil(5000) {
+      ingredientViewModel.searchingIngredientList.value.isNotEmpty()
+    }
     composeTestRule.waitForIdle()
     testIngredients.forEach { ingredient ->
       composeTestRule
@@ -96,6 +101,11 @@ class IngredientSearchScreenTest {
   @Test
   fun testSearchPopUpDisplayCorrectly() {
     composeTestRule.onNodeWithTag("searchBar", useUnmergedTree = true).performTextInput("To")
+
+    composeTestRule.waitUntil(5000) {
+      ingredientViewModel.searchingIngredientList.value.isNotEmpty()
+    }
+
     composeTestRule.waitForIdle()
 
     composeTestRule
@@ -114,6 +124,11 @@ class IngredientSearchScreenTest {
   @Test
   fun testSearchPopUpCancelCorrectly() {
     composeTestRule.onNodeWithTag("searchBar", useUnmergedTree = true).performTextInput("To")
+
+    composeTestRule.waitUntil(5000) {
+      ingredientViewModel.searchingIngredientList.value.isNotEmpty()
+    }
+
     composeTestRule.waitForIdle()
 
     composeTestRule
@@ -125,6 +140,9 @@ class IngredientSearchScreenTest {
     composeTestRule.onNodeWithTag("confirmationPopUp", useUnmergedTree = true).assertIsDisplayed()
 
     composeTestRule.onNodeWithTag("cancelButton", useUnmergedTree = true).performClick()
+
+    composeTestRule.waitForIdle()
+
     verify(mockNavigationActions, never()).navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
     assertNotEquals(ingredientViewModel.ingredientList.value, listOf(testIngredients[0]))
   }

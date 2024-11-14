@@ -67,8 +67,8 @@ fun IngredientListScreen(
         Column(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.Start,
-            modifier = Modifier.testTag("DraggableItem").fillMaxSize().padding(paddingValues)) {
-              Column(Modifier.weight(2f).fillMaxSize()) {
+            modifier = Modifier.fillMaxSize().padding(paddingValues).testTag("DraggableItem")) {
+              Column(Modifier.fillMaxWidth()) {
                 Text(
                     text = createRecipeViewModel.recipeBuilder.getName(),
                     style = MaterialTheme.typography.titleLarge.copy(fontSize = 30.sp),
@@ -76,7 +76,7 @@ fun IngredientListScreen(
                     modifier = Modifier.padding(PADDING.dp))
                 Row(
                     modifier =
-                        Modifier.fillMaxSize()
+                        Modifier.fillMaxWidth() // Changed to fill the available width
                             .padding(start = PADDING.dp, end = PADDING.dp, top = PADDING.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically) {
@@ -98,19 +98,22 @@ fun IngredientListScreen(
                     }
               }
 
+              // Column for ingredients with scroll and weight for flexible space distribution
               Column(
                   modifier =
-                      Modifier.fillMaxSize().weight(6f).verticalScroll(rememberScrollState()),
-              ) {
-                for (ingredient in ingredientList) {
-                  // Display the ingredient
-                  IngredientPreview(ingredient, ingredientViewModel)
-                }
-              }
+                      Modifier.fillMaxWidth() // Changed to fill available width instead of size
+                          .weight(6f)
+                          .verticalScroll(rememberScrollState())) {
+                    for (ingredient in ingredientList) {
+                      // Display the ingredient
+                      IngredientPreview(ingredient, ingredientViewModel)
+                    }
+                  }
+
+              // Box for the save button, positioned at the bottom center
               Box(
-                  modifier = Modifier.fillMaxWidth().weight(1f).padding(PADDING.dp),
+                  modifier = Modifier.fillMaxWidth().padding(PADDING.dp),
                   contentAlignment = Alignment.Center) {
-                    // Save Button
                     Button(
                         onClick = {
                           for (ingredient in ingredientList) {
@@ -119,11 +122,13 @@ fun IngredientListScreen(
                           }
                           navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_INSTRUCTION)
                         },
-                        Modifier.width(BUTTON_WIDTH)
-                            .height(BUTTON_HEIGHT)
-                            .background(color = lightCream, shape = RoundedCornerShape(size = 4.dp))
-                            .align(Alignment.BottomCenter)
-                            .zIndex(1f),
+                        modifier =
+                            Modifier.width(BUTTON_WIDTH)
+                                .height(BUTTON_HEIGHT)
+                                .background(
+                                    color = lightCream, shape = RoundedCornerShape(size = 4.dp))
+                                .align(Alignment.BottomCenter)
+                                .zIndex(1f),
                         shape = RoundedCornerShape(4.dp),
                         colors =
                             ButtonDefaults.buttonColors(
