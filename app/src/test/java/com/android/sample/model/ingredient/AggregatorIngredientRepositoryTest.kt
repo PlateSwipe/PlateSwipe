@@ -12,6 +12,7 @@ import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
 import org.mockito.kotlin.capture
 import org.mockito.kotlin.doNothing
+import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 
 class AggregatorIngredientRepositoryTest {
@@ -147,6 +148,30 @@ class AggregatorIngredientRepositoryTest {
   }
 
   @Test
+  fun testSearchReturnsRightIngredientWhenNotFoundInFirestore() {
+    var resultingIngredient: Ingredient? = null
+    var resultingException: Exception? = null
+
+    aggregatorIngredientRepository.search(
+        ingredient.name,
+        onSuccess = { resultingIngredient = it[0] },
+        onFailure = { resultingException = it },
+        count = 1)
+
+    onSuccessCollectionCapture.value.invoke(listOf(ingredient))
+    onSuccessSingleCapture.value.invoke(null)
+
+    // check that it will add the missing ingredient to firestore
+    verify(mockFirestoreIngredientRepository, never())
+        .add(any<Ingredient>(), onSuccess = any(), onFailure = any())
+
+    assertNotNull(resultingIngredient)
+    assertEquals(ingredient, resultingIngredient)
+
+    assertNull(resultingException)
+  }
+
+  @Test
   fun testSearchReturnsRightIngredientWhenFoundInFirestore() {
     var resultingIngredient: Ingredient? = null
     var resultingException: Exception? = null
@@ -158,6 +183,10 @@ class AggregatorIngredientRepositoryTest {
         count = 1)
 
     onSuccessCollectionCapture.value.invoke(listOf(ingredient))
+    onSuccessSingleCapture.value.invoke(ingredient)
+
+    verify(mockFirestoreIngredientRepository, never())
+        .add(any<Ingredient>(), onSuccess = any(), onFailure = any())
 
     assertNotNull(resultingIngredient)
     assertEquals(ingredient, resultingIngredient)
@@ -181,29 +210,6 @@ class AggregatorIngredientRepositoryTest {
     assertNull(resultingIngredient)
 
     assertNotNull(resultingException)
-  }
-
-  @Test
-  fun testSearchFindsFromOpenFoodFactsRepoWhenNotFoundInFirestore() {
-    var resultingIngredient: Ingredient? = null
-    var resultingException: Exception? = null
-
-    aggregatorIngredientRepository.search(
-        ingredient.name,
-        onSuccess = { resultingIngredient = it[0] },
-        onFailure = { resultingException = it },
-        count = 1)
-
-    onSuccessCollectionCapture.value.invoke(emptyList())
-
-    onSuccessCollectionCapture.value.invoke(listOf(ingredient))
-
-    verify(mockFirestoreIngredientRepository)
-        .add(any<List<Ingredient>>(), onSuccess = any(), onFailure = any())
-
-    assertNull(resultingException)
-    assertNotNull(resultingIngredient)
-    assertEquals(ingredient, resultingIngredient)
   }
 
   @Test
