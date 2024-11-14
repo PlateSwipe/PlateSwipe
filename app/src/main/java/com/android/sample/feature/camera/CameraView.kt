@@ -12,6 +12,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.viewinterop.AndroidView
+import com.android.sample.resources.C
 
 /**
  * @param imageCapture
@@ -35,7 +36,8 @@ fun CameraView(imageCapture: ImageCapture, imageAnalyzer: ImageAnalysis.Analyzer
   Box(modifier = Modifier.fillMaxSize()) {
     // AndroidView :  to use UI elements that are not yet available in Compose
     AndroidView(
-        factory = { previewView }, modifier = Modifier.fillMaxSize().testTag("camera_preview")) {
+        factory = { previewView },
+        modifier = Modifier.fillMaxSize().testTag(C.TestTag.CameraPreview.PREVIEW)) {
           startCamera(lifecycleOwner, context, imageCapture, previewView, imageAnalyzer)
         }
   }

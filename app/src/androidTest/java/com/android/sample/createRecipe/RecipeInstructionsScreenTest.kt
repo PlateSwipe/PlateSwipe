@@ -1,10 +1,11 @@
-package com.android.sample.ui.createRecipe
+package com.android.sample.createRecipe
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.android.sample.ui.createRecipe.RecipeInstructionsScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import org.junit.Rule

@@ -15,7 +15,7 @@ import com.android.sample.resources.C.Tag.CHEF_IMAGE_STANDING_ORIGINAL_RATIO
 @Composable
 fun ChefImage(modifier: Modifier = Modifier) {
   Image(
-      painter = painterResource(id = R.drawable.chef_standing),
+      painter = painterResource(id = R.drawable.cook),
       contentDescription = stringResource(R.string.chef_standing_description),
       modifier =
           modifier
