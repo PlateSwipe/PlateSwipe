@@ -3,7 +3,7 @@ package com.android.sample.model.ingredient
 import android.util.Log
 import com.android.sample.resources.C
 
-class AggregatorIngredientRepository(
+open class AggregatorIngredientRepository(
     private val firestoreIngredientRepository: FirestoreIngredientRepository,
     private val openFoodFactsIngredientRepository: OpenFoodFactsIngredientRepository
 ) : IngredientRepository {

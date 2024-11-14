@@ -50,7 +50,7 @@ class IngredientViewModel(private val repository: IngredientRepository) : ViewMo
    *
    * @param ingredient
    */
-  fun addBarCodeIngredient(ingredient: Ingredient) {
+  fun addIngredient(ingredient: Ingredient) {
     _ingredientList.value += ingredient
   }
 
