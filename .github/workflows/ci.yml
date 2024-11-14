@@ -81,7 +81,7 @@ jobs:
           LOCAL_PROPERTIES: ${{ secrets.LOCAL_PROPERTIES }}
         run: |
           echo "$KEYSTORE" | base64 --decode > ./app/upload-keystore.jks
-          echo "$GOOGLE_SERVICES" | base64 --decode > ./app/google-services.json
+          echo "$KEYSTORE_PROPERTIES" | base64 --decode > ./keystore.properties
           echo "$GOOGLE_SERVICES" | base64 --decode > ./app/google-services.json
           echo "$LOCAL_PROPERTIES" | base64 --decode > ./local.properties
 
