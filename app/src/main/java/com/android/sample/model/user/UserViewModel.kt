@@ -147,6 +147,7 @@ class UserViewModel(
    */
   fun changeUserName(newUserName: String) {
     _userName.value = newUserName
+    updateCurrentUser()
   }
 
   /**
@@ -156,6 +157,7 @@ class UserViewModel(
    */
   fun changeProfilePictureUrl(newProfilePictureUrl: String) {
     _profilePictureUrl.value = newProfilePictureUrl
+    updateCurrentUser()
   }
 
   /**
@@ -199,6 +201,7 @@ class UserViewModel(
     } catch (e: NoSuchElementException) {
       updateList(_fridge, Pair(ingredient, count), add = true)
     }
+    updateCurrentUser()
   }
 
   /**
@@ -227,6 +230,7 @@ class UserViewModel(
     } catch (e: NoSuchElementException) {
       throw IllegalArgumentException(REMOVED_INGREDIENT_NOT_IN_FRIDGE_ERROR)
     }
+    updateCurrentUser()
   }
 
   /**
@@ -236,6 +240,7 @@ class UserViewModel(
    */
   fun addRecipeToUserLikedRecipes(recipe: Recipe) {
     updateList(_likedRecipes, recipe, true)
+    updateCurrentUser()
   }
 
   /**
@@ -245,6 +250,7 @@ class UserViewModel(
    */
   fun removeRecipeFromUserLikedRecipes(recipe: Recipe) {
     updateList(_likedRecipes, recipe, false)
+    updateCurrentUser()
   }
 
   /**
@@ -254,6 +260,7 @@ class UserViewModel(
    */
   fun addRecipeToUserCreatedRecipes(recipe: Recipe) {
     updateList(_createdRecipes, recipe, true)
+    updateCurrentUser()
   }
 
   /**
@@ -263,6 +270,7 @@ class UserViewModel(
    */
   fun removeRecipeFromUserCreatedRecipes(recipe: Recipe) {
     updateList(_createdRecipes, recipe, false)
+    updateCurrentUser()
   }
 
   /**
