@@ -230,7 +230,6 @@ fun IngredientPreview(ingredient: Ingredient, ingredientViewModel: IngredientVie
                       quantity = newQuantity
                       ingredientViewModel.updateQuantity(ingredient, quantity)
                     },
-                    label = {},
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                     keyboardActions = KeyboardActions(onNext = { focusManager.clearFocus() }),
                     shape = RoundedCornerShape(INGREDIENT_PREVIEW_CORNER.dp),

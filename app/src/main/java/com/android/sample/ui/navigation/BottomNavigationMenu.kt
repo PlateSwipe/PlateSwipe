@@ -13,6 +13,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.android.sample.resources.C.Dimension.CameraScanCodeBarScreen.BOTTOM_BAR_HEIGHT
+import com.android.sample.ui.theme.lightCream
 
 @Composable
 fun BottomNavigationMenu(
@@ -23,6 +24,7 @@ fun BottomNavigationMenu(
   NavigationBar(
       modifier =
           Modifier.fillMaxWidth().height(BOTTOM_BAR_HEIGHT.dp).testTag("bottomNavigationMenu"),
+      containerColor = lightCream,
       content = {
         tabList.forEach { tab ->
           NavigationBarItem(

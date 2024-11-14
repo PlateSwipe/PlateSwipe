@@ -421,7 +421,7 @@ object C {
     object CameraScanCodeBarScreen {
 
       // PLATE SWIPE SCAFFOLD
-      const val TOP_BAR_HEIGHT = 40
+      const val TOP_BAR_HEIGHT = 50
       const val TOP_BAR_TITLE_FONT_SIZE = 28
       const val BACK_ARROW_ICON_SIZE = 26
       const val CHEF_HAT_ICON_SIZE = 35
