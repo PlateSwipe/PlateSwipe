@@ -28,8 +28,8 @@ class SearchBarTest {
 
   @Test
   fun testSearchBarDisplayed() {
-
     composeTestRule.setContent { SearchBar() }
+
     composeTestRule.onNodeWithTag("searchBar").assertIsDisplayed()
   }
 
@@ -44,6 +44,7 @@ class SearchBarTest {
     }
 
     composeTestRule.setContent { SearchBar(onValueChange = onValueChange) }
+
     composeTestRule.onNodeWithTag("searchBar").performTextInput(query)
     composeTestRule.waitForIdle()
     assert(calledOnValueChange)
