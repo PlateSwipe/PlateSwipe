@@ -57,6 +57,7 @@ class ImageRepositoryFirebase {
   private lateinit var imageStorage: ImageRepositoryFirebase
   private lateinit var testFilePath: String
   private lateinit var imageBitmap: ImageBitmap
+  private val testUri = Uri.parse("https://example.com/test.jpg")
 
   @Before
   fun setUp() {
@@ -70,19 +71,22 @@ class ImageRepositoryFirebase {
     imageStorage = ImageRepositoryFirebase(mockFirebaseStorage)
     testFilePath = "app/src/test/resources/images/Muscle mice sticker.jpg"
     imageBitmap = BitmapFactory.decodeFile(testFilePath).asImageBitmap()
+    // Ensure `mockTaskUri` returns itself for both success and failure listeners
+    `when`(mockTaskUri.addOnSuccessListener(any())).thenAnswer { invocation ->
+      val listener = invocation.arguments[0] as OnSuccessListener<Uri>
+      listener.onSuccess(testUri)
+      mockTaskUri
+    }
+    `when`(mockTaskUri.addOnFailureListener(any())).thenAnswer { invocation ->
+      val listener = invocation.arguments[0] as OnFailureListener
+      listener.onFailure(Exception("Image download failed"))
+      mockTaskUri
+    }
   }
 
   @Test
   fun getImageUrlSuccessful() {
-    val testUri = Uri.parse("https://example.com/test.jpg")
     `when`(mockImageRef.downloadUrl).thenReturn(mockTaskUri)
-
-    // Ensure `mockTaskUri` returns itself for both success and failure listeners
-    `when`(mockTaskUri.addOnSuccessListener(any())).thenAnswer { invocation ->
-      val listener = invocation.arguments[0] as OnSuccessListener<Uri>
-      listener.onSuccess(Uri.parse("https://example.com/test.jpg"))
-      mockTaskUri
-    }
 
     var resultUri: Uri? = null
     imageStorage.getImageUrl(
@@ -99,19 +103,6 @@ class ImageRepositoryFirebase {
   fun getImageUrlFail() {
     var failureException: Exception? = null
     `when`(mockImageRef.downloadUrl).thenReturn(mockTaskUri)
-
-    // Ensure `mockTaskUri` returns itself for both success and failure listeners
-    `when`(mockTaskUri.addOnSuccessListener(any())).thenAnswer { invocation ->
-      val listener = invocation.arguments[0] as OnSuccessListener<Uri>
-      listener.onSuccess(Uri.parse("https://example.com/test.jpg"))
-      mockTaskUri
-    }
-
-    `when`(mockTaskUri.addOnFailureListener(any())).thenAnswer { invocation ->
-      val listener = invocation.arguments[0] as OnFailureListener
-      listener.onFailure(Exception("Image download failed"))
-      mockTaskUri
-    }
 
     imageStorage.getImageUrl(
         testImageDirectoryUID,
