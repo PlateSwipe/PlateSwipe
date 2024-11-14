@@ -24,9 +24,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,16 +40,25 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.android.sample.R
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.user.UserViewModel
+import com.android.sample.resources.C.Dimension.RecipeList.POP_UP_CLIP
+import com.android.sample.resources.C.Dimension.RecipeList.POP_UP_DESCRIPTION_FONT_SIZE
+import com.android.sample.resources.C.Dimension.RecipeList.POP_UP_ELEVATION
+import com.android.sample.resources.C.Tag.PADDING
 import com.android.sample.resources.C.Tag.RECIPE_FAVORITE_ICON_CONTENT_DESCRIPTION
 import com.android.sample.resources.C.Tag.RECIPE_LIST_CORNER_RADIUS
 import com.android.sample.resources.C.Tag.RECIPE_RATING_CONTENT_DESCRIPTION
+import com.android.sample.resources.C.TestTag.RecipeList.CANCEL_BUTTON
+import com.android.sample.resources.C.TestTag.RecipeList.CONFIRMATION_BUTTON
+import com.android.sample.resources.C.TestTag.RecipeList.CONFIRMATION_POP_UP
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_CARD_TEST_TAG
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_CATEGORIES_TEST_TAG
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_FAVORITE_ICON_TEST_TAG
@@ -195,7 +206,7 @@ private fun RecipeCategories(recipe: Recipe) {
 @Composable
 private fun RecipeImage(recipe: Recipe) {
   Image(
-      painter = rememberAsyncImagePainter(recipe.strMealThumbUrl),
+      painter = rememberAsyncImagePainter(recipe.url),
       contentDescription = null,
       modifier =
           Modifier.aspectRatio(1f)
@@ -209,7 +220,7 @@ private fun RecipeTitle(recipe: Recipe, modifier: Modifier) {
   Text(
       modifier = modifier.testTag(RECIPE_TITLE_TEST_TAG),
       text = recipe.strMeal,
-      style = MaterialTheme.typography.titleMedium,
+      style = MaterialTheme.typography.titleSmall,
       fontWeight = FontWeight.Bold,
       maxLines = 1,
       overflow = TextOverflow.Ellipsis)
@@ -224,14 +235,57 @@ private fun RecipeTitle(recipe: Recipe, modifier: Modifier) {
  */
 @Composable
 fun TopCornerLikeButton(recipe: Recipe, userViewModel: UserViewModel) {
-  var isLiked by remember { mutableStateOf(true) }
+  var recipeUnlike: Boolean by remember { mutableStateOf(false) }
+
   Icon(
-      imageVector = if (isLiked) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+      imageVector = if (!recipeUnlike) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
       contentDescription = RECIPE_FAVORITE_ICON_CONTENT_DESCRIPTION,
       modifier =
           Modifier.padding(4.dp).testTag(RECIPE_FAVORITE_ICON_TEST_TAG).clickable {
-            isLiked = !isLiked
-            userViewModel.removeRecipeFromUserLikedRecipes(recipe)
+            recipeUnlike = true
           },
       tint = valencia)
+  if (recipeUnlike) {
+    ConfirmationPopUp(
+        {
+          userViewModel.removeRecipeFromUserLikedRecipes(recipe)
+          recipeUnlike = false
+        },
+        { recipeUnlike = false })
+  }
+}
+
+@Composable
+private fun ConfirmationPopUp(onConfirm: () -> Unit, onDismiss: () -> Unit) {
+  AlertDialog(
+      onDismissRequest = onDismiss,
+      modifier =
+          Modifier.fillMaxWidth()
+              .padding(PADDING.dp)
+              .shadow(elevation = POP_UP_ELEVATION.dp, clip = POP_UP_CLIP)
+              .testTag(CONFIRMATION_POP_UP),
+      title = {
+        Text(
+            text = stringResource(R.string.pop_up_description),
+            style = MaterialTheme.typography.titleSmall,
+            fontSize = POP_UP_DESCRIPTION_FONT_SIZE.sp,
+            color = MaterialTheme.colorScheme.onPrimary)
+      },
+      confirmButton = {
+        TextButton(onClick = onConfirm, modifier = Modifier.testTag(CONFIRMATION_BUTTON)) {
+          Text(
+              text = stringResource(R.string.pop_up_confirm_removal_liked_recipe),
+              style = MaterialTheme.typography.titleSmall,
+              color = MaterialTheme.colorScheme.onPrimary)
+        }
+      },
+      dismissButton = {
+        TextButton(onClick = onDismiss, modifier = Modifier.testTag(CANCEL_BUTTON)) {
+          Text(
+              text = stringResource(R.string.pop_up_confirm_cancel_removal_liked_recipe),
+              style = MaterialTheme.typography.titleSmall,
+              color = MaterialTheme.colorScheme.onPrimary)
+        }
+      },
+      containerColor = MaterialTheme.colorScheme.onPrimaryContainer)
 }

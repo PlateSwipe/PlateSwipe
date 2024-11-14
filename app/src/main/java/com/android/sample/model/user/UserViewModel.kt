@@ -115,9 +115,9 @@ class UserViewModel(
                       uid = userId,
                       userName = userName.value ?: userId,
                       profilePictureUrl = "",
-                      fridge = emptyList(),
-                      likedRecipes = emptyList(),
-                      createdRecipes = emptyList()),
+                      fridge = _fridge.value.map { Pair(it.first.barCode.toString(), it.second) },
+                      likedRecipes = _likedRecipes.value.map { it.idMeal },
+                      createdRecipes = _createdRecipes.value.map { it.idMeal }),
               onSuccess = { getCurrentUser() },
               onFailure = { e -> throw e })
         })
