@@ -303,7 +303,8 @@ fun AddImageContent(
                               .height(RECIPE_NAME_BUTTON_HEIGHT)
                               .background(
                                   color = lightCream,
-                                  shape = RoundedCornerShape(size = C.Dimension.PADDING_4.dp)),
+                                  shape = RoundedCornerShape(size = C.Dimension.PADDING_4.dp))
+                              .testTag("NextStepButton"),
                       shape = RoundedCornerShape(C.Dimension.PADDING_4.dp),
                       enabled = isPictureTaken) {
                         Text(

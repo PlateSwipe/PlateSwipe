@@ -8,6 +8,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -96,7 +97,8 @@ fun RecipeStepScreen(
                       .height(BUTTON_HEIGHT)
                       .background(color = lightCream, shape = RoundedCornerShape(size = 4.dp))
                       .align(Alignment.BottomCenter)
-                      .zIndex(1f),
+                      .zIndex(1f)
+                      .testTag("NextStepButton"),
               shape = RoundedCornerShape(4.dp)) {
                 Text(buttonText)
               }
