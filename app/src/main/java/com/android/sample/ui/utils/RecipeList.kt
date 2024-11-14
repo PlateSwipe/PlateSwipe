@@ -266,7 +266,7 @@ private fun ConfirmationPopUp(onConfirm: () -> Unit, onDismiss: () -> Unit) {
               .testTag(CONFIRMATION_POP_UP),
       title = {
         Text(
-            text = stringResource(R.string.pop_up_description),
+            text = stringResource(R.string.message_pop_up),
             style = MaterialTheme.typography.titleSmall,
             fontSize = POP_UP_DESCRIPTION_FONT_SIZE.sp,
             color = MaterialTheme.colorScheme.onPrimary)
