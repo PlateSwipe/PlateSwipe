@@ -229,6 +229,7 @@ object C {
 
     // RecipeNameScreen
     val RECIPE_NAME_BASE_PADDING = 16.dp
+    val RECIPE_NAME_BUTTON_HEIGHT = 46.dp
     val RECIPE_NAME_BUTTON_WIDTH = 261.dp
     val RECIPE_NAME_FIELD_HEIGHT = 60.dp
     val RECIPE_NAME_FONT_SPACING = 0.14.sp

@@ -14,12 +14,10 @@ import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.firestore.util.Assert.fail
 import io.mockk.*
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import okhttp3.Call
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -51,8 +49,8 @@ class PublishRecipeScreenTest {
     mockCall = mock(Call::class.java)
 
     navigationActions = mockk(relaxed = true)
-      repoImg = mockk(relaxed = true)
-      createRecipeViewModel = spyk(CreateRecipeViewModel(repository, repoImg))
+    repoImg = mockk(relaxed = true)
+    createRecipeViewModel = spyk(CreateRecipeViewModel(repository, repoImg))
 
     // Mock dependencies for UserViewModel
     mockUserRepository = mock(UserRepository::class.java)
@@ -64,9 +62,6 @@ class PublishRecipeScreenTest {
 
     // Initialize UserViewModel with mocked dependencies
     userViewModel = UserViewModel(mockUserRepository, mockFirebaseAuth)
-
-    Intents.init()
-
 
     every { repository.getNewUid() } returns "valid-id"
   }

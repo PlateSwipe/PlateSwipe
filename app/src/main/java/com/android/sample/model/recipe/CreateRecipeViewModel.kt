@@ -322,15 +322,14 @@ class CreateRecipeViewModel(
                     repository.addRecipe(
                         recipe,
                         onSuccess = {
-
-                            onSuccess(recipe)
+                          onSuccess(recipe)
                           _publishStatus.value = RECIPE_PUBLISHED_SUCCESS_MESSAGE
                           recipeBuilder.clear()
                         },
                         onFailure = { exception ->
                           _publishStatus.value =
                               RECIPE_PUBLISH_ERROR_MESSAGE.format(exception.message)
-                            onFailure(exception)
+                          onFailure(exception)
                         })
                   },
                   onFailure = { exception ->
@@ -393,4 +392,3 @@ class CreateRecipeViewModel(
         }
   }
 }
-
