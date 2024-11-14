@@ -1,9 +1,14 @@
 package com.android.sample.createRecipe
 
 import android.graphics.Bitmap
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.assertHasClickAction
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.core.graphics.createBitmap
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.model.recipe.FirestoreRecipesRepository
@@ -96,5 +101,17 @@ class RecipeAddImageScreenTest {
     createRecipeViewModel.setBitmap(bitmap, 0)
 
     composeTestRule.onNodeWithTag("camera button").assertIsEnabled()
+    composeTestRule.onNodeWithText("Next").assertIsEnabled().performClick()
+    verify { navigationActions.navigateTo(Screen.PUBLISH_CREATED_RECIPE) }
+  }
+
+  @Test
+  fun clickOnGallery() {
+    composeTestRule.setContent {
+      RecipeAddImageScreen(
+          navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
+    }
+
+    composeTestRule.onNodeWithTag("gallery button").performClick()
   }
 }

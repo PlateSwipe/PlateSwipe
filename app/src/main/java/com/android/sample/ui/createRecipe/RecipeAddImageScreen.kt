@@ -1,7 +1,6 @@
 package com.android.sample.ui.createRecipe
 
 import android.graphics.Bitmap
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -30,8 +29,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -140,19 +139,12 @@ fun AddImageContent(
   val context = LocalContext.current
   // Collect the photo bitmap from the ViewModel's StateFlow
   val bitmap: Bitmap? by createRecipeViewModel.photo.collectAsState()
-  val isPictureTaken by remember { mutableStateOf(bitmap != null) }
+  val isPictureTaken by remember { derivedStateOf { bitmap != null } }
   // Launcher for the photo picker activity
   val photoPickerLauncher =
       rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia()) { uri
         ->
-        val bitmapUri = uriToBitmap(context, uri!!)
-        if (bitmapUri != null) {
-          createRecipeViewModel.setBitmap(bitmapUri, ZERO)
-        } else {
-          Toast.makeText(
-                  context, context.getString(R.string.error_loading_image), Toast.LENGTH_SHORT)
-              .show()
-        }
+        createRecipeViewModel.setBitmap(uriToBitmap(context, uri!!)!!, ZERO)
       }
   Column(
       modifier =
