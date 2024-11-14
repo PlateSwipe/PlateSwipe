@@ -1,5 +1,6 @@
 package com.android.sample.ui.utils
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -31,7 +32,11 @@ import com.android.sample.resources.C.Tag.SEARCH_BAR_CORNER_RADIUS
  */
 @Preview
 @Composable
-fun SearchBar(modifier: Modifier = Modifier, onValueChange: (String) -> Unit = {}) {
+fun SearchBar(
+    modifier: Modifier = Modifier,
+    onValueChange: (String) -> Unit = {},
+    isSingleLine: Boolean = false
+) {
   var searchText by remember { mutableStateOf("") }
 
   TextField(
@@ -46,7 +51,8 @@ fun SearchBar(modifier: Modifier = Modifier, onValueChange: (String) -> Unit = {
               .shadow(
                   elevation = 8.dp,
                   shape = RoundedCornerShape(SEARCH_BAR_CORNER_RADIUS.dp),
-              ),
+              )
+              .fillMaxWidth(),
       shape = RoundedCornerShape(SEARCH_BAR_CORNER_RADIUS.dp),
       leadingIcon = {
         Icon(
@@ -58,7 +64,8 @@ fun SearchBar(modifier: Modifier = Modifier, onValueChange: (String) -> Unit = {
         Text(
             text = stringResource(R.string.search_bar_place_holder),
             color = MaterialTheme.colorScheme.onPrimary,
-            style = MaterialTheme.typography.bodyMedium)
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.fillMaxWidth())
       },
       colors =
           TextFieldDefaults.colors(
@@ -68,5 +75,6 @@ fun SearchBar(modifier: Modifier = Modifier, onValueChange: (String) -> Unit = {
               focusedIndicatorColor = Color.Transparent,
               disabledIndicatorColor = Color.Transparent,
               unfocusedIndicatorColor = Color.Transparent,
-          ))
+          ),
+      singleLine = isSingleLine)
 }

@@ -1,33 +1,124 @@
 package com.android.sample.recipe
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performClick
+import com.android.sample.model.recipe.Recipe
+import com.android.sample.model.recipe.RecipesRepository
+import com.android.sample.model.recipe.RecipesViewModel
+import com.android.sample.resources.C.Tag.SEARCH_BAR_PLACE_HOLDER
+import com.android.sample.resources.C.TestTag.SearchScreen.FILTER
+import com.android.sample.resources.C.TestTag.SearchScreen.SEARCH_BAR
+import com.android.sample.resources.C.TestTag.SearchScreen.SEARCH_LIST
+import com.android.sample.resources.C.TestTag.SearchScreen.SEARCH_SCREEN
+import com.android.sample.resources.C.TestTag.Utils.PLATESWIPE_SCAFFOLD
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.recipe.SearchRecipeScreen
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.ArgumentMatchers.eq
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
+import org.mockito.kotlin.anyOrNull
 
 class SearchRecipeScreenTest {
-
-  private lateinit var navigationActions: NavigationActions
+  private lateinit var mockNavigationActions: NavigationActions
+  private lateinit var mockRepository: RecipesRepository
+  private lateinit var recipesViewModel: RecipesViewModel
+  private lateinit var recipesList: List<Recipe>
 
   @get:Rule val composeTestRule = createComposeRule()
 
   @Before
   fun setUp() {
-    navigationActions = mock(NavigationActions::class.java)
-    `when`(navigationActions.currentRoute()).thenReturn(Screen.SEARCH)
+    mockNavigationActions = mock(NavigationActions::class.java)
+    mockRepository = mock(RecipesRepository::class.java)
+    recipesViewModel = RecipesViewModel(mockRepository)
+
+    `when`(mockRepository.random(eq(1), anyOrNull(), anyOrNull())).then {}
+    `when`(mockNavigationActions.currentRoute()).thenReturn(Screen.SEARCH)
+
+    recipesList =
+        listOf(
+            Recipe(
+                "0",
+                "Meal1",
+                "Meal1cat",
+                "Meal1Area",
+                "Meals 1 instructions",
+                "https://img.jakpost.net/c/2016/09/29/2016_09_29_12990_1475116504._large.jpg",
+                listOf(Pair("1", "peu"), Pair("2", "beaucoup"), Pair("3", "peu")),
+            ),
+            Recipe(
+                "1",
+                "Meal2",
+                "Meal2cat",
+                "Meal2Area",
+                "Meals 2 instructions",
+                "https://img.jakpost.net/c/2016/09/29/2016_09_29_12990_1475116504._large.jpg",
+                listOf(Pair("1", "peu"), Pair("2", "beaucoup"), Pair("3", "peu")),
+            ),
+            Recipe(
+                "2",
+                "Meal3",
+                "Meal3cat",
+                "Meal3Area",
+                "Meals 3 instructions",
+                "https://img.jakpost.net/c/2016/09/29/2016_09_29_12990_1475116504._large.jpg",
+                listOf(Pair("1", "peu"), Pair("2", "beaucoup"), Pair("3", "peu")),
+            ),
+            Recipe(
+                "3",
+                "Meal4",
+                "Meal4cat",
+                "Meal4Area",
+                "Meals 4 instructions",
+                "https://img.jakpost.net/c/2016/09/29/2016_09_29_12990_1475116504._large.jpg",
+                listOf(Pair("1", "peu"), Pair("2", "beaucoup"), Pair("3", "peu")),
+            ),
+            Recipe(
+                "4",
+                "Meal5",
+                "Meal5cat",
+                "Meal5Area",
+                "Meals 5 instructions",
+                "https://img.jakpost.net/c/2016/09/29/2016_09_29_12990_1475116504._large.jpg",
+                listOf(Pair("1", "peu"), Pair("2", "beaucoup"), Pair("3", "peu")),
+            ))
   }
 
   @Test
-  fun mainTextIsDisplayed() {
-    composeTestRule.setContent { SearchRecipeScreen(navigationActions = navigationActions) }
-    composeTestRule.onNodeWithText("Search Recipe Screen").assertIsDisplayed()
-    composeTestRule.onNodeWithText("Work in progress... Stay tuned!").assertIsDisplayed()
+  fun displaySearchScreen() {
+    composeTestRule.setContent { SearchRecipeScreen(mockNavigationActions, recipesList) }
+    composeTestRule.onNodeWithTag(PLATESWIPE_SCAFFOLD).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(SEARCH_SCREEN).assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(SEARCH_BAR)
+        .assertIsDisplayed()
+        .assertTextContains(SEARCH_BAR_PLACE_HOLDER)
+    composeTestRule.onNodeWithTag(SEARCH_LIST).assertIsDisplayed()
+    for (i in 0..4) {
+      composeTestRule.onNodeWithTag("recipeCard$i").assertIsDisplayed()
+    }
+    composeTestRule.onNodeWithTag(FILTER).assertIsDisplayed()
+  }
+
+  @Test
+  fun navigateToRecipeOverview() {
+    composeTestRule.setContent { SearchRecipeScreen(mockNavigationActions, recipesList) }
+    composeTestRule.onNodeWithTag("recipeCard3").performClick()
+    verify(mockNavigationActions).navigateTo(Screen.OVERVIEW_RECIPE)
+  }
+
+  @Test
+  fun navigateToFilter() {
+    composeTestRule.setContent { SearchRecipeScreen(mockNavigationActions, recipesList) }
+    composeTestRule.onNodeWithTag(FILTER).performClick()
+    verify(mockNavigationActions).navigateTo(Screen.FILTER)
   }
 }

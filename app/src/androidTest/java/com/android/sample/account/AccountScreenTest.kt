@@ -83,7 +83,7 @@ class AccountScreenTest {
     composeTestRule.onNodeWithTag("userName").assertIsDisplayed().assertTextEquals(userName)
     composeTestRule.onNodeWithTag("recipeList").assertIsDisplayed()
     composeTestRule
-        .onNodeWithTag("recipeTitle", useUnmergedTree = true)
+        .onNodeWithTag("recipeTitle${dummyRecipes[0].idMeal}", useUnmergedTree = true)
         .assertIsDisplayed()
         .assertTextEquals(dummyRecipes[0].strMeal)
   }
@@ -97,14 +97,14 @@ class AccountScreenTest {
     composeTestRule.onNodeWithTag("createdRecipesButton").performClick()
     composeTestRule.waitForIdle()
     composeTestRule
-        .onNodeWithTag("recipeTitle", useUnmergedTree = true)
+        .onNodeWithTag("recipeTitle${dummyRecipes[1].idMeal}", useUnmergedTree = true)
         .assertIsDisplayed()
         .assertTextEquals(dummyRecipes[1].strMeal)
 
     composeTestRule.onNodeWithTag("likedRecipesButton").performClick()
     composeTestRule.waitForIdle()
     composeTestRule
-        .onNodeWithTag("recipeTitle", useUnmergedTree = true)
+        .onNodeWithTag("recipeTitle${dummyRecipes[0].idMeal}", useUnmergedTree = true)
         .assertIsDisplayed()
         .assertTextEquals(dummyRecipes[0].strMeal)
   }

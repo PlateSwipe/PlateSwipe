@@ -567,6 +567,13 @@ object C {
       const val LOGIN_BUTTON = "loginButton"
     }
 
+    object SearchScreen {
+      const val SEARCH_SCREEN = "search screen"
+      const val SEARCH_BAR = "searchBar"
+      const val SEARCH_LIST = "searchList"
+      const val FILTER = "filter icon"
+    }
+
     object CreateRecipeListInstructionsScreen {
       const val SCREEN_COLUMN = "ScreenColumn"
       const val INSTRUCTION_TEXT_SPACE = "InstructionTextSpace"
