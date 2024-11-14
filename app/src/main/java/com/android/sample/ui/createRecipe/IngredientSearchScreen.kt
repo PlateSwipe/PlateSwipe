@@ -61,7 +61,7 @@ fun IngredientSearchScreen(
         var selectedIngredient by remember { mutableStateOf<Ingredient?>(null) }
         var isLoading by remember { mutableStateOf(false) }
 
-        LaunchedEffect(listIngredient) { isLoading = false }
+        LaunchedEffect(listIngredient.value) { isLoading = false }
 
         Column(
             verticalArrangement = Arrangement.Top,
@@ -74,12 +74,9 @@ fun IngredientSearchScreen(
                     Spacer(modifier = Modifier.width(PADDING.dp).weight(1f))
                     SearchBar(
                         modifier = Modifier.padding(PADDING.dp).weight(4f).testTag("DraggableItem"),
-                        onValueChange = { query ->
-                          ingredientViewModel.fetchIngredientByName(query)
-                        },
+                        onValueChange = { query -> isLoading = query.isNotEmpty() },
                         onDebounce = { query ->
                           if (query.isNotEmpty()) {
-                            isLoading = true
                             ingredientViewModel.fetchIngredientByName(query)
                           }
                         })
