@@ -2,6 +2,8 @@ package com.android.sample.ui.createRecipe
 
 import android.graphics.Bitmap
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -28,8 +30,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,6 +47,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.android.sample.R
+import com.android.sample.feature.camera.openGallery
+import com.android.sample.feature.camera.uriToBitmap
 import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.resources.C
 import com.android.sample.resources.C.Tag.RECIPE_NAME_BUTTON_HEIGHT
@@ -61,6 +65,7 @@ import com.android.sample.resources.C.TestTag.RecipeAddImageScreen.MAIN_COL
 import com.android.sample.resources.C.TestTag.RecipeAddImageScreen.ROW_BUTTON
 import com.android.sample.resources.C.TestTag.RecipeAddImageScreen.ROW_FOR_CHEF
 import com.android.sample.resources.C.TestTag.RecipeAddImageScreen.TITLE_COL
+import com.android.sample.resources.C.ZERO
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.Typography
@@ -135,7 +140,19 @@ fun AddImageContent(
   val context = LocalContext.current
   // Collect the photo bitmap from the ViewModel's StateFlow
   val bitmap: Bitmap? by createRecipeViewModel.photo.collectAsState()
-  val isPictureTaken by remember { mutableStateOf(bitmap != null) }
+  val isPictureTaken by remember { derivedStateOf { bitmap != null } }
+  // Launcher for the photo picker activity ( built-in option to  pick an image from the gallery)
+  val photoPickerLauncher =
+      rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia()) { uri
+        ->
+        if (uri != null) {
+          createRecipeViewModel.setBitmap(uriToBitmap(context, uri)!!, ZERO)
+        } else {
+          Toast.makeText(
+                  context, context.getString(R.string.image_failed_to_load), Toast.LENGTH_SHORT)
+              .show()
+        }
+      }
   Column(
       modifier =
           Modifier.fillMaxHeight()
@@ -214,6 +231,7 @@ fun AddImageContent(
                 Row(
                     modifier = Modifier.fillMaxWidth().testTag(ROW_BUTTON),
                     horizontalArrangement = Arrangement.Center) {
+                      /** Camera buttons * */
                       Column(
                           modifier =
                               Modifier.weight(C.Dimension.RecipeAddImageScreen.ICON_WEIGHT)
@@ -238,12 +256,11 @@ fun AddImageContent(
                                 style = Typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onPrimary)
                           }
+                      /** Gallery buttons * */
                       Column(
                           modifier =
                               Modifier.weight(C.Dimension.RecipeAddImageScreen.ICON_WEIGHT)
-                                  .clickable {
-                                    Toast.makeText(context, "Image", Toast.LENGTH_SHORT).show()
-                                  }
+                                  .clickable { openGallery(photoPickerLauncher) }
                                   .testTag(GALLERY_BUTTON),
                           horizontalAlignment = Alignment.CenterHorizontally) {
                             Icon(

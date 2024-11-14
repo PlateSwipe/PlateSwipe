@@ -1,8 +1,14 @@
 package com.android.sample.feature.camera
 
+import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Matrix
+import android.net.Uri
 import android.util.Log
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.Preview
 import com.android.sample.resources.C
@@ -60,4 +66,32 @@ fun rotateBitmap(bitmap: Bitmap, rotationDegrees: Int): Bitmap {
   matrix.preRotate(rotationDegrees.toFloat())
   val rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
   return rotatedBitmap
+}
+
+/**
+ * Function to open the gallery to select an image
+ *
+ * @param photoPickerLauncher ManagedActivityResultLauncher<PickVisualMediaRequest, Uri?>
+ */
+fun openGallery(photoPickerLauncher: ManagedActivityResultLauncher<PickVisualMediaRequest, Uri?>) {
+  photoPickerLauncher.launch(
+      PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+}
+/**
+ * Converts a URI to a Bitmap.
+ *
+ * @param context The context used to access the content resolver.
+ * @param uri The URI of the image to be converted to a Bitmap.
+ * @return The Bitmap representation of the image, or null if an error occurs.
+ * @see <a href="https://developer.android.com/training/data-storage/shared/media#kotlin">Load
+ */
+fun uriToBitmap(context: Context, uri: Uri): Bitmap? {
+  return try {
+    val inputStream = context.contentResolver.openInputStream(uri)
+    // Use the inputStream to decode the image into a Bitmap
+    inputStream?.use { BitmapFactory.decodeStream(it) }
+  } catch (e: Exception) {
+    e.printStackTrace()
+    null
+  }
 }

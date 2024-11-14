@@ -44,8 +44,6 @@ object Screen {
 
   const val CAMERA_TAKE_PHOTO = "Camera Take Photo Screen"
 
-  const val DISPLAY_IMAGE = "Display Image Screen"
-
   const val CREATE_RECIPE_ADD_IMAGE = "Create Recipe Add Image Screen"
 }
 

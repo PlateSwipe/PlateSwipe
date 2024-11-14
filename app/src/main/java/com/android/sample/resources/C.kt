@@ -157,6 +157,7 @@ object C {
 
     // FirestoreRecipeRepository
     const val FIRESTORE_COLLECTION_NAME = "recipes with images"
+
     // Values for storage
     const val FIRESTORE_RECIPE_NAME = "name"
     const val FIRESTORE_RECIPE_CATEGORY = "category"
@@ -411,6 +412,9 @@ object C {
       const val GOOGLE_LOGO_SIZE = 30
     }
 
+    const val PAD_4 = 4
+    const val PAD_8 = 8
+    const val PAD_16 = 16
     // CameraScanCodeBarScreen
     object CameraScanCodeBarScreen {
 
@@ -597,6 +601,10 @@ object C {
       const val MAIN_BOX = "main box"
       const val COL_2 = "col 2"
       const val TITLE_COL = "title col"
+    }
+
+    object ChefImage {
+      const val CHEF_IMAGE = "Chef Image"
     }
   }
 }
