@@ -60,20 +60,10 @@ class IngredientViewModel(private val repository: IngredientRepository) : ViewMo
    * @param name
    */
   fun fetchIngredientByName(name: String) {
-    _searchingIngredientList.value =
-        listOf(
-            Ingredient("012", 1325L, "name1", null, "2", emptyList(), emptyList()),
-            Ingredient("012", 1325L, "name2", null, "2", emptyList(), emptyList()),
-            Ingredient("012", 1325L, "name3", null, "2", emptyList(), emptyList()),
-            Ingredient("012", 1325L, "name4", null, "2", emptyList(), emptyList()),
-            Ingredient("012", 1325L, "name1", null, "2", emptyList(), emptyList()),
-            Ingredient("012", 1325L, "name2", null, "2", emptyList(), emptyList()),
-            Ingredient("012", 1325L, "name3", null, "2", emptyList(), emptyList()),
-            Ingredient("012", 1325L, "name4", null, "2", emptyList(), emptyList()))
-    /*repository.search(
-    name,
-    onSuccess = { ingredientList -> _searchingIngredientList.value = ingredientList },
-    onFailure = { _searchingIngredientList.value = emptyList() })*/
+    repository.search(
+        name,
+        onSuccess = { ingredientList -> _searchingIngredientList.value = ingredientList },
+        onFailure = { _searchingIngredientList.value = emptyList() })
   }
 
   fun removeIngredient(ingredient: Ingredient) {
