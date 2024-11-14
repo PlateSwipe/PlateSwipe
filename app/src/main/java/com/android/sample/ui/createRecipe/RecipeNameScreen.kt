@@ -18,6 +18,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.android.sample.R
 import com.android.sample.model.recipe.CreateRecipeViewModel
+import com.android.sample.resources.C.Tag.CORNER_SHAPE_TEXT_FIELD
+import com.android.sample.resources.C.Tag.MAXLINES_RECIPE_NAME_FIELD
 import com.android.sample.resources.C.Tag.RECIPE_NAME_BASE_PADDING
 import com.android.sample.resources.C.Tag.RECIPE_NAME_BUTTON_WIDTH
 import com.android.sample.resources.C.Tag.RECIPE_NAME_CHARACTER_LIMIT
@@ -123,7 +125,8 @@ fun RecipeNameScreen(
                   modifier =
                       Modifier.fillMaxWidth()
                           .padding(horizontal = RECIPE_NAME_BASE_PADDING)
-                          .background(lightCream, shape = RoundedCornerShape(8.dp))
+                          .background(
+                              lightCream, shape = RoundedCornerShape(CORNER_SHAPE_TEXT_FIELD.dp))
                           .testTag("recipeNameTextField"),
                   colors =
                       TextFieldDefaults.outlinedTextFieldColors(
@@ -131,7 +134,7 @@ fun RecipeNameScreen(
                           focusedBorderColor = Color.Transparent,
                       ),
                   textStyle = MaterialTheme.typography.bodyMedium,
-                  maxLines = 2)
+                  maxLines = MAXLINES_RECIPE_NAME_FIELD)
 
               getErrorMessage(showError).invoke()
 

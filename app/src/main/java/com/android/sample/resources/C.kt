@@ -215,16 +215,16 @@ object C {
     const val SECOND_STEP_OF_THE_CREATION = 1
     const val THIRD_STEP_OF_THE_CREATION = 2
 
-    // RecipeNameScreen Specific Constants
+    // RecipeNameScreen
     val RECIPE_NAME_BASE_PADDING = 16.dp
-    val RECIPE_NAME_FIELD_SPACING = 30.dp
     val RECIPE_NAME_BUTTON_WIDTH = 261.dp
-    val RECIPE_NAME_BUTTON_HEIGHT = 46.dp
     val RECIPE_NAME_FIELD_HEIGHT = 60.dp
     val RECIPE_NAME_FONT_SPACING = 0.14.sp
     val RECIPE_NAME_CHARACTER_LIMIT = 50
     const val SCREEN_WIDTH_THRESHOLD = 400
     const val SCREEN_HEIGHT_THRESHOLD = 865
+    val CORNER_SHAPE_TEXT_FIELD = 8
+    val MAXLINES_RECIPE_NAME_FIELD = 2
 
     // RecipeStepScreen
     val BASE_PADDING = 16.dp
