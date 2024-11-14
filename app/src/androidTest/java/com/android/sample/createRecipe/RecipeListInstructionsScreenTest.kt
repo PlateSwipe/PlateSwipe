@@ -4,6 +4,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.test.espresso.intent.Intents
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.model.recipe.FirestoreRecipesRepository
 import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.INSTRUCTION_LIST_ITEM
@@ -30,11 +31,12 @@ class RecipeListInstructionsScreenTest {
   private lateinit var navigationActions: NavigationActions
   private lateinit var createRecipeViewModel: CreateRecipeViewModel
   private val repository = mockk<FirestoreRecipesRepository>(relaxed = true)
+  private val repoImg = mockk<ImageRepositoryFirebase>(relaxed = true)
 
   @Before
   fun setUp() {
     navigationActions = mockk(relaxed = true)
-    createRecipeViewModel = spyk(CreateRecipeViewModel(repository))
+    createRecipeViewModel = spyk(CreateRecipeViewModel(repository, repoImg))
 
     Intents.init()
 
@@ -74,6 +76,6 @@ class RecipeListInstructionsScreenTest {
     composeTestRule.onNodeWithTag(NEXT_STEP_BUTTON).assertIsDisplayed().performClick()
 
     // Verify that the navigateTo function was called with the correct parameter
-    verify { navigationActions.navigateTo(Screen.PUBLISH_CREATED_RECIPE) }
+    verify { navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_IMAGE) }
   }
 }

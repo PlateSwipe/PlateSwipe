@@ -1,5 +1,10 @@
 package com.android.sample.model.recipe
 
+import com.android.sample.resources.C.Tag.ERROR_LIST_INGREDIENT_EMPTY
+import com.android.sample.resources.C.Tag.ERROR_STR_INSTR_BLANK
+import com.android.sample.resources.C.Tag.ERROR_STR_MEAL_BLANK
+import com.android.sample.resources.C.Tag.ERROR_STR_THUMBNAIL
+
 /** Builder class for creating a Recipe instance. */
 class RecipeBuilder {
   private var idMeal: String = ""
@@ -12,6 +17,7 @@ class RecipeBuilder {
   private var time: String? = null
   private var difficulty: String? = null
   private var price: String? = null
+  private var url: String? = null
 
   /**
    * Sets the ID of the recipe.
@@ -50,9 +56,10 @@ class RecipeBuilder {
   fun setInstructions(strInstructions: String) = apply { this.strInstructions = strInstructions }
 
   /**
-   * Sets the URL of the thumbnail image for the recipe.
+   * Sets the UID of the thumbnail image for the recipe.
    *
-   * @param strMealThumbUrl The URL of the thumbnail image for the recipe.
+   * @param strMealThumbUrl The UID of the thumbnail image for the recipe, it correspond to the
+   *   FireBase Image Store UID.
    */
   fun setPictureID(strMealThumbUrl: String) = apply { this.strMealThumbUrl = strMealThumbUrl }
 
@@ -77,6 +84,13 @@ class RecipeBuilder {
    * @param price The price of the recipe.
    */
   fun setPrice(price: String) = apply { this.price = price }
+
+  /**
+   * Sets the URL of the thumbnail image for the recipe.
+   *
+   * @param url The URL of the thumbnail image for the recipe.
+   */
+  fun setUrl(url: String) = apply { this.url = url }
 
   /**
    * Adds an ingredient and its measurement to the recipe.
@@ -130,12 +144,10 @@ class RecipeBuilder {
    */
   fun build(): Recipe {
     // Validation for essential fields
-    require(strMeal.isNotBlank()) { "Recipe name is required and cannot be blank." }
-    require(strInstructions.isNotBlank()) {
-      "Recipe instructions are required and cannot be blank."
-    }
-    require(ingredientsAndMeasurements.isNotEmpty()) { "At least one ingredient is required." }
-
+    require(strMeal.isNotBlank()) { ERROR_STR_MEAL_BLANK }
+    require(strInstructions.isNotBlank()) { ERROR_STR_INSTR_BLANK }
+    require(ingredientsAndMeasurements.isNotEmpty()) { ERROR_LIST_INGREDIENT_EMPTY }
+    require(strMealThumbUrl.isNotBlank()) { ERROR_STR_THUMBNAIL }
     return Recipe(
         idMeal = idMeal,
         strMeal = strMeal,
@@ -146,7 +158,8 @@ class RecipeBuilder {
         ingredientsAndMeasurements = ingredientsAndMeasurements,
         time = time,
         difficulty = difficulty,
-        price = price)
+        price = price,
+        url = url)
   }
 
   /** Clears all fields in the builder. */
@@ -161,6 +174,7 @@ class RecipeBuilder {
     this.time = null
     this.difficulty = null
     this.price = null
+    this.url = null
   }
 
   /**
@@ -226,6 +240,13 @@ class RecipeBuilder {
    * @return The price of the recipe.
    */
   fun getPrice(): String? = price
+
+  /**
+   * Returns the URL of the thumbnail image for the recipe.
+   *
+   * @return The URL of the thumbnail image for the recipe.
+   */
+  fun getUrl(): String? = url
 
   /**
    * Returns the ingredients and their measurements for the recipe.

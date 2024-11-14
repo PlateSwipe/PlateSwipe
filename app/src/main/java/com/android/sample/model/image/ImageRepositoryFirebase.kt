@@ -8,6 +8,7 @@ import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import com.android.sample.resources.C.Tag.INGREDIENTS_IMAGE_DIR
 import com.android.sample.resources.C.Tag.RECIPE_IMAGE_DIR
+import com.android.sample.resources.C.Tag.TEST_IMAGE_DIR
 import com.android.sample.resources.C.Tag.USER_IMAGE_DIR
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -37,6 +38,22 @@ class ImageRepositoryFirebase(storage: FirebaseStorage) : ImageRepository {
             Exception("Image download from Firebase storage has failed or image does not exist"))
       }
     }
+  }
+
+  override fun getImageUrl(
+      imageDirectoryUID: String,
+      imageName: String,
+      imageDirectoryType: ImageDirectoryType,
+      onSuccess: (Uri) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    val imageRef = imageRefCreation(imageDirectoryUID, imageName, imageDirectoryType)
+    imageRef.downloadUrl
+        .addOnSuccessListener { uri -> onSuccess(uri) }
+        .addOnFailureListener {
+          onFailure(
+              Exception("Image download from Firebase storage has failed or image does not exist"))
+        }
   }
 
   override fun uploadImageFromDevice(
@@ -117,6 +134,7 @@ class ImageRepositoryFirebase(storage: FirebaseStorage) : ImageRepository {
           ImageDirectoryType.USER -> USER_IMAGE_DIR
           ImageDirectoryType.RECIPE -> RECIPE_IMAGE_DIR
           ImageDirectoryType.INGREDIENT -> INGREDIENTS_IMAGE_DIR
+          ImageDirectoryType.TEST -> TEST_IMAGE_DIR
         }
     return storageRef.child(dir + imageDirectoryUID + "/$imageName" + ".jpg")
   }

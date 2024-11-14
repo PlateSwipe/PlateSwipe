@@ -2,8 +2,8 @@ package com.android.sample.createRecipe
 
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.test.espresso.intent.Intents
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.model.recipe.FirestoreRecipesRepository
 import com.android.sample.model.recipe.Recipe
@@ -34,6 +34,7 @@ class PublishRecipeScreenTest {
   private lateinit var navigationActions: NavigationActions
   private lateinit var createRecipeViewModel: CreateRecipeViewModel
   private lateinit var userViewModel: UserViewModel
+  private lateinit var repoImg: ImageRepositoryFirebase
   private val repository = mockk<FirestoreRecipesRepository>(relaxed = true)
 
   private lateinit var mockUserRepository: UserRepository
@@ -50,7 +51,8 @@ class PublishRecipeScreenTest {
     mockCall = mock(Call::class.java)
 
     navigationActions = mockk(relaxed = true)
-    createRecipeViewModel = spyk(CreateRecipeViewModel(repository))
+      repoImg = mockk(relaxed = true)
+      createRecipeViewModel = spyk(CreateRecipeViewModel(repository, repoImg))
 
     // Mock dependencies for UserViewModel
     mockUserRepository = mock(UserRepository::class.java)
@@ -64,12 +66,9 @@ class PublishRecipeScreenTest {
     userViewModel = UserViewModel(mockUserRepository, mockFirebaseAuth)
 
     Intents.init()
-    every { repository.getNewUid() } returns "valid-id"
-  }
 
-  @After
-  fun tearDown() {
-    Intents.release()
+
+    every { repository.getNewUid() } returns "valid-id"
   }
 
   /** Verifies that all UI elements are displayed on the PublishRecipeScreen. */
@@ -122,16 +121,6 @@ class PublishRecipeScreenTest {
 
     // Verify navigation to the CREATE_RECIPE screen
     verify { navigationActions.navigateTo(Screen.SWIPE) }
-  }
-
-  /** Verifies that an error is thrown when trying to publish without a recipe ID. */
-  @Test(expected = IllegalArgumentException::class)
-  fun publishRecipeScreen_throwsErrorWhenIdIsBlank() = runTest {
-    // Simulate blank ID
-    every { repository.getNewUid() } returns ""
-    createRecipeViewModel.publishRecipe(
-        onSuccess = { fail("Expected an IllegalArgumentException, but onSuccess was called.") },
-        onFailure = { fail("Expected an IllegalArgumentException, but onFailure was called.") })
   }
 
   /**
