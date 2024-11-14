@@ -55,6 +55,23 @@ class IngredientViewModel(private val repository: IngredientRepository) : ViewMo
   }
 
   /**
+   * Update quantity
+   *
+   * @param ingredient
+   * @param quantity
+   */
+  fun updateQuantity(ingredient: Ingredient, quantity: String) {
+    _ingredientList.value =
+        _ingredientList.value.map {
+          if (it == ingredient) {
+            it.copy(quantity = quantity)
+          } else {
+            it
+          }
+        }
+  }
+
+  /**
    * Fetch ingredient by name
    *
    * @param name

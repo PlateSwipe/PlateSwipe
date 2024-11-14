@@ -1,10 +1,13 @@
 package com.android.sample.createRecipe
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextClearance
+import androidx.compose.ui.test.performTextInput
 import com.android.sample.model.ingredient.AggregatorIngredientRepository
 import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.ingredient.IngredientViewModel
@@ -141,5 +144,34 @@ class IngredientListScreenTest {
 
     // Verify that the ingredient was removed from the view model
     assertEquals(ingredientViewModel.ingredientList.value, listOf(testIngredients[1]))
+  }
+
+  @Test
+  fun testIngredientQuantityUpdateInTextField() {
+    // Given the initial ingredient with a quantity
+    val ingredient = testIngredients[0]
+    val initialQuantity = ingredient.quantity
+    val updatedQuantity = "3 cups" // New quantity to simulate user input
+
+    // Verify that the initial quantity is displayed in the text field
+    composeTestRule
+        .onNodeWithTag("recipeNameTextField${ingredient.name}", useUnmergedTree = true)
+        .assertTextEquals(initialQuantity!!)
+
+    composeTestRule
+        .onNodeWithTag("recipeNameTextField${ingredient.name}", useUnmergedTree = true)
+        .performTextClearance()
+    // Simulate typing the updated quantity into the OutlinedTextField
+    composeTestRule
+        .onNodeWithTag("recipeNameTextField${ingredient.name}", useUnmergedTree = true)
+        .performTextInput(updatedQuantity)
+
+    // Verify that the updated quantity is now displayed in the text field
+    composeTestRule
+        .onNodeWithTag("recipeNameTextField${ingredient.name}", useUnmergedTree = true)
+        .assertTextEquals(updatedQuantity)
+
+    // Verify that the updateQuantity method was called with the correct parameters
+    assertEquals(updatedQuantity, ingredientViewModel.ingredientList.value[0].quantity)
   }
 }

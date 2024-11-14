@@ -4,6 +4,7 @@ import androidx.test.core.app.ApplicationProvider
 import com.google.firebase.Firebase
 import com.google.firebase.initialize
 import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
 import org.junit.Before
@@ -217,5 +218,31 @@ class IngredientViewModelTest {
     // Clear search and verify that the searchingIngredientList is empty
     ingredientViewModel.clearSearch()
     assertTrue(ingredientViewModel.searchingIngredientList.value.isEmpty())
+  }
+
+  @Test
+  fun updateQuantity_updatesIngredientQuantity() {
+    // Create an initial ingredient
+    val ingredient =
+        Ingredient(
+            barCode = 123456L,
+            name = "Test Ingredient",
+            brands = "Brand",
+            quantity = "100g", // Initial quantity
+            categories = listOf("Category1"),
+            images = listOf("image1.jpg"))
+
+    // Add the ingredient to the ingredient list
+    ingredientViewModel.addIngredient(ingredient)
+
+    // Update the quantity of the ingredient
+    val newQuantity = "200g"
+    ingredientViewModel.updateQuantity(ingredient, newQuantity)
+
+    // Verify that the ingredient list contains the ingredient with the updated quantity
+    val updatedIngredient =
+        ingredientViewModel.ingredientList.value.find { it.barCode == ingredient.barCode }
+    assertNotNull(updatedIngredient)
+    assertEquals(newQuantity, updatedIngredient?.quantity)
   }
 }
