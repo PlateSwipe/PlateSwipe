@@ -101,7 +101,6 @@ fun PlateSwipeApp() {
       composable(Screen.SEARCH) { SearchRecipeScreen(navigationActions) }
     }
     navigation(
-        // startDestination = Screen.CREATE_RECIPE_SEARCH_INGREDIENTS,
         startDestination = Screen.CREATE_RECIPE,
         route = Route.CREATE_RECIPE,
     ) {

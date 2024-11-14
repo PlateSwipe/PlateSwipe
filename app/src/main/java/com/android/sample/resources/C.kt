@@ -46,7 +46,6 @@ object C {
     }
 
     object SignInScreen {
-      const val NONCE = "WhyShouldIUseThis"
       const val PLATE = "Plate"
       const val SWIPE = "Swipe"
       const val SHIFTING_SPACE_TITLE = 50
@@ -70,8 +69,6 @@ object C {
       const val DO_NOT_SHOW_CONFIRMATION = false
       const val INITIAL_LOADING_STATE = false
     }
-
-    object IngredientListScreen {}
 
     // Filter
     const val MIN_SHOULD_NOT_BE_GREATER_THAN_MAX = "min should not be greater than max"
@@ -205,8 +202,6 @@ object C {
     const val PRODUCT_FRONT_IMAGE_SMALL = "display_small"
     const val INGREDIENT_IMAGE_ADDED_SUCCESSFULLY =
         "Ingredient image added successfully to the storage"
-    const val OPEN_FOOD_FACTS_FIELDS =
-        "&fields=$PRODUCT_ID,$PRODUCT_NAME,$PRODUCT_BRAND,$PRODUCT_QUANTITY,$PRODUCT_CATEGORIES,$PRODUCT_FRONT_IMAGE_URL,$PRODUCT_FRONT_IMAGE_THUMBNAIL_URL,$PRODUCT_FRONT_IMAGE_SMALL_URL"
 
     // EXCEPTION MESSAGES
     const val LIMIT_MUST_BE_POSITIVE_MESSAGE = "Limit must be greater than 0"
@@ -473,17 +468,13 @@ object C {
     object CreateRecipeListInstructionsScreen {
       const val REALLY_SMALL_PADDING = 4
       const val BIG_PADDING = 32
-      const val SMALL_PADDING = 8
       const val MEDIUM_PADDING = 16
-      const val LIST_HEIGHT_FRACTION = 0.8899f
       const val ROUNDED_CORNER_SHAPE = 4
-      const val CARD_BORDER_THICKNESS = 1
       const val CARD_BORDER_ROUND = 8
       const val CARD_CORNER_RADIUS = 8
       const val CARD_SHADOW_ELEVATION = 8
       const val ICON_SIZE = 24
       const val ROW_SIZE = 1f
-      const val SPACER_SIZE = 1f
 
       // progress bar value
       const val CURRENT_STEP = 2
@@ -612,7 +603,6 @@ object C {
       const val INSTRUCTION_LIST_ITEM = "InstructionListItem"
       const val NEXT_STEP_BUTTON = "NextStepButton"
       const val RECIPE_LIST_INSTRUCTIONS_SCREEN_SPACER1 = "RecipeListInstructionsScreenSpacer1"
-      const val RECIPE_LIST_INSTRUCTIONS_SCREEN_SPACER2 = "RecipeListInstructionsScreenSpacer2"
       const val RECIPE_LIST_ITEM_THUMBNAIL = "InstructionThumbnail"
       const val RECIPE_LIST_INSTRUCTION_ICON = "InstructionIcon"
     }

@@ -187,7 +187,7 @@ fun IngredientListScreen(
  * @param ingredientViewModel the view model to handle ingredient operations.
  */
 @Composable
-fun IngredientPreview(ingredient: Ingredient, ingredientViewModel: IngredientViewModel) {
+private fun IngredientPreview(ingredient: Ingredient, ingredientViewModel: IngredientViewModel) {
   var quantity by remember { mutableStateOf(ingredient.quantity ?: "") }
   val focusManager = LocalFocusManager.current
 

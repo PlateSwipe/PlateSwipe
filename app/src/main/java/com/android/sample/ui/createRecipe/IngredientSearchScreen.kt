@@ -198,7 +198,7 @@ private fun ResultDisplay() {
  * @param onDismiss the callback to invoke when the user dismisses the pop-up.
  */
 @Composable
-fun ConfirmationPopUp(onConfirm: () -> Unit, onDismiss: () -> Unit) {
+private fun ConfirmationPopUp(onConfirm: () -> Unit, onDismiss: () -> Unit) {
   AlertDialog(
       onDismissRequest = onDismiss,
       modifier =
@@ -247,7 +247,7 @@ fun ConfirmationPopUp(onConfirm: () -> Unit, onDismiss: () -> Unit) {
  * @param onClick the callback to invoke when the ingredient item is clicked.
  */
 @Composable
-fun IngredientItem(ingredient: Ingredient, onClick: () -> Unit) {
+private fun IngredientItem(ingredient: Ingredient, onClick: () -> Unit) {
   Row(
       modifier =
           Modifier.fillMaxWidth()
