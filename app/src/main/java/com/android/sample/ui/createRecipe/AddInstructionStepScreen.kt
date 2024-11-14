@@ -89,11 +89,11 @@ fun AddInstructionStepContent(
                     .padding(16.dp)
                     .testTag("InputContainer")) {
               Column {
-                // Row for input fields for time, category, and icon
+                // Row for input fields for time, and icon
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically) {
+                    verticalAlignment = Alignment.Bottom) {
 
                       // Time input field
                       OutlinedTextField(

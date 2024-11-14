@@ -1,5 +1,6 @@
 package com.android.sample.ui.createRecipe
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -18,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.android.sample.R
 import com.android.sample.model.recipe.CreateRecipeViewModel
+import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C.Tag.CHEF_IMAGE_DESCRIPTION
 import com.android.sample.resources.C.Tag.CHEF_IN_EGG_ORIGINAL_RATIO
 import com.android.sample.ui.navigation.NavigationActions
@@ -30,6 +32,7 @@ import com.android.sample.ui.utils.PlateSwipeScaffold
 fun PublishRecipeScreen(
     navigationActions: NavigationActions,
     createRecipeViewModel: CreateRecipeViewModel,
+    userViewModel: UserViewModel
 ) {
   PlateSwipeScaffold(
       navigationActions = navigationActions,
@@ -39,6 +42,7 @@ fun PublishRecipeScreen(
         PublishRecipeContent(
             navigationActions,
             createRecipeViewModel,
+            userViewModel,
             modifier = Modifier.padding(paddingValues).fillMaxSize())
       })
 }
@@ -54,6 +58,7 @@ fun PublishRecipeScreen(
 fun PublishRecipeContent(
     navigationActions: NavigationActions,
     createRecipeViewModel: CreateRecipeViewModel,
+    userViewModel: UserViewModel,
     modifier: Modifier = Modifier
 ) {
   // Get the current context
@@ -95,7 +100,16 @@ fun PublishRecipeContent(
         // Display the publish button
         Button(
             onClick = {
-              createRecipeViewModel.publishRecipe()
+              createRecipeViewModel.publishRecipe(
+                  onSuccess = { recipe ->
+                    Log.d("PublishRecipe", "Recipe successfully published: $recipe")
+                    userViewModel.addRecipeToUserCreatedRecipes(recipe)
+                    Log.d("PublishRecipe", "Recipe added to user created recipes")
+                  },
+                  onFailure = { exception ->
+                    Toast.makeText(context, exception.message, Toast.LENGTH_SHORT).show()
+                  })
+
               navigationActions.navigateTo(Screen.SWIPE)
             },
             colors =

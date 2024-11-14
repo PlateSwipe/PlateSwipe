@@ -243,7 +243,7 @@ class CreateRecipeViewModel(private val repository: FirestoreRecipesRepository) 
   }
 
   /** Publishes the recipe to the repository. */
-  fun publishRecipe() {
+  fun publishRecipe(onSuccess: (Recipe) -> Unit, onFailure: (Exception) -> Unit) {
     val newUid = repository.getNewUid()
     require(newUid.isNotBlank()) { "Recipe ID must not be blank." }
     recipeBuilder.setId(newUid)
@@ -253,11 +253,13 @@ class CreateRecipeViewModel(private val repository: FirestoreRecipesRepository) 
       repository.addRecipe(
           recipe,
           onSuccess = {
-            _publishStatus.value = RECIPE_PUBLISHED_SUCCESS_MESSAGE
+            onSuccess(recipe)
             recipeBuilder.clear()
+            _publishStatus.value = RECIPE_PUBLISHED_SUCCESS_MESSAGE
           },
           onFailure = { exception ->
             _publishStatus.value = RECIPE_PUBLISH_ERROR_MESSAGE.format(exception.message)
+            onFailure(exception)
           })
     } catch (e: IllegalArgumentException) {
       _publishStatus.value = e.message

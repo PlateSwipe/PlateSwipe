@@ -149,6 +149,8 @@ class CreateRecipeViewModelTest {
     createRecipeViewModel.updateRecipeInstructions(defaultRecipe.strInstructions)
     createRecipeViewModel.updateRecipeThumbnail(defaultRecipe.strMealThumbUrl)
     createRecipeViewModel.addIngredient("Banana", "3")
+    defaultRecipe.strCategory?.let { createRecipeViewModel.updateRecipeCategory(it) }
+    defaultRecipe.strArea?.let { createRecipeViewModel.updateRecipeArea(it) }
 
     `when`(mockRepository.getNewUid()).thenReturn(defaultRecipe.idMeal)
 
@@ -156,7 +158,15 @@ class CreateRecipeViewModelTest {
     val onSuccessCaptor = argumentCaptor<() -> Unit>()
     val onFailureCaptor = argumentCaptor<(Exception) -> Unit>()
 
-    createRecipeViewModel.publishRecipe()
+    // Define the onSuccess callback to validate if it was called correctly
+    var onSuccessCalled = false
+    createRecipeViewModel.publishRecipe(
+        onSuccess = { recipe ->
+          onSuccessCalled = true
+          assertEquals(defaultRecipe, recipe) // Validate the published recipe is as expected
+        },
+        onFailure = { fail("Expected onSuccess, but onFailure was called instead.") })
+
     advanceUntilIdle()
 
     verify(mockRepository)
@@ -190,7 +200,15 @@ class CreateRecipeViewModelTest {
     val onSuccessCaptor = argumentCaptor<() -> Unit>()
     val onFailureCaptor = argumentCaptor<(Exception) -> Unit>()
 
-    createRecipeViewModel.publishRecipe()
+    // Define the onFailure callback to validate if it was called correctly
+    var onFailureCalled = false
+    createRecipeViewModel.publishRecipe(
+        onSuccess = { fail("Expected onFailure, but onSuccess was called instead.") },
+        onFailure = { errorMessage ->
+          onFailureCalled = true
+          assertEquals("Network error", errorMessage.message)
+        })
+
     advanceUntilIdle()
 
     verify(mockRepository)
@@ -206,11 +224,22 @@ class CreateRecipeViewModelTest {
   fun `test clearPublishError resets publish error`() = runTest {
     `when`(mockRepository.getNewUid()).thenReturn("unique-id")
 
-    try {
-      createRecipeViewModel.updateRecipeName("")
-    } catch (e: IllegalArgumentException) {}
+    // Call publishRecipe with onSuccess and onFailure callbacks
+    createRecipeViewModel.publishRecipe(
+        onSuccess = {
+          fail(
+              "Expected onFailure to be called due to invalid recipe, but onSuccess was called instead.")
+        },
+        onFailure = { exception ->
+          // Check if the publishStatus is set with the error message
+          assertNotNull(
+              "Expected publishStatus to be set on failure, but it was null.",
+              createRecipeViewModel.publishStatus.value)
+          assertEquals(
+              "Recipe name is required and cannot be blank.",
+              createRecipeViewModel.publishStatus.value)
+        })
 
-    createRecipeViewModel.publishRecipe()
     advanceUntilIdle()
 
     assertNotNull(createRecipeViewModel.publishStatus.value)

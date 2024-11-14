@@ -126,7 +126,9 @@ fun PlateSwipeApp() {
       }
       composable(Screen.PUBLISH_CREATED_RECIPE) {
         PublishRecipeScreen(
-            navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
+            navigationActions = navigationActions,
+            createRecipeViewModel = createRecipeViewModel,
+            userViewModel = userViewModel)
       }
     }
     navigation(

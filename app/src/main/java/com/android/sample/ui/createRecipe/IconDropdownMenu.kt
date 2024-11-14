@@ -45,7 +45,7 @@ fun IconDropdownMenu(
               .background(Color.White, shape = RoundedCornerShape(4.dp))
               .border(1.dp, Color.DarkGray, shape = RoundedCornerShape(4.dp))
               .clickable { isDropDownExpanded.value = true }
-              .padding(horizontal = 8.dp, vertical = 18.dp)
+              .padding(horizontal = 8.dp, vertical = 19.dp)
               .testTag("IconDropdownTrigger")) {
         Row(
             verticalAlignment = Alignment.CenterVertically,

@@ -151,7 +151,7 @@ fun RecipeNameScreen(
         // Button to proceed to the next step
         PlateSwipeButton(
             stringResource(R.string.next_step),
-            modifier = Modifier.align(Alignment.BottomCenter),
+            modifier = Modifier.align(Alignment.BottomCenter).testTag("NextStepButton"),
             onClick = {
               handleOnClick(
                   recipeName = recipeName,
