@@ -243,6 +243,11 @@ object C {
     const val MAXLINES_VISIBLE_FOR_INSTRUCTION = 10
     const val TIME_CHARACTER_LIMIT = 4
 
+    // IconDropdownMenu
+    const val HORIZONTAL_PADDING_ICON_DROPDOWN = 8
+    const val VERTICAL_PADDING_ICON_DROPDOWN = 19
+    const val SIZE_DROPDOWN_ICON = 24
+
     // PublishRecipeScreen
     val CHEF_IMAGE_DESCRIPTION = "Chef illustration inside an egg"
     val CHEF_IN_EGG_ORIGINAL_RATIO = 412 / 500f
