@@ -40,6 +40,22 @@ class ImageRepositoryFirebase(storage: FirebaseStorage) : ImageRepository {
     }
   }
 
+  override fun getImageUrl(
+      imageDirectoryUID: String,
+      imageName: String,
+      imageDirectoryType: ImageDirectoryType,
+      onSuccess: (Uri) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    val imageRef = imageRefCreation(imageDirectoryUID, imageName, imageDirectoryType)
+    imageRef.downloadUrl
+        .addOnSuccessListener { uri -> onSuccess(uri) }
+        .addOnFailureListener {
+          onFailure(
+              Exception("Image download from Firebase storage has failed or image does not exist"))
+        }
+  }
+
   override fun uploadImageFromDevice(
       imageDirectoryUID: String,
       imageName: String,

@@ -159,7 +159,8 @@ object C {
 
     // FirestoreRecipeRepository
     const val FIRESTORE_COLLECTION_NAME = "recipes with images"
-    // Values for storage
+
+      // Values for storage
     const val FIRESTORE_RECIPE_NAME = "name"
     const val FIRESTORE_RECIPE_CATEGORY = "category"
     const val FIRESTORE_RECIPE_AREA = "area"
@@ -170,6 +171,7 @@ object C {
     const val FIRESTORE_RECIPE_TIME = "time"
     const val FIRESTORE_RECIPE_DIFFICULTY = "difficulty"
     const val FIRESTORE_RECIPE_PRICE = "price"
+    const val FIRESTORE_RECIPE_URL = "url"
     const val CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
     const val FIRESTORE_RECIPE_IMAGE_NAME = "Main"
 
@@ -412,6 +414,9 @@ object C {
       const val GOOGLE_LOGO_SIZE = 30
     }
 
+    const val PAD_4 = 4
+    const val PAD_8 = 8
+    const val PAD_16 = 16
     // CameraScanCodeBarScreen
     object CameraScanCodeBarScreen {
 
@@ -620,6 +625,10 @@ object C {
       const val MAIN_BOX = "main box"
       const val COL_2 = "col 2"
       const val TITLE_COL = "title col"
+    }
+
+    object ChefImage {
+      const val CHEF_IMAGE = "Chef Image"
     }
 
     object IngredientSearchScreen {

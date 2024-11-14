@@ -25,10 +25,44 @@ class RecipeBuilderTest {
               addIngredientAndMeasurement("Flour", "200g")
               addIngredientAndMeasurement("Sugar", "100g")
               setPictureID("http://example.com/image.jpg")
+              setUrl("http://example.com")
             }
             .build()
 
     assertEquals(listOf("Flour" to "200g", "Sugar" to "100g"), recipe.ingredientsAndMeasurements)
+  }
+
+  @Test
+  fun `test addUrl`() {
+    val recipe =
+        builder
+            .apply {
+              setName("Cake")
+              setInstructions("Mix all ingredients")
+              addIngredientAndMeasurement("Flour", "200g")
+              addIngredientAndMeasurement("Sugar", "100g")
+              setPictureID("http://example.com/image.jpg")
+              setUrl("http://example.com")
+            }
+            .build()
+
+    assertEquals("http://example.com", recipe.url)
+  }
+
+  @Test
+  fun `test getUrl`() {
+    val recipe =
+        builder
+            .apply {
+              setName("Cake")
+              setInstructions("Mix all ingredients")
+              addIngredientAndMeasurement("Flour", "200g")
+              addIngredientAndMeasurement("Sugar", "100g")
+              setPictureID("http://example.com/image.jpg")
+              setUrl("http://example.com")
+            }
+            .build()
+    assertEquals(recipe.url, "http://example.com")
   }
 
   @Test
@@ -41,6 +75,7 @@ class RecipeBuilderTest {
               addIngredientAndMeasurement("Pasta", "200g")
               addIngredientAndMeasurement("Salt", "1 tsp")
               setPictureID("http://example.com/image.jpg")
+              setUrl("http://example.com")
             }
             .build()
 
@@ -90,6 +125,7 @@ class RecipeBuilderTest {
               setTime("15 mins")
               setDifficulty("Easy")
               setPrice("5.00")
+              setUrl("http://example.com")
             }
             .build()
 
@@ -114,6 +150,7 @@ class RecipeBuilderTest {
     builder.setTime("15 mins")
     builder.setDifficulty("Easy")
     builder.setPrice("5.00")
+    builder.setUrl("http://example.com")
 
     // Build and clear
     builder.build()

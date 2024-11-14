@@ -93,6 +93,9 @@ fun PlateSwipeApp() {
       composable(Screen.CAMERA_SCAN_CODE_BAR) {
         CameraScanCodeBarScreen(navigationActions, ingredientViewModel)
       }
+      composable(Screen.CAMERA_TAKE_PHOTO) {
+        CameraTakePhotoScreen(navigationActions, createRecipeViewModel)
+      }
     }
     navigation(
         startDestination = Screen.SEARCH,

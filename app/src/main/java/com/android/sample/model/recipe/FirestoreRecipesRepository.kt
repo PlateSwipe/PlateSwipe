@@ -13,6 +13,7 @@ import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_NAME
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_PICTURE_ID
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_PRICE
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_TIME
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_URL
 import com.android.sample.resources.C.Tag.LIMIT_MUST_BE_POSITIVE_MESSAGE
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.DocumentSnapshot
@@ -74,6 +75,7 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
       val time = document.getString(FIRESTORE_RECIPE_TIME)
       val difficulty = document.getString(FIRESTORE_RECIPE_DIFFICULTY)
       val price = document.getString(FIRESTORE_RECIPE_PRICE)
+      val url = document.getString(FIRESTORE_RECIPE_URL)
 
       val ingredients = ingredientsData.mapNotNull { it as? String }
       val measurements = measurementsData.mapNotNull { it as? String }
@@ -88,7 +90,8 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
           ingredientsAndMeasurements = ingredients.zip(measurements),
           time = time,
           difficulty = difficulty,
-          price = price)
+          price = price,
+          url = url)
     } catch (e: Exception) {
       Log.e(
           "FirestoreRecipesRepository",

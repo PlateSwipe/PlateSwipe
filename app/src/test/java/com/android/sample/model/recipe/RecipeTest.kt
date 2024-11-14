@@ -29,6 +29,7 @@ class RecipeTest {
     val strInstructions = "Instructions here..."
     val strMealThumbUrl = "https://www.recipetineats.com/penne-all-arrabbiata-spicy-tomato-pasta/"
     val ingredientsAndMeasurements = listOf(Pair("Penne", "1 pound"), Pair("Olive oil", "1/4 cup"))
+    val url = "https://www.recipetineats.com/penne"
 
     // Act
     val recipe =
@@ -39,7 +40,8 @@ class RecipeTest {
             strArea = strArea,
             strInstructions = strInstructions,
             strMealThumbUrl = strMealThumbUrl,
-            ingredientsAndMeasurements = ingredientsAndMeasurements)
+            ingredientsAndMeasurements = ingredientsAndMeasurements,
+            url = url)
 
     // Assert
     assertThat(recipe.idMeal, `is`(idMeal))
@@ -49,6 +51,7 @@ class RecipeTest {
     assertThat(recipe.strInstructions, `is`(strInstructions))
     assertThat(recipe.strMealThumbUrl, `is`(strMealThumbUrl))
     assertThat(recipe.ingredientsAndMeasurements, `is`(ingredientsAndMeasurements))
+    assertThat(recipe.url, `is`(url))
   }
 
   @Test
@@ -70,7 +73,8 @@ class RecipeTest {
             strArea = null, // Nullable
             strInstructions = strInstructions,
             strMealThumbUrl = strMealThumbUrl,
-            ingredientsAndMeasurements = ingredientsAndMeasurements)
+            ingredientsAndMeasurements = ingredientsAndMeasurements,
+            url = null) // Nullable
 
     // Assert
     assertThat(recipe.idMeal, `is`(idMeal))
@@ -80,6 +84,7 @@ class RecipeTest {
     assertThat(recipe.strInstructions, `is`(strInstructions))
     assertThat(recipe.strMealThumbUrl, `is`(strMealThumbUrl))
     assertThat(recipe.ingredientsAndMeasurements, `is`(ingredientsAndMeasurements))
+    assertThat(recipe.url, `is`(nullValue()))
   }
 
   @Test
