@@ -12,7 +12,7 @@ import com.android.sample.model.ingredient.IngredientRepository
 import com.android.sample.model.ingredient.IngredientViewModel
 import com.android.sample.ui.camera.BarCodeFrame
 import com.android.sample.ui.camera.CameraScanCodeBarScreen
-import com.android.sample.ui.camera.IngredientDisplay
+import com.android.sample.ui.camera.IngredientOverlay
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import org.junit.Before
@@ -21,6 +21,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
+import org.mockito.kotlin.any
 
 @RunWith(AndroidJUnit4::class)
 class CameraScanCodeBarScreenTest {
@@ -53,12 +54,17 @@ class CameraScanCodeBarScreenTest {
             brands = "Test Brand",
             categories = listOf(""),
             images = listOf(""))
-    composeTestRule.setContent {
-      IngredientDisplay(ingredient, mockIngredientViewModel, mockNavigationActions)
-    }
 
-    composeTestRule.onNodeWithText("Test Ingredient").assertIsDisplayed()
-    composeTestRule.onNodeWithText("Test Brand").assertIsDisplayed()
+    `when`(mockRepo.get(any(), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.getArgument<(Ingredient) -> Unit>(1)
+      onSuccess(ingredient)
+      null
+    }
+    mockIngredientViewModel.fetchIngredient(123L)
+    composeTestRule.setContent { IngredientOverlay(mockIngredientViewModel, mockNavigationActions) }
+
+    composeTestRule.onNodeWithText("Test Ingredient", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithText("Test Brand", useUnmergedTree = true).assertIsDisplayed()
   }
 
   @Test

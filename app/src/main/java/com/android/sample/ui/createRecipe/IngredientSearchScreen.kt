@@ -77,63 +77,33 @@ fun IngredientSearchScreen(
     navigationActions: NavigationActions,
     ingredientViewModel: IngredientViewModel,
 ) {
+  val listIngredient = ingredientViewModel.searchingIngredientList.collectAsState()
+  var showConfirmation by remember { mutableStateOf(DO_NOT_SHOW_CONFIRMATION) }
+  var selectedIngredient by remember { mutableStateOf<Ingredient?>(null) }
+  var isLoading by remember { mutableStateOf(INITIAL_LOADING_STATE) }
+
   PlateSwipeScaffold(
       navigationActions = navigationActions,
       selectedItem = navigationActions.currentRoute(),
       showBackArrow = true,
       content = { paddingValues ->
-        val listIngredient = ingredientViewModel.searchingIngredientList.collectAsState()
-        var showConfirmation by remember { mutableStateOf(DO_NOT_SHOW_CONFIRMATION) }
-        var selectedIngredient by remember { mutableStateOf<Ingredient?>(null) }
-        var isLoading by remember { mutableStateOf(INITIAL_LOADING_STATE) }
-
         LaunchedEffect(listIngredient.value) { isLoading = false }
 
         Column(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.testTag(DRAGGABLE_ITEM).fillMaxSize().padding(paddingValues)) {
-              Row(
-                  modifier = Modifier.fillMaxWidth().padding(PADDING.dp),
-                  verticalAlignment = Alignment.CenterVertically,
-                  horizontalArrangement = Arrangement.Center) {
-                    // Display the search bar and scanner icon
-                    Spacer(modifier = Modifier.width(PADDING.dp).weight(SPACER_WEIGHT))
-                    SearchBar(
-                        modifier = Modifier.padding(PADDING.dp).weight(IMAGE_WEIGHT),
-                        onValueChange = { query -> isLoading = query.isNotEmpty() },
-                        onDebounce = { query ->
-                          if (query.isNotEmpty()) {
-                            ingredientViewModel.fetchIngredientByName(query)
-                          }
-                        })
-                    Icon(
-                        painter = painterResource(id = R.drawable.scanner),
-                        modifier =
-                            Modifier.weight(ICON_SCANNER_WEIGHT)
-                                .size(ICON_SCANNER_SIZE.dp)
-                                .testTag(SCANNER_ICON)
-                                .clickable {
-                                  navigationActions.navigateTo(Screen.CAMERA_SCAN_CODE_BAR)
-                                },
-                        tint = MaterialTheme.colorScheme.onPrimary,
-                        contentDescription = stringResource(R.string.scanner_instruction))
-                  }
-              Row(
-                  modifier = Modifier.fillMaxWidth().padding(PADDING.dp),
-                  horizontalArrangement = Arrangement.Start,
-              ) {
-                Text(
-                    text = stringResource(R.string.result),
-                    style =
-                        MaterialTheme.typography.titleMedium.copy(fontSize = RESULT_FONT_SIZE.sp),
-                    color = MaterialTheme.colorScheme.onPrimary)
-              }
+              SearchDisplay(
+                  ingredientViewModel = ingredientViewModel,
+                  navigationActions = navigationActions,
+                  onValueChange = { query -> isLoading = query.isNotEmpty() })
+
+              ResultDisplay()
 
               // Display the list of ingredients
               Column(
                   modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
-                  verticalArrangement = Arrangement.Center,
+                  verticalArrangement = Arrangement.Top,
                   horizontalAlignment = Alignment.CenterHorizontally) {
                     if (isLoading) {
                       LoadingCook(
@@ -166,6 +136,59 @@ fun IngredientSearchScreen(
               }
             }
       })
+}
+
+/**
+ * A composable that displays the search bar and scanner icon.
+ *
+ * @param ingredientViewModel the view model for the ingredient.
+ * @param navigationActions the navigation actions.
+ * @param onValueChange the callback to invoke when the value changes.
+ */
+@Composable
+private fun SearchDisplay(
+    ingredientViewModel: IngredientViewModel,
+    navigationActions: NavigationActions,
+    onValueChange: (String) -> Unit
+) {
+  Row(
+      modifier = Modifier.fillMaxWidth().padding(PADDING.dp),
+      verticalAlignment = Alignment.CenterVertically,
+      horizontalArrangement = Arrangement.Center) {
+        // Display the search bar and scanner icon
+        Spacer(modifier = Modifier.width(PADDING.dp).weight(SPACER_WEIGHT))
+        SearchBar(
+            modifier = Modifier.padding(PADDING.dp).weight(IMAGE_WEIGHT),
+            onValueChange = onValueChange,
+            onDebounce = { query ->
+              if (query.isNotEmpty()) {
+                ingredientViewModel.fetchIngredientByName(query)
+              }
+            })
+        Icon(
+            painter = painterResource(id = R.drawable.scanner),
+            modifier =
+                Modifier.weight(ICON_SCANNER_WEIGHT)
+                    .size(ICON_SCANNER_SIZE.dp)
+                    .testTag(SCANNER_ICON)
+                    .clickable { navigationActions.navigateTo(Screen.CAMERA_SCAN_CODE_BAR) },
+            tint = MaterialTheme.colorScheme.onPrimary,
+            contentDescription = stringResource(R.string.scanner_instruction))
+      }
+}
+
+/** A composable that displays the result text. */
+@Composable
+private fun ResultDisplay() {
+  Row(
+      modifier = Modifier.fillMaxWidth().padding(PADDING.dp),
+      horizontalArrangement = Arrangement.Start,
+  ) {
+    Text(
+        text = stringResource(R.string.result),
+        style = MaterialTheme.typography.titleMedium.copy(fontSize = RESULT_FONT_SIZE.sp),
+        color = MaterialTheme.colorScheme.onPrimary)
+  }
 }
 
 /**
