@@ -14,7 +14,6 @@ import com.android.sample.ui.navigation.Screen
 import com.google.firebase.firestore.FirebaseFirestore
 import io.mockk.*
 import kotlinx.coroutines.test.runTest
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -39,11 +38,6 @@ class RecipeNameScreenTest {
 
     // Set the content for testing
 
-  }
-
-  @After
-  fun tearDown() {
-    // Add any necessary cleanup here
   }
 
   /** Tests if all components of RecipeNameScreen are displayed. */

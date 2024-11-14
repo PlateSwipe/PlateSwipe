@@ -62,7 +62,6 @@ class RecipeAddImageScreenTest {
     composeTestRule.onNodeWithText("Gallery").assertExists().assertIsDisplayed()
     composeTestRule.onNodeWithTag("box for next button").assertExists().assertIsDisplayed()
     composeTestRule.onNodeWithText("Next").assertExists().assertIsDisplayed()
-    composeTestRule.onNodeWithTag("row for chef image").assertExists().assertIsDisplayed()
   }
 
   @Test

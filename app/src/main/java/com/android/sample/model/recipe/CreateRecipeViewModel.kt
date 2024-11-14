@@ -9,12 +9,14 @@ import com.android.sample.model.image.ImageDirectoryType
 import com.android.sample.model.image.ImageRepository
 import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.resources.C
+import com.android.sample.resources.C.Tag.ERROR_NULL_IMAGE
 import com.android.sample.resources.C.Tag.RECIPE_PUBLISHED_SUCCESS_MESSAGE
 import com.android.sample.resources.C.Tag.RECIPE_PUBLISH_ERROR_MESSAGE
 import com.android.sample.ui.createRecipe.IconType
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.storage
+import kotlin.NullPointerException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -287,10 +289,7 @@ class CreateRecipeViewModel(
    * @throws IllegalArgumentException if the recipe ID is blank or if the image upload fails.
    */
   fun publishRecipe() {
-    // Generate a new unique ID for the recipe
     val newUid = repository.getNewUid()
-    require(newUid.isNotBlank()) { "Recipe ID must not be blank." }
-    // Set the ID in the Recipe Builder
     recipeBuilder.setId(newUid)
     try {
       if (_photo.value != null) {
@@ -310,7 +309,7 @@ class CreateRecipeViewModel(
               repoImg.getImageUrl(
                   newUid,
                   C.Tag.FIRESTORE_RECIPE_IMAGE_NAME,
-                  ImageDirectoryType.TEST,
+                  ImageDirectoryType.RECIPE,
                   onSuccess = { uri ->
 
                     // Set the URL to the Builder
@@ -336,12 +335,12 @@ class CreateRecipeViewModel(
                     _publishStatus.value = RECIPE_PUBLISH_ERROR_MESSAGE.format(exception.message)
                   })
             },
-            onFailure = {
+            onFailure = { exception ->
               // Throw an error if the image upload fails
-              throw IllegalArgumentException("Image upload failed.")
+                _publishStatus.value = RECIPE_PUBLISH_ERROR_MESSAGE.format(exception.message)
             })
       } else {
-        throw IllegalArgumentException("Image must not be blank.")
+          throw NullPointerException(ERROR_NULL_IMAGE)
       }
     } catch (e: IllegalArgumentException) {
       _publishStatus.value = e.message

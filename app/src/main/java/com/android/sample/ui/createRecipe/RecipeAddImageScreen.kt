@@ -19,19 +19,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,8 +49,21 @@ import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.resources.C
 import com.android.sample.resources.C.Tag.RECIPE_NAME_BUTTON_HEIGHT
 import com.android.sample.resources.C.Tag.RECIPE_NAME_BUTTON_WIDTH
+import com.android.sample.resources.C.TestTag.RecipeAddImageScreen.BOX_IMAGE
+import com.android.sample.resources.C.TestTag.RecipeAddImageScreen.BOX_NEXT_BUTTON
+import com.android.sample.resources.C.TestTag.RecipeAddImageScreen.CAMERA_BUTTON
+import com.android.sample.resources.C.TestTag.RecipeAddImageScreen.COL_2
+import com.android.sample.resources.C.TestTag.RecipeAddImageScreen.DISPLAY_IMAGE
+import com.android.sample.resources.C.TestTag.RecipeAddImageScreen.DISPLAY_IMAGE_DEFAULT
+import com.android.sample.resources.C.TestTag.RecipeAddImageScreen.GALLERY_BUTTON
+import com.android.sample.resources.C.TestTag.RecipeAddImageScreen.MAIN_BOX
+import com.android.sample.resources.C.TestTag.RecipeAddImageScreen.MAIN_COL
+import com.android.sample.resources.C.TestTag.RecipeAddImageScreen.ROW_BUTTON
+import com.android.sample.resources.C.TestTag.RecipeAddImageScreen.ROW_FOR_CHEF
+import com.android.sample.resources.C.TestTag.RecipeAddImageScreen.TITLE_COL
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
+import com.android.sample.ui.theme.Typography
 import com.android.sample.ui.theme.lightCream
 import com.android.sample.ui.utils.PlateSwipeScaffold
 
@@ -119,11 +131,11 @@ fun AddImageContent(
     navigationActions: NavigationActions,
     createRecipeViewModel: CreateRecipeViewModel
 ) {
-  var isPictureTaken by remember { mutableStateOf(false) }
+
   val context = LocalContext.current
   // Collect the photo bitmap from the ViewModel's StateFlow
   val bitmap: Bitmap? by createRecipeViewModel.photo.collectAsState()
-  bitmap?.let { isPictureTaken = true }
+  val isPictureTaken by remember { mutableStateOf(bitmap != null) }
   Column(
       modifier =
           Modifier.fillMaxHeight()
@@ -131,15 +143,15 @@ fun AddImageContent(
                   (C.Dimension.RecipeAddImageScreen.CONTENT_WIDTH *
                           LocalConfiguration.current.screenWidthDp)
                       .dp)
-              .testTag("main column"),
+              .testTag(MAIN_COL),
       verticalArrangement = Arrangement.Center,
       horizontalAlignment = Alignment.CenterHorizontally) {
         /** Title of the Screen * */
         Box(
-            modifier = Modifier.fillMaxSize().testTag("main box"),
+            modifier = Modifier.fillMaxSize().testTag(MAIN_BOX),
         ) {
           Column(
-              modifier = Modifier.fillMaxSize().testTag("col 2"),
+              modifier = Modifier.fillMaxSize().testTag(COL_2),
               verticalArrangement = Arrangement.Top,
               horizontalAlignment = Alignment.CenterHorizontally) {
                 Column(
@@ -149,11 +161,12 @@ fun AddImageContent(
                                 (C.Dimension.RecipeAddImageScreen.TEXT_HEIGHT *
                                         LocalConfiguration.current.screenHeightDp)
                                     .dp)
-                            .testTag("title col"),
+                            .testTag(TITLE_COL),
                     horizontalAlignment = Alignment.CenterHorizontally) {
                       Text(
                           text = stringResource(R.string.add_image),
-                          style = MaterialTheme.typography.h5,
+                          style = Typography.titleMedium,
+                          color = MaterialTheme.colorScheme.onPrimary,
                           textAlign = TextAlign.Center)
                     }
                 Spacer(
@@ -172,7 +185,7 @@ fun AddImageContent(
                                         LocalConfiguration.current.screenHeightDp)
                                     .dp)
                             .clip(RoundedCornerShape(C.Dimension.PADDING_8.dp))
-                            .testTag("box for image"),
+                            .testTag(BOX_IMAGE),
                     contentAlignment = Alignment.Center,
                 ) {
                   // Display the image taken from the camera or default image
@@ -180,13 +193,13 @@ fun AddImageContent(
                     Image(
                         bitmap = it.asImageBitmap(),
                         contentDescription = stringResource(R.string.image_taken_from_camera),
-                        modifier = Modifier.fillMaxSize().testTag("display_image"),
+                        modifier = Modifier.fillMaxSize().testTag(DISPLAY_IMAGE),
                         contentScale = ContentScale.Crop)
                   }
                       ?: Image(
                           painter = painterResource(id = R.drawable.crop_original),
                           contentDescription = stringResource(R.string.no_image),
-                          modifier = Modifier.fillMaxSize().testTag("display_image_default"),
+                          modifier = Modifier.fillMaxSize().testTag(DISPLAY_IMAGE_DEFAULT),
                       )
                 }
 
@@ -199,7 +212,7 @@ fun AddImageContent(
 
                 /** Container for the Camera and Gallery buttons * */
                 Row(
-                    modifier = Modifier.fillMaxWidth().testTag("row for buttons"),
+                    modifier = Modifier.fillMaxWidth().testTag(ROW_BUTTON),
                     horizontalArrangement = Arrangement.Center) {
                       Column(
                           modifier =
@@ -209,7 +222,7 @@ fun AddImageContent(
                                   .clickable {
                                     navigationActions.navigateTo(Screen.CAMERA_TAKE_PHOTO)
                                   }
-                                  .testTag("camera button"),
+                                  .testTag(CAMERA_BUTTON),
                           horizontalAlignment = Alignment.CenterHorizontally) {
                             Icon(
                                 imageVector = Icons.Default.PhotoCamera,
@@ -222,7 +235,8 @@ fun AddImageContent(
                                 tint = Color.Black)
                             Text(
                                 text = stringResource(R.string.camera),
-                                style = MaterialTheme.typography.body1)
+                                style = Typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onPrimary)
                           }
                       Column(
                           modifier =
@@ -230,7 +244,7 @@ fun AddImageContent(
                                   .clickable {
                                     Toast.makeText(context, "Image", Toast.LENGTH_SHORT).show()
                                   }
-                                  .testTag("gallery button"),
+                                  .testTag(GALLERY_BUTTON),
                           horizontalAlignment = Alignment.CenterHorizontally) {
                             Icon(
                                 imageVector = Icons.Default.Image,
@@ -243,7 +257,8 @@ fun AddImageContent(
                                 tint = Color.Black)
                             Text(
                                 text = stringResource(R.string.gallery),
-                                style = MaterialTheme.typography.body1)
+                                style = Typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onPrimary)
                           }
                     }
 
@@ -252,13 +267,17 @@ fun AddImageContent(
                     modifier =
                         Modifier.fillMaxSize()
                             .padding(bottom = C.Dimension.PADDING_16.dp)
-                            .testTag("box for next button"),
+                            .testTag(BOX_NEXT_BUTTON),
                     contentAlignment = Alignment.BottomCenter,
                 ) {
                   Row(
-                      modifier = Modifier.fillMaxWidth().testTag("row for chef image"),
+                      modifier = Modifier.fillMaxWidth().testTag(ROW_FOR_CHEF),
                   ) {
-                    ChefImage()
+                    if (shouldDisplayChefImage(
+                        LocalConfiguration.current.screenWidthDp,
+                        LocalConfiguration.current.screenHeightDp)) {
+                      ChefImage()
+                    }
                   }
                   Button(
                       onClick = { navigationActions.navigateTo(Screen.PUBLISH_CREATED_RECIPE) },
@@ -272,7 +291,8 @@ fun AddImageContent(
                       enabled = isPictureTaken) {
                         Text(
                             text = stringResource(R.string.next),
-                            style = MaterialTheme.typography.button)
+                            style = Typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onPrimary)
                       }
                 }
               }

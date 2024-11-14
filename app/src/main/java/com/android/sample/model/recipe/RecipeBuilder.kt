@@ -1,5 +1,10 @@
 package com.android.sample.model.recipe
 
+import com.android.sample.resources.C.Tag.ERROR_LIST_INGREDIENT_EMPTY
+import com.android.sample.resources.C.Tag.ERROR_STR_INSTR_BLANK
+import com.android.sample.resources.C.Tag.ERROR_STR_MEAL_BLANK
+import com.android.sample.resources.C.Tag.ERROR_STR_THUMBNAIL
+
 /** Builder class for creating a Recipe instance. */
 class RecipeBuilder {
   private var idMeal: String = ""
@@ -139,12 +144,10 @@ class RecipeBuilder {
    */
   fun build(): Recipe {
     // Validation for essential fields
-    require(strMeal.isNotBlank()) { "Recipe name is required and cannot be blank." }
-    require(strInstructions.isNotBlank()) {
-      "Recipe instructions are required and cannot be blank."
-    }
-    require(ingredientsAndMeasurements.isNotEmpty()) { "At least one ingredient is required." }
-    require(strMealThumbUrl.isNotBlank()) { "Recipe thumbnail is required and cannot be blank." }
+    require(strMeal.isNotBlank()) { ERROR_STR_MEAL_BLANK }
+    require(strInstructions.isNotBlank()) { ERROR_STR_INSTR_BLANK }
+    require(ingredientsAndMeasurements.isNotEmpty()) { ERROR_LIST_INGREDIENT_EMPTY }
+    require(strMealThumbUrl.isNotBlank()) { ERROR_STR_THUMBNAIL }
     return Recipe(
         idMeal = idMeal,
         strMeal = strMeal,
