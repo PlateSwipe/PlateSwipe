@@ -9,22 +9,22 @@
     <string name="plate_swipe_title">Plate Swipe</string>
 
     <string name="search_bar_place_holder">Search</string>
-    <string name="scan_barcode">Scan Barcode</string>
     <string name="fridge_screen">Fridge Screen</string>
+    <string name="fridge_screen_description">Work in progress…stay tuned!</string>
     <string name="add_to_fridge">Add to Fridge</string>
 
     <string name="account_screen_default_user_name">User Name</string>
     <string name="account_screen_liked_recipe_button_title">Liked Recipes</string>
     <string name="account_screen_created_recipe_button_title">Created Recipes</string>
+
     <string name="photo_capture_failed">Photo capture failed: %1$s</string>
     <string name="take_photo">Take Photo</string>
-    
+
     <string name="filter_icon">Filter Icon</string>
     <string name="time_range_input_description">Time Range</string>
     <string name="price_range_input_description">Price Range</string>
     <string name="difficulty_input_description">Difficulty</string>
     <string name="category_input_description">Category</string>
-
 
 
     <string name="prep_time">Prep time</string>
@@ -85,6 +85,20 @@
     <string name="RecipeListInstructionsScreen_Instructions">Instructions</string>
     <string name="RecipeListInstructionsScreen_Step">Step</string>
     <string name="RecipeListInstructionsScreen_Minutes">min</string>
+    <string name="image_failed_to_load">Image failed to load</string>
+
+    //RecipeListIngredientsScreen
+    <string name="scanner_instruction">Scanner Icon</string>
+    <string name="result">Result</string>
+    <string name="pop_up_title">Add to Recipe?</string>
+    <string name="pop_up_description">Do you want to add this ingredient to your recipe?</string>
+    <string name="pop_up_confirmation">Add to Recipe</string>
+    <string name="pop_up_cancel">Cancel</string>
+
+    //RecipeListScreen
+    <string name="ingredient_list">Ingredients list</string>
+    <string name="add">Add</string>
+    <string name="close">Close</string>
 
 
 

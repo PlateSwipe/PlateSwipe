@@ -32,6 +32,8 @@ object Screen {
 
   const val CREATE_RECIPE_ADD_INSTRUCTION = "Add One Recipe Instruction"
 
+  const val CREATE_RECIPE_SEARCH_INGREDIENTS = "Search Ingredient Screen"
+
   const val CREATE_RECIPE_LIST_INSTRUCTIONS = "List Recipe Instructions"
 
   const val PUBLISH_CREATED_RECIPE = "Publish Created Recipe"
@@ -44,9 +46,9 @@ object Screen {
 
   const val CAMERA_TAKE_PHOTO = "Camera Take Photo Screen"
 
-  const val DISPLAY_IMAGE = "Display Image Screen"
-
   const val CREATE_RECIPE_ADD_IMAGE = "Create Recipe Add Image Screen"
+
+  const val CREATE_RECIPE_LIST_INGREDIENTS = "List Ingredients Screen"
 }
 
 data class TopLevelDestination(val route: String, val iconId: Int, val textId: String)

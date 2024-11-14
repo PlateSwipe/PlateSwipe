@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.compose.ui.graphics.asImageBitmap
 import com.android.sample.model.image.ImageDirectoryType
 import com.android.sample.model.image.ImageRepositoryFirebase
+import com.android.sample.resources.C
 import com.android.sample.resources.C.Tag.INGREDIENT_IMAGE_ADDED_SUCCESSFULLY
 import com.android.sample.resources.C.Tag.OPEN_FOOD_FACTS_INGREDIENT_REPOSITORY_TAG
 import com.android.sample.resources.C.Tag.OPEN_FOOD_FACTS_URL
@@ -38,7 +39,11 @@ class OpenFoodFactsIngredientRepository(
   private fun parseOpenFoodFactsJsonToIngredient(json: JSONObject): Ingredient {
 
     val ingredientName = json.getString(PRODUCT_NAME)
-    // Null if there is no branding since it's an optional field
+
+    if (ingredientName.isNullOrEmpty()) {
+      throw Exception(C.Tag.INGREDIENT_NAME_NOT_PROVIDED)
+    }
+
     val brands = json.getString(PRODUCT_BRAND) ?: null
     val barcode = json.getLong(PRODUCT_ID)
     val quantity = json.getString(PRODUCT_QUANTITY) ?: null
@@ -160,10 +165,14 @@ class OpenFoodFactsIngredientRepository(
 
                   val ingredients: List<Ingredient> =
                       (0 until products.length()).mapNotNull { i ->
-                        val ingredient =
-                            parseOpenFoodFactsJsonToIngredient(products.getJSONObject(i))
+                        try {
+                          val ingredient =
+                              parseOpenFoodFactsJsonToIngredient(products.getJSONObject(i))
 
-                        ingredient
+                          ingredient
+                        } catch (e: Exception) {
+                          null
+                        }
                       }
 
                   onSuccess(ingredients.take(count))

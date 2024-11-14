@@ -275,32 +275,68 @@ class CreateRecipeViewModel(
     _publishStatus.value = null
   }
 
-  /** Publishes the recipe to the repository. */
+  /**
+   * Publishes the recipe to the repository.
+   *
+   * This function generates a new unique ID for the recipe, sets the ID in the recipe builder, and
+   * uploads the photo associated with the recipe to the image repository. Once the image is
+   * successfully uploaded, it retrieves the image URL and sets it in the recipe builder. Finally,
+   * it adds the recipe to the repository and updates the publish status accordingly.
+   *
+   * If the photo is not set or if any error occurs during the process, it updates the publish
+   * status with the appropriate error message.
+   *
+   * @throws IllegalArgumentException if the recipe ID is blank or if the image upload fails.
+   */
   fun publishRecipe() {
     val newUid = repository.getNewUid()
     recipeBuilder.setId(newUid)
     try {
       if (_photo.value != null) {
+        // Upload the image to the Image Repository with Name FIRESTORE_RECIPE_IMAGE_NAME and the
+        // generated UID
         repoImg.uploadImage(
             newUid,
             C.Tag.FIRESTORE_RECIPE_IMAGE_NAME,
-            ImageDirectoryType.TEST,
+            ImageDirectoryType.RECIPE,
             _photo.value!!.asImageBitmap(),
             onSuccess = {
+
               // Set the Image UID to the Builder
               recipeBuilder.setPictureID(newUid)
-              val recipe = recipeBuilder.build()
-              repository.addRecipe(
-                  recipe,
-                  onSuccess = {
-                    _publishStatus.value = RECIPE_PUBLISHED_SUCCESS_MESSAGE
-                    recipeBuilder.clear()
+
+              // Get the Image URL from the Image Repository
+              repoImg.getImageUrl(
+                  newUid,
+                  C.Tag.FIRESTORE_RECIPE_IMAGE_NAME,
+                  ImageDirectoryType.RECIPE,
+                  onSuccess = { uri ->
+
+                    // Set the URL to the Builder
+                    val url = uri.toString()
+                    recipeBuilder.setUrl(url)
+
+                    // Build the Recipe
+                    val recipe = recipeBuilder.build()
+
+                    // Add the Recipe to the Repository
+                    repository.addRecipe(
+                        recipe,
+                        onSuccess = {
+                          _publishStatus.value = RECIPE_PUBLISHED_SUCCESS_MESSAGE
+                          recipeBuilder.clear()
+                        },
+                        onFailure = { exception ->
+                          _publishStatus.value =
+                              RECIPE_PUBLISH_ERROR_MESSAGE.format(exception.message)
+                        })
                   },
                   onFailure = { exception ->
                     _publishStatus.value = RECIPE_PUBLISH_ERROR_MESSAGE.format(exception.message)
                   })
             },
             onFailure = { exception ->
+              // Throw an error if the image upload fails
               _publishStatus.value = RECIPE_PUBLISH_ERROR_MESSAGE.format(exception.message)
             })
       } else {
