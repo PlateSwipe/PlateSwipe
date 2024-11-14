@@ -22,6 +22,19 @@ class IngredientViewModel(private val repository: IngredientRepository) : ViewMo
   val ingredient: StateFlow<Ingredient?>
     get() = _ingredient
 
+  private val _ingredientList = MutableStateFlow<List<Ingredient>>(emptyList())
+  val ingredientList: StateFlow<List<Ingredient>>
+    get() = _ingredientList
+
+  private val _searchingIngredientList = MutableStateFlow<List<Ingredient>>(emptyList())
+  val searchingIngredientList: StateFlow<List<Ingredient>>
+    get() = _searchingIngredientList
+
+  /**
+   * Fetch ingredient
+   *
+   * @param barCode
+   */
   fun fetchIngredient(barCode: Long) {
     if (_ingredient.value?.barCode == barCode) {
       return
@@ -30,6 +43,58 @@ class IngredientViewModel(private val repository: IngredientRepository) : ViewMo
         barCode,
         onSuccess = { ingredient -> _ingredient.value = ingredient },
         onFailure = { _ingredient.value = null })
+  }
+
+  /**
+   * Add bar code ingredient
+   *
+   * @param ingredient
+   */
+  fun addIngredient(ingredient: Ingredient) {
+    _ingredientList.value += ingredient
+  }
+
+  /**
+   * Update quantity
+   *
+   * @param ingredient
+   * @param quantity
+   */
+  fun updateQuantity(ingredient: Ingredient, quantity: String) {
+    _ingredientList.value =
+        _ingredientList.value.map {
+          if (it == ingredient) {
+            it.copy(quantity = quantity)
+          } else {
+            it
+          }
+        }
+  }
+
+  /**
+   * Fetch ingredient by name
+   *
+   * @param name
+   */
+  fun fetchIngredientByName(name: String) {
+    repository.search(
+        name,
+        onSuccess = { ingredientList -> _searchingIngredientList.value = ingredientList },
+        onFailure = { _searchingIngredientList.value = emptyList() })
+  }
+
+  /**
+   * Remove ingredient
+   *
+   * @param ingredient
+   */
+  fun removeIngredient(ingredient: Ingredient) {
+    _ingredientList.value = _ingredientList.value.filter { it != ingredient }
+  }
+
+  /** Clear search */
+  fun clearSearch() {
+    _searchingIngredientList.value = emptyList()
   }
 
   // create factory

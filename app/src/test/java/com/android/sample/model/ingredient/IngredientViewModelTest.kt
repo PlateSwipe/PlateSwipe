@@ -4,6 +4,7 @@ import androidx.test.core.app.ApplicationProvider
 import com.google.firebase.Firebase
 import com.google.firebase.initialize
 import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
 import org.junit.Before
@@ -94,12 +95,154 @@ class IngredientViewModelTest {
   }
 
   @Test
-  fun factory_createsIngredientViewModel() {
-    val factory = IngredientViewModel.Factory
-    val viewModel = factory.create(IngredientViewModel::class.java)
-    assertTrue(viewModel is IngredientViewModel)
-    // Check if the viewModel can call fetchIngredient
-    val barCode = 123456L
-    viewModel.fetchIngredient(barCode)
+  fun addIngredient_updatesIngredientList() {
+    val ingredient =
+        Ingredient(
+            barCode = 123456L,
+            name = "New Ingredient",
+            brands = "Brand",
+            quantity = "100g",
+            categories = listOf("Category1"),
+            images = listOf("image1.jpg"))
+
+    ingredientViewModel.addIngredient(ingredient)
+
+    // Verify that the ingredient list now contains the added ingredient
+    assertTrue(ingredientViewModel.ingredientList.value.contains(ingredient))
+  }
+
+  @Test
+  fun fetchIngredientByName_withValidName_updatesSearchingIngredientList() {
+    val name = "Test Ingredient"
+    val ingredientList =
+        listOf(
+            Ingredient(
+                barCode = 123456L,
+                name = name,
+                brands = "Brand1",
+                quantity = "",
+                categories = listOf(),
+                images = listOf()),
+            Ingredient(
+                barCode = 789012L,
+                name = "Another Ingredient",
+                brands = "Brand2",
+                quantity = "",
+                categories = listOf(),
+                images = listOf()))
+
+    `when`(ingredientRepository.search(any(), any(), any(), any())).thenAnswer { invocation ->
+      val onSuccess: (List<Ingredient>) -> Unit = invocation.getArgument(1)
+      onSuccess(ingredientList)
+    }
+
+    ingredientViewModel.fetchIngredientByName(name)
+    verify(ingredientRepository).search(any(), any(), any(), any())
+
+    // Verify that the searchingIngredientList contains the expected ingredients
+    assertEquals(ingredientList, ingredientViewModel.searchingIngredientList.value)
+  }
+
+  @Test
+  fun fetchIngredientByName_withInvalidName_setsSearchingIngredientListToEmpty() {
+    val name = "Invalid Ingredient"
+
+    `when`(ingredientRepository.search(any(), any(), any(), any())).thenAnswer { invocation ->
+      val onFailure: (Exception) -> Unit = invocation.getArgument(2)
+      onFailure(Exception("Ingredient not found"))
+    }
+
+    ingredientViewModel.fetchIngredientByName(name)
+    verify(ingredientRepository).search(any(), any(), any(), any())
+
+    // Verify that searchingIngredientList is empty
+    assertTrue(ingredientViewModel.searchingIngredientList.value.isEmpty())
+  }
+
+  @Test
+  fun removeIngredient_updatesIngredientList() {
+    val ingredient1 =
+        Ingredient(
+            barCode = 123456L,
+            name = "Ingredient1",
+            brands = "Brand1",
+            quantity = "100g",
+            categories = listOf("Category1"),
+            images = listOf())
+    val ingredient2 =
+        Ingredient(
+            barCode = 789012L,
+            name = "Ingredient2",
+            brands = "Brand2",
+            quantity = "200g",
+            categories = listOf("Category2"),
+            images = listOf())
+
+    // Add ingredients to the list
+    ingredientViewModel.addIngredient(ingredient1)
+    ingredientViewModel.addIngredient(ingredient2)
+
+    // Remove one ingredient and verify it is no longer in the list
+    ingredientViewModel.removeIngredient(ingredient1)
+    assertTrue(ingredientViewModel.ingredientList.value.contains(ingredient2))
+    assertTrue(!ingredientViewModel.ingredientList.value.contains(ingredient1))
+  }
+
+  @Test
+  fun clearSearch_resetsSearchingIngredientListToEmpty() {
+    val ingredientList =
+        listOf(
+            Ingredient(
+                barCode = 123456L,
+                name = "Ingredient1",
+                brands = "Brand1",
+                quantity = "",
+                categories = listOf(),
+                images = listOf()),
+            Ingredient(
+                barCode = 789012L,
+                name = "Ingredient2",
+                brands = "Brand2",
+                quantity = "",
+                categories = listOf(),
+                images = listOf()))
+
+    // Set initial search results
+    `when`(ingredientRepository.search(any(), any(), any(), any())).thenAnswer { invocation ->
+      val onSuccess: (List<Ingredient>) -> Unit = invocation.getArgument(1)
+      onSuccess(ingredientList)
+    }
+    ingredientViewModel.fetchIngredientByName("Ingredient")
+    assertEquals(ingredientList, ingredientViewModel.searchingIngredientList.value)
+
+    // Clear search and verify that the searchingIngredientList is empty
+    ingredientViewModel.clearSearch()
+    assertTrue(ingredientViewModel.searchingIngredientList.value.isEmpty())
+  }
+
+  @Test
+  fun updateQuantity_updatesIngredientQuantity() {
+    // Create an initial ingredient
+    val ingredient =
+        Ingredient(
+            barCode = 123456L,
+            name = "Test Ingredient",
+            brands = "Brand",
+            quantity = "100g", // Initial quantity
+            categories = listOf("Category1"),
+            images = listOf("image1.jpg"))
+
+    // Add the ingredient to the ingredient list
+    ingredientViewModel.addIngredient(ingredient)
+
+    // Update the quantity of the ingredient
+    val newQuantity = "200g"
+    ingredientViewModel.updateQuantity(ingredient, newQuantity)
+
+    // Verify that the ingredient list contains the ingredient with the updated quantity
+    val updatedIngredient =
+        ingredientViewModel.ingredientList.value.find { it.barCode == ingredient.barCode }
+    assertNotNull(updatedIngredient)
+    assertEquals(newQuantity, updatedIngredient?.quantity)
   }
 }

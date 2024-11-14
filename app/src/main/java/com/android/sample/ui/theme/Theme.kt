@@ -23,8 +23,8 @@ private val DarkColorScheme =
 private val LightColorScheme =
     lightColorScheme(
         primary = lightCream,
-        secondary = PurpleGrey40,
-        tertiary = Pink40,
+        secondary = lightGray,
+        tertiary = lightCream,
         background = Color.White,
         onPrimary = Color.Black,
         onSecondary = graySlate,
