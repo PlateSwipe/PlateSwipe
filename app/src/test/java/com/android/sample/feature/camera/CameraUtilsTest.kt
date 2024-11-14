@@ -1,16 +1,24 @@
 package com.android.sample.feature.camera
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.net.Uri
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import java.io.File
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertThrows
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class CameraUtilsTest {
+  private val context: Context = ApplicationProvider.getApplicationContext<Context>()
 
   @Test
   fun testRotateBitmap_outOfRange() {
@@ -108,5 +116,55 @@ class CameraUtilsTest {
         assertEquals(rotatedBitmap.getPixel(0, 0), result.getPixel(0, 0))
       }
     }
+  }
+
+  @Test
+  fun testUriToBitmapWork() {
+    val path = "src/test/resources/images/scoobygourmand_normal.jpg"
+    val file = File(path)
+    val uri = Uri.fromFile(file)
+
+    // Create a reference Bitmap from the file path directly
+    val referenceBitmap = BitmapFactory.decodeFile(file.path)
+    assertNotNull("Reference Bitmap should not be null", referenceBitmap)
+
+    // Call the uriToBitmap function to get the Bitmap from URI
+    val resultBitmap = uriToBitmap(context, uri)
+    assertNotNull("Result Bitmap should not be null", resultBitmap)
+
+    // Compare the Bitmaps (use width and height as a quick check)
+    assertTrue("Bitmaps should be of the same width", resultBitmap?.width == referenceBitmap.width)
+    assertTrue(
+        "Bitmaps should be of the same height", resultBitmap?.height == referenceBitmap.height)
+
+    // Compare the Bitmaps pixel by pixel
+    assertTrue("Bitmaps should be equal", bitmapsAreEqual(referenceBitmap, resultBitmap))
+  }
+
+  @Test
+  fun testUriToBitmapErrorHandling() {
+    // Create an invalid URI (non-existent file)
+    val invalidUri = Uri.parse("file:///non_existent_path/non_existent_image.jpg")
+
+    // Call uriToBitmap with the invalid URI
+    val result = uriToBitmap(context, invalidUri)
+
+    // Assert that the result is null due to error handling
+    assertNull(result)
+  }
+
+  // Helper function to compare two bitmaps pixel by pixel
+  private fun bitmapsAreEqual(bitmap1: Bitmap?, bitmap2: Bitmap?): Boolean {
+    if (bitmap1 == null || bitmap2 == null) return false
+    if (bitmap1.width != bitmap2.width || bitmap1.height != bitmap2.height) return false
+
+    for (x in 0 until bitmap1.width) {
+      for (y in 0 until bitmap1.height) {
+        if (bitmap1.getPixel(x, y) != bitmap2.getPixel(x, y)) {
+          return false
+        }
+      }
+    }
+    return true
   }
 }
