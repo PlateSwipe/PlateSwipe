@@ -39,11 +39,22 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.android.sample.R
 import com.android.sample.model.recipe.Recipe
+import com.android.sample.model.user.UserViewModel
+import com.android.sample.resources.C.Tag.RECIPE_FAVORITE_ICON_CONTENT_DESCRIPTION
 import com.android.sample.resources.C.Tag.RECIPE_LIST_CORNER_RADIUS
+import com.android.sample.resources.C.Tag.RECIPE_RATING_CONTENT_DESCRIPTION
+import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_CARD_TEST_TAG
+import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_CATEGORIES_TEST_TAG
+import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_FAVORITE_ICON_TEST_TAG
+import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_IMAGE_TEST_TAG
+import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_LIST_TEST_TAG
+import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_PRICE_RATING_TEST_TAG
+import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_TITLE_TEST_TAG
 import com.android.sample.ui.theme.goldenBronze
 import com.android.sample.ui.theme.valencia
 
@@ -64,7 +75,7 @@ fun RecipeList(
     topCornerButton: @Composable (Recipe) -> Unit = {},
 ) {
   LazyColumn(
-      modifier = modifier.testTag("recipeList"),
+      modifier = modifier.testTag(RECIPE_LIST_TEST_TAG),
       verticalArrangement = Arrangement.Top,
       horizontalAlignment = Alignment.CenterHorizontally,
   ) {
@@ -82,9 +93,11 @@ private fun RecipeCard(
 ) {
   Box(
       modifier =
-          Modifier.fillMaxWidth().height(88.dp).padding(2.dp).testTag("recipeCard").clickable {
-            onRecipeSelected(recipe)
-          },
+          Modifier.fillMaxWidth()
+              .height(88.dp)
+              .padding(2.dp)
+              .testTag(RECIPE_CARD_TEST_TAG)
+              .clickable { onRecipeSelected(recipe) },
   ) {
     Row(
         modifier =
@@ -106,7 +119,7 @@ private fun RecipeCard(
                     modifier = Modifier.fillMaxWidth().weight(1f),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically) {
-                      RecipeTitle(recipe)
+                      RecipeTitle(recipe, Modifier.weight(3f))
                       topCornerButton(recipe)
                     }
 
@@ -130,19 +143,21 @@ private fun RecipeCard(
 
 @Composable
 private fun RecipePrice(maxDollars: Int = 3, cost: Int, recipe: Recipe) {
-  Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.testTag("priceRating")) {
-    for (i in 1..maxDollars) {
-      val isSelected = i <= cost
-      val iconTintColor =
-          if (isSelected) MaterialTheme.colorScheme.onSecondary
-          else MaterialTheme.colorScheme.onPrimary
-      Icon(
-          painter = painterResource(R.drawable.dollar_sign),
-          contentDescription = null,
-          tint = iconTintColor,
-      )
-    }
-  }
+  Row(
+      verticalAlignment = Alignment.CenterVertically,
+      modifier = Modifier.testTag(RECIPE_PRICE_RATING_TEST_TAG)) {
+        for (i in 1..maxDollars) {
+          val isSelected = i <= cost
+          val iconTintColor =
+              if (isSelected) MaterialTheme.colorScheme.onSecondary
+              else MaterialTheme.colorScheme.onPrimary
+          Icon(
+              painter = painterResource(R.drawable.dollar_sign),
+              contentDescription = null,
+              tint = iconTintColor,
+          )
+        }
+      }
 }
 
 @Composable
@@ -153,7 +168,7 @@ private fun RecipeRating() {
   ) {
     Icon(
         imageVector = Icons.Filled.Star,
-        contentDescription = "rating",
+        contentDescription = RECIPE_RATING_CONTENT_DESCRIPTION,
         modifier = Modifier.size(24.dp),
         tint = goldenBronze)
     Spacer(modifier = Modifier.width(8.dp))
@@ -167,7 +182,7 @@ private fun RecipeRating() {
 @Composable
 private fun RecipeCategories(recipe: Recipe) {
   Row(
-      modifier = Modifier.testTag("recipeCategories"),
+      modifier = Modifier.testTag(RECIPE_CATEGORIES_TEST_TAG),
       horizontalArrangement = Arrangement.spacedBy(4.dp)) {
         if (recipe.strCategory?.isNotEmpty() == true) {
           for (category in recipe.strCategory.split(",")) {
@@ -186,17 +201,18 @@ private fun RecipeImage(recipe: Recipe) {
           Modifier.aspectRatio(1f)
               .fillMaxSize()
               .clip(RoundedCornerShape(RECIPE_LIST_CORNER_RADIUS.dp))
-              .testTag("recipeImage"))
+              .testTag(RECIPE_IMAGE_TEST_TAG))
 }
 
 @Composable
-private fun RecipeTitle(recipe: Recipe) {
+private fun RecipeTitle(recipe: Recipe, modifier: Modifier) {
   Text(
-      modifier = Modifier.testTag("recipeTitle"),
+      modifier = modifier.testTag(RECIPE_TITLE_TEST_TAG),
       text = recipe.strMeal,
       style = MaterialTheme.typography.titleMedium,
       fontWeight = FontWeight.Bold,
-  )
+      maxLines = 1,
+      overflow = TextOverflow.Ellipsis)
 }
 
 /**
@@ -207,12 +223,15 @@ private fun RecipeTitle(recipe: Recipe) {
  * @param recipe the recipe to like.
  */
 @Composable
-fun TopCornerLikeButton(recipe: Recipe) {
+fun TopCornerLikeButton(recipe: Recipe, userViewModel: UserViewModel) {
   var isLiked by remember { mutableStateOf(true) }
   Icon(
       imageVector = if (isLiked) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-      contentDescription = "like",
+      contentDescription = RECIPE_FAVORITE_ICON_CONTENT_DESCRIPTION,
       modifier =
-          Modifier.padding(4.dp).testTag("recipeFavoriteIcon").clickable { isLiked = !isLiked },
+          Modifier.padding(4.dp).testTag(RECIPE_FAVORITE_ICON_TEST_TAG).clickable {
+            isLiked = !isLiked
+            userViewModel.removeRecipeFromUserLikedRecipes(recipe)
+          },
       tint = valencia)
 }

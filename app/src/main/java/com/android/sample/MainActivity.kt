@@ -66,7 +66,7 @@ fun PlateSwipeApp() {
   val recipesViewModel: RecipesViewModel = viewModel(factory = RecipesViewModel.Factory)
   val ingredientViewModel: IngredientViewModel = viewModel(factory = IngredientViewModel.Factory)
 
-  val userViewModel = UserViewModel.Factory.create(UserViewModel::class.java)
+  val userViewModel: UserViewModel = viewModel(factory = UserViewModel.Factory)
   val createRecipeViewModel: CreateRecipeViewModel =
       viewModel(factory = CreateRecipeViewModel.Factory)
 
@@ -81,7 +81,7 @@ fun PlateSwipeApp() {
         startDestination = Screen.SWIPE,
         route = Route.SWIPE,
     ) {
-      composable(Screen.SWIPE) { SwipePage(navigationActions, recipesViewModel) }
+      composable(Screen.SWIPE) { SwipePage(navigationActions, recipesViewModel, userViewModel) }
       composable(Screen.OVERVIEW_RECIPE) { RecipeOverview(navigationActions, recipesViewModel) }
       composable(Screen.FILTER) { FilterPage(navigationActions, recipesViewModel) }
     }
@@ -163,6 +163,9 @@ fun PlateSwipeApp() {
         route = Route.ACCOUNT,
     ) {
       composable(Screen.ACCOUNT) { AccountScreen(navigationActions, userViewModel) }
+      composable(Screen.OVERVIEW_RECIPE_ACCOUNT) {
+        RecipeOverview(navigationActions, userViewModel)
+      }
     }
   }
 }
