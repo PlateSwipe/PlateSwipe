@@ -197,7 +197,7 @@ fun IngredientDisplay(
           verticalArrangement = Arrangement.Center) {
             Text(
                 text = ingredient.name,
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.titleSmall,
                 modifier =
                     Modifier.padding(
                         vertical =
@@ -210,7 +210,7 @@ fun IngredientDisplay(
                                 .dp))
             Text(
                 text = ingredient.brands ?: "",
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodySmall,
                 modifier =
                     Modifier.padding(
                         vertical =

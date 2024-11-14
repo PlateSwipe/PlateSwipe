@@ -8,6 +8,11 @@ import androidx.compose.ui.test.performTextInput
 import com.android.sample.model.ingredient.AggregatorIngredientRepository
 import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.ingredient.IngredientViewModel
+import com.android.sample.resources.C.TestTag.IngredientSearchScreen.CANCEL_BUTTON
+import com.android.sample.resources.C.TestTag.IngredientSearchScreen.CONFIRMATION_BUTTON
+import com.android.sample.resources.C.TestTag.IngredientSearchScreen.CONFIRMATION_POPUP
+import com.android.sample.resources.C.TestTag.IngredientSearchScreen.SCANNER_ICON
+import com.android.sample.resources.C.TestTag.Utils.SEARCH_BAR
 import com.android.sample.ui.createRecipe.IngredientSearchScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
@@ -67,16 +72,16 @@ class IngredientSearchScreenTest {
   @Test
   fun testSearchBarTriggersFetchIngredientByName() {
     // Interacting with the SearchBar to enter a query
-    composeTestRule.onNodeWithTag("searchBar", useUnmergedTree = true).assertIsDisplayed()
-    composeTestRule.onNodeWithTag("searchBar", useUnmergedTree = true).performClick()
+    composeTestRule.onNodeWithTag(SEARCH_BAR, useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(SEARCH_BAR, useUnmergedTree = true).performClick()
   }
 
   @Test
   fun testScannerIconNavigatesToCameraScreen() {
     // Click on the scanner icon
-    composeTestRule.onNodeWithTag("searchBar", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(SEARCH_BAR, useUnmergedTree = true).assertIsDisplayed()
 
-    composeTestRule.onNodeWithTag("scannerIcon", useUnmergedTree = true).performClick()
+    composeTestRule.onNodeWithTag(SCANNER_ICON, useUnmergedTree = true).performClick()
 
     // Verify that the navigation action was triggered
     verify(mockNavigationActions).navigateTo(Screen.CAMERA_SCAN_CODE_BAR)
@@ -84,7 +89,7 @@ class IngredientSearchScreenTest {
 
   @Test
   fun testSearchBarDisplaysIngredients() = runTest {
-    composeTestRule.onNodeWithTag("searchBar", useUnmergedTree = true).performTextInput("To")
+    composeTestRule.onNodeWithTag(SEARCH_BAR, useUnmergedTree = true).performTextInput("To")
 
     composeTestRule.waitUntil(5000) {
       ingredientViewModel.searchingIngredientList.value.isNotEmpty()
@@ -99,7 +104,7 @@ class IngredientSearchScreenTest {
 
   @Test
   fun testSearchPopUpDisplayCorrectly() {
-    composeTestRule.onNodeWithTag("searchBar", useUnmergedTree = true).performTextInput("To")
+    composeTestRule.onNodeWithTag(SEARCH_BAR, useUnmergedTree = true).performTextInput("To")
 
     composeTestRule.waitUntil(5000) {
       ingredientViewModel.searchingIngredientList.value.isNotEmpty()
@@ -113,16 +118,16 @@ class IngredientSearchScreenTest {
 
     composeTestRule.waitForIdle()
 
-    composeTestRule.onNodeWithTag("confirmationPopUp", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CONFIRMATION_POPUP, useUnmergedTree = true).assertIsDisplayed()
 
-    composeTestRule.onNodeWithTag("confirmButton", useUnmergedTree = true).performClick()
+    composeTestRule.onNodeWithTag(CONFIRMATION_BUTTON, useUnmergedTree = true).performClick()
     verify(mockNavigationActions).navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
     assertEquals(ingredientViewModel.ingredientList.value, listOf(testIngredients[0]))
   }
 
   @Test
   fun testSearchPopUpCancelCorrectly() {
-    composeTestRule.onNodeWithTag("searchBar", useUnmergedTree = true).performTextInput("To")
+    composeTestRule.onNodeWithTag(SEARCH_BAR, useUnmergedTree = true).performTextInput("To")
 
     composeTestRule.waitUntil(5000) {
       ingredientViewModel.searchingIngredientList.value.isNotEmpty()
@@ -136,9 +141,9 @@ class IngredientSearchScreenTest {
 
     composeTestRule.waitForIdle()
 
-    composeTestRule.onNodeWithTag("confirmationPopUp", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CONFIRMATION_POPUP, useUnmergedTree = true).assertIsDisplayed()
 
-    composeTestRule.onNodeWithTag("cancelButton", useUnmergedTree = true).performClick()
+    composeTestRule.onNodeWithTag(CANCEL_BUTTON, useUnmergedTree = true).performClick()
 
     composeTestRule.waitForIdle()
 

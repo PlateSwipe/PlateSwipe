@@ -12,6 +12,9 @@ import com.android.sample.model.ingredient.AggregatorIngredientRepository
 import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.ingredient.IngredientViewModel
 import com.android.sample.model.recipe.CreateRecipeViewModel
+import com.android.sample.resources.C.TestTag.IngredientListScreen.ADD_INGREDIENT_ICON
+import com.android.sample.resources.C.TestTag.IngredientListScreen.NEXT_STEP_BUTTON
+import com.android.sample.resources.C.TestTag.IngredientListScreen.RECIPE_NAME
 import com.android.sample.ui.createRecipe.IngredientListScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
@@ -27,7 +30,7 @@ import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
 import org.mockito.kotlin.verify
 
-class IngredientListScreenTest {
+class ListIngredientScreenTest {
 
   @get:Rule val composeTestRule = createComposeRule()
 
@@ -81,7 +84,7 @@ class IngredientListScreenTest {
 
   @Test
   fun testTextAreDisplayed() {
-    composeTestRule.onNodeWithTag("recipeName", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(RECIPE_NAME, useUnmergedTree = true).assertIsDisplayed()
 
     composeTestRule.onNodeWithText("Ingredients list", useUnmergedTree = true).assertIsDisplayed()
   }
@@ -97,9 +100,9 @@ class IngredientListScreenTest {
   @Test
   fun testAddButtonNavigatesToSearchScreen() {
     // Click the add button to navigate to ingredient search screen
-    composeTestRule.onNodeWithTag("addIngredientIcon", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(ADD_INGREDIENT_ICON, useUnmergedTree = true).assertIsDisplayed()
 
-    composeTestRule.onNodeWithTag("addIngredientIcon", useUnmergedTree = true).performClick()
+    composeTestRule.onNodeWithTag(ADD_INGREDIENT_ICON, useUnmergedTree = true).performClick()
 
     // Verify navigation action to ingredient search screen
     verify(mockNavigationActions).navigateTo(Screen.CREATE_RECIPE_SEARCH_INGREDIENTS)
@@ -123,8 +126,8 @@ class IngredientListScreenTest {
   @Test
   fun testNextStepButtonAddsIngredientsToRecipeAndNavigates() {
     // Click the Next Step button
-    composeTestRule.onNodeWithTag("nextStepButton", useUnmergedTree = true).assertIsDisplayed()
-    composeTestRule.onNodeWithTag("nextStepButton", useUnmergedTree = true).performClick()
+    composeTestRule.onNodeWithTag(NEXT_STEP_BUTTON, useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(NEXT_STEP_BUTTON, useUnmergedTree = true).performClick()
 
     // Verify each ingredient is added to the recipe
     assertTrue(

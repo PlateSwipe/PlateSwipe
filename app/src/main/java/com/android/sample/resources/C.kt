@@ -3,6 +3,7 @@ package com.android.sample.resources
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.sample.R
+import com.android.sample.resources.C.Tag.PADDING
 
 // Like R, but C
 object C {
@@ -64,6 +65,13 @@ object C {
       const val GOOGLE_DESCRIPTION = "Google Logo"
       const val SIGN_IN_ERROR_NO_CRED = "Invalid credential type"
     }
+
+    object IngredientSearchScreen {
+      const val DO_NOT_SHOW_CONFIRMATION = false
+      const val INITIAL_LOADING_STATE = false
+    }
+
+    object IngredientListScreen {}
 
     // Filter
     const val MIN_SHOULD_NOT_BE_GREATER_THAN_MAX = "min should not be greater than max"
@@ -480,6 +488,33 @@ object C {
       // progress bar value
       const val CURRENT_STEP = 2
     }
+
+    object IngredientSearchScreen {
+      const val SPACER_WEIGHT = 1f
+      const val IMAGE_WEIGHT = 4f
+      const val ICON_SCANNER_SIZE = 40
+      const val ICON_SCANNER_WEIGHT = 1f
+      const val RESULT_FONT_SIZE = 20
+      const val LOADING_COOK_WEIGHT = 1f
+      const val LOADING_COOK_SIZE = 150
+      const val POP_UP_ELEVATION = 4
+      const val POP_UP_CLIP = true
+      const val INGREDIENT_ITEM_ELEVATION = 4
+      const val INGREDIENT_ITEM_CORNER = 8
+      const val INGREDIENT_ITEM_MAX_LINE = 2
+    }
+
+    object IngredientListScreen {
+      const val NAME_SIZE = 30
+      const val INGREDIENT_LIST_SIZE = 20
+      const val INGREDIENT_LIST_WEIGHT = 6f
+      const val INGREDIENT_PREVIEW_ELEVATION = 4
+      const val INGREDIENT_PREVIEW_CORNER = 8
+      const val IMAGE_SPACER = PADDING.times(6)
+      const val INPUT_MAX_LINE = 1
+      const val BUTTON_ROUND = 4
+      const val BUTTON_Z = 1f
+    }
   }
 
   object TestTag {
@@ -499,6 +534,7 @@ object C {
 
     object Utils {
       // PLATE SWIPE SCAFFOLD
+      const val SEARCH_BAR = "searchBar"
       const val TOP_BAR = "topBar"
       const val TOP_BAR_TITLE = "topBarTitle"
       const val BACK_ARROW_ICON = "backArrowIcon"
@@ -594,6 +630,20 @@ object C {
       const val MAIN_BOX = "main box"
       const val COL_2 = "col 2"
       const val TITLE_COL = "title col"
+    }
+
+    object IngredientSearchScreen {
+      const val DRAGGABLE_ITEM = "DraggableItem"
+      const val SCANNER_ICON = "scannerIcon"
+      const val CONFIRMATION_POPUP = "confirmationPopUp"
+      const val CONFIRMATION_BUTTON = "confirmButton"
+      const val CANCEL_BUTTON = "cancelButton"
+    }
+
+    object IngredientListScreen {
+      const val RECIPE_NAME = "recipeName"
+      const val ADD_INGREDIENT_ICON = "addIngredientIcon"
+      const val NEXT_STEP_BUTTON = "nextStepButton"
     }
   }
 }

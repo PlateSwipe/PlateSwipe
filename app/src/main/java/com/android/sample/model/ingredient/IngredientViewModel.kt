@@ -83,10 +83,16 @@ class IngredientViewModel(private val repository: IngredientRepository) : ViewMo
         onFailure = { _searchingIngredientList.value = emptyList() })
   }
 
+  /**
+   * Remove ingredient
+   *
+   * @param ingredient
+   */
   fun removeIngredient(ingredient: Ingredient) {
     _ingredientList.value = _ingredientList.value.filter { it != ingredient }
   }
 
+  /** Clear search */
   fun clearSearch() {
     _searchingIngredientList.value = emptyList()
   }

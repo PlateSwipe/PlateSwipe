@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -39,12 +40,37 @@ import com.android.sample.R
 import com.android.sample.animation.LoadingCook
 import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.ingredient.IngredientViewModel
+import com.android.sample.resources.C.Dimension.IngredientSearchScreen.ICON_SCANNER_SIZE
+import com.android.sample.resources.C.Dimension.IngredientSearchScreen.ICON_SCANNER_WEIGHT
+import com.android.sample.resources.C.Dimension.IngredientSearchScreen.IMAGE_WEIGHT
+import com.android.sample.resources.C.Dimension.IngredientSearchScreen.INGREDIENT_ITEM_CORNER
+import com.android.sample.resources.C.Dimension.IngredientSearchScreen.INGREDIENT_ITEM_ELEVATION
+import com.android.sample.resources.C.Dimension.IngredientSearchScreen.INGREDIENT_ITEM_MAX_LINE
+import com.android.sample.resources.C.Dimension.IngredientSearchScreen.LOADING_COOK_SIZE
+import com.android.sample.resources.C.Dimension.IngredientSearchScreen.LOADING_COOK_WEIGHT
+import com.android.sample.resources.C.Dimension.IngredientSearchScreen.POP_UP_CLIP
+import com.android.sample.resources.C.Dimension.IngredientSearchScreen.POP_UP_ELEVATION
+import com.android.sample.resources.C.Dimension.IngredientSearchScreen.RESULT_FONT_SIZE
+import com.android.sample.resources.C.Dimension.IngredientSearchScreen.SPACER_WEIGHT
+import com.android.sample.resources.C.Tag.IngredientSearchScreen.DO_NOT_SHOW_CONFIRMATION
+import com.android.sample.resources.C.Tag.IngredientSearchScreen.INITIAL_LOADING_STATE
 import com.android.sample.resources.C.Tag.PADDING
+import com.android.sample.resources.C.TestTag.IngredientSearchScreen.CANCEL_BUTTON
+import com.android.sample.resources.C.TestTag.IngredientSearchScreen.CONFIRMATION_BUTTON
+import com.android.sample.resources.C.TestTag.IngredientSearchScreen.CONFIRMATION_POPUP
+import com.android.sample.resources.C.TestTag.IngredientSearchScreen.DRAGGABLE_ITEM
+import com.android.sample.resources.C.TestTag.IngredientSearchScreen.SCANNER_ICON
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.utils.PlateSwipeScaffold
 import com.android.sample.ui.utils.SearchBar
 
+/**
+ * A composable that displays the ingredient search screen.
+ *
+ * @param navigationActions the navigation actions.
+ * @param ingredientViewModel the view model for the ingredient.
+ */
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun IngredientSearchScreen(
@@ -57,23 +83,24 @@ fun IngredientSearchScreen(
       showBackArrow = true,
       content = { paddingValues ->
         val listIngredient = ingredientViewModel.searchingIngredientList.collectAsState()
-        var showConfirmation by remember { mutableStateOf(false) }
+        var showConfirmation by remember { mutableStateOf(DO_NOT_SHOW_CONFIRMATION) }
         var selectedIngredient by remember { mutableStateOf<Ingredient?>(null) }
-        var isLoading by remember { mutableStateOf(false) }
+        var isLoading by remember { mutableStateOf(INITIAL_LOADING_STATE) }
 
         LaunchedEffect(listIngredient.value) { isLoading = false }
 
         Column(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.testTag("DraggableItem").fillMaxSize().padding(paddingValues)) {
+            modifier = Modifier.testTag(DRAGGABLE_ITEM).fillMaxSize().padding(paddingValues)) {
               Row(
                   modifier = Modifier.fillMaxWidth().padding(PADDING.dp),
                   verticalAlignment = Alignment.CenterVertically,
                   horizontalArrangement = Arrangement.Center) {
-                    Spacer(modifier = Modifier.width(PADDING.dp).weight(1f))
+                    // Display the search bar and scanner icon
+                    Spacer(modifier = Modifier.width(PADDING.dp).weight(SPACER_WEIGHT))
                     SearchBar(
-                        modifier = Modifier.padding(PADDING.dp).weight(4f),
+                        modifier = Modifier.padding(PADDING.dp).weight(IMAGE_WEIGHT),
                         onValueChange = { query -> isLoading = query.isNotEmpty() },
                         onDebounce = { query ->
                           if (query.isNotEmpty()) {
@@ -83,29 +110,35 @@ fun IngredientSearchScreen(
                     Icon(
                         painter = painterResource(id = R.drawable.scanner),
                         modifier =
-                            Modifier.weight(1f).size(40.dp).testTag("scannerIcon").clickable {
-                              navigationActions.navigateTo(Screen.CAMERA_SCAN_CODE_BAR)
-                            },
+                            Modifier.weight(ICON_SCANNER_WEIGHT)
+                                .size(ICON_SCANNER_SIZE.dp)
+                                .testTag(SCANNER_ICON)
+                                .clickable {
+                                  navigationActions.navigateTo(Screen.CAMERA_SCAN_CODE_BAR)
+                                },
                         tint = MaterialTheme.colorScheme.onPrimary,
-                        contentDescription = "Scanner Icon")
+                        contentDescription = stringResource(R.string.scanner_instruction))
                   }
               Row(
                   modifier = Modifier.fillMaxWidth().padding(PADDING.dp),
                   horizontalArrangement = Arrangement.Start,
               ) {
                 Text(
-                    text = "Result",
-                    style = MaterialTheme.typography.titleMedium.copy(fontSize = 20.sp),
+                    text = stringResource(R.string.result),
+                    style =
+                        MaterialTheme.typography.titleMedium.copy(fontSize = RESULT_FONT_SIZE.sp),
                     color = MaterialTheme.colorScheme.onPrimary)
               }
 
+              // Display the list of ingredients
               Column(
                   modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
                   verticalArrangement = Arrangement.Center,
                   horizontalAlignment = Alignment.CenterHorizontally) {
                     if (isLoading) {
-                      LoadingCook(modifier = Modifier.weight(1f), size = 150)
-                      Spacer(modifier = Modifier.weight(1f))
+                      LoadingCook(
+                          modifier = Modifier.weight(LOADING_COOK_WEIGHT), size = LOADING_COOK_SIZE)
+                      Spacer(modifier = Modifier.weight(SPACER_WEIGHT))
                     } else {
                       for (ingredient in listIngredient.value) {
                         IngredientItem(
@@ -117,7 +150,7 @@ fun IngredientSearchScreen(
                       }
                     }
                   }
-
+              // Display the confirmation pop-up if the user selects an ingredient
               if (showConfirmation && selectedIngredient != null) {
                 ConfirmationPopUp(
                     onConfirm = {
@@ -135,6 +168,12 @@ fun IngredientSearchScreen(
       })
 }
 
+/**
+ * A composable that displays a confirmation pop-up.
+ *
+ * @param onConfirm the callback to invoke when the user confirms the action.
+ * @param onDismiss the callback to invoke when the user dismisses the pop-up.
+ */
 @Composable
 fun ConfirmationPopUp(onConfirm: () -> Unit, onDismiss: () -> Unit) {
   AlertDialog(
@@ -143,34 +182,34 @@ fun ConfirmationPopUp(onConfirm: () -> Unit, onDismiss: () -> Unit) {
           Modifier.fillMaxWidth()
               .padding(PADDING.dp)
               .shadow(
-                  elevation = 4.dp, // Adjust elevation as desired
-                  clip = true // Ensures background respects the shadow's rounded corners
+                  elevation = POP_UP_ELEVATION.dp, // Adjust elevation as desired
+                  clip = POP_UP_CLIP // Ensures background respects the shadow's rounded corners
                   )
-              .testTag("confirmationPopUp"),
+              .testTag(CONFIRMATION_POPUP),
       title = {
         Text(
-            text = "Add to Recipe?",
+            text = stringResource(R.string.pop_up_title),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onPrimary)
       },
       text = {
         Text(
-            text = "Do you want to add this ingredient to your recipe?",
+            text = stringResource(R.string.pop_up_description),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onPrimary)
       },
       confirmButton = {
-        TextButton(onClick = onConfirm, modifier = Modifier.testTag("confirmButton")) {
+        TextButton(onClick = onConfirm, modifier = Modifier.testTag(CONFIRMATION_BUTTON)) {
           Text(
-              text = "Add to Recipe",
+              text = stringResource(R.string.pop_up_confirmation),
               style = MaterialTheme.typography.titleSmall,
               color = MaterialTheme.colorScheme.onPrimary)
         }
       },
       dismissButton = {
-        TextButton(onClick = onDismiss, modifier = Modifier.testTag("cancelButton")) {
+        TextButton(onClick = onDismiss, modifier = Modifier.testTag(CANCEL_BUTTON)) {
           Text(
-              text = "Cancel",
+              text = stringResource(R.string.pop_up_cancel),
               style = MaterialTheme.typography.titleSmall,
               color = MaterialTheme.colorScheme.onPrimary)
         }
@@ -178,6 +217,12 @@ fun ConfirmationPopUp(onConfirm: () -> Unit, onDismiss: () -> Unit) {
       containerColor = MaterialTheme.colorScheme.secondary)
 }
 
+/**
+ * A composable that displays an ingredient item.
+ *
+ * @param ingredient the ingredient to display.
+ * @param onClick the callback to invoke when the ingredient item is clicked.
+ */
 @Composable
 fun IngredientItem(ingredient: Ingredient, onClick: () -> Unit) {
   Row(
@@ -185,11 +230,13 @@ fun IngredientItem(ingredient: Ingredient, onClick: () -> Unit) {
           Modifier.fillMaxWidth()
               .padding(PADDING.dp)
               .shadow(
-                  elevation = 4.dp, // Adjust elevation as desired
-                  shape = RoundedCornerShape(8.dp),
+                  elevation = INGREDIENT_ITEM_ELEVATION.dp, // Adjust elevation as desired
+                  shape = RoundedCornerShape(INGREDIENT_ITEM_CORNER.dp),
                   clip = true // Ensures background respects the shadow's rounded corners
                   )
-              .background(MaterialTheme.colorScheme.secondary, shape = RoundedCornerShape(8.dp))
+              .background(
+                  MaterialTheme.colorScheme.secondary,
+                  shape = RoundedCornerShape(INGREDIENT_ITEM_CORNER.dp))
               .testTag("ingredientItem${ingredient.name}")
               .clickable { onClick() }) {
         Column(
@@ -198,9 +245,9 @@ fun IngredientItem(ingredient: Ingredient, onClick: () -> Unit) {
             modifier = Modifier.padding(PADDING.dp)) {
               Text(
                   text = ingredient.name,
-                  style = MaterialTheme.typography.titleMedium,
+                  style = MaterialTheme.typography.titleSmall,
                   color = MaterialTheme.colorScheme.onPrimary,
-                  maxLines = 2,
+                  maxLines = INGREDIENT_ITEM_MAX_LINE,
                   overflow = TextOverflow.Ellipsis)
               ingredient.quantity?.let {
                 Text(
