@@ -102,9 +102,9 @@ class SearchRecipeScreenTest {
         .assertIsDisplayed()
         .assertTextContains(SEARCH_BAR_PLACE_HOLDER)
     composeTestRule.onNodeWithTag(SEARCH_LIST).assertIsDisplayed()
-      for(i in 0..4) {
-          composeTestRule.onNodeWithTag("recipeCard$i").assertIsDisplayed()
-      }
+    for (i in 0..4) {
+      composeTestRule.onNodeWithTag("recipeCard$i").assertIsDisplayed()
+    }
     composeTestRule.onNodeWithTag(FILTER).assertIsDisplayed()
   }
 
