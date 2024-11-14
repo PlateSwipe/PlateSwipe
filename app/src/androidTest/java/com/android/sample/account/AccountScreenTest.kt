@@ -91,7 +91,24 @@ class AccountScreenTest {
   }
 
   @Test
-  fun testAccountDisplays() {
+  fun testAccountDisplaysWithoutProfilePicture() {
+    composeTestRule.setContent {
+      SampleAppTheme { AccountScreen(mockNavigationActions, userViewModel) }
+    }
+
+    composeTestRule.onNodeWithTag(PROFILE_PICTURE_TEST_TAG).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(USERNAME_TEST_TAG).assertIsDisplayed().assertTextEquals(userName)
+    composeTestRule.onNodeWithTag(RECIPE_LIST_TEST_TAG).assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(RECIPE_TITLE_TEST_TAG, useUnmergedTree = true)
+        .assertIsDisplayed()
+        .assertTextEquals(dummyRecipes[0].strMeal)
+  }
+
+  @Test
+  fun testAccountDisplaysWithProfilePicture() {
+    userViewModel.changeProfilePictureUrl(
+        "app/src/androidTest/res/drawable/scoobygourmand_normal.jpg")
     composeTestRule.setContent {
       SampleAppTheme { AccountScreen(mockNavigationActions, userViewModel) }
     }
