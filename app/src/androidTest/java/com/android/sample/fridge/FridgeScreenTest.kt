@@ -30,6 +30,5 @@ class FridgeScreenTest {
     composeTestRule.onNodeWithText("Fridge Screen").assertIsDisplayed()
     composeTestRule.onNodeWithText("Scan Barcode").assertIsDisplayed()
     composeTestRule.onNodeWithText("Take Photo").assertIsDisplayed()
-    composeTestRule.onNodeWithText("Import Photo").assertIsDisplayed()
   }
 }

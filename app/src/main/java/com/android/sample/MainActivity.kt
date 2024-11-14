@@ -25,9 +25,6 @@ import com.android.sample.ui.account.AccountScreen
 import com.android.sample.ui.authentication.SignInScreen
 import com.android.sample.ui.camera.CameraScanCodeBarScreen
 import com.android.sample.ui.camera.CameraTakePhotoScreen
-import com.android.sample.ui.camera.DisplayImageScreen
-import com.android.sample.ui.camera.PhotoPicker
-import com.android.sample.ui.camera.CameraTakePhotoScreen
 import com.android.sample.ui.createRecipe.AddInstructionStepScreen
 import com.android.sample.ui.createRecipe.CreateRecipeScreen
 import com.android.sample.ui.createRecipe.PublishRecipeScreen
@@ -95,10 +92,8 @@ fun PlateSwipeApp() {
         CameraScanCodeBarScreen(navigationActions, ingredientViewModel)
       }
       composable(Screen.CAMERA_TAKE_PHOTO) {
-        CameraTakePhotoScreen(navigationActions, takePhotoViewModel)
+        CameraTakePhotoScreen(navigationActions, createRecipeViewModel)
       }
-      composable(Screen.CAMERA_IMPORT_PHOTO) { PhotoPicker(takePhotoViewModel) }
-      composable(Screen.DISPLAY_IMAGE) { DisplayImageScreen(takePhotoViewModel) }
     }
     navigation(
         startDestination = Screen.SEARCH,

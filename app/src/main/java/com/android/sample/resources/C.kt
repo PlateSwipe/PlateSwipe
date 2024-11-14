@@ -6,6 +6,8 @@ import com.android.sample.R
 
 // Like R, but C
 object C {
+  const val ZERO = 0
+
   object Tag {
 
     const val main_screen_container = "main_screen_container"
@@ -155,7 +157,6 @@ object C {
 
     // FirestoreRecipeRepository
     const val FIRESTORE_COLLECTION_NAME = "recipes with images"
-    const val FIRESTORE_COLLECTION_NAME = "recipes"
 
     // Values for storage
     const val FIRESTORE_RECIPE_NAME = "name"
@@ -485,15 +486,6 @@ object C {
       // progress bar value
       const val CURRENT_STEP = 2
     }
-
-    object CameraTakePhotoScreen {
-      const val BUTTON_SIZE = 0.1f
-      const val BUTTON_PADDING = 0.05f
-    }
-
-    object PhotoPicker {
-      const val PHOTO_PICKER_IMAGE_SIZE = 0.7f
-    }
   }
 
   object TestTag {
@@ -608,22 +600,6 @@ object C {
       const val MAIN_BOX = "main box"
       const val COL_2 = "col 2"
       const val TITLE_COL = "title col"
-    }
-
-    object CameraTakePhotoScreen {
-      const val BUTTON_BOX = "Take photo button box"
-      const val BUTTON = "Take photo button"
-    }
-
-    object CameraPreview {
-      const val PREVIEW = "camera_preview"
-    }
-
-    object PhotoPicker {
-      const val PHOTO_PICKER_COLUMN = "Photo picker column"
-      const val PHOTO_PICKER_BUTTON = "Photo picker button"
-      const val PHOTO_PICKER_TEXT = "Photo picker text"
-      const val PHOTO_PICKER_IMAGE = "Photo picker image"
     }
   }
 }
