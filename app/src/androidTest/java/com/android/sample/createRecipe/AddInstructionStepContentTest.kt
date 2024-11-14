@@ -2,8 +2,8 @@ package com.android.sample.createRecipe
 
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.test.espresso.intent.Intents
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.model.recipe.FirestoreRecipesRepository
 import com.android.sample.resources.C.Tag.SAVE_BUTTON_TAG
@@ -14,7 +14,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import io.mockk.*
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -26,20 +25,16 @@ class AddInstructionStepScreenTest {
   private lateinit var navigationActions: NavigationActions
   private lateinit var createRecipeViewModel: CreateRecipeViewModel
   private val firestore = mockk<FirebaseFirestore>(relaxed = true)
+  private lateinit var repoImg: ImageRepositoryFirebase
   private val repository = mockk<FirestoreRecipesRepository>(relaxed = true)
 
   @get:Rule val composeTestRule = createComposeRule()
 
   @Before
   fun setUp() {
+    repoImg = mockk(relaxed = true)
     navigationActions = mockk(relaxed = true)
-    createRecipeViewModel = spyk(CreateRecipeViewModel(repository))
-    Intents.init()
-  }
-
-  @After
-  fun tearDown() {
-    Intents.release()
+    createRecipeViewModel = spyk(CreateRecipeViewModel(repository, repoImg))
   }
 
   /** Verifies that all UI elements are displayed on the AddInstructionStepScreen. */

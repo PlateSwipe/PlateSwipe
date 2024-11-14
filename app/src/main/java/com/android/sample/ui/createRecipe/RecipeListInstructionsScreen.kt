@@ -160,7 +160,7 @@ fun RecipeListInstructionsContent(
     PlateSwipeButton(
         text = stringResource(R.string.next_step),
         modifier = Modifier.align(Alignment.CenterHorizontally).testTag(NEXT_STEP_BUTTON),
-        onClick = { navigationActions.navigateTo(Screen.PUBLISH_CREATED_RECIPE) },
+        onClick = { navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_IMAGE) },
     )
   }
 }

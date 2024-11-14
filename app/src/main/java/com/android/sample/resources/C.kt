@@ -15,6 +15,12 @@ object C {
     const val PADDING = 16
     const val SMALL_PADDING = 8
 
+    // Error
+    const val ERROR_NULL_IMAGE = "Image is null"
+    const val ERROR_STR_MEAL_BLANK = "Recipe name is required and cannot be blank."
+    const val ERROR_STR_INSTR_BLANK = "Recipe instructions are required and cannot be blank."
+    const val ERROR_LIST_INGREDIENT_EMPTY = "At least one ingredient is required."
+    const val ERROR_STR_THUMBNAIL = "Recipe thumbnail is required and cannot be blank."
     // PlateSwipeButton
     object PlateSwipeButton {
       val BUTTON_WIDTH = 261.dp
@@ -121,6 +127,7 @@ object C {
     const val USER_IMAGE_DIR = "images/user/"
     const val RECIPE_IMAGE_DIR = "images/recipe/"
     const val INGREDIENTS_IMAGE_DIR = "images/ingredient/"
+    const val TEST_IMAGE_DIR = "images/test/"
 
     // RecipeList
     const val RECIPE_LIST_CORNER_RADIUS = 12
@@ -147,7 +154,7 @@ object C {
     const val MEAL_DB_CATEGORY_ARRAY = "categories"
 
     // FirestoreRecipeRepository
-    const val FIRESTORE_COLLECTION_NAME = "recipes"
+    const val FIRESTORE_COLLECTION_NAME = "recipes with images"
     // Values for storage
     const val FIRESTORE_RECIPE_NAME = "name"
     const val FIRESTORE_RECIPE_CATEGORY = "category"
@@ -160,6 +167,7 @@ object C {
     const val FIRESTORE_RECIPE_DIFFICULTY = "difficulty"
     const val FIRESTORE_RECIPE_PRICE = "price"
     const val CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+    const val FIRESTORE_RECIPE_IMAGE_NAME = "Main"
 
     // FirestoreIngredientRepository
     const val FIRESTORE_INGREDIENT_COLLECTION_NAME = "ingredients"
@@ -247,6 +255,9 @@ object C {
         "Cannot remove more ingredients than there are in the fridge."
     const val REMOVED_INGREDIENT_NOT_IN_FRIDGE_ERROR =
         "Cannot remove an ingredient that is not in the fridge."
+
+    // Create Recipe Add Image
+    const val ADD_IMAGE_STEP = 4
   }
 
   object Values {
@@ -256,6 +267,13 @@ object C {
   }
 
   object Dimension {
+
+    const val PADDING_4 = 4
+    const val PADDING_8 = 8
+    const val PADDING_16 = 16
+    const val PADDING_24 = 24
+    const val PADDING_32 = 32
+
     object SwipePage {
       const val FILTER_ICON_SIZE = 30
       const val FILTER_ICON_WEIGHT = 1f
@@ -430,6 +448,20 @@ object C {
       const val INGREDIENT_DISPLAY_TEXT_BUTTON_PADDING_H = 8
     }
 
+    object CameraTakePhotoScreen {
+      const val BUTTON_SIZE = 0.1f
+      const val BUTTON_PADDING = 0.05f
+    }
+
+    object RecipeAddImageScreen {
+      const val CONTENT_WIDTH = 0.8f
+      const val TEXT_HEIGHT = 0.05f
+      const val SPACER = 0.03f
+      const val IMAGE = 0.3f
+      const val ICON_WEIGHT = 0.5f
+      const val ICON_SIZE = 0.1f
+    }
+
     object CreateRecipeListInstructionsScreen {
       const val REALLY_SMALL_PADDING = 4
       const val BIG_PADDING = 32
@@ -451,8 +483,18 @@ object C {
   }
 
   object TestTag {
+
     object CameraScanCodeBarScreen {
       const val BARCODE_FRAME = "Barcode frame"
+    }
+
+    object CameraTakePhotoScreen {
+      const val BUTTON_BOX = "Take photo button box"
+      const val BUTTON = "Take photo button"
+    }
+
+    object CameraPreview {
+      const val PREVIEW = "camera_preview"
     }
 
     object Utils {
@@ -537,6 +579,21 @@ object C {
       const val RECIPE_LIST_INSTRUCTIONS_SCREEN_SPACER2 = "RecipeListInstructionsScreenSpacer2"
       const val RECIPE_LIST_ITEM_THUMBNAIL = "InstructionThumbnail"
       const val RECIPE_LIST_INSTRUCTION_ICON = "InstructionIcon"
+    }
+
+    object RecipeAddImageScreen {
+      const val BOX_IMAGE = "box for image"
+      const val DISPLAY_IMAGE = "display_image"
+      const val DISPLAY_IMAGE_DEFAULT = "display_image_default"
+      const val ROW_BUTTON = "row for buttons"
+      const val CAMERA_BUTTON = "camera button"
+      const val GALLERY_BUTTON = "gallery button"
+      const val BOX_NEXT_BUTTON = "box for next button"
+      const val ROW_FOR_CHEF = "row for chef image"
+      const val MAIN_COL = "main column"
+      const val MAIN_BOX = "main box"
+      const val COL_2 = "col 2"
+      const val TITLE_COL = "title col"
     }
   }
 }

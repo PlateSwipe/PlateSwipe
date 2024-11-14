@@ -42,6 +42,9 @@ fun FridgeScreen(navigationActions: NavigationActions) {
           Button(onClick = { navigationActions.navigateTo(Screen.CAMERA_SCAN_CODE_BAR) }) {
             Text(text = stringResource(R.string.scan_barcode))
           }
+          Button(onClick = { navigationActions.navigateTo(Screen.CAMERA_TAKE_PHOTO) }) {
+            Text(text = stringResource(R.string.take_photo))
+          }
         }
   }
 }

@@ -1,5 +1,9 @@
 package com.android.sample.model.recipe
 
+import android.graphics.Bitmap
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.android.sample.feature.camera.rotateBitmap
+import com.android.sample.model.image.ImageRepositoryFirebase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -8,16 +12,26 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito.*
+import org.junit.runner.RunWith
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.times
+import org.mockito.Mockito.verify
+import org.mockito.Mockito.`when`
+import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
 
 @OptIn(ExperimentalCoroutinesApi::class)
+@RunWith(AndroidJUnit4::class)
 class CreateRecipeViewModelTest {
 
   private lateinit var mockRepository: FirestoreRecipesRepository
+  private lateinit var mockImageRepository: ImageRepositoryFirebase
   private lateinit var createRecipeViewModel: CreateRecipeViewModel
 
   @Before
@@ -26,7 +40,8 @@ class CreateRecipeViewModelTest {
     Dispatchers.setMain(testDispatcher)
 
     mockRepository = mock(FirestoreRecipesRepository::class.java)
-    createRecipeViewModel = CreateRecipeViewModel(mockRepository)
+    mockImageRepository = mock(ImageRepositoryFirebase::class.java)
+    createRecipeViewModel = CreateRecipeViewModel(mockRepository, mockImageRepository)
   }
 
   @After
@@ -43,6 +58,16 @@ class CreateRecipeViewModelTest {
         strInstructions = "Some instructions",
         strMealThumbUrl = "https://example.com/image.jpg",
         ingredientsAndMeasurements = listOf(Pair("Banana", "3")))
+  }
+
+  @Test
+  fun setBitmap() {
+    val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+    // Check if the photo is set to null by default
+    assert(createRecipeViewModel.photo.value == null)
+    createRecipeViewModel.setBitmap(bitmap, 90)
+    val rotatedBitmap = rotateBitmap(bitmap, 90)
+    assertTrue(rotatedBitmap.sameAs(createRecipeViewModel.photo.value))
   }
 
   @Test
@@ -143,14 +168,93 @@ class CreateRecipeViewModelTest {
   }
 
   @Test
-  fun `test publishRecipe publishes the recipe successfully`() = runTest {
+  fun `test publishRecipe() with null image throw IllegalArgument`() {
+    assert(createRecipeViewModel.photo.value == null)
     val defaultRecipe = createDefaultRecipe()
+    // Check that the exception is thrown with the correct message
+    `when`(mockRepository.getNewUid()).thenReturn(defaultRecipe.idMeal)
+    createRecipeViewModel.publishRecipe()
+
+    assertEquals("Image is null", createRecipeViewModel.publishStatus.value)
+  }
+
+  @Test
+  fun `test publishRecipe() with non null image call uploadImage`() {
+    val defaultRecipe = createDefaultRecipe()
+    // Check that the exception is thrown with the correct message
+    `when`(mockRepository.getNewUid()).thenReturn(defaultRecipe.idMeal)
+    val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+    createRecipeViewModel.setBitmap(bitmap, 90)
+    createRecipeViewModel.publishRecipe()
+    verify(mockImageRepository, times(1))
+        .uploadImage(any(), any(), any(), any(), onSuccess = any(), onFailure = any())
+  }
+
+  @Test
+  fun `test publishRecipe() fail to Upload Image throw IllegalArgument`() {
+    val defaultRecipe = createDefaultRecipe()
+    // Check that the exception is thrown with the correct message
+    `when`(mockRepository.getNewUid()).thenReturn(defaultRecipe.idMeal)
+    val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+    createRecipeViewModel.setBitmap(bitmap, 90)
+    `when`(
+            mockImageRepository.uploadImage(
+                any(), any(), any(), any(), onSuccess = any(), onFailure = any()))
+        .thenAnswer {
+          (it.arguments[5] as (Exception) -> Unit).invoke(Exception("Failed to upload image"))
+        }
+    createRecipeViewModel.publishRecipe()
+    assertEquals(
+        "Failed to publish recipe: Failed to upload image",
+        createRecipeViewModel.publishStatus.value)
+  }
+
+  @Test
+  fun `test publisRecipe() with correct image call addRecipe`() = runTest {
+    val defaultRecipe = createDefaultRecipe()
+    val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
     createRecipeViewModel.updateRecipeName(defaultRecipe.strMeal)
     createRecipeViewModel.updateRecipeInstructions(defaultRecipe.strInstructions)
-    createRecipeViewModel.updateRecipeThumbnail(defaultRecipe.strMealThumbUrl)
     createRecipeViewModel.addIngredient("Banana", "3")
+    createRecipeViewModel.setBitmap(bitmap, 90)
 
     `when`(mockRepository.getNewUid()).thenReturn(defaultRecipe.idMeal)
+
+    `when`(
+            mockImageRepository.uploadImage(
+                any(), any(), any(), any(), onSuccess = any(), onFailure = any()))
+        .thenAnswer { invocation ->
+          val onSuccessCallback = invocation.arguments[4] as () -> Unit
+          onSuccessCallback()
+        }
+
+    createRecipeViewModel.publishRecipe()
+
+    // Ensure all coroutines have completed
+    advanceUntilIdle()
+
+    verify(mockRepository, times(1)).addRecipe(any(), any(), any())
+  }
+
+  @Test
+  fun `test publishRecipe publishes the recipe successfully`() = runTest {
+    val defaultRecipe = createDefaultRecipe()
+    val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+
+    createRecipeViewModel.updateRecipeName(defaultRecipe.strMeal)
+    createRecipeViewModel.updateRecipeInstructions(defaultRecipe.strInstructions)
+    createRecipeViewModel.addIngredient("Banana", "3")
+    createRecipeViewModel.setBitmap(bitmap, 90)
+
+    `when`(mockRepository.getNewUid()).thenReturn(defaultRecipe.idMeal)
+
+    `when`(
+            mockImageRepository.uploadImage(
+                any(), any(), any(), any(), onSuccess = any(), onFailure = any()))
+        .thenAnswer { invocation ->
+          val onSuccessCallback = invocation.arguments[4] as () -> Unit
+          onSuccessCallback()
+        }
 
     val recipeCaptor = argumentCaptor<Recipe>()
     val onSuccessCaptor = argumentCaptor<() -> Unit>()
@@ -165,7 +269,7 @@ class CreateRecipeViewModelTest {
     assertEquals(defaultRecipe.idMeal, recipeCaptor.firstValue.idMeal)
     assertEquals(defaultRecipe.strMeal, recipeCaptor.firstValue.strMeal)
     assertEquals(defaultRecipe.strInstructions, recipeCaptor.firstValue.strInstructions)
-    assertEquals(defaultRecipe.strMealThumbUrl, recipeCaptor.firstValue.strMealThumbUrl)
+    assertEquals(defaultRecipe.idMeal, recipeCaptor.firstValue.strMealThumbUrl)
     assertEquals(
         defaultRecipe.ingredientsAndMeasurements,
         recipeCaptor.firstValue.ingredientsAndMeasurements)
@@ -179,12 +283,23 @@ class CreateRecipeViewModelTest {
   fun `test publishRecipe handles failure correctly`() = runTest {
     val exception = Exception("Network error")
 
-    createRecipeViewModel.updateRecipeName("Test Recipe")
-    createRecipeViewModel.updateRecipeInstructions("Some instructions")
-    createRecipeViewModel.updateRecipeThumbnail("https://example.com/image.jpg")
-    createRecipeViewModel.addIngredient("Banana", "3")
+    val defaultRecipe = createDefaultRecipe()
+    val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
 
-    `when`(mockRepository.getNewUid()).thenReturn("unique-id")
+    createRecipeViewModel.updateRecipeName(defaultRecipe.strMeal)
+    createRecipeViewModel.updateRecipeInstructions(defaultRecipe.strInstructions)
+    createRecipeViewModel.addIngredient("Banana", "3")
+    createRecipeViewModel.setBitmap(bitmap, 90)
+
+    `when`(mockRepository.getNewUid()).thenReturn(defaultRecipe.idMeal)
+
+    `when`(
+            mockImageRepository.uploadImage(
+                any(), any(), any(), any(), onSuccess = any(), onFailure = any()))
+        .thenAnswer { invocation ->
+          val onSuccessCallback = invocation.arguments[4] as () -> Unit
+          onSuccessCallback()
+        }
 
     val recipeCaptor = argumentCaptor<Recipe>()
     val onSuccessCaptor = argumentCaptor<() -> Unit>()

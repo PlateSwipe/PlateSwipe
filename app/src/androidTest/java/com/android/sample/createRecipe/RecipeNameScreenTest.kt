@@ -1,18 +1,19 @@
-package com.android.sample.ui.createRecipe
+package com.android.sample.createRecipe
 
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
+import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.model.recipe.FirestoreRecipesRepository
 import com.android.sample.resources.C.Tag.SCREEN_HEIGHT_THRESHOLD
 import com.android.sample.resources.C.Tag.SCREEN_WIDTH_THRESHOLD
+import com.android.sample.ui.createRecipe.RecipeNameScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.google.firebase.firestore.FirebaseFirestore
 import io.mockk.*
 import kotlinx.coroutines.test.runTest
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -23,6 +24,7 @@ class RecipeNameScreenTest {
 
   private lateinit var mockNavigationActions: NavigationActions
   private lateinit var createRecipeViewModel: CreateRecipeViewModel
+  private lateinit var repoImg: ImageRepositoryFirebase
 
   @Before
   fun setUp() = runTest {
@@ -31,15 +33,11 @@ class RecipeNameScreenTest {
     // Mock Firestore and Repository for use in ViewModel
     val firestore = mockk<FirebaseFirestore>(relaxed = true)
     val repository = FirestoreRecipesRepository(firestore)
-    createRecipeViewModel = spyk(CreateRecipeViewModel(repository)) // Spy to verify calls
+    repoImg = mockk(relaxed = true)
+    createRecipeViewModel = spyk(CreateRecipeViewModel(repository, repoImg)) // Spy to verify calls
 
     // Set the content for testing
 
-  }
-
-  @After
-  fun tearDown() {
-    // Add any necessary cleanup here
   }
 
   /** Tests if all components of RecipeNameScreen are displayed. */

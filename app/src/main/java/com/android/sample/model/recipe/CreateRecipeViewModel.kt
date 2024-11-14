@@ -1,11 +1,22 @@
 package com.android.sample.model.recipe
 
+import android.graphics.Bitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.android.sample.feature.camera.rotateBitmap
+import com.android.sample.model.image.ImageDirectoryType
+import com.android.sample.model.image.ImageRepository
+import com.android.sample.model.image.ImageRepositoryFirebase
+import com.android.sample.resources.C
+import com.android.sample.resources.C.Tag.ERROR_NULL_IMAGE
 import com.android.sample.resources.C.Tag.RECIPE_PUBLISHED_SUCCESS_MESSAGE
 import com.android.sample.resources.C.Tag.RECIPE_PUBLISH_ERROR_MESSAGE
 import com.android.sample.ui.createRecipe.IconType
+import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.storage
+import kotlin.NullPointerException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -14,7 +25,10 @@ import kotlinx.coroutines.flow.StateFlow
  *
  * @property repository The repository used to add the recipe to Firestore.
  */
-class CreateRecipeViewModel(private val repository: FirestoreRecipesRepository) : ViewModel() {
+class CreateRecipeViewModel(
+    private val repository: RecipesRepository,
+    private val repoImg: ImageRepository
+) : ViewModel() {
 
   val recipeBuilder = RecipeBuilder()
 
@@ -34,6 +48,25 @@ class CreateRecipeViewModel(private val repository: FirestoreRecipesRepository) 
   private val _publishStatus = MutableStateFlow<String?>(null)
   val publishStatus: StateFlow<String?>
     get() = _publishStatus
+
+  // MutableStateFlow to hold the Bitmap photo
+  private val _photo = MutableStateFlow<Bitmap?>(null)
+
+  /** StateFlow to expose the photo as an immutable state. */
+  val photo: StateFlow<Bitmap?>
+    get() = _photo
+
+  /**
+   * Sets the Bitmap photo and rotate it if needed.
+   *
+   * @param bitmap The Bitmap to set.
+   * @param rotation The rotation needed for the bitmap to be in the right orientation.
+   */
+  fun setBitmap(bitmap: Bitmap, rotation: Int) {
+    if (_photo.value != bitmap) {
+      rotateBitmap(bitmap, rotation).let { rotatedBitmap -> _photo.value = rotatedBitmap }
+    }
+  }
 
   /**
    * Updates the name of the recipe.
@@ -245,21 +278,35 @@ class CreateRecipeViewModel(private val repository: FirestoreRecipesRepository) 
   /** Publishes the recipe to the repository. */
   fun publishRecipe() {
     val newUid = repository.getNewUid()
-    require(newUid.isNotBlank()) { "Recipe ID must not be blank." }
     recipeBuilder.setId(newUid)
-
     try {
-      val recipe = recipeBuilder.build()
-      repository.addRecipe(
-          recipe,
-          onSuccess = {
-            _publishStatus.value = RECIPE_PUBLISHED_SUCCESS_MESSAGE
-            recipeBuilder.clear()
-          },
-          onFailure = { exception ->
-            _publishStatus.value = RECIPE_PUBLISH_ERROR_MESSAGE.format(exception.message)
-          })
-    } catch (e: IllegalArgumentException) {
+      if (_photo.value != null) {
+        repoImg.uploadImage(
+            newUid,
+            C.Tag.FIRESTORE_RECIPE_IMAGE_NAME,
+            ImageDirectoryType.TEST,
+            _photo.value!!.asImageBitmap(),
+            onSuccess = {
+              // Set the Image UID to the Builder
+              recipeBuilder.setPictureID(newUid)
+              val recipe = recipeBuilder.build()
+              repository.addRecipe(
+                  recipe,
+                  onSuccess = {
+                    _publishStatus.value = RECIPE_PUBLISHED_SUCCESS_MESSAGE
+                    recipeBuilder.clear()
+                  },
+                  onFailure = { exception ->
+                    _publishStatus.value = RECIPE_PUBLISH_ERROR_MESSAGE.format(exception.message)
+                  })
+            },
+            onFailure = { exception ->
+              _publishStatus.value = RECIPE_PUBLISH_ERROR_MESSAGE.format(exception.message)
+            })
+      } else {
+        throw NullPointerException(ERROR_NULL_IMAGE)
+      }
+    } catch (e: NullPointerException) {
       _publishStatus.value = e.message
     }
   }
@@ -302,7 +349,8 @@ class CreateRecipeViewModel(private val repository: FirestoreRecipesRepository) 
           override fun <T : ViewModel> create(modelClass: Class<T>): T {
             val firestore = FirebaseFirestore.getInstance()
             val repository = FirestoreRecipesRepository(firestore)
-            return CreateRecipeViewModel(repository) as T
+            val repoImg = ImageRepositoryFirebase(Firebase.storage)
+            return CreateRecipeViewModel(repository, repoImg) as T
           }
         }
   }
