@@ -226,19 +226,22 @@ object C {
     val CHEF_IMAGE_CORNER_RADIUS = 16.dp
     val CHEF_IMAGE_STANDING_ORIGINAL_RATIO = 224 / 300f
 
-    // Initial step value for recipe creation flow
+    // RecipeProgressBar
     const val INITIAL_RECIPE_STEP = 0
+    const val SECOND_STEP_OF_THE_CREATION = 1
+    const val THIRD_STEP_OF_THE_CREATION = 2
 
-    // RecipeNameScreen Specific Constants
+    // RecipeNameScreen
     val RECIPE_NAME_BASE_PADDING = 16.dp
-    val RECIPE_NAME_FIELD_SPACING = 30.dp
-    val RECIPE_NAME_BUTTON_WIDTH = 261.dp
     val RECIPE_NAME_BUTTON_HEIGHT = 46.dp
+    val RECIPE_NAME_BUTTON_WIDTH = 261.dp
     val RECIPE_NAME_FIELD_HEIGHT = 60.dp
     val RECIPE_NAME_FONT_SPACING = 0.14.sp
     val RECIPE_NAME_CHARACTER_LIMIT = 50
     const val SCREEN_WIDTH_THRESHOLD = 400
     const val SCREEN_HEIGHT_THRESHOLD = 865
+    val CORNER_SHAPE_TEXT_FIELD = 8
+    val MAXLINES_RECIPE_NAME_FIELD = 2
 
     // RecipeStepScreen
     val BASE_PADDING = 16.dp
@@ -248,11 +251,24 @@ object C {
 
     // AddInstructionStepScreen
     const val HORIZONTAL_PADDING = 16
+    const val CONTAINER_PADDING = 16
+    const val SPACE_BETWEEN_ELEMENTS = 16
+    const val INSTRUCTION_VERTICAL_PADDING = 8
     const val SAVE_BUTTON_TAG = "saveButton"
+    const val MAXLINES_TIME_FIELD = 1
+    const val MINLINES_VISIBLE_FOR_INSTRUCTION = 10
+    const val MAXLINES_VISIBLE_FOR_INSTRUCTION = 10
+    const val TIME_CHARACTER_LIMIT = 4
+
+    // IconDropdownMenu
+    const val HORIZONTAL_PADDING_ICON_DROPDOWN = 8
+    const val VERTICAL_PADDING_ICON_DROPDOWN = 19
+    const val SIZE_DROPDOWN_ICON = 24
 
     // PublishRecipeScreen
     val CHEF_IMAGE_DESCRIPTION = "Chef illustration inside an egg"
     val CHEF_IN_EGG_ORIGINAL_RATIO = 412 / 500f
+    const val CORNER_SHAPE_PUBLISH_BUTTON = 8
 
     // CreateRecipeViewModel
     const val RECIPE_PUBLISHED_SUCCESS_MESSAGE = "Recipe published successfully!"

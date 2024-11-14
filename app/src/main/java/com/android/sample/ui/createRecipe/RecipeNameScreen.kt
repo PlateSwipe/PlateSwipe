@@ -15,20 +15,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.android.sample.R
 import com.android.sample.model.recipe.CreateRecipeViewModel
+import com.android.sample.resources.C.Tag.CORNER_SHAPE_TEXT_FIELD
+import com.android.sample.resources.C.Tag.MAXLINES_RECIPE_NAME_FIELD
 import com.android.sample.resources.C.Tag.RECIPE_NAME_BASE_PADDING
-import com.android.sample.resources.C.Tag.RECIPE_NAME_BUTTON_HEIGHT
 import com.android.sample.resources.C.Tag.RECIPE_NAME_BUTTON_WIDTH
 import com.android.sample.resources.C.Tag.RECIPE_NAME_CHARACTER_LIMIT
 import com.android.sample.resources.C.Tag.RECIPE_NAME_FIELD_HEIGHT
-import com.android.sample.resources.C.Tag.RECIPE_NAME_FIELD_SPACING
 import com.android.sample.resources.C.Tag.RECIPE_NAME_FONT_SPACING
 import com.android.sample.resources.C.Tag.SCREEN_HEIGHT_THRESHOLD
 import com.android.sample.resources.C.Tag.SCREEN_WIDTH_THRESHOLD
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.*
+import com.android.sample.ui.utils.PlateSwipeButton
 
 /**
  * Composable function that displays the screen for entering a recipe name.
@@ -50,11 +52,13 @@ fun RecipeNameScreen(
   val screenWidthDp = configuration.screenWidthDp
   val screenHeightDp = configuration.screenHeightDp
 
-  var recipeName by remember { mutableStateOf(TextFieldValue("")) }
+  var recipeName by remember {
+    mutableStateOf(TextFieldValue(createRecipeViewModel.getRecipeName()))
+  }
   var showError by remember { mutableStateOf(false) }
 
   Box(
-      modifier = modifier.padding(RECIPE_NAME_BASE_PADDING),
+      modifier = modifier.padding(RECIPE_NAME_BASE_PADDING / 2),
       contentAlignment = Alignment.TopCenter) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -63,20 +67,20 @@ fun RecipeNameScreen(
               // Display the progress bar for the current step
               RecipeProgressBar(currentStep = currentStep)
 
-              Spacer(modifier = Modifier.height(RECIPE_NAME_FIELD_SPACING))
+              Spacer(modifier = Modifier.weight(0.1f))
 
               // Display the title text
               Text(
                   text = stringResource(R.string.create_your_recipe),
-                  style = MaterialTheme.typography.titleLarge,
+                  style = Typography.displayLarge,
                   color = MaterialTheme.colorScheme.onPrimary,
                   modifier =
                       Modifier.fillMaxWidth()
-                          .padding(horizontal = RECIPE_NAME_BASE_PADDING * 2)
+                          .padding(horizontal = RECIPE_NAME_BASE_PADDING)
                           .testTag("RecipeTitle"),
                   textAlign = TextAlign.Center)
 
-              Spacer(modifier = Modifier.height(RECIPE_NAME_FIELD_SPACING / 3))
+              Spacer(modifier = Modifier.weight(0.1f))
 
               // Display the description text
               Text(
@@ -90,67 +94,67 @@ fun RecipeNameScreen(
                           .testTag("RecipeSubtitle"),
                   textAlign = TextAlign.Center)
 
-              Spacer(modifier = Modifier.height(RECIPE_NAME_FIELD_SPACING))
+              Spacer(modifier = Modifier.weight(0.2f))
 
-              Column(modifier = Modifier.fillMaxWidth()) {
-                // Display the label for the recipe name field
-                Text(
-                    text = stringResource(R.string.recipe_name_label),
-                    style =
-                        MaterialTheme.typography.bodySmall.copy(
-                            fontFamily = Roboto,
-                            fontWeight = FontWeight.Bold,
-                            letterSpacing = RECIPE_NAME_FONT_SPACING),
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier.padding(horizontal = RECIPE_NAME_BASE_PADDING))
+              // Display the label for the recipe name field
+              Text(
+                  text = stringResource(R.string.recipe_name_label),
+                  style =
+                      MaterialTheme.typography.bodySmall.copy(
+                          fontFamily = Roboto,
+                          fontWeight = FontWeight.Bold,
+                          letterSpacing = RECIPE_NAME_FONT_SPACING),
+                  color = MaterialTheme.colorScheme.onPrimary,
+                  modifier =
+                      Modifier.padding(horizontal = RECIPE_NAME_BASE_PADDING)
+                          .align(Alignment.Start))
 
-                Spacer(modifier = Modifier.height(RECIPE_NAME_BASE_PADDING / 2))
+              Spacer(modifier = Modifier.height(RECIPE_NAME_BASE_PADDING / 2))
 
-                // Input field for the recipe name
-                OutlinedTextField(
-                    value = recipeName,
-                    onValueChange = { newName ->
-                      handleRecipeNameChange(
-                          newName = newName,
-                          onRecipeNameChange = { recipeName = it },
-                          onShowErrorChange = { showError = it })
-                    },
-                    label = getLabelText(recipeName),
-                    shape = RoundedCornerShape(8.dp),
-                    modifier =
-                        Modifier.fillMaxWidth()
-                            .padding(horizontal = RECIPE_NAME_BASE_PADDING)
-                            .background(lightCream, shape = RoundedCornerShape(8.dp))
-                            .testTag("recipeNameTextField"),
-                    colors =
-                        TextFieldDefaults.outlinedTextFieldColors(
-                            unfocusedBorderColor = Color.Transparent,
-                            focusedBorderColor = Color.Transparent,
-                        ),
-                    textStyle = MaterialTheme.typography.bodyMedium,
-                    maxLines = 2)
+              // Input field for the recipe name
+              OutlinedTextField(
+                  value = recipeName,
+                  onValueChange = { newName ->
+                    handleRecipeNameChange(
+                        newName = newName,
+                        onRecipeNameChange = { recipeName = it },
+                        onShowErrorChange = { showError = it })
+                  },
+                  placeholder = getLabelText(recipeName),
+                  shape = RoundedCornerShape(8.dp),
+                  modifier =
+                      Modifier.fillMaxWidth()
+                          .padding(horizontal = RECIPE_NAME_BASE_PADDING)
+                          .background(
+                              lightCream, shape = RoundedCornerShape(CORNER_SHAPE_TEXT_FIELD.dp))
+                          .testTag("recipeNameTextField"),
+                  colors =
+                      TextFieldDefaults.outlinedTextFieldColors(
+                          unfocusedBorderColor = Color.Transparent,
+                          focusedBorderColor = Color.Transparent,
+                      ),
+                  textStyle = MaterialTheme.typography.bodyMedium,
+                  maxLines = MAXLINES_RECIPE_NAME_FIELD)
 
-                // Display error message if recipe name is empty
-                Column(modifier = Modifier.weight(0.3f).align(Alignment.CenterHorizontally)) {
-                  getErrorMessage(showError).invoke()
-                }
-                Spacer(modifier = Modifier.weight(0.4f))
+              getErrorMessage(showError).invoke()
 
-                // Display the chef image if the screen dimensions are large enough
-                if (shouldDisplayChefImage(screenWidthDp, screenHeightDp)) {
-                  Row(
-                      modifier = Modifier.weight(0.6f),
-                      verticalAlignment = Alignment.CenterVertically) {
-                        Spacer(modifier = Modifier.weight(0.2f))
-                        ChefImage(modifier = Modifier.weight(0.6f).testTag("ChefImage"))
-                      }
-                }
-                Spacer(modifier = Modifier.weight(0.4f))
+              Spacer(modifier = Modifier.weight(0.6f))
+
+              // Display the chef image if the screen dimensions are large enough
+              if (shouldDisplayChefImage(screenWidthDp, screenHeightDp)) {
+                Row(
+                    modifier = Modifier.weight(0.6f),
+                    verticalAlignment = Alignment.CenterVertically) {
+                      ChefImage(modifier = Modifier.weight(0.6f).testTag("ChefImage").zIndex(-1f))
+                    }
               }
+              Spacer(modifier = Modifier.weight(0.35f))
             }
 
         // Button to proceed to the next step
-        Button(
+        PlateSwipeButton(
+            stringResource(R.string.next_step),
+            modifier = Modifier.align(Alignment.BottomCenter).testTag("NextStepButton"),
             onClick = {
               handleOnClick(
                   recipeName = recipeName,
@@ -159,16 +163,7 @@ fun RecipeNameScreen(
                   onNavigateToNextScreen = {
                     navigationActions.navigateTo(Screen.CREATE_RECIPE_INGREDIENTS)
                   })
-            },
-            modifier =
-                Modifier.align(Alignment.BottomCenter)
-                    .width(RECIPE_NAME_BUTTON_WIDTH)
-                    .height(RECIPE_NAME_BUTTON_HEIGHT)
-                    .background(color = lightCream, shape = RoundedCornerShape(size = 4.dp))
-                    .testTag("NextStepButton"),
-            shape = RoundedCornerShape(4.dp)) {
-              Text(stringResource(R.string.next_step))
-            }
+            })
       }
 }
 
@@ -222,7 +217,7 @@ fun getErrorMessage(showError: Boolean): @Composable () -> Unit {
           text = stringResource(R.string.recipe_name_error),
           color = MaterialTheme.colorScheme.error,
           style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-          modifier = Modifier.padding(top = RECIPE_NAME_BASE_PADDING / 2))
+          modifier = Modifier.zIndex(1f))
     }
   }
 }
