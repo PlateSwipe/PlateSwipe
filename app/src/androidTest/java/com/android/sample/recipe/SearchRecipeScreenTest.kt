@@ -1,4 +1,4 @@
-package com.android.sample.utils
+package com.android.sample.recipe
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextContains
@@ -26,7 +26,7 @@ import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.anyOrNull
 
-class searchRecipeScreenTest {
+class SearchRecipeScreenTest {
   private lateinit var mockNavigationActions: NavigationActions
   private lateinit var mockRepository: RecipesRepository
   private lateinit var recipesViewModel: RecipesViewModel
@@ -102,6 +102,9 @@ class searchRecipeScreenTest {
         .assertIsDisplayed()
         .assertTextContains(SEARCH_BAR_PLACE_HOLDER)
     composeTestRule.onNodeWithTag(SEARCH_LIST).assertIsDisplayed()
+      for(i in 0..4) {
+          composeTestRule.onNodeWithTag("recipeCard$i").assertIsDisplayed()
+      }
     composeTestRule.onNodeWithTag(FILTER).assertIsDisplayed()
   }
 
