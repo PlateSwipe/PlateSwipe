@@ -1,8 +1,9 @@
-package com.android.sample.ui.createRecipe
+package com.android.sample.createRecipe
 
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import com.android.sample.model.recipe.CreateRecipeViewModel
+import com.android.sample.ui.createRecipe.RecipeIngredientsScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import io.mockk.mockk

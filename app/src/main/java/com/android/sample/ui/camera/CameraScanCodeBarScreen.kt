@@ -114,6 +114,7 @@ fun BarCodeFrame() {
               .testTag(C.TestTag.CameraScanCodeBarScreen.BARCODE_FRAME),
       contentAlignment = Alignment.Center) {}
 }
+
 /** Display the ingredient overlay */
 @Composable
 fun IngredientOverlay(

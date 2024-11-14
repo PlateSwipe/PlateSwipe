@@ -119,7 +119,6 @@ import com.android.sample.resources.C.Tag.SignInScreen.COOK_DESCRIPTION
 import com.android.sample.resources.C.Tag.SignInScreen.GOOGLE_DESCRIPTION
 import com.android.sample.resources.C.Tag.SignInScreen.LOGIN_FAILED
 import com.android.sample.resources.C.Tag.SignInScreen.LOGIN_SUCCESSFUL
-import com.android.sample.resources.C.Tag.SignInScreen.NONCE
 import com.android.sample.resources.C.Tag.SignInScreen.PLATE
 import com.android.sample.resources.C.Tag.SignInScreen.ROTATION_LABEL
 import com.android.sample.resources.C.Tag.SignInScreen.SHIFTING_SPACE_TITLE
@@ -148,7 +147,7 @@ import com.android.sample.resources.C.TestTag.SignInScreen.TACO
 import com.android.sample.resources.C.TestTag.SignInScreen.TOMATO
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
-import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
@@ -172,16 +171,11 @@ fun SignInScreen(navigationActions: NavigationActions) {
   val activityContext = LocalContext.current
   val token = stringResource(R.string.default_web_client_id)
 
-  val googleIdOption: GetGoogleIdOption =
-      GetGoogleIdOption.Builder()
-          .setFilterByAuthorizedAccounts(true)
-          .setServerClientId(token)
-          .setAutoSelectEnabled(true)
-          .setNonce(NONCE)
-          .build()
+  val getSignInWithGoogleOption: GetSignInWithGoogleOption =
+      GetSignInWithGoogleOption.Builder(token).build()
 
   val request: GetCredentialRequest =
-      GetCredentialRequest.Builder().addCredentialOption(googleIdOption).build()
+      GetCredentialRequest.Builder().addCredentialOption(getSignInWithGoogleOption).build()
 
   // The main container for the screen
   Scaffold(

@@ -12,6 +12,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.android.sample.resources.C.Dimension.CameraScanCodeBarScreen.BOTTOM_BAR_HEIGHT
 
 @Composable
 fun BottomNavigationMenu(
@@ -20,7 +21,8 @@ fun BottomNavigationMenu(
     selectedItem: String
 ) {
   NavigationBar(
-      modifier = Modifier.fillMaxWidth().height(60.dp).testTag("bottomNavigationMenu"),
+      modifier =
+          Modifier.fillMaxWidth().height(BOTTOM_BAR_HEIGHT.dp).testTag("bottomNavigationMenu"),
       content = {
         tabList.forEach { tab ->
           NavigationBarItem(
