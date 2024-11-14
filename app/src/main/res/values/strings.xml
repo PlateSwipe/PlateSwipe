@@ -85,7 +85,6 @@
     <string name="RecipeListInstructionsScreen_Instructions">Instructions</string>
     <string name="RecipeListInstructionsScreen_Step">Step</string>
     <string name="RecipeListInstructionsScreen_Minutes">min</string>
-    <string name="error_loading_image">Error loading image</string>
 
 
 </resources>
