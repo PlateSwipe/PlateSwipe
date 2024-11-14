@@ -9,7 +9,6 @@
     <string name="plate_swipe_title">Plate Swipe</string>
 
     <string name="search_bar_place_holder">Search</string>
-    <string name="scan_barcode">Scan Barcode</string>
     <string name="fridge_screen">Fridge Screen</string>
     <string name="fridge_screen_description">Work in progress…stay tuned!</string>
     <string name="add_to_fridge">Add to Fridge</string>
@@ -86,6 +85,7 @@
     <string name="RecipeListInstructionsScreen_Instructions">Instructions</string>
     <string name="RecipeListInstructionsScreen_Step">Step</string>
     <string name="RecipeListInstructionsScreen_Minutes">min</string>
+    <string name="image_failed_to_load">Image failed to load</string>
 
 
 </resources>

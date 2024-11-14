@@ -1,6 +1,7 @@
 package com.android.sample.ui.createRecipe
 
 import android.graphics.Bitmap
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -140,11 +141,17 @@ fun AddImageContent(
   // Collect the photo bitmap from the ViewModel's StateFlow
   val bitmap: Bitmap? by createRecipeViewModel.photo.collectAsState()
   val isPictureTaken by remember { derivedStateOf { bitmap != null } }
-  // Launcher for the photo picker activity
+  // Launcher for the photo picker activity ( built-in option to  pick an image from the gallery)
   val photoPickerLauncher =
       rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia()) { uri
         ->
-        createRecipeViewModel.setBitmap(uriToBitmap(context, uri!!)!!, ZERO)
+        if (uri != null) {
+          createRecipeViewModel.setBitmap(uriToBitmap(context, uri)!!, ZERO)
+        } else {
+          Toast.makeText(
+                  context, context.getString(R.string.image_failed_to_load), Toast.LENGTH_SHORT)
+              .show()
+        }
       }
   Column(
       modifier =
