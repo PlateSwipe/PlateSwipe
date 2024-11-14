@@ -73,7 +73,7 @@ fun IngredientSearchScreen(
                   horizontalArrangement = Arrangement.Center) {
                     Spacer(modifier = Modifier.width(PADDING.dp).weight(1f))
                     SearchBar(
-                        modifier = Modifier.padding(PADDING.dp).weight(4f).testTag("DraggableItem"),
+                        modifier = Modifier.padding(PADDING.dp).weight(4f),
                         onValueChange = { query ->
                           ingredientViewModel.fetchIngredientByName(query)
                         },
@@ -86,7 +86,7 @@ fun IngredientSearchScreen(
                     Icon(
                         painter = painterResource(id = R.drawable.scanner),
                         modifier =
-                            Modifier.weight(1f).size(40.dp).clickable {
+                            Modifier.weight(1f).size(40.dp).testTag("scannerIcon").clickable {
                               navigationActions.navigateTo(Screen.CAMERA_SCAN_CODE_BAR)
                             },
                         tint = MaterialTheme.colorScheme.onPrimary,
@@ -124,7 +124,7 @@ fun IngredientSearchScreen(
               if (showConfirmation && selectedIngredient != null) {
                 ConfirmationPopUp(
                     onConfirm = {
-                      ingredientViewModel.addBarCodeIngredient(selectedIngredient!!)
+                      ingredientViewModel.addIngredient(selectedIngredient!!)
                       selectedIngredient = null
                       showConfirmation = false
                       navigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
@@ -142,6 +142,14 @@ fun IngredientSearchScreen(
 fun ConfirmationPopUp(onConfirm: () -> Unit, onDismiss: () -> Unit) {
   AlertDialog(
       onDismissRequest = onDismiss,
+      modifier =
+          Modifier.fillMaxWidth()
+              .padding(PADDING.dp)
+              .shadow(
+                  elevation = 4.dp, // Adjust elevation as desired
+                  clip = true // Ensures background respects the shadow's rounded corners
+                  )
+              .testTag("confirmationPopUp"),
       title = {
         Text(
             text = "Add to Recipe?",
@@ -155,7 +163,7 @@ fun ConfirmationPopUp(onConfirm: () -> Unit, onDismiss: () -> Unit) {
             color = MaterialTheme.colorScheme.onPrimary)
       },
       confirmButton = {
-        TextButton(onClick = onConfirm) {
+        TextButton(onClick = onConfirm, modifier = Modifier.testTag("confirmButton")) {
           Text(
               text = "Add to Recipe",
               style = MaterialTheme.typography.titleSmall,
@@ -163,21 +171,14 @@ fun ConfirmationPopUp(onConfirm: () -> Unit, onDismiss: () -> Unit) {
         }
       },
       dismissButton = {
-        TextButton(onClick = onDismiss) {
+        TextButton(onClick = onDismiss, modifier = Modifier.testTag("cancelButton")) {
           Text(
               text = "Cancel",
               style = MaterialTheme.typography.titleSmall,
               color = MaterialTheme.colorScheme.onPrimary)
         }
       },
-      containerColor = MaterialTheme.colorScheme.secondary,
-      modifier =
-          Modifier.fillMaxWidth()
-              .padding(PADDING.dp)
-              .shadow(
-                  elevation = 4.dp, // Adjust elevation as desired
-                  clip = true // Ensures background respects the shadow's rounded corners
-                  ))
+      containerColor = MaterialTheme.colorScheme.secondary)
 }
 
 @Composable
@@ -192,6 +193,7 @@ fun IngredientItem(ingredient: Ingredient, onClick: () -> Unit) {
                   clip = true // Ensures background respects the shadow's rounded corners
                   )
               .background(MaterialTheme.colorScheme.secondary, shape = RoundedCornerShape(8.dp))
+              .testTag("ingredientItem${ingredient.name}")
               .clickable { onClick() }) {
         Column(
             verticalArrangement = Arrangement.Center,
