@@ -15,8 +15,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -126,10 +126,7 @@ fun IngredientOverlay(
       Box(
           modifier =
               Modifier.fillMaxWidth()
-                  .height(
-                      (C.Dimension.CameraScanCodeBarScreen.INGREDIENT_OVERLAY_HEIGHT *
-                              LocalConfiguration.current.screenWidthDp)
-                          .dp)
+                  .height((C.Dimension.CameraScanCodeBarScreen.INGREDIENT_OVERLAY_HEIGHT).dp)
                   .wrapContentHeight()) {
             // Display the ingredient details
             IngredientDisplay(ingredient = ingredient!!, viewModel, navigationActions)
@@ -199,7 +196,7 @@ fun IngredientDisplay(
           verticalArrangement = Arrangement.Center) {
             Text(
                 text = ingredient.name,
-                style = MaterialTheme.typography.h6,
+                style = MaterialTheme.typography.titleMedium,
                 modifier =
                     Modifier.padding(
                         vertical =
@@ -212,7 +209,7 @@ fun IngredientDisplay(
                                 .dp))
             Text(
                 text = ingredient.brands ?: "",
-                style = MaterialTheme.typography.body2,
+                style = MaterialTheme.typography.bodyMedium,
                 modifier =
                     Modifier.padding(
                         vertical =
@@ -238,7 +235,11 @@ fun IngredientDisplay(
                             C.Dimension.CameraScanCodeBarScreen
                                 .INGREDIENT_DISPLAY_TEXT_BUTTON_PADDING_H
                                 .dp)) {
-                  Text(text = stringResource(R.string.add_to_fridge))
+                  Text(
+                      text = stringResource(R.string.add_to_fridge),
+                      style = MaterialTheme.typography.bodySmall,
+                      color = MaterialTheme.colorScheme.onPrimary,
+                  )
                 }
           }
     }
