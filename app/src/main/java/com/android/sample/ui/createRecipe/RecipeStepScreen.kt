@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.android.sample.resources.C.Tag.BASE_PADDING
 import com.android.sample.ui.navigation.NavigationActions
@@ -67,11 +66,7 @@ fun RecipeStepScreen(
                     text = subtitle,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimary,
-                    modifier =
-                        Modifier.padding(horizontal = BASE_PADDING * 2)
-                            .width(260.dp)
-                            .height(63.dp)
-                            .zIndex(1f),
+                    modifier = Modifier.padding(horizontal = BASE_PADDING * 2).zIndex(1f),
                     textAlign = TextAlign.Center)
 
                 Spacer(modifier = Modifier.weight(0.05f))
