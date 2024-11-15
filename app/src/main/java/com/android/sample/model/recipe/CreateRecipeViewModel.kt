@@ -288,7 +288,7 @@ class CreateRecipeViewModel(
    *
    * @throws IllegalArgumentException if the recipe ID is blank or if the image upload fails.
    */
-  fun publishRecipe() {
+  fun publishRecipe(onSuccess: (Recipe) -> Unit, onFailure: (Exception) -> Unit) {
     val newUid = repository.getNewUid()
     recipeBuilder.setId(newUid)
     try {
@@ -301,7 +301,6 @@ class CreateRecipeViewModel(
             ImageDirectoryType.RECIPE,
             _photo.value!!.asImageBitmap(),
             onSuccess = {
-
               // Set the Image UID to the Builder
               recipeBuilder.setPictureID(newUid)
 
@@ -323,12 +322,14 @@ class CreateRecipeViewModel(
                     repository.addRecipe(
                         recipe,
                         onSuccess = {
+                          onSuccess(recipe)
                           _publishStatus.value = RECIPE_PUBLISHED_SUCCESS_MESSAGE
                           recipeBuilder.clear()
                         },
                         onFailure = { exception ->
                           _publishStatus.value =
                               RECIPE_PUBLISH_ERROR_MESSAGE.format(exception.message)
+                          onFailure(exception)
                         })
                   },
                   onFailure = { exception ->

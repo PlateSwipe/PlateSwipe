@@ -1,5 +1,6 @@
 package com.android.sample.ui.createRecipe
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -18,8 +19,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.android.sample.R
 import com.android.sample.model.recipe.CreateRecipeViewModel
+import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C.Tag.CHEF_IMAGE_DESCRIPTION
 import com.android.sample.resources.C.Tag.CHEF_IN_EGG_ORIGINAL_RATIO
+import com.android.sample.resources.C.Tag.CORNER_SHAPE_PUBLISH_BUTTON
+import com.android.sample.resources.C.Tag.HORIZONTAL_PADDING
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
@@ -30,6 +34,7 @@ import com.android.sample.ui.utils.PlateSwipeScaffold
 fun PublishRecipeScreen(
     navigationActions: NavigationActions,
     createRecipeViewModel: CreateRecipeViewModel,
+    userViewModel: UserViewModel
 ) {
   PlateSwipeScaffold(
       navigationActions = navigationActions,
@@ -39,6 +44,7 @@ fun PublishRecipeScreen(
         PublishRecipeContent(
             navigationActions,
             createRecipeViewModel,
+            userViewModel,
             modifier = Modifier.padding(paddingValues).fillMaxSize())
       })
 }
@@ -54,6 +60,7 @@ fun PublishRecipeScreen(
 fun PublishRecipeContent(
     navigationActions: NavigationActions,
     createRecipeViewModel: CreateRecipeViewModel,
+    userViewModel: UserViewModel,
     modifier: Modifier = Modifier
 ) {
   // Get the current context
@@ -72,17 +79,18 @@ fun PublishRecipeContent(
       modifier = modifier,
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.SpaceBetween) {
-        Spacer(modifier = Modifier.weight(0.05f))
+        Spacer(modifier = Modifier.weight(0.15f))
         // Display the done text
         Text(
             text = stringResource(R.string.done_text),
             style = Typography.titleLarge,
-            modifier = Modifier.weight(0.4f).padding(bottom = 16.dp).testTag("DoneText"))
-        Spacer(modifier = Modifier.weight(0.1f))
+            modifier = Modifier.weight(0.2f).zIndex(1f).testTag("DoneText"),
+            color = MaterialTheme.colorScheme.onPrimary)
+        Spacer(modifier = Modifier.weight(0.05f))
 
         // Display the chef in egg image
         Image(
-            painter = painterResource(id = R.drawable.chef_image_in_egg),
+            painter = painterResource(id = R.drawable.chef_image_in_egg1),
             contentDescription = CHEF_IMAGE_DESCRIPTION,
             modifier =
                 Modifier.weight(1f)
@@ -91,21 +99,28 @@ fun PublishRecipeContent(
                     .zIndex(-1f)
                     .testTag("ChefImage"))
 
-        Spacer(modifier = Modifier.weight(0.1f))
-
         // Display the publish button
         Button(
             onClick = {
-              createRecipeViewModel.publishRecipe()
+              createRecipeViewModel.publishRecipe(
+                  onSuccess = { recipe ->
+                    Log.d("PublishRecipe", "Recipe successfully published: $recipe")
+                    userViewModel.addRecipeToUserCreatedRecipes(recipe)
+                    Log.d("PublishRecipe", "Recipe added to user created recipes")
+                  },
+                  onFailure = { exception ->
+                    Toast.makeText(context, exception.message, Toast.LENGTH_SHORT).show()
+                  })
+
               navigationActions.navigateTo(Screen.SWIPE)
             },
             colors =
                 ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-            shape = RoundedCornerShape(8.dp),
+            shape = RoundedCornerShape(CORNER_SHAPE_PUBLISH_BUTTON.dp),
             modifier =
-                Modifier.padding(horizontal = 16.dp)
+                Modifier.padding(horizontal = HORIZONTAL_PADDING.dp)
                     .fillMaxWidth(0.7f)
-                    .weight(0.2f)
+                    .weight(0.15f)
                     .testTag("PublishButton")) {
               Text(
                   text = stringResource(R.string.publish_recipe_button),

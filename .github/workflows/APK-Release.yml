@@ -1,11 +1,12 @@
-name: Android APK Build
+name: Android APK Release Build
 
 # This workflow is triggered on push events to branches that start with 'release/'.
 
 on:
   push:
     branches:
-      - 'release/**' # Only trigger on branches starting with 'release/'
+      - 'release/**'
+      - 'ci/**'
 
 
   # Allows you to run this workflow manually from the Actions tab
@@ -26,23 +27,32 @@ jobs:
           java-version: '17'
           cache: 'gradle'
 
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v2.0.10
+
       # Load google-services.json and local.properties from the secrets
       - name: Decode secrets
         env:
+          KEYSTORE: ${{ secrets.KEYSTORE_BASE_64 }}
+          KEYSTORE_PROPERTIES: ${{ secrets.KEYSTORE_PROPERTIES }}
           GOOGLE_SERVICES: ${{ secrets.GOOGLE_SERVICES }}
           LOCAL_PROPERTIES: ${{ secrets.LOCAL_PROPERTIES }}
         run: |
+          echo "$KEYSTORE" | base64 --decode > ./app/upload-keystore.jks
           echo "$GOOGLE_SERVICES" | base64 --decode > ./app/google-services.json
           echo "$LOCAL_PROPERTIES" | base64 --decode > ./local.properties
+          echo "$KEYSTORE_PROPERTIES" | base64 --decode > ./keystore.properties
 
       - name: Change wrapper permissions
         run: chmod +x ./gradlew
 
+      # Build the APK
       - name: Build APK
-        run: ./gradlew assembleDebug --stacktrace
+        run: ./gradlew assembleRelease --stacktrace
 
-      - name: Upload APK Debug
+      # Upload the APK as an artifact
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: PlateSwipe-app-debug
-          path: app/build/outputs/apk/debug/{{ github.ref_name }}.apk
+          name: app-release.apk
+          path: app/build/outputs/apk/release/app-release.apk
