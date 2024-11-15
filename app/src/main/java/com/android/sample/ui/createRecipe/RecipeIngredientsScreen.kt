@@ -11,7 +11,6 @@ import com.android.sample.ui.navigation.Screen
 @Composable
 fun RecipeIngredientsScreen(
     navigationActions: NavigationActions,
-    createRecipeViewModel: CreateRecipeViewModel,
     currentStep: Int,
     modifier: Modifier = Modifier
 ) {
