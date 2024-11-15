@@ -227,34 +227,10 @@ class EndToEndTest {
     composeTestRule.onNodeWithText("Fridge Screen").assertExists()
   }
 
-  @OptIn(ExperimentalCoroutinesApi::class)
-  @Test
-  fun cookingChickenCongee() {
-    runTest {
-      // using search screen (using filter if I link it to search screen)
-      val mealName = "Chicken Congee"
-      composeTestRule.setContent {
-        val navController = rememberNavController()
-        FakeNavHost(navController, userViewModel, createRecipeViewModel, recipesViewModel)
-      }
 
-      composeTestRule.onNodeWithTag("tabSearch").assertIsDisplayed()
-      composeTestRule.onNodeWithTag("tabSearch").performClick()
-
-      composeTestRule.onNodeWithTag("searchBar").performClick()
-      composeTestRule.onNodeWithTag("searchBar").performTextInput("Chicken")
-
-      // voir si toutes les recettes affichées commencent ou contiennent par chicken sont affichées
-
-      composeTestRule.onNodeWithTag("").assertIsDisplayed()
-
-      // afficher l'overview
-
-      // liker et voir le like recettes dans le account
-
-    }
-  }
-
+    /**
+     * Test the filter feature
+     */
 
   @Test
   fun testFilter() {
@@ -267,6 +243,7 @@ class EndToEndTest {
     composeTestRule.onNodeWithTag("tabFilter").performClick()
 
     composeTestRule.onNodeWithTag(CATEGORY_CHIP).assertIsDisplayed().performClick()
+
     composeTestRule.onNodeWithTag(CATEGORY_NAME).assertIsDisplayed().performClick()
 
     composeTestRule.onNodeWithTag(FILTER).performClick()
@@ -276,7 +253,12 @@ class EndToEndTest {
     assertEquals(1, recipesViewModel.recipes.value.size)
   }
 
-  @Test
+
+    /**
+     * Test the like recipe feature
+     */
+
+    @Test
   fun likeRecipeTest() {
       composeTestRule.setContent {
         val navController = rememberNavController()
@@ -348,6 +330,8 @@ class EndToEndTest {
           .performClick()
 
       composeTestRule.waitForIdle()
+
+      composeTestRule.onNodeWithTag(CONFIRMATION_BUTTON, useUnmergedTree = true).assertExists().performClick()
 
       assertEquals(0, userViewModel.likedRecipes.value.size)
       composeTestRule
@@ -471,7 +455,7 @@ class EndToEndTest {
           startDestination = Screen.SWIPE,
           route = Route.SWIPE,
       ) {
-        composable(Screen.SWIPE) { SwipePage(navigationActions, recipesViewModel) }
+        composable(Screen.SWIPE) { SwipePage(navigationActions, recipesViewModel, userViewModel) }
         composable(Screen.OVERVIEW_RECIPE) { RecipeOverview(navigationActions, recipesViewModel) }
         composable(Screen.FILTER) { FilterPage(navigationActions, recipesViewModel) }
       }
@@ -547,6 +531,7 @@ class EndToEndTest {
           route = Route.ACCOUNT,
       ) {
         composable(Screen.ACCOUNT) { AccountScreen(navigationActions, userViewModel) }
+        composable(Screen.OVERVIEW_RECIPE_ACCOUNT) { RecipeOverview(navigationActions, recipesViewModel) }
       }
     }
   }
