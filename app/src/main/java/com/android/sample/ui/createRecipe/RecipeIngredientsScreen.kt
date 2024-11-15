@@ -20,7 +20,6 @@ fun RecipeIngredientsScreen(
       subtitle = stringResource(id = R.string.list_ingredients),
       buttonText = stringResource(id = R.string.add_ingredient),
       onButtonClick = {
-        createRecipeViewModel.addIngredient("Banana", "3")
         navigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
       },
       navigationActions = navigationActions,
