@@ -546,6 +546,12 @@ object C {
       const val BUTTON_ROUND = 4
       const val BUTTON_Z = 1f
     }
+
+    object RecipeList {
+      const val POP_UP_ELEVATION = 4
+      const val POP_UP_CLIP = true
+      const val POP_UP_DESCRIPTION_FONT_SIZE = 16
+    }
   }
 
   object TestTag {
@@ -622,6 +628,9 @@ object C {
       const val RECIPE_IMAGE_TEST_TAG = "recipeImage"
       const val RECIPE_TITLE_TEST_TAG = "recipeTitle"
       const val RECIPE_FAVORITE_ICON_TEST_TAG = "recipeFavoriteIcon"
+      const val CONFIRMATION_POP_UP = "confirmationPopUp"
+      const val CONFIRMATION_BUTTON = "confirmButton"
+      const val CANCEL_BUTTON = "cancelButton"
     }
 
     object SignInScreen {

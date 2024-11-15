@@ -53,6 +53,7 @@ fun AccountScreen(navigationActions: NavigationActions, userViewModel: UserViewM
   PlateSwipeScaffold(
       navigationActions = navigationActions,
       selectedItem = TopLevelDestinations.ACCOUNT.route,
+      showBackArrow = false,
       content = { padding ->
         val userName = userViewModel.userName.collectAsState()
         val profilePictureUrl = userViewModel.profilePictureUrl.collectAsState()

@@ -239,7 +239,7 @@ private fun RecipeImage(currentRecipe: Recipe) {
       elevation = CardDefaults.cardElevation(OVERVIEW_RECIPE_CARD_ELEVATION.dp)) {
         Column(modifier = Modifier.background(color = MaterialTheme.colorScheme.onPrimary)) {
           Image(
-              painter = rememberAsyncImagePainter(model = currentRecipe.strMealThumbUrl),
+              painter = rememberAsyncImagePainter(model = currentRecipe.url),
               contentDescription = stringResource(R.string.recipe_image),
               modifier = Modifier.fillMaxWidth().height(height).testTag(RECIPE_IMAGE),
               contentScale = ContentScale.Crop,

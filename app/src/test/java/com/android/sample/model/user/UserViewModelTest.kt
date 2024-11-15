@@ -26,6 +26,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.capture
 import org.mockito.kotlin.doNothing
 import org.mockito.kotlin.eq
+import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 
 class UserViewModelTest {
@@ -142,7 +143,7 @@ class UserViewModelTest {
 
     userViewModel.updateCurrentUser()
 
-    verify(mockUserRepository).updateUser(capture(userCaptor), any(), any())
+    verify(mockUserRepository, times(3)).updateUser(capture(userCaptor), any(), any())
 
     assertEquals(userCaptor.value.uid, mockCurrentUser.uid)
     assertEquals(userCaptor.value.userName, userExample.userName)
