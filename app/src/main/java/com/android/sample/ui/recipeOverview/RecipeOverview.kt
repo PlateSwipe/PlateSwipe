@@ -45,6 +45,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.android.sample.R
 import com.android.sample.animation.LoadingCook
@@ -55,6 +56,7 @@ import com.android.sample.resources.C.Dimension.RecipeOverview.COUNTER_ROUND_COR
 import com.android.sample.resources.C.Dimension.RecipeOverview.IMAGE_ROUND_CORNER
 import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_CHECKBOX_SIZE
 import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_COUNTER_TEXT_SIZE
+import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_FONT_SIZE_MEDIUM
 import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_INSTRUCTION_BOTTOM
 import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_INSTRUCTION_END
 import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_INSTRUCTION_START
@@ -375,6 +377,7 @@ private fun IngredientView(
             textAlign = TextAlign.Start,
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSecondary,
+            fontSize = OVERVIEW_FONT_SIZE_MEDIUM.sp,
             modifier =
                 Modifier.weight(1f).semantics { contentDescription = "$servingsCount servings" },
         )
@@ -425,6 +428,7 @@ private fun Counter(servingsCount: Int, onCounterChange: (Int) -> Unit) {
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.background,
             textAlign = TextAlign.Center,
+            fontSize = OVERVIEW_FONT_SIZE_MEDIUM.sp,
             modifier = Modifier.testTag(NUMBER_SERVINGS).width(OVERVIEW_COUNTER_TEXT_SIZE.dp))
 
         // + button

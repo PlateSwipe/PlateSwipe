@@ -34,6 +34,11 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.android.sample.R
 import com.android.sample.model.user.UserViewModel
+import com.android.sample.resources.C.Dimension.AccountScreen.ACCOUNT_SCREEN_SELECTED_LIST_HEIGHT
+import com.android.sample.resources.C.Dimension.AccountScreen.ACCOUNT_SCREEN_SELECTED_LIST_SEPARATOR_FILL_MAX_WIDTH
+import com.android.sample.resources.C.Dimension.AccountScreen.ACCOUNT_SCREEN_SELECTED_LIST_SEPARATOR_THICKNESS
+import com.android.sample.resources.C.Dimension.AccountScreen.ACCOUNT_SCREEN_SELECTED_LIST_SPACER_ELEMENTS
+import com.android.sample.resources.C.Dimension.AccountScreen.ACCOUNT_SCREEN_SELECTED_LIST_WEIGHT
 import com.android.sample.resources.C.Tag.AccountScreen.PROFILE_PICTURE_CONTENT_DESCRIPTION
 import com.android.sample.resources.C.TestTag.AccountScreen.CREATED_RECIPES_BUTTON_TEST_TAG
 import com.android.sample.resources.C.TestTag.AccountScreen.LIKED_RECIPES_BUTTON_TEST_TAG
@@ -113,12 +118,15 @@ private fun ListSelection(
 
   Column(
       modifier = modifier,
-      verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.Top),
+      verticalArrangement =
+          Arrangement.spacedBy(ACCOUNT_SCREEN_SELECTED_LIST_SPACER_ELEMENTS.dp, Alignment.Top),
       horizontalAlignment = Alignment.CenterHorizontally,
   ) {
-    Row(modifier = Modifier.height(30.dp).fillMaxWidth()) {
+    Row(modifier = Modifier.height(ACCOUNT_SCREEN_SELECTED_LIST_HEIGHT.dp).fillMaxWidth()) {
       ListSelectionButton(
-          modifier = Modifier.weight(1f).testTag(LIKED_RECIPES_BUTTON_TEST_TAG),
+          modifier =
+              Modifier.weight(ACCOUNT_SCREEN_SELECTED_LIST_WEIGHT)
+                  .testTag(LIKED_RECIPES_BUTTON_TEST_TAG),
           onClick = {
             selectedList = likedRecipes
             selectedListIndex = 0
@@ -126,7 +134,9 @@ private fun ListSelection(
           title = stringResource(R.string.account_screen_liked_recipe_button_title),
           isSelected = selectedListIndex == 0)
       ListSelectionButton(
-          modifier = Modifier.weight(1f).testTag(CREATED_RECIPES_BUTTON_TEST_TAG),
+          modifier =
+              Modifier.weight(ACCOUNT_SCREEN_SELECTED_LIST_WEIGHT)
+                  .testTag(CREATED_RECIPES_BUTTON_TEST_TAG),
           onClick = {
             selectedList = createdRecipes
             selectedListIndex = 1
@@ -136,13 +146,13 @@ private fun ListSelection(
     }
 
     HorizontalDivider(
-        modifier = Modifier.fillMaxWidth(.8f),
-        thickness = 2.dp,
+        modifier = Modifier.fillMaxWidth(ACCOUNT_SCREEN_SELECTED_LIST_SEPARATOR_FILL_MAX_WIDTH),
+        thickness = ACCOUNT_SCREEN_SELECTED_LIST_SEPARATOR_THICKNESS.dp,
         color = MaterialTheme.colorScheme.onTertiary)
 
     RecipeList(
         list = selectedList.value,
-        modifier = Modifier.weight(1f).fillMaxWidth(),
+        modifier = Modifier.weight(ACCOUNT_SCREEN_SELECTED_LIST_WEIGHT).fillMaxWidth(),
         onRecipeSelected = { recipe ->
           userViewModel.selectRecipe(recipe)
           navigationActions.navigateTo(Screen.OVERVIEW_RECIPE_ACCOUNT)
