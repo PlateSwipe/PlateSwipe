@@ -19,9 +19,7 @@ fun RecipeIngredientsScreen(
       title = stringResource(id = R.string.no_ingredients),
       subtitle = stringResource(id = R.string.list_ingredients),
       buttonText = stringResource(id = R.string.add_ingredient),
-      onButtonClick = {
-        navigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
-      },
+      onButtonClick = { navigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS) },
       navigationActions = navigationActions,
       currentStep = currentStep,
       modifier = modifier)
