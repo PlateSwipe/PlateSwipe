@@ -6,6 +6,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.zIndex
 import com.android.sample.resources.C.Tag.BASE_PADDING
@@ -85,7 +86,7 @@ fun RecipeStepScreen(
           // Action button
           PlateSwipeButton(
               buttonText,
-              modifier = Modifier.align(Alignment.BottomCenter),
+              modifier = Modifier.align(Alignment.BottomCenter).testTag("NextStepButton"),
               onClick = onButtonClick)
         }
       })
