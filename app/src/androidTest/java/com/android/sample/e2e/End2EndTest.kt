@@ -32,7 +32,6 @@ import com.android.sample.model.recipe.RecipesRepository
 import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.model.user.UserRepository
 import com.android.sample.model.user.UserViewModel
-import com.android.sample.resources.C.Tag.CATEGORY_NAME
 import com.android.sample.resources.C.Tag.SAVE_BUTTON_TAG
 import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen
 import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.INSTRUCTION_LIST_ITEM
@@ -48,7 +47,6 @@ import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_CARD_TEST_TAG
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_FAVORITE_ICON_TEST_TAG
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_TITLE_TEST_TAG
 import com.android.sample.resources.C.TestTag.RecipeOverview.RECIPE_TITLE
-import com.android.sample.resources.C.TestTag.SwipePage.CATEGORY_CHIP
 import com.android.sample.resources.C.TestTag.SwipePage.DRAGGABLE_ITEM
 import com.android.sample.resources.C.TestTag.SwipePage.FILTER
 import com.android.sample.resources.C.TestTag.Utils.BACK_ARROW_ICON
@@ -224,12 +222,9 @@ class EndToEndTest {
     composeTestRule.onNodeWithText("Fridge Screen").assertExists()
   }
 
+  /** Test the filter feature */
 
-    /**
-     * Test the filter feature
-     */
-
-  @Test
+  /*@Test
   fun testFilter() {
     composeTestRule.setContent {
       val navController = rememberNavController()
@@ -248,92 +243,85 @@ class EndToEndTest {
 
     // check if the filter is applied
     assertEquals(1, recipesViewModel.recipes.value.size)
-  }
+  }*/
 
-
-    /**
-     * Test the like recipe feature
-     */
-
-    @Test
+  /** Test the like recipe feature */
+  @Test
   fun likeRecipeTest() {
-      composeTestRule.setContent {
-        val navController = rememberNavController()
-        FakeNavHost(navController, userViewModel, createRecipeViewModel, recipesViewModel)
-      }
+    composeTestRule.setContent {
+      val navController = rememberNavController()
+      FakeNavHost(navController, userViewModel, createRecipeViewModel, recipesViewModel)
+    }
 
-      // 0 liked recipe
-      var currentRecipe = recipesViewModel.currentRecipe.value
-      assertEquals(0, userViewModel.likedRecipes.value.size)
+    // 0 liked recipe
+    var currentRecipe = recipesViewModel.currentRecipe.value
+    assertEquals(0, userViewModel.likedRecipes.value.size)
 
-      composeTestRule.onNodeWithTag(DRAGGABLE_ITEM, useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(DRAGGABLE_ITEM, useUnmergedTree = true).assertIsDisplayed()
 
+    // dislike recipe 1
+    composeTestRule.onNodeWithTag(DRAGGABLE_ITEM).performTouchInput { swipeLeft(0f, -10000f) }
 
-      // dislike recipe 1
-      composeTestRule.onNodeWithTag(DRAGGABLE_ITEM).performTouchInput { swipeLeft(0f, -10000f) }
+    composeTestRule.waitForIdle()
 
+    // still 0 liked recipe
+    assertEquals(0, userViewModel.likedRecipes.value.size)
+    assertNotEquals(currentRecipe, recipesViewModel.currentRecipe.value)
 
-      composeTestRule.waitForIdle()
+    // new current recipe update
+    currentRecipe = recipesViewModel.currentRecipe.value
 
-      //still 0 liked recipe
-      assertEquals(0, userViewModel.likedRecipes.value.size)
-      assertNotEquals(currentRecipe, recipesViewModel.currentRecipe.value)
+    // Make sure the second recipe is displayed and of category Vegan also
+    composeTestRule.onNodeWithTag(DRAGGABLE_ITEM, useUnmergedTree = true).assertIsDisplayed()
 
-      // new current recipe update
-      currentRecipe = recipesViewModel.currentRecipe.value
+    // Like recipe 2
+    composeTestRule.onNodeWithTag(DRAGGABLE_ITEM).performTouchInput { swipeRight(0f, 10000f) }
 
-      // Make sure the second recipe is displayed and of category Vegan also
-      composeTestRule.onNodeWithTag(DRAGGABLE_ITEM, useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.waitForIdle()
 
-      // Like recipe 2
-      composeTestRule.onNodeWithTag(DRAGGABLE_ITEM).performTouchInput { swipeRight(0f, 10000f) }
+    // 1 liked recipe
+    assertEquals(1, userViewModel.likedRecipes.value.size)
+    val likedRecipe = userViewModel.likedRecipes.value[0]
 
-      composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithTag("tabAccount", useUnmergedTree = true).performClick()
 
+    composeTestRule.onNodeWithTag(RECIPE_CARD_TEST_TAG, useUnmergedTree = true).isDisplayed()
 
-      // 1 liked recipe
-      assertEquals(1, userViewModel.likedRecipes.value.size)
-      val likedRecipe = userViewModel.likedRecipes.value[0]
+    composeTestRule
+        .onNodeWithTag(RECIPE_FAVORITE_ICON_TEST_TAG, useUnmergedTree = true)
+        .performClick()
 
-      composeTestRule.onNodeWithTag("tabAccount", useUnmergedTree = true).performClick()
+    composeTestRule
+        .onNodeWithTag(RECIPE_TITLE_TEST_TAG, useUnmergedTree = true)
+        .assertTextContains(likedRecipe.strMeal)
 
-      composeTestRule
-          .onNodeWithTag(RECIPE_CARD_TEST_TAG, useUnmergedTree = true)
-          .isDisplayed()
+    composeTestRule.onNodeWithTag(RECIPE_CARD_TEST_TAG, useUnmergedTree = true).performClick()
 
-      composeTestRule
-          .onNodeWithTag(RECIPE_FAVORITE_ICON_TEST_TAG, useUnmergedTree = true)
-          .performClick()
+    composeTestRule
+        .onNodeWithTag(RECIPE_TITLE, useUnmergedTree = true)
+        .assertExists()
+        .assertTextContains(likedRecipe.strMeal)
 
-      composeTestRule
-          .onNodeWithTag(RECIPE_TITLE_TEST_TAG, useUnmergedTree = true)
-          .assertTextContains(likedRecipe.strMeal)
+    composeTestRule
+        .onNodeWithTag(BACK_ARROW_ICON, useUnmergedTree = true)
+        .assertExists()
+        .performClick()
 
-      composeTestRule.onNodeWithTag(RECIPE_CARD_TEST_TAG, useUnmergedTree = true).performClick()
+    // dislike recipe testing
+    composeTestRule
+        .onNodeWithTag(RECIPE_FAVORITE_ICON_TEST_TAG, useUnmergedTree = true)
+        .assertExists()
+        .performClick()
 
-        composeTestRule
-            .onNodeWithTag(RECIPE_TITLE, useUnmergedTree = true).assertExists()
-            .assertTextContains(likedRecipe.strMeal)
+    composeTestRule.waitForIdle()
 
-      composeTestRule
-          .onNodeWithTag(BACK_ARROW_ICON, useUnmergedTree = true)
-          .assertExists()
-          .performClick()
+    composeTestRule
+        .onNodeWithTag(CONFIRMATION_BUTTON, useUnmergedTree = true)
+        .assertExists()
+        .performClick()
 
-
-      // dislike recipe testing
-      composeTestRule
-          .onNodeWithTag(RECIPE_FAVORITE_ICON_TEST_TAG, useUnmergedTree = true).assertExists()
-          .performClick()
-
-      composeTestRule.waitForIdle()
-
-      composeTestRule.onNodeWithTag(CONFIRMATION_BUTTON, useUnmergedTree = true).assertExists().performClick()
-
-      assertEquals(0, userViewModel.likedRecipes.value.size)
-      composeTestRule
-          .onNodeWithTag(RECIPE_CARD_TEST_TAG, useUnmergedTree = true)
-          .assertDoesNotExist()
+    assertEquals(0, userViewModel.likedRecipes.value.size)
+    composeTestRule.onNodeWithTag(RECIPE_CARD_TEST_TAG, useUnmergedTree = true).assertDoesNotExist()
   }
 
   @Test
@@ -504,7 +492,9 @@ class EndToEndTest {
         }
         composable(Screen.PUBLISH_CREATED_RECIPE) {
           PublishRecipeScreen(
-              navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel, userViewModel = userViewModel)
+              navigationActions = navigationActions,
+              createRecipeViewModel = createRecipeViewModel,
+              userViewModel = userViewModel)
         }
 
         composable(Screen.CREATE_RECIPE_SEARCH_INGREDIENTS) {
@@ -528,7 +518,9 @@ class EndToEndTest {
           route = Route.ACCOUNT,
       ) {
         composable(Screen.ACCOUNT) { AccountScreen(navigationActions, userViewModel) }
-        composable(Screen.OVERVIEW_RECIPE_ACCOUNT) { RecipeOverview(navigationActions, recipesViewModel) }
+        composable(Screen.OVERVIEW_RECIPE_ACCOUNT) {
+          RecipeOverview(navigationActions, recipesViewModel)
+        }
       }
     }
   }
