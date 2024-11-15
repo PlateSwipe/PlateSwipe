@@ -32,6 +32,7 @@ import com.android.sample.model.recipe.RecipesRepository
 import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.model.user.UserRepository
 import com.android.sample.model.user.UserViewModel
+import com.android.sample.resources.C.Tag.CATEGORY_NAME
 import com.android.sample.resources.C.Tag.SAVE_BUTTON_TAG
 import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen
 import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.INSTRUCTION_LIST_ITEM
@@ -43,7 +44,11 @@ import com.android.sample.resources.C.TestTag.IngredientSearchScreen.SCANNER_ICO
 import com.android.sample.resources.C.TestTag.RecipeAddImageScreen.CAMERA_BUTTON
 import com.android.sample.resources.C.TestTag.RecipeAddImageScreen.DISPLAY_IMAGE_DEFAULT
 import com.android.sample.resources.C.TestTag.RecipeAddImageScreen.GALLERY_BUTTON
+import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_CARD_TEST_TAG
+import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_FAVORITE_ICON_TEST_TAG
+import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_TITLE_TEST_TAG
 import com.android.sample.resources.C.TestTag.RecipeOverview.RECIPE_TITLE
+import com.android.sample.resources.C.TestTag.SwipePage.CATEGORY_CHIP
 import com.android.sample.resources.C.TestTag.SwipePage.DRAGGABLE_ITEM
 import com.android.sample.resources.C.TestTag.SwipePage.FILTER
 import com.android.sample.resources.C.TestTag.Utils.BACK_ARROW_ICON
@@ -250,95 +255,104 @@ class EndToEndTest {
     }
   }
 
-  @OptIn(ExperimentalCoroutinesApi::class)
+
+  @Test
+  fun testFilter() {
+    composeTestRule.setContent {
+      val navController = rememberNavController()
+      FakeNavHost(navController, userViewModel, createRecipeViewModel, recipesViewModel)
+    }
+
+    composeTestRule.onNodeWithTag(DRAGGABLE_ITEM, useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag("tabFilter").performClick()
+
+    composeTestRule.onNodeWithTag(CATEGORY_CHIP).assertIsDisplayed().performClick()
+    composeTestRule.onNodeWithTag(CATEGORY_NAME).assertIsDisplayed().performClick()
+
+    composeTestRule.onNodeWithTag(FILTER).performClick()
+    composeTestRule.waitForIdle()
+
+    // check if the filter is applied
+    assertEquals(1, recipesViewModel.recipes.value.size)
+  }
+
   @Test
   fun likeRecipeTest() {
-    runTest {
-      // TODO : simuler la swipePage avec des recette que je cree car mockRepository => pas de
-      // recettes de fireStore
       composeTestRule.setContent {
         val navController = rememberNavController()
         FakeNavHost(navController, userViewModel, createRecipeViewModel, recipesViewModel)
       }
 
+      // 0 liked recipe
       var currentRecipe = recipesViewModel.currentRecipe.value
       assertEquals(0, userViewModel.likedRecipes.value.size)
 
-      // Filter testing
-      /*composeTestRule.onNodeWithTag(FILTER).performClick()
-
-      verify(navigationActions).navigateTo(Screen.FILTER)
-
-      composeTestRule.onNodeWithTag("categoryCheckboxVegan", useUnmergedTree = true).performClick()
-
-      assertEquals(0, userViewModel.likedRecipes.value.size)
-      // Make sure the first recipe is displayed and of category Vegan
       composeTestRule.onNodeWithTag(DRAGGABLE_ITEM, useUnmergedTree = true).assertIsDisplayed()
-      composeTestRule.onNodeWithTag(CATEGORY_CHIP, useUnmergedTree = true).assertIsDisplayed()
-      composeTestRule.onNodeWithTag(CATEGORY_CHIP, useUnmergedTree = true)
-          .assertTextContains("Vegan")
-      */
 
-      // Simulate a drag event (dislike)
+
+      // dislike recipe 1
       composeTestRule.onNodeWithTag(DRAGGABLE_ITEM).performTouchInput { swipeLeft(0f, -10000f) }
 
-      advanceUntilIdle()
 
       composeTestRule.waitForIdle()
+
+      //still 0 liked recipe
+      assertEquals(0, userViewModel.likedRecipes.value.size)
       assertNotEquals(currentRecipe, recipesViewModel.currentRecipe.value)
 
+      // new current recipe update
       currentRecipe = recipesViewModel.currentRecipe.value
 
       // Make sure the second recipe is displayed and of category Vegan also
       composeTestRule.onNodeWithTag(DRAGGABLE_ITEM, useUnmergedTree = true).assertIsDisplayed()
-      // composeTestRule.onNodeWithTag(CATEGORY_CHIP, useUnmergedTree = true).assertIsDisplayed()
-      // composeTestRule.onNodeWithTag(CATEGORY_CHIP, useUnmergedTree = true)
-      // .assertTextContains("Vegan")
 
-      // Simulate a drag event (like)
+      // Like recipe 2
       composeTestRule.onNodeWithTag(DRAGGABLE_ITEM).performTouchInput { swipeRight(0f, 10000f) }
 
-      advanceUntilIdle()
       composeTestRule.waitForIdle()
 
-      // composeTestRule.onNodeWithTag("tabAccount", useUnmergedTree = true).performClick()
 
-      // verify(navigationActions).navigateTo(TopLevelDestinations.ACCOUNT)
-
-      advanceUntilIdle()
-      composeTestRule.waitForIdle()
-
-      // userViewModel likedRecipes testing
+      // 1 liked recipe
       assertEquals(1, userViewModel.likedRecipes.value.size)
       val likedRecipe = userViewModel.likedRecipes.value[0]
+
+      composeTestRule.onNodeWithTag("tabAccount", useUnmergedTree = true).performClick()
+
       composeTestRule
-          .onNodeWithTag("recipeCard${likedRecipe.idMeal}", useUnmergedTree = true)
+          .onNodeWithTag(RECIPE_CARD_TEST_TAG, useUnmergedTree = true)
           .isDisplayed()
 
       composeTestRule
-          .onNodeWithTag("recipeCard${likedRecipe.strMeal}", useUnmergedTree = true)
+          .onNodeWithTag(RECIPE_FAVORITE_ICON_TEST_TAG, useUnmergedTree = true)
           .performClick()
-      verify(navigationActions).navigateTo(Screen.OVERVIEW_RECIPE)
+
       composeTestRule
-          .onNodeWithTag(RECIPE_TITLE, useUnmergedTree = true)
-          .assertTextContains(likedRecipe.idMeal)
+          .onNodeWithTag(RECIPE_TITLE_TEST_TAG, useUnmergedTree = true)
+          .assertTextContains(likedRecipe.strMeal)
+
+      composeTestRule.onNodeWithTag(RECIPE_CARD_TEST_TAG, useUnmergedTree = true).performClick()
+
+        composeTestRule
+            .onNodeWithTag(RECIPE_TITLE, useUnmergedTree = true).assertExists()
+            .assertTextContains(likedRecipe.strMeal)
 
       composeTestRule
           .onNodeWithTag(BACK_ARROW_ICON, useUnmergedTree = true)
           .assertExists()
           .performClick()
-      verify(navigationActions).goBack()
+
 
       // dislike recipe testing
       composeTestRule
-          .onNodeWithTag("recipeFavoriteIcon${likedRecipe.idMeal}", useUnmergedTree = true)
+          .onNodeWithTag(RECIPE_FAVORITE_ICON_TEST_TAG, useUnmergedTree = true).assertExists()
           .performClick()
+
+      composeTestRule.waitForIdle()
 
       assertEquals(0, userViewModel.likedRecipes.value.size)
       composeTestRule
-          .onNodeWithTag("recipeCard${likedRecipe.idMeal}", useUnmergedTree = true)
+          .onNodeWithTag(RECIPE_CARD_TEST_TAG, useUnmergedTree = true)
           .assertDoesNotExist()
-    }
   }
 
   @Test
@@ -509,7 +523,7 @@ class EndToEndTest {
         }
         composable(Screen.PUBLISH_CREATED_RECIPE) {
           PublishRecipeScreen(
-              navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
+              navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel, userViewModel = userViewModel)
         }
 
         composable(Screen.CREATE_RECIPE_SEARCH_INGREDIENTS) {
