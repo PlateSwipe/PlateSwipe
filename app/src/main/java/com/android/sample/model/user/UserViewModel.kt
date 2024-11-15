@@ -1,11 +1,20 @@
 package com.android.sample.model.user
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.android.sample.model.ingredient.FirestoreIngredientRepository
 import com.android.sample.model.ingredient.Ingredient
+import com.android.sample.model.recipe.FirestoreRecipesRepository
 import com.android.sample.model.recipe.Recipe
-import com.android.sample.resources.C.Tag.REMOVED_INGREDIENT_NOT_IN_FRIDGE_ERROR
-import com.android.sample.resources.C.Tag.REMOVED_TOO_MANY_INGREDIENTS_ERROR
+import com.android.sample.model.recipe.RecipeOverviewViewModel
+import com.android.sample.resources.C.Tag.UserViewModel.FAILED_TO_FETCH_CREATED_RECIPE_FROM_DATABASE_ERROR
+import com.android.sample.resources.C.Tag.UserViewModel.FAILED_TO_FETCH_INGREDIENT_FROM_DATABASE_ERROR
+import com.android.sample.resources.C.Tag.UserViewModel.FAILED_TO_FETCH_LIKED_RECIPE_FROM_DATABASE_ERROR
+import com.android.sample.resources.C.Tag.UserViewModel.LOG_TAG
+import com.android.sample.resources.C.Tag.UserViewModel.NOT_FOUND_INGREDIENT_IN_DATABASE_ERROR
+import com.android.sample.resources.C.Tag.UserViewModel.REMOVED_INGREDIENT_NOT_IN_FRIDGE_ERROR
+import com.android.sample.resources.C.Tag.UserViewModel.REMOVED_TOO_MANY_INGREDIENTS_ERROR
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
@@ -15,8 +24,12 @@ import kotlinx.coroutines.flow.StateFlow
 
 class UserViewModel(
     private val userRepository: UserRepository,
-    private val firebaseAuth: FirebaseAuth = Firebase.auth
-) : ViewModel() {
+    private val firebaseAuth: FirebaseAuth = Firebase.auth,
+    private val recipesRepository: FirestoreRecipesRepository =
+        FirestoreRecipesRepository(Firebase.firestore),
+    private val ingredientRepository: FirestoreIngredientRepository =
+        FirestoreIngredientRepository(Firebase.firestore)
+) : ViewModel(), RecipeOverviewViewModel {
 
   private val _userName: MutableStateFlow<String?> = MutableStateFlow(null)
   val userName: StateFlow<String?> = _userName
@@ -32,6 +45,10 @@ class UserViewModel(
 
   private val _createdRecipes: MutableStateFlow<List<Recipe>> = MutableStateFlow(emptyList())
   val createdRecipes: StateFlow<List<Recipe>> = _createdRecipes
+
+  private val _currentRecipe = MutableStateFlow<Recipe?>(null)
+  override val currentRecipe: StateFlow<Recipe?>
+    get() = _currentRecipe
 
   init {
     userRepository.init { getCurrentUser() }
@@ -60,9 +77,36 @@ class UserViewModel(
         onSuccess = { user ->
           _userName.value = user.userName
           _profilePictureUrl.value = user.profilePictureUrl
-          _fridge.value = emptyList()
-          _likedRecipes.value = emptyList()
-          _createdRecipes.value = emptyList()
+          user.fridge.forEach { (barcode, ingredientCount) ->
+            ingredientRepository.get(
+                barcode.toLong(),
+                onSuccess = { ingredient ->
+                  if (ingredient != null) {
+                    addIngredientToUserFridge(ingredient, ingredientCount)
+                  } else {
+                    Log.e(LOG_TAG, NOT_FOUND_INGREDIENT_IN_DATABASE_ERROR)
+                  }
+                },
+                onFailure = { e ->
+                  Log.e(LOG_TAG, FAILED_TO_FETCH_INGREDIENT_FROM_DATABASE_ERROR, e)
+                })
+          }
+          user.likedRecipes.forEach { uid ->
+            recipesRepository.search(
+                uid,
+                onSuccess = { recipe -> addRecipeToUserLikedRecipes(recipe) },
+                onFailure = { e ->
+                  Log.e(LOG_TAG, FAILED_TO_FETCH_LIKED_RECIPE_FROM_DATABASE_ERROR, e)
+                })
+          }
+          user.createdRecipes.forEach { uid ->
+            recipesRepository.search(
+                uid,
+                onSuccess = { recipe -> addRecipeToUserCreatedRecipes(recipe) },
+                onFailure = { e ->
+                  Log.e(LOG_TAG, FAILED_TO_FETCH_CREATED_RECIPE_FROM_DATABASE_ERROR, e)
+                })
+          }
         },
         onFailure = {
           userRepository.addUser(
@@ -71,9 +115,9 @@ class UserViewModel(
                       uid = userId,
                       userName = userName.value ?: userId,
                       profilePictureUrl = "",
-                      fridge = emptyList(),
-                      likedRecipes = emptyList(),
-                      createdRecipes = emptyList()),
+                      fridge = _fridge.value.map { Pair(it.first.barCode.toString(), it.second) },
+                      likedRecipes = _likedRecipes.value.map { it.idMeal },
+                      createdRecipes = _createdRecipes.value.map { it.idMeal }),
               onSuccess = { getCurrentUser() },
               onFailure = { e -> throw e })
         })
@@ -103,6 +147,7 @@ class UserViewModel(
    */
   fun changeUserName(newUserName: String) {
     _userName.value = newUserName
+    updateCurrentUser()
   }
 
   /**
@@ -112,6 +157,7 @@ class UserViewModel(
    */
   fun changeProfilePictureUrl(newProfilePictureUrl: String) {
     _profilePictureUrl.value = newProfilePictureUrl
+    updateCurrentUser()
   }
 
   /**
@@ -155,6 +201,7 @@ class UserViewModel(
     } catch (e: NoSuchElementException) {
       updateList(_fridge, Pair(ingredient, count), add = true)
     }
+    updateCurrentUser()
   }
 
   /**
@@ -183,6 +230,7 @@ class UserViewModel(
     } catch (e: NoSuchElementException) {
       throw IllegalArgumentException(REMOVED_INGREDIENT_NOT_IN_FRIDGE_ERROR)
     }
+    updateCurrentUser()
   }
 
   /**
@@ -192,6 +240,7 @@ class UserViewModel(
    */
   fun addRecipeToUserLikedRecipes(recipe: Recipe) {
     updateList(_likedRecipes, recipe, true)
+    updateCurrentUser()
   }
 
   /**
@@ -201,6 +250,7 @@ class UserViewModel(
    */
   fun removeRecipeFromUserLikedRecipes(recipe: Recipe) {
     updateList(_likedRecipes, recipe, false)
+    updateCurrentUser()
   }
 
   /**
@@ -210,6 +260,7 @@ class UserViewModel(
    */
   fun addRecipeToUserCreatedRecipes(recipe: Recipe) {
     updateList(_createdRecipes, recipe, true)
+    updateCurrentUser()
   }
 
   /**
@@ -219,5 +270,15 @@ class UserViewModel(
    */
   fun removeRecipeFromUserCreatedRecipes(recipe: Recipe) {
     updateList(_createdRecipes, recipe, false)
+    updateCurrentUser()
+  }
+
+  /**
+   * Selects a specific recipe to be shown on the overview screen of the account
+   *
+   * @param recipe the recipe to select
+   */
+  fun selectRecipe(recipe: Recipe) {
+    _currentRecipe.value = recipe
   }
 }

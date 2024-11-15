@@ -34,10 +34,22 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.android.sample.R
 import com.android.sample.model.user.UserViewModel
+import com.android.sample.resources.C.Dimension.AccountScreen.ACCOUNT_SCREEN_SELECTED_LIST_HEIGHT
+import com.android.sample.resources.C.Dimension.AccountScreen.ACCOUNT_SCREEN_SELECTED_LIST_SEPARATOR_FILL_MAX_WIDTH
+import com.android.sample.resources.C.Dimension.AccountScreen.ACCOUNT_SCREEN_SELECTED_LIST_SEPARATOR_THICKNESS
+import com.android.sample.resources.C.Dimension.AccountScreen.ACCOUNT_SCREEN_SELECTED_LIST_SPACER_ELEMENTS
+import com.android.sample.resources.C.Dimension.AccountScreen.ACCOUNT_SCREEN_SELECTED_LIST_WEIGHT
+import com.android.sample.resources.C.Tag.AccountScreen.PROFILE_PICTURE_CONTENT_DESCRIPTION
+import com.android.sample.resources.C.TestTag.AccountScreen.CREATED_RECIPES_BUTTON_TEST_TAG
+import com.android.sample.resources.C.TestTag.AccountScreen.LIKED_RECIPES_BUTTON_TEST_TAG
+import com.android.sample.resources.C.TestTag.AccountScreen.PROFILE_PICTURE_TEST_TAG
+import com.android.sample.resources.C.TestTag.AccountScreen.USERNAME_TEST_TAG
 import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.navigation.TopLevelDestinations
 import com.android.sample.ui.utils.PlateSwipeScaffold
 import com.android.sample.ui.utils.RecipeList
+import com.android.sample.ui.utils.TopCornerLikeButton
 
 @Composable
 fun AccountScreen(navigationActions: NavigationActions, userViewModel: UserViewModel) {
@@ -46,6 +58,7 @@ fun AccountScreen(navigationActions: NavigationActions, userViewModel: UserViewM
   PlateSwipeScaffold(
       navigationActions = navigationActions,
       selectedItem = TopLevelDestinations.ACCOUNT.route,
+      showBackArrow = false,
       content = { padding ->
         val userName = userViewModel.userName.collectAsState()
         val profilePictureUrl = userViewModel.profilePictureUrl.collectAsState()
@@ -61,11 +74,11 @@ fun AccountScreen(navigationActions: NavigationActions, userViewModel: UserViewM
 
           Text(
               text = userName.value ?: stringResource(R.string.account_screen_default_user_name),
-              modifier = Modifier.weight(.1f).testTag("userName"),
+              modifier = Modifier.weight(.1f).testTag(USERNAME_TEST_TAG),
               style = MaterialTheme.typography.titleMedium,
               color = MaterialTheme.colorScheme.onPrimary)
 
-          ListSelection(userViewModel, modifier = Modifier.weight(.8f))
+          ListSelection(navigationActions, userViewModel, modifier = Modifier.weight(.8f))
         }
       })
 }
@@ -92,7 +105,11 @@ private fun ListSelectionButton(
 }
 
 @Composable
-private fun ListSelection(userViewModel: UserViewModel, modifier: Modifier = Modifier) {
+private fun ListSelection(
+    navigationActions: NavigationActions,
+    userViewModel: UserViewModel,
+    modifier: Modifier = Modifier
+) {
   val likedRecipes = userViewModel.likedRecipes.collectAsState()
   val createdRecipes = userViewModel.createdRecipes.collectAsState()
 
@@ -101,12 +118,15 @@ private fun ListSelection(userViewModel: UserViewModel, modifier: Modifier = Mod
 
   Column(
       modifier = modifier,
-      verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.Top),
+      verticalArrangement =
+          Arrangement.spacedBy(ACCOUNT_SCREEN_SELECTED_LIST_SPACER_ELEMENTS.dp, Alignment.Top),
       horizontalAlignment = Alignment.CenterHorizontally,
   ) {
-    Row(modifier = Modifier.height(30.dp).fillMaxWidth()) {
+    Row(modifier = Modifier.height(ACCOUNT_SCREEN_SELECTED_LIST_HEIGHT.dp).fillMaxWidth()) {
       ListSelectionButton(
-          modifier = Modifier.weight(1f).testTag("likedRecipesButton"),
+          modifier =
+              Modifier.weight(ACCOUNT_SCREEN_SELECTED_LIST_WEIGHT)
+                  .testTag(LIKED_RECIPES_BUTTON_TEST_TAG),
           onClick = {
             selectedList = likedRecipes
             selectedListIndex = 0
@@ -114,7 +134,9 @@ private fun ListSelection(userViewModel: UserViewModel, modifier: Modifier = Mod
           title = stringResource(R.string.account_screen_liked_recipe_button_title),
           isSelected = selectedListIndex == 0)
       ListSelectionButton(
-          modifier = Modifier.weight(1f).testTag("createdRecipesButton"),
+          modifier =
+              Modifier.weight(ACCOUNT_SCREEN_SELECTED_LIST_WEIGHT)
+                  .testTag(CREATED_RECIPES_BUTTON_TEST_TAG),
           onClick = {
             selectedList = createdRecipes
             selectedListIndex = 1
@@ -124,11 +146,20 @@ private fun ListSelection(userViewModel: UserViewModel, modifier: Modifier = Mod
     }
 
     HorizontalDivider(
-        modifier = Modifier.fillMaxWidth(.8f),
-        thickness = 2.dp,
+        modifier = Modifier.fillMaxWidth(ACCOUNT_SCREEN_SELECTED_LIST_SEPARATOR_FILL_MAX_WIDTH),
+        thickness = ACCOUNT_SCREEN_SELECTED_LIST_SEPARATOR_THICKNESS.dp,
         color = MaterialTheme.colorScheme.onTertiary)
 
-    RecipeList(list = selectedList.value, modifier = Modifier.weight(1f).fillMaxWidth())
+    RecipeList(
+        list = selectedList.value,
+        modifier = Modifier.weight(ACCOUNT_SCREEN_SELECTED_LIST_WEIGHT).fillMaxWidth(),
+        onRecipeSelected = { recipe ->
+          userViewModel.selectRecipe(recipe)
+          navigationActions.navigateTo(Screen.OVERVIEW_RECIPE_ACCOUNT)
+        },
+        topCornerButton = { recipe ->
+          if (selectedListIndex == 0) TopCornerLikeButton(recipe, userViewModel)
+        })
   }
 }
 
@@ -142,8 +173,8 @@ private fun ProfilePicture(profilePictureUrl: String?, modifier: Modifier = Modi
             } else {
               rememberAsyncImagePainter(model = profilePictureUrl)
             },
-        contentDescription = "profilePicture",
+        contentDescription = PROFILE_PICTURE_CONTENT_DESCRIPTION,
         contentScale = ContentScale.Crop,
-        modifier = Modifier.fillMaxSize().testTag("profilePicture"))
+        modifier = Modifier.fillMaxSize().testTag(PROFILE_PICTURE_TEST_TAG))
   }
 }

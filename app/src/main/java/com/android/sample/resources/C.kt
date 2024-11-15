@@ -138,6 +138,8 @@ object C {
 
     // RecipeList
     const val RECIPE_LIST_CORNER_RADIUS = 12
+    const val RECIPE_RATING_CONTENT_DESCRIPTION = "rating"
+    const val RECIPE_FAVORITE_ICON_CONTENT_DESCRIPTION = "like"
 
     // SearchBar
     const val SEARCH_BAR_CORNER_RADIUS = 16
@@ -275,10 +277,25 @@ object C {
     const val RECIPE_PUBLISH_ERROR_MESSAGE = "Failed to publish recipe: %1\$s"
 
     // UserViewModel
-    const val REMOVED_TOO_MANY_INGREDIENTS_ERROR =
-        "Cannot remove more ingredients than there are in the fridge."
-    const val REMOVED_INGREDIENT_NOT_IN_FRIDGE_ERROR =
-        "Cannot remove an ingredient that is not in the fridge."
+    object UserViewModel {
+      const val REMOVED_TOO_MANY_INGREDIENTS_ERROR =
+          "Cannot remove more ingredients than there are in the fridge."
+      const val REMOVED_INGREDIENT_NOT_IN_FRIDGE_ERROR =
+          "Cannot remove an ingredient that is not in the fridge."
+      const val LOG_TAG = "UserViewModel"
+      const val NOT_FOUND_INGREDIENT_IN_DATABASE_ERROR = "Ingredient not found in the database."
+      const val FAILED_TO_FETCH_INGREDIENT_FROM_DATABASE_ERROR =
+          "Failed to fetch ingredient from the database."
+      const val FAILED_TO_FETCH_LIKED_RECIPE_FROM_DATABASE_ERROR =
+          "Failed to fetch liked recipes from the database."
+      const val FAILED_TO_FETCH_CREATED_RECIPE_FROM_DATABASE_ERROR =
+          "Failed to fetch created recipes from the database."
+    }
+
+    // AccountScreen
+    object AccountScreen {
+      const val PROFILE_PICTURE_CONTENT_DESCRIPTION = "profilePicture"
+    }
 
     // Create Recipe Add Image
     const val ADD_IMAGE_STEP = 4
@@ -352,7 +369,7 @@ object C {
       const val IMAGE_ROUND_CORNER = 10
       const val COUNTER_ROUND_CORNER = 25
       const val OVERVIEW_RECIPE_STAR_SIZE = 24
-      const val COUNTER_MIN_MAX_SIZE = 30
+      const val COUNTER_MIN_MAX_SIZE = 35
       const val OVERVIEW_TIME_DISPLAY_RATE = 1f / 12f
       const val OVERVIEW_MIN_COUNTER_VALUE = 1
       const val OVERVIEW_MAX_COUNTER_VALUE = 99
@@ -368,6 +385,7 @@ object C {
       const val OVERVIEW_INSTRUCTION_END = 15
       const val OVERVIEW_INSTRUCTION_TOP = 10
       const val OVERVIEW_INSTRUCTION_BOTTOM = 5
+      const val OVERVIEW_FONT_SIZE_MEDIUM = 20
     }
 
     object SignInScreen {
@@ -529,6 +547,20 @@ object C {
       const val BUTTON_ROUND = 4
       const val BUTTON_Z = 1f
     }
+
+    object RecipeList {
+      const val POP_UP_ELEVATION = 4
+      const val POP_UP_CLIP = true
+      const val POP_UP_DESCRIPTION_FONT_SIZE = 16
+    }
+
+    object AccountScreen {
+      const val ACCOUNT_SCREEN_SELECTED_LIST_SPACER_ELEMENTS = 16
+      const val ACCOUNT_SCREEN_SELECTED_LIST_WEIGHT = 1f
+      const val ACCOUNT_SCREEN_SELECTED_LIST_HEIGHT = 30
+      const val ACCOUNT_SCREEN_SELECTED_LIST_SEPARATOR_FILL_MAX_WIDTH = .8f
+      const val ACCOUNT_SCREEN_SELECTED_LIST_SEPARATOR_THICKNESS = 2
+    }
   }
 
   object TestTag {
@@ -597,6 +629,19 @@ object C {
       const val TOTAL_TIME_TEXT = "totalTimeText"
     }
 
+    object RecipeList {
+      const val RECIPE_LIST_TEST_TAG = "recipeList"
+      const val RECIPE_CARD_TEST_TAG = "recipeCard"
+      const val RECIPE_PRICE_RATING_TEST_TAG = "priceRating"
+      const val RECIPE_CATEGORIES_TEST_TAG = "recipeCategories"
+      const val RECIPE_IMAGE_TEST_TAG = "recipeImage"
+      const val RECIPE_TITLE_TEST_TAG = "recipeTitle"
+      const val RECIPE_FAVORITE_ICON_TEST_TAG = "recipeFavoriteIcon"
+      const val CONFIRMATION_POP_UP = "confirmationPopUp"
+      const val CONFIRMATION_BUTTON = "confirmButton"
+      const val CANCEL_BUTTON = "cancelButton"
+    }
+
     object SignInScreen {
       const val TACO = "taco"
       const val SUSHI = "sushi"
@@ -612,6 +657,13 @@ object C {
       const val PLATE_TEXT = "plateText"
       const val SWIPE_TEXT = "swipeText"
       const val LOGIN_BUTTON = "loginButton"
+    }
+
+    object AccountScreen {
+      const val USERNAME_TEST_TAG = "userName"
+      const val LIKED_RECIPES_BUTTON_TEST_TAG = "likedRecipesButton"
+      const val CREATED_RECIPES_BUTTON_TEST_TAG = "createdRecipesButton"
+      const val PROFILE_PICTURE_TEST_TAG = "profilePicture"
     }
 
     object CreateRecipeListInstructionsScreen {

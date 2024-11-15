@@ -24,9 +24,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,12 +40,32 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.android.sample.R
 import com.android.sample.model.recipe.Recipe
+import com.android.sample.model.user.UserViewModel
+import com.android.sample.resources.C.Dimension.RecipeList.POP_UP_CLIP
+import com.android.sample.resources.C.Dimension.RecipeList.POP_UP_DESCRIPTION_FONT_SIZE
+import com.android.sample.resources.C.Dimension.RecipeList.POP_UP_ELEVATION
+import com.android.sample.resources.C.Tag.PADDING
+import com.android.sample.resources.C.Tag.RECIPE_FAVORITE_ICON_CONTENT_DESCRIPTION
 import com.android.sample.resources.C.Tag.RECIPE_LIST_CORNER_RADIUS
+import com.android.sample.resources.C.Tag.RECIPE_RATING_CONTENT_DESCRIPTION
+import com.android.sample.resources.C.TestTag.RecipeList.CANCEL_BUTTON
+import com.android.sample.resources.C.TestTag.RecipeList.CONFIRMATION_BUTTON
+import com.android.sample.resources.C.TestTag.RecipeList.CONFIRMATION_POP_UP
+import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_CARD_TEST_TAG
+import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_CATEGORIES_TEST_TAG
+import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_FAVORITE_ICON_TEST_TAG
+import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_IMAGE_TEST_TAG
+import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_LIST_TEST_TAG
+import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_PRICE_RATING_TEST_TAG
+import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_TITLE_TEST_TAG
 import com.android.sample.ui.theme.goldenBronze
 import com.android.sample.ui.theme.valencia
 
@@ -64,7 +86,7 @@ fun RecipeList(
     topCornerButton: @Composable (Recipe) -> Unit = {},
 ) {
   LazyColumn(
-      modifier = modifier.testTag("recipeList"),
+      modifier = modifier.testTag(RECIPE_LIST_TEST_TAG),
       verticalArrangement = Arrangement.Top,
       horizontalAlignment = Alignment.CenterHorizontally,
   ) {
@@ -82,9 +104,11 @@ private fun RecipeCard(
 ) {
   Box(
       modifier =
-          Modifier.fillMaxWidth().height(88.dp).padding(2.dp).testTag("recipeCard").clickable {
-            onRecipeSelected(recipe)
-          },
+          Modifier.fillMaxWidth()
+              .height(88.dp)
+              .padding(2.dp)
+              .testTag(RECIPE_CARD_TEST_TAG)
+              .clickable { onRecipeSelected(recipe) },
   ) {
     Row(
         modifier =
@@ -106,7 +130,7 @@ private fun RecipeCard(
                     modifier = Modifier.fillMaxWidth().weight(1f),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically) {
-                      RecipeTitle(recipe)
+                      RecipeTitle(recipe, Modifier.weight(3f))
                       topCornerButton(recipe)
                     }
 
@@ -130,19 +154,21 @@ private fun RecipeCard(
 
 @Composable
 private fun RecipePrice(maxDollars: Int = 3, cost: Int, recipe: Recipe) {
-  Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.testTag("priceRating")) {
-    for (i in 1..maxDollars) {
-      val isSelected = i <= cost
-      val iconTintColor =
-          if (isSelected) MaterialTheme.colorScheme.onSecondary
-          else MaterialTheme.colorScheme.onPrimary
-      Icon(
-          painter = painterResource(R.drawable.dollar_sign),
-          contentDescription = null,
-          tint = iconTintColor,
-      )
-    }
-  }
+  Row(
+      verticalAlignment = Alignment.CenterVertically,
+      modifier = Modifier.testTag(RECIPE_PRICE_RATING_TEST_TAG)) {
+        for (i in 1..maxDollars) {
+          val isSelected = i <= cost
+          val iconTintColor =
+              if (isSelected) MaterialTheme.colorScheme.onSecondary
+              else MaterialTheme.colorScheme.onPrimary
+          Icon(
+              painter = painterResource(R.drawable.dollar_sign),
+              contentDescription = null,
+              tint = iconTintColor,
+          )
+        }
+      }
 }
 
 @Composable
@@ -153,7 +179,7 @@ private fun RecipeRating() {
   ) {
     Icon(
         imageVector = Icons.Filled.Star,
-        contentDescription = "rating",
+        contentDescription = RECIPE_RATING_CONTENT_DESCRIPTION,
         modifier = Modifier.size(24.dp),
         tint = goldenBronze)
     Spacer(modifier = Modifier.width(8.dp))
@@ -167,7 +193,7 @@ private fun RecipeRating() {
 @Composable
 private fun RecipeCategories(recipe: Recipe) {
   Row(
-      modifier = Modifier.testTag("recipeCategories"),
+      modifier = Modifier.testTag(RECIPE_CATEGORIES_TEST_TAG),
       horizontalArrangement = Arrangement.spacedBy(4.dp)) {
         if (recipe.strCategory?.isNotEmpty() == true) {
           for (category in recipe.strCategory.split(",")) {
@@ -180,23 +206,24 @@ private fun RecipeCategories(recipe: Recipe) {
 @Composable
 private fun RecipeImage(recipe: Recipe) {
   Image(
-      painter = rememberAsyncImagePainter(recipe.strMealThumbUrl),
+      painter = rememberAsyncImagePainter(recipe.url),
       contentDescription = null,
       modifier =
           Modifier.aspectRatio(1f)
               .fillMaxSize()
               .clip(RoundedCornerShape(RECIPE_LIST_CORNER_RADIUS.dp))
-              .testTag("recipeImage"))
+              .testTag(RECIPE_IMAGE_TEST_TAG))
 }
 
 @Composable
-private fun RecipeTitle(recipe: Recipe) {
+private fun RecipeTitle(recipe: Recipe, modifier: Modifier) {
   Text(
-      modifier = Modifier.testTag("recipeTitle"),
+      modifier = modifier.testTag(RECIPE_TITLE_TEST_TAG),
       text = recipe.strMeal,
-      style = MaterialTheme.typography.titleMedium,
+      style = MaterialTheme.typography.titleSmall,
       fontWeight = FontWeight.Bold,
-  )
+      maxLines = 1,
+      overflow = TextOverflow.Ellipsis)
 }
 
 /**
@@ -207,12 +234,58 @@ private fun RecipeTitle(recipe: Recipe) {
  * @param recipe the recipe to like.
  */
 @Composable
-fun TopCornerLikeButton(recipe: Recipe) {
-  var isLiked by remember { mutableStateOf(true) }
+fun TopCornerLikeButton(recipe: Recipe, userViewModel: UserViewModel) {
+  var recipeUnlike: Boolean by remember { mutableStateOf(false) }
+
   Icon(
-      imageVector = if (isLiked) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-      contentDescription = "like",
+      imageVector = if (!recipeUnlike) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+      contentDescription = RECIPE_FAVORITE_ICON_CONTENT_DESCRIPTION,
       modifier =
-          Modifier.padding(4.dp).testTag("recipeFavoriteIcon").clickable { isLiked = !isLiked },
+          Modifier.padding(4.dp).testTag(RECIPE_FAVORITE_ICON_TEST_TAG).clickable {
+            recipeUnlike = true
+          },
       tint = valencia)
+  if (recipeUnlike) {
+    ConfirmationPopUp(
+        {
+          userViewModel.removeRecipeFromUserLikedRecipes(recipe)
+          recipeUnlike = false
+        },
+        { recipeUnlike = false })
+  }
+}
+
+@Composable
+private fun ConfirmationPopUp(onConfirm: () -> Unit, onDismiss: () -> Unit) {
+  AlertDialog(
+      onDismissRequest = onDismiss,
+      modifier =
+          Modifier.fillMaxWidth()
+              .padding(PADDING.dp)
+              .shadow(elevation = POP_UP_ELEVATION.dp, clip = POP_UP_CLIP)
+              .testTag(CONFIRMATION_POP_UP),
+      title = {
+        Text(
+            text = stringResource(R.string.message_pop_up),
+            style = MaterialTheme.typography.titleSmall,
+            fontSize = POP_UP_DESCRIPTION_FONT_SIZE.sp,
+            color = MaterialTheme.colorScheme.onPrimary)
+      },
+      confirmButton = {
+        TextButton(onClick = onConfirm, modifier = Modifier.testTag(CONFIRMATION_BUTTON)) {
+          Text(
+              text = stringResource(R.string.pop_up_confirm_removal_liked_recipe),
+              style = MaterialTheme.typography.titleSmall,
+              color = MaterialTheme.colorScheme.onPrimary)
+        }
+      },
+      dismissButton = {
+        TextButton(onClick = onDismiss, modifier = Modifier.testTag(CANCEL_BUTTON)) {
+          Text(
+              text = stringResource(R.string.pop_up_confirm_cancel_removal_liked_recipe),
+              style = MaterialTheme.typography.titleSmall,
+              color = MaterialTheme.colorScheme.onPrimary)
+        }
+      },
+      containerColor = MaterialTheme.colorScheme.onPrimaryContainer)
 }
