@@ -2,7 +2,6 @@ package com.android.sample.e2e
 
 import android.graphics.Bitmap
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.assertTextEquals
@@ -460,9 +459,7 @@ class EndToEndTest {
           startDestination = Screen.CREATE_RECIPE,
           route = Route.CREATE_RECIPE,
       ) {
-        composable(Screen.CREATE_RECIPE) { backStackEntry ->
-          remember(backStackEntry) { navController.getBackStackEntry(Route.CREATE_RECIPE) }
-
+        composable(Screen.CREATE_RECIPE) {
           CreateRecipeScreen(
               navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
         }
