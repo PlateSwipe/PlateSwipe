@@ -369,7 +369,7 @@ object C {
       const val IMAGE_ROUND_CORNER = 10
       const val COUNTER_ROUND_CORNER = 25
       const val OVERVIEW_RECIPE_STAR_SIZE = 24
-      const val COUNTER_MIN_MAX_SIZE = 30
+      const val COUNTER_MIN_MAX_SIZE = 35
       const val OVERVIEW_TIME_DISPLAY_RATE = 1f / 12f
       const val OVERVIEW_MIN_COUNTER_VALUE = 1
       const val OVERVIEW_MAX_COUNTER_VALUE = 99
@@ -385,6 +385,7 @@ object C {
       const val OVERVIEW_INSTRUCTION_END = 15
       const val OVERVIEW_INSTRUCTION_TOP = 10
       const val OVERVIEW_INSTRUCTION_BOTTOM = 5
+      const val OVERVIEW_FONT_SIZE_MEDIUM = 20
     }
 
     object SignInScreen {
@@ -551,6 +552,14 @@ object C {
       const val POP_UP_ELEVATION = 4
       const val POP_UP_CLIP = true
       const val POP_UP_DESCRIPTION_FONT_SIZE = 16
+    }
+
+    object AccountScreen{
+      const val ACCOUNT_SCREEN_SELECTED_LIST_SPACER_ELEMENTS = 16
+      const val ACCOUNT_SCREEN_SELECTED_LIST_WEIGHT = 1f
+      const val ACCOUNT_SCREEN_SELECTED_LIST_HEIGHT = 30
+      const val ACCOUNT_SCREEN_SELECTED_LIST_SEPARATOR_FILL_MAX_WIDTH = .8f
+      const val ACCOUNT_SCREEN_SELECTED_LIST_SEPARATOR_THICKNESS = 2
     }
   }
 
