@@ -118,12 +118,15 @@ private fun ListSelection(
 
   Column(
       modifier = modifier,
-      verticalArrangement = Arrangement.spacedBy(ACCOUNT_SCREEN_SELECTED_LIST_SPACER_ELEMENTS.dp, Alignment.Top),
+      verticalArrangement =
+          Arrangement.spacedBy(ACCOUNT_SCREEN_SELECTED_LIST_SPACER_ELEMENTS.dp, Alignment.Top),
       horizontalAlignment = Alignment.CenterHorizontally,
   ) {
     Row(modifier = Modifier.height(ACCOUNT_SCREEN_SELECTED_LIST_HEIGHT.dp).fillMaxWidth()) {
       ListSelectionButton(
-          modifier = Modifier.weight(ACCOUNT_SCREEN_SELECTED_LIST_WEIGHT).testTag(LIKED_RECIPES_BUTTON_TEST_TAG),
+          modifier =
+              Modifier.weight(ACCOUNT_SCREEN_SELECTED_LIST_WEIGHT)
+                  .testTag(LIKED_RECIPES_BUTTON_TEST_TAG),
           onClick = {
             selectedList = likedRecipes
             selectedListIndex = 0
@@ -131,7 +134,9 @@ private fun ListSelection(
           title = stringResource(R.string.account_screen_liked_recipe_button_title),
           isSelected = selectedListIndex == 0)
       ListSelectionButton(
-          modifier = Modifier.weight(ACCOUNT_SCREEN_SELECTED_LIST_WEIGHT).testTag(CREATED_RECIPES_BUTTON_TEST_TAG),
+          modifier =
+              Modifier.weight(ACCOUNT_SCREEN_SELECTED_LIST_WEIGHT)
+                  .testTag(CREATED_RECIPES_BUTTON_TEST_TAG),
           onClick = {
             selectedList = createdRecipes
             selectedListIndex = 1

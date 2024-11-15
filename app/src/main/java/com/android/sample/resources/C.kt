@@ -554,7 +554,7 @@ object C {
       const val POP_UP_DESCRIPTION_FONT_SIZE = 16
     }
 
-    object AccountScreen{
+    object AccountScreen {
       const val ACCOUNT_SCREEN_SELECTED_LIST_SPACER_ELEMENTS = 16
       const val ACCOUNT_SCREEN_SELECTED_LIST_WEIGHT = 1f
       const val ACCOUNT_SCREEN_SELECTED_LIST_HEIGHT = 30
