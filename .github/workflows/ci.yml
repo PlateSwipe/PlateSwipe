@@ -8,6 +8,7 @@ on:
       - 'feature/**'
       - 'chore/**'
       - 'fix/**'
+      - 'ci/**'
 
   pull_request:
     types:
@@ -74,9 +75,13 @@ jobs:
         # Load google-services.json and local.properties from the secrets
       - name: Decode secrets
         env:
+          KEYSTORE: ${{ secrets.KEYSTORE_BASE_64 }}
+          KEYSTORE_PROPERTIES: ${{ secrets.KEYSTORE_PROPERTIES }}
           GOOGLE_SERVICES: ${{ secrets.GOOGLE_SERVICES }}
           LOCAL_PROPERTIES: ${{ secrets.LOCAL_PROPERTIES }}
         run: |
+          echo "$KEYSTORE" | base64 --decode > ./app/upload-keystore.jks
+          echo "$KEYSTORE_PROPERTIES" | base64 --decode > ./keystore.properties
           echo "$GOOGLE_SERVICES" | base64 --decode > ./app/google-services.json
           echo "$LOCAL_PROPERTIES" | base64 --decode > ./local.properties
 
