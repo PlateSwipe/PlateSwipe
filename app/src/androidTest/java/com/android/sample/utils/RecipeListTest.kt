@@ -88,11 +88,11 @@ class RecipeListTest {
 
   private val testRecipe =
       Recipe(
-          idMeal = "12345",
-          strMeal = "Test Recipe",
-          strCategory = "Test Category",
-          strArea = "Test Area",
-          strInstructions = "Test Instructions",
+          uid = "12345",
+          name = "Test Recipe",
+          category = "Test Category",
+          origin = "Test Area",
+          instructions = "Test Instructions",
           strMealThumbUrl = "https://example.com/image.jpg",
           ingredientsAndMeasurements = listOf(Pair("1", "Test Ingredient")),
       )

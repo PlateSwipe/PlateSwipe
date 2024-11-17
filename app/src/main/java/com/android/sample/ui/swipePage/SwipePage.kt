@@ -384,7 +384,7 @@ fun RecipeDisplay(
 
               // Image Description
               ImageDescription(
-                  currentRecipe?.strMeal ?: LOADING, currentRecipe?.strCategory ?: LOADING)
+                  currentRecipe?.name ?: LOADING, currentRecipe?.category ?: LOADING)
 
               Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                 ShawRecipeButton(navigationActions)

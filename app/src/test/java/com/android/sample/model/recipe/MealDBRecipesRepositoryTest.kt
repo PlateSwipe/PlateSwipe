@@ -274,12 +274,12 @@ class MealDBRecipesRepositoryTest {
 
     assertNull(searchException)
     assertNotNull(searchRecipe)
-    assert(searchRecipe?.get(0)?.idMeal == "52771")
-    assert(searchRecipe?.get(0)?.strMeal == "Spicy Arrabiata Penne")
-    assert(searchRecipe?.get(0)?.strCategory == "Vegetarian")
-    assert(searchRecipe?.get(0)?.strArea == "Italian")
+    assert(searchRecipe?.get(0)?.uid == "52771")
+    assert(searchRecipe?.get(0)?.name == "Spicy Arrabiata Penne")
+    assert(searchRecipe?.get(0)?.category == "Vegetarian")
+    assert(searchRecipe?.get(0)?.origin == "Italian")
     assert(
-        searchRecipe?.get(0)?.strInstructions ==
+        searchRecipe?.get(0)?.instructions ==
             "Bring a large pot of water to a boil. Add kosher salt to the boiling water, then add the pasta. Cook according to the package instructions, about 9 minutes.\r\nIn a large skillet over medium-high heat, add the olive oil and heat until the oil starts to shimmer. Add the garlic and cook, stirring, until fragrant, 1 to 2 minutes. Add the chopped tomatoes, red chile flakes, Italian seasoning and salt and pepper to taste. Bring to a boil and cook for 5 minutes. Remove from the heat and add the chopped basil.\r\nDrain the pasta and add it to the sauce. Garnish with Parmigiano-Reggiano flakes and more basil and serve warm.")
     assert(
         searchRecipe?.get(0)?.strMealThumbUrl ==
@@ -330,12 +330,12 @@ class MealDBRecipesRepositoryTest {
     assertNull(searchException)
     assert(searchRecipe?.size == 3)
     assertNotNull(searchRecipe)
-    assert(searchRecipe?.get(0)?.idMeal == "52771")
-    assert(searchRecipe?.get(0)?.strMeal == "Spicy Arrabiata Penne")
-    assert(searchRecipe?.get(0)?.strCategory == "Vegetarian")
-    assert(searchRecipe?.get(0)?.strArea == "Italian")
+    assert(searchRecipe?.get(0)?.uid == "52771")
+    assert(searchRecipe?.get(0)?.name == "Spicy Arrabiata Penne")
+    assert(searchRecipe?.get(0)?.category == "Vegetarian")
+    assert(searchRecipe?.get(0)?.origin == "Italian")
     assert(
-        searchRecipe?.get(0)?.strInstructions ==
+        searchRecipe?.get(0)?.instructions ==
             "Bring a large pot of water to a boil. Add kosher salt to the boiling water, then add the pasta. Cook according to the package instructions, about 9 minutes.\r\nIn a large skillet over medium-high heat, add the olive oil and heat until the oil starts to shimmer. Add the garlic and cook, stirring, until fragrant, 1 to 2 minutes. Add the chopped tomatoes, red chile flakes, Italian seasoning and salt and pepper to taste. Bring to a boil and cook for 5 minutes. Remove from the heat and add the chopped basil.\r\nDrain the pasta and add it to the sauce. Garnish with Parmigiano-Reggiano flakes and more basil and serve warm.")
     assert(
         searchRecipe?.get(0)?.strMealThumbUrl ==
@@ -353,12 +353,12 @@ class MealDBRecipesRepositoryTest {
                 Pair("basil", "6 leaves"),
                 Pair("Parmigiano-Reggiano", "spinkling")))
 
-    assert(searchRecipe?.get(1)?.idMeal == "52989")
-    assert(searchRecipe?.get(1)?.strMeal == "Christmas Pudding Trifle")
-    assert(searchRecipe?.get(1)?.strCategory == "Dessert")
-    assert(searchRecipe?.get(1)?.strArea == "British")
+    assert(searchRecipe?.get(1)?.uid == "52989")
+    assert(searchRecipe?.get(1)?.name == "Christmas Pudding Trifle")
+    assert(searchRecipe?.get(1)?.category == "Dessert")
+    assert(searchRecipe?.get(1)?.origin == "British")
     assert(
-        searchRecipe?.get(1)?.strInstructions ==
+        searchRecipe?.get(1)?.instructions ==
             "Peel the oranges using a sharp knife, ensuring all the pith is removed. Slice as thinly as possible and arrange over a dinner plate. Sprinkle with the demerara sugar followed by the Grand Marnier and set aside.\r\n\r\nCrumble the Christmas pudding into large pieces and scatter over the bottom of a trifle bowl. Lift the oranges onto the pudding in a layer and pour over any juices.\r\n\r\nBeat the mascarpone until smooth, then stir in the custard. Spoon the mixture over the top of the oranges.\r\n\r\nLightly whip the cream and spoon over the custard. Sprinkle with the flaked almonds and grated chocolate. You can make this a day in advance if you like, chill until ready to serve.")
     assert(
         searchRecipe?.get(1)?.strMealThumbUrl ==
@@ -376,12 +376,12 @@ class MealDBRecipesRepositoryTest {
                 Pair("Flaked Almonds", "Handful"),
                 Pair("Dark Chocolate", "Grated")))
 
-    assert(searchRecipe?.get(2)?.idMeal == "52774")
-    assert(searchRecipe?.get(2)?.strMeal == "Pad See Ew")
-    assert(searchRecipe?.get(2)?.strCategory == "Chicken")
-    assert(searchRecipe?.get(2)?.strArea == "Thai")
+    assert(searchRecipe?.get(2)?.uid == "52774")
+    assert(searchRecipe?.get(2)?.name == "Pad See Ew")
+    assert(searchRecipe?.get(2)?.category == "Chicken")
+    assert(searchRecipe?.get(2)?.origin == "Thai")
     assert(
-        searchRecipe?.get(2)?.strInstructions ==
+        searchRecipe?.get(2)?.instructions ==
             "Mix Sauce in small bowl.\r\nMince garlic into wok with oil. Place over high heat, when hot, add chicken and Chinese broccoli stems, cook until chicken is light golden.\r\nPush to the side of the wok, crack egg in and scramble. Don't worry if it sticks to the bottom of the wok - it will char and which adds authentic flavour.\r\nAdd noodles, Chinese broccoli leaves and sauce. Gently mix together until the noodles are stained dark and leaves are wilted. Serve immediately!")
     assert(
         searchRecipe?.get(2)?.strMealThumbUrl ==
@@ -453,12 +453,12 @@ class MealDBRecipesRepositoryTest {
 
     assertNull(searchException)
     assertNotNull(searchRecipe)
-    assert(searchRecipe?.idMeal == "52771")
-    assert(searchRecipe?.strMeal == "Spicy Arrabiata Penne")
-    assert(searchRecipe?.strCategory == "Vegetarian")
-    assert(searchRecipe?.strArea == "Italian")
+    assert(searchRecipe?.uid == "52771")
+    assert(searchRecipe?.name == "Spicy Arrabiata Penne")
+    assert(searchRecipe?.category == "Vegetarian")
+    assert(searchRecipe?.origin == "Italian")
     assert(
-        searchRecipe?.strInstructions ==
+        searchRecipe?.instructions ==
             "Bring a large pot of water to a boil. Add kosher salt to the boiling water, then add the pasta. Cook according to the package instructions, about 9 minutes.\r\nIn a large skillet over medium-high heat, add the olive oil and heat until the oil starts to shimmer. Add the garlic and cook, stirring, until fragrant, 1 to 2 minutes. Add the chopped tomatoes, red chile flakes, Italian seasoning and salt and pepper to taste. Bring to a boil and cook for 5 minutes. Remove from the heat and add the chopped basil.\r\nDrain the pasta and add it to the sauce. Garnish with Parmigiano-Reggiano flakes and more basil and serve warm.")
     assert(
         searchRecipe?.strMealThumbUrl ==
@@ -604,12 +604,12 @@ class MealDBRecipesRepositoryTest {
     assertNull(searchException)
     assertNotNull(searchRecipes)
     assert(searchRecipes?.size == 1)
-    assert(searchRecipes?.get(0)?.idMeal == "52771")
-    assert(searchRecipes?.get(0)?.strMeal == "Spicy Arrabiata Penne")
-    assert(searchRecipes?.get(0)?.strCategory == "Vegetarian")
-    assert(searchRecipes?.get(0)?.strArea == "Italian")
+    assert(searchRecipes?.get(0)?.uid == "52771")
+    assert(searchRecipes?.get(0)?.name == "Spicy Arrabiata Penne")
+    assert(searchRecipes?.get(0)?.category == "Vegetarian")
+    assert(searchRecipes?.get(0)?.origin == "Italian")
     assert(
-        searchRecipes?.get(0)?.strInstructions ==
+        searchRecipes?.get(0)?.instructions ==
             "Bring a large pot of water to a boil. Add kosher salt to the boiling water, then add the pasta. Cook according to the package instructions, about 9 minutes.\r\nIn a large skillet over medium-high heat, add the olive oil and heat until the oil starts to shimmer. Add the garlic and cook, stirring, until fragrant, 1 to 2 minutes. Add the chopped tomatoes, red chile flakes, Italian seasoning and salt and pepper to taste. Bring to a boil and cook for 5 minutes. Remove from the heat and add the chopped basil.\r\nDrain the pasta and add it to the sauce. Garnish with Parmigiano-Reggiano flakes and more basil and serve warm.")
     assert(
         searchRecipes?.get(0)?.strMealThumbUrl ==
@@ -623,12 +623,12 @@ class MealDBRecipesRepositoryTest {
       mealDBRecipesRepository.updateRecipe(
           recipe =
               Recipe(
-                  strMeal = "Spicy Arrabiata Penne",
-                  strCategory = "Vegetarian",
-                  strInstructions = "alal",
+                  name = "Spicy Arrabiata Penne",
+                  category = "Vegetarian",
+                  instructions = "alal",
                   strMealThumbUrl = "someurl",
-                  strArea = "Italian",
-                  idMeal = "52771",
+                  origin = "Italian",
+                  uid = "52771",
                   ingredientsAndMeasurements =
                       listOf(
                           Pair("penne rigate", "1 pound"),
@@ -655,12 +655,12 @@ class MealDBRecipesRepositoryTest {
       mealDBRecipesRepository.addRecipe(
           recipe =
               Recipe(
-                  strMeal = "Spicy Arrabiata Penne",
-                  strCategory = "Vegetarian",
-                  strInstructions = "alal",
+                  name = "Spicy Arrabiata Penne",
+                  category = "Vegetarian",
+                  instructions = "alal",
                   strMealThumbUrl = "someurl",
-                  strArea = "Italian",
-                  idMeal = "52771",
+                  origin = "Italian",
+                  uid = "52771",
                   ingredientsAndMeasurements =
                       listOf(
                           Pair("penne rigate", "1 pound"),

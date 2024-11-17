@@ -34,21 +34,21 @@ class RecipesViewModelTest {
   private val dummyRecipes: List<Recipe> =
       listOf(
           Recipe(
-              idMeal = "1",
-              strMeal = "Spicy Arrabiata Penne",
-              strCategory = "Vegetarian",
-              strArea = "Italian",
-              strInstructions = "Instructions here...",
+              uid = "1",
+              name = "Spicy Arrabiata Penne",
+              category = "Vegetarian",
+              origin = "Italian",
+              instructions = "Instructions here...",
               strMealThumbUrl =
                   "https://www.recipetineats.com/penne-all-arrabbiata-spicy-tomato-pasta/",
               ingredientsAndMeasurements =
                   listOf(Pair("Penne", "1 pound"), Pair("Olive oil", "1/4 cup"))),
           Recipe(
-              idMeal = "2",
-              strMeal = "Chicken Curry",
-              strCategory = "Non-Vegetarian",
-              strArea = "Indian",
-              strInstructions = "Instructions here...",
+              uid = "2",
+              name = "Chicken Curry",
+              category = "Non-Vegetarian",
+              origin = "Indian",
+              instructions = "Instructions here...",
               strMealThumbUrl =
                   "https://www.foodfashionparty.com/2023/08/05/everyday-chicken-curry/",
               ingredientsAndMeasurements =
@@ -290,11 +290,11 @@ class RecipesViewModelTest {
     val extendedDummyRecipes =
         dummyRecipes +
             Recipe(
-                idMeal = "3",
-                strMeal = "Beef Stroganoff",
-                strCategory = "Non-Vegetarian",
-                strArea = "Russian",
-                strInstructions = "Instructions here...",
+                uid = "3",
+                name = "Beef Stroganoff",
+                category = "Non-Vegetarian",
+                origin = "Russian",
+                instructions = "Instructions here...",
                 strMealThumbUrl = "https://www.example.com/beef-stroganoff/",
                 ingredientsAndMeasurements =
                     listOf(Pair("Beef", "1 pound"), Pair("Sour cream", "1 cup")))
@@ -362,20 +362,20 @@ class RecipesViewModelTest {
         dummyRecipes +
             listOf(
                 Recipe(
-                    idMeal = "3",
-                    strMeal = "Beef Stroganoff",
-                    strCategory = "Non-Vegetarian",
-                    strArea = "Russian",
-                    strInstructions = "Instructions here...",
+                    uid = "3",
+                    name = "Beef Stroganoff",
+                    category = "Non-Vegetarian",
+                    origin = "Russian",
+                    instructions = "Instructions here...",
                     strMealThumbUrl = "https://www.example.com/beef-stroganoff/",
                     ingredientsAndMeasurements =
                         listOf(Pair("Beef", "1 pound"), Pair("Sour cream", "1 cup"))),
                 Recipe(
-                    idMeal = "4",
-                    strMeal = "Chicken Curry",
-                    strCategory = "Non-Vegetarian",
-                    strArea = "Indian",
-                    strInstructions = "Instructions here...",
+                    uid = "4",
+                    name = "Chicken Curry",
+                    category = "Non-Vegetarian",
+                    origin = "Indian",
+                    instructions = "Instructions here...",
                     strMealThumbUrl = "https://www.example.com/chicken-curry/",
                     ingredientsAndMeasurements =
                         listOf(Pair("Chicken", "1 kg"), Pair("Curry powder", "2 tbsp"))))

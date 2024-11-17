@@ -35,7 +35,7 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
   override fun addRecipe(recipe: Recipe, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     performFirestoreOperation(
         db.collection(FIRESTORE_COLLECTION_NAME)
-            .document(recipe.idMeal)
+            .document(recipe.uid)
             .set(recipe.toFirestoreMap()),
         onSuccess,
         onFailure)
@@ -44,7 +44,7 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
   override fun updateRecipe(recipe: Recipe, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     performFirestoreOperation(
         db.collection(FIRESTORE_COLLECTION_NAME)
-            .document(recipe.idMeal)
+            .document(recipe.uid)
             .set(recipe.toFirestoreMap()),
         onSuccess,
         onFailure)
@@ -81,11 +81,11 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
       val measurements = measurementsData.mapNotNull { it as? String }
 
       Recipe(
-          idMeal = id,
-          strMeal = name,
-          strCategory = category,
-          strArea = area,
-          strInstructions = instructions,
+          uid = id,
+          name = name,
+          category = category,
+          origin = area,
+          instructions = instructions,
           strMealThumbUrl = pictureID,
           ingredientsAndMeasurements = ingredients.zip(measurements),
           time = time,

@@ -79,8 +79,8 @@ class RecipeBuilderTest {
             }
             .build()
 
-    assertEquals("Pasta", recipe.strMeal)
-    assertEquals("Boil water, cook pasta", recipe.strInstructions)
+    assertEquals("Pasta", recipe.name)
+    assertEquals("Boil water, cook pasta", recipe.instructions)
     assertEquals("200g", recipe.ingredientsAndMeasurements[0].second)
   }
 
@@ -129,8 +129,8 @@ class RecipeBuilderTest {
             }
             .build()
 
-    assertEquals("Vegetarian", recipe.strCategory)
-    assertEquals("French", recipe.strArea)
+    assertEquals("Vegetarian", recipe.category)
+    assertEquals("French", recipe.origin)
     assertEquals("http://example.com/image.jpg", recipe.strMealThumbUrl)
     assertEquals("15 mins", recipe.time)
     assertEquals("Easy", recipe.difficulty)

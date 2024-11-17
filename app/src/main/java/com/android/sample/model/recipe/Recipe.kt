@@ -15,11 +15,11 @@ import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_URL
 /**
  * Data class representing a recipe.
  *
- * @property idMeal The unique identifier for the meal, represented as a String.
- * @property strMeal The name of the meal.
- * @property strCategory The category of the meal (e.g., Vegetarian, Non-Vegetarian). Nullable.
- * @property strArea The area or cuisine of the meal (e.g., Italian, Indian). Nullable.
- * @property strInstructions Instructions on how to prepare the meal.
+ * @property uid The unique identifier for the meal, represented as a String.
+ * @property name The name of the meal.
+ * @property category The category of the meal (e.g., Vegetarian, Non-Vegetarian). Nullable.
+ * @property origin The area or cuisine of the meal (e.g., Italian, Indian). Nullable.
+ * @property instructions Instructions on how to prepare the meal.
  * @property strMealThumbUrl URL of the thumbnail image of the meal.
  * @property ingredientsAndMeasurements A list of ingredient and measurement pairs for the recipe.
  * @property time The time required to prepare the meal. Nullable.
@@ -27,11 +27,11 @@ import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_URL
  * @property price The price of the meal. Nullable.
  */
 data class Recipe(
-    val idMeal: String,
-    val strMeal: String,
-    val strCategory: String? = null,
-    val strArea: String? = null,
-    val strInstructions: String,
+    val uid: String,
+    val name: String,
+    val category: String? = null,
+    val origin: String? = null,
+    val instructions: String,
     val strMealThumbUrl: String,
     val ingredientsAndMeasurements: List<Pair<String, String>>,
     val time: String? = null,
@@ -49,11 +49,11 @@ data class Recipe(
   /** Returns the list of ingredients and measurements. */
   fun toFirestoreMap(): Map<String, Any?> {
     return mapOf(
-        FIRESTORE_RECIPE_NAME to strMeal,
-        FIRESTORE_RECIPE_CATEGORY to strCategory,
-        FIRESTORE_RECIPE_AREA to strArea,
+        FIRESTORE_RECIPE_NAME to name,
+        FIRESTORE_RECIPE_CATEGORY to category,
+        FIRESTORE_RECIPE_AREA to origin,
         FIRESTORE_RECIPE_PICTURE_ID to strMealThumbUrl,
-        FIRESTORE_RECIPE_INSTRUCTIONS to strInstructions,
+        FIRESTORE_RECIPE_INSTRUCTIONS to instructions,
         FIRESTORE_RECIPE_INGREDIENTS to ingredientsAndMeasurements.map { it.first },
         FIRESTORE_RECIPE_MEASUREMENTS to ingredientsAndMeasurements.map { it.second },
         FIRESTORE_RECIPE_TIME to time,

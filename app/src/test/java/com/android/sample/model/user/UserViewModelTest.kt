@@ -245,8 +245,8 @@ class UserViewModelTest {
     assertEquals(userViewModel.userName.value, userExample.userName)
     assertEquals(userViewModel.profilePictureUrl.value, userExample.profilePictureUrl)
     assertEquals(userViewModel.fridge.value[0].first.name, "apple")
-    assertEquals(userViewModel.likedRecipes.value[0].idMeal, "123")
-    assertEquals(userViewModel.createdRecipes.value[0].idMeal, "123")
+    assertEquals(userViewModel.likedRecipes.value[0].uid, "123")
+    assertEquals(userViewModel.createdRecipes.value[0].uid, "123")
 
     userViewModel.removeIngredientFromUserFridge(ingredientExample)
     userViewModel.removeRecipeFromUserLikedRecipes(recipeExample)

@@ -149,11 +149,11 @@ class RecipeBuilder {
     require(ingredientsAndMeasurements.isNotEmpty()) { ERROR_LIST_INGREDIENT_EMPTY }
     require(strMealThumbUrl.isNotBlank()) { ERROR_STR_THUMBNAIL }
     return Recipe(
-        idMeal = idMeal,
-        strMeal = strMeal,
-        strCategory = strCategory,
-        strArea = strArea,
-        strInstructions = strInstructions,
+        uid = idMeal,
+        name = strMeal,
+        category = strCategory,
+        origin = strArea,
+        instructions = strInstructions,
         strMealThumbUrl = strMealThumbUrl,
         ingredientsAndMeasurements = ingredientsAndMeasurements,
         time = time,

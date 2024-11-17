@@ -45,31 +45,31 @@ class AccountScreenTest {
   private val dummyRecipes: List<Recipe> =
       listOf(
           Recipe(
-              idMeal = "1",
-              strMeal = "Spicy Arrabiata Penne",
-              strCategory = "Vegetarian",
-              strArea = "Italian",
-              strInstructions = "Instructions here...",
+              uid = "1",
+              name = "Spicy Arrabiata Penne",
+              category = "Vegetarian",
+              origin = "Italian",
+              instructions = "Instructions here...",
               strMealThumbUrl =
                   "https://www.recipetineats.com/penne-all-arrabbiata-spicy-tomato-pasta/",
               ingredientsAndMeasurements =
                   listOf(Pair("Penne", "1 pound"), Pair("Olive oil", "1/4 cup"))),
           Recipe(
-              idMeal = "2",
-              strMeal = "Chicken Curry",
-              strCategory = "Non-Vegetarian",
-              strArea = "Indian",
-              strInstructions = "Instructions here...",
+              uid = "2",
+              name = "Chicken Curry",
+              category = "Non-Vegetarian",
+              origin = "Indian",
+              instructions = "Instructions here...",
               strMealThumbUrl =
                   "https://www.foodfashionparty.com/2023/08/05/everyday-chicken-curry/",
               ingredientsAndMeasurements =
                   listOf(Pair("Chicken", "1 pound"), Pair("Curry powder", "2 tbsp"))),
           Recipe(
-              idMeal = "3",
-              strMeal = "Burger with Fries",
-              strCategory = "Fast Food",
-              strArea = "American",
-              strInstructions = "Instructions here...",
+              uid = "3",
+              name = "Burger with Fries",
+              category = "Fast Food",
+              origin = "American",
+              instructions = "Instructions here...",
               strMealThumbUrl =
                   "https://www.recipetineats.com/penne-all-arrabbiata-spicy-tomato-pasta/",
               ingredientsAndMeasurements =
@@ -102,7 +102,7 @@ class AccountScreenTest {
     composeTestRule
         .onNodeWithTag(RECIPE_TITLE_TEST_TAG, useUnmergedTree = true)
         .assertIsDisplayed()
-        .assertTextEquals(dummyRecipes[0].strMeal)
+        .assertTextEquals(dummyRecipes[0].name)
   }
 
   @Test
@@ -119,7 +119,7 @@ class AccountScreenTest {
     composeTestRule
         .onNodeWithTag(RECIPE_TITLE_TEST_TAG, useUnmergedTree = true)
         .assertIsDisplayed()
-        .assertTextEquals(dummyRecipes[0].strMeal)
+        .assertTextEquals(dummyRecipes[0].name)
   }
 
   @Test
@@ -133,14 +133,14 @@ class AccountScreenTest {
     composeTestRule
         .onNodeWithTag(RECIPE_TITLE_TEST_TAG, useUnmergedTree = true)
         .assertIsDisplayed()
-        .assertTextEquals(dummyRecipes[1].strMeal)
+        .assertTextEquals(dummyRecipes[1].name)
 
     composeTestRule.onNodeWithTag(LIKED_RECIPES_BUTTON_TEST_TAG).performClick()
     composeTestRule.waitForIdle()
     composeTestRule
         .onNodeWithTag(RECIPE_TITLE_TEST_TAG, useUnmergedTree = true)
         .assertIsDisplayed()
-        .assertTextEquals(dummyRecipes[0].strMeal)
+        .assertTextEquals(dummyRecipes[0].name)
   }
 
   @Test
