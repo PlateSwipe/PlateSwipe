@@ -116,8 +116,8 @@ class UserViewModel(
                       userName = userName.value ?: userId,
                       profilePictureUrl = "",
                       fridge = _fridge.value.map { Pair(it.first.barCode.toString(), it.second) },
-                      likedRecipes = _likedRecipes.value.map { it.idMeal },
-                      createdRecipes = _createdRecipes.value.map { it.idMeal }),
+                      likedRecipes = _likedRecipes.value.map { it.uid },
+                      createdRecipes = _createdRecipes.value.map { it.uid }),
               onSuccess = { getCurrentUser() },
               onFailure = { e -> throw e })
         })
@@ -134,8 +134,8 @@ class UserViewModel(
             userName = _userName.value ?: "",
             profilePictureUrl = _profilePictureUrl.value ?: "",
             fridge = _fridge.value.map { Pair(it.first.barCode.toString(), it.second) },
-            likedRecipes = _likedRecipes.value.map { it.idMeal },
-            createdRecipes = _createdRecipes.value.map { it.idMeal })
+            likedRecipes = _likedRecipes.value.map { it.uid },
+            createdRecipes = _createdRecipes.value.map { it.uid })
 
     userRepository.updateUser(user = savedUser, onSuccess = {}, onFailure = { e -> throw e })
   }

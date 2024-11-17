@@ -93,7 +93,7 @@ class CreateRecipeViewModel(
    * @param area The new area of the recipe.
    */
   fun updateRecipeArea(area: String) {
-    recipeBuilder.setArea(area)
+    recipeBuilder.setOrigin(area)
   }
 
   /**
@@ -230,7 +230,7 @@ class CreateRecipeViewModel(
    * @return The area of the recipe.
    */
   fun getRecipeArea(): String? {
-    return recipeBuilder.getArea()
+    return recipeBuilder.getOrigin()
   }
 
   /**

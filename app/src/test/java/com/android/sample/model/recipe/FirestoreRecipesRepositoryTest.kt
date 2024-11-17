@@ -51,11 +51,11 @@ class FirestoreRecipesRepositoryTest {
 
   private val recipe =
       Recipe(
-          idMeal = "1",
-          strMeal = "Chicken",
-          strCategory = "Main",
-          strArea = "Italian",
-          strInstructions = "Instructions",
+          uid = "1",
+          name = "Chicken",
+          category = "Main",
+          origin = "Italian",
+          instructions = "Instructions",
           strMealThumbUrl = "https://www.themealdb.com/images/media/meals/1548772327.jpg",
           ingredientsAndMeasurements = listOf(Pair("Chicken", "1"), Pair("Salt", "1 tsp")),
           time = "30 mins",
@@ -132,7 +132,7 @@ class FirestoreRecipesRepositoryTest {
   @Test
   fun search_callsDocuments() {
     // Ensure that mockQuerySnapshot is properly initialized and mocked
-    `when`(mockCollectionReference.document(recipe.idMeal)).thenReturn(mockDocumentReference)
+    `when`(mockCollectionReference.document(recipe.uid)).thenReturn(mockDocumentReference)
 
     // Ensure the QuerySnapshot returns a list of mock DocumentSnapshots
     `when`(mockDocumentReference.get()).thenReturn(Tasks.forResult(mockDocumentSnapshot))
@@ -170,11 +170,11 @@ class FirestoreRecipesRepositoryTest {
     val recipe = firestoreFirebaseRepository.documentToRecipe(document)
 
     assertNotNull(recipe)
-    assertEquals("1", recipe?.idMeal)
-    assertEquals("Test Recipe", recipe?.strMeal)
-    assertEquals("Category", recipe?.strCategory)
-    assertEquals("Area", recipe?.strArea)
-    assertEquals("Instructions", recipe?.strInstructions)
+    assertEquals("1", recipe?.uid)
+    assertEquals("Test Recipe", recipe?.name)
+    assertEquals("Category", recipe?.category)
+    assertEquals("Area", recipe?.origin)
+    assertEquals("Instructions", recipe?.instructions)
     assertEquals("ThumbUrl", recipe?.strMealThumbUrl)
     assertEquals(
         listOf("Ingredient1" to "Measurement1", "Ingredient2" to "Measurement2"),
@@ -286,7 +286,7 @@ class FirestoreRecipesRepositoryTest {
         { recipes ->
           assertNotNull(recipes)
           assertEquals(1, recipes.size)
-          assertEquals("Test Recipe", recipes[0].strMeal)
+          assertEquals("Test Recipe", recipes[0].name)
         },
         { fail("Failure callback should not be called") },
         10)
@@ -353,8 +353,8 @@ class FirestoreRecipesRepositoryTest {
         mealID = "1",
         onSuccess = { recipe ->
           assertNotNull(recipe)
-          assertEquals("Chicken", recipe.strMeal)
-          assertEquals("Instructions", recipe.strInstructions)
+          assertEquals("Chicken", recipe.name)
+          assertEquals("Instructions", recipe.instructions)
           assertEquals("https://image.url", recipe.strMealThumbUrl)
           assertEquals(
               listOf("Chicken" to "1", "Salt" to "1 tsp"), recipe.ingredientsAndMeasurements)
@@ -425,7 +425,7 @@ class FirestoreRecipesRepositoryTest {
         onSuccess = { recipes ->
           assertNotNull(recipes)
           assertEquals(1, recipes.size)
-          assertEquals("Test Recipe", recipes[0].strMeal)
+          assertEquals("Test Recipe", recipes[0].name)
         },
         onFailure = { fail("Failure callback should not be called") })
 

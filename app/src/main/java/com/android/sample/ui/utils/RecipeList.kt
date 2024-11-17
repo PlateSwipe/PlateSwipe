@@ -195,8 +195,8 @@ private fun RecipeCategories(recipe: Recipe) {
   Row(
       modifier = Modifier.testTag(RECIPE_CATEGORIES_TEST_TAG),
       horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-        if (recipe.strCategory?.isNotEmpty() == true) {
-          for (category in recipe.strCategory.split(",")) {
+        if (recipe.category?.isNotEmpty() == true) {
+          for (category in recipe.category.split(",")) {
             Tag(category)
           }
         }
@@ -219,7 +219,7 @@ private fun RecipeImage(recipe: Recipe) {
 private fun RecipeTitle(recipe: Recipe, modifier: Modifier) {
   Text(
       modifier = modifier.testTag(RECIPE_TITLE_TEST_TAG),
-      text = recipe.strMeal,
+      text = recipe.name,
       style = MaterialTheme.typography.titleSmall,
       fontWeight = FontWeight.Bold,
       maxLines = 1,
