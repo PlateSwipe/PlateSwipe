@@ -2,8 +2,6 @@ package com.android.sample
 
 import android.content.Context
 import android.net.ConnectivityManager
-import android.util.Log
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.android.sample.model.image.ImageRepositoryFirebase
 import com.google.firebase.Firebase
@@ -12,10 +10,10 @@ import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertNull
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.junit.runners.BlockJUnit4ClassRunner
+import org.junit.runners.model.FrameworkMethod
 
-@Retention(AnnotationRetention.RUNTIME) @Target(AnnotationTarget.FUNCTION) annotation class Network
-
-@RunWith(AndroidJUnit4::class)
+@RunWith(NetworkAwareTestRunner::class)
 class NetworkTest {
 
   private var imageRepository: ImageRepositoryFirebase = ImageRepositoryFirebase(Firebase.storage)
@@ -23,7 +21,6 @@ class NetworkTest {
   @Network
   @Test
   fun testUrlToBitmap() {
-    if (!isNetworkAvailable()) return
     val url =
         "https://firebasestorage.googleapis.com/v0/b/plateswipe.appspot.com/o/images%2Ftest%2F4104420057326%2Fdisplay_small.jpg?alt=media&token=7fd91ca3-dbef-4c6e-a004-1e4ee5d0879d"
     val bitmap = imageRepository.urlToBitmap(url)
@@ -33,12 +30,31 @@ class NetworkTest {
   @Network
   @Test
   fun testUrlToBitmapFailure() {
-    Log.d("NetworkTest", "testUrlToBitmapFailure")
-    if (!isNetworkAvailable()) return
-    Log.d("NetworkTest", "testUrlToBitmapFailure2")
     val url = "https://wrong"
     val bitmap = imageRepository.urlToBitmap(url)
     assertNull(bitmap)
+  }
+}
+
+@Retention(AnnotationRetention.RUNTIME) @Target(AnnotationTarget.FUNCTION) annotation class Network
+
+class NetworkAwareTestRunner(testClass: Class<*>) : BlockJUnit4ClassRunner(testClass) {
+
+  override fun runChild(
+      method: FrameworkMethod,
+      notifier: org.junit.runner.notification.RunNotifier
+  ) {
+
+    // Check if the method has the @NetworkTest annotation
+    if (method.getAnnotation(Network::class.java) != null) {
+      if (!isNetworkAvailable()) {
+        println("Skipping test: Network is not available")
+        notifier.fireTestIgnored(describeChild(method))
+        return
+      }
+    }
+    // Run the test if network is available or if it's not a network test
+    super.runChild(method, notifier)
   }
 
   /**
