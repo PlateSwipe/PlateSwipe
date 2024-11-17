@@ -8,6 +8,9 @@ import androidx.compose.ui.test.performTextInput
 import com.android.sample.model.ingredient.AggregatorIngredientRepository
 import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.ingredient.IngredientViewModel
+import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_NORMAL_URL
+import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_SMALL_URL
+import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_THUMBNAIL_URL
 import com.android.sample.resources.C.TestTag.IngredientSearchScreen.CANCEL_BUTTON
 import com.android.sample.resources.C.TestTag.IngredientSearchScreen.CONFIRMATION_BUTTON
 import com.android.sample.resources.C.TestTag.IngredientSearchScreen.CONFIRMATION_POPUP
@@ -44,8 +47,28 @@ class IngredientSearchScreenTest {
   // Setting up some test data
   private val testIngredients =
       listOf(
-          Ingredient("1", 1234L, "Ingredient 1", "Description", "2 cups", emptyList(), emptyList()),
-          Ingredient("2", 5678L, "Ingredient 2", "Description", "1 tbsp", emptyList(), emptyList()))
+          Ingredient(
+              "1",
+              1234L,
+              "Ingredient 1",
+              "Description",
+              "2 cups",
+              emptyList(),
+              mutableMapOf(
+                  PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
+                  PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
+                  PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small")),
+          Ingredient(
+              "2",
+              5678L,
+              "Ingredient 2",
+              "Description",
+              "1 tbsp",
+              emptyList(),
+              mutableMapOf(
+                  PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
+                  PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
+                  PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small")))
 
   @Before
   fun setup() {

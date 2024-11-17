@@ -1,5 +1,6 @@
 package com.android.sample.model.ingredient
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.android.sample.model.image.ImageRepositoryFirebase
@@ -42,7 +43,10 @@ class IngredientViewModel(private val repository: IngredientRepository) : ViewMo
     repository.get(
         barCode,
         onSuccess = { ingredient -> _ingredient.value = ingredient },
-        onFailure = { _ingredient.value = null })
+        onFailure = {
+          Log.e("IngredientViewModel", "Failed to fetch ingredient")
+          _ingredient.value = null
+        })
   }
 
   /**
@@ -106,8 +110,8 @@ class IngredientViewModel(private val repository: IngredientRepository) : ViewMo
             return IngredientViewModel(
                 AggregatorIngredientRepository(
                     FirestoreIngredientRepository(Firebase.firestore),
-                    OpenFoodFactsIngredientRepository(
-                        OkHttpClient(), ImageRepositoryFirebase(Firebase.storage))))
+                    OpenFoodFactsIngredientRepository(OkHttpClient()),
+                    ImageRepositoryFirebase(Firebase.storage)))
                 as T
           }
         }

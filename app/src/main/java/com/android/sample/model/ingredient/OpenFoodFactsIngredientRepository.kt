@@ -1,28 +1,16 @@
 package com.android.sample.model.ingredient
 
-import android.graphics.BitmapFactory
-import android.util.Log
-import androidx.compose.ui.graphics.asImageBitmap
-import com.android.sample.model.image.ImageDirectoryType
-import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.resources.C
-import com.android.sample.resources.C.Tag.INGREDIENT_IMAGE_ADDED_SUCCESSFULLY
-import com.android.sample.resources.C.Tag.OPEN_FOOD_FACTS_INGREDIENT_REPOSITORY_TAG
 import com.android.sample.resources.C.Tag.OPEN_FOOD_FACTS_URL
 import com.android.sample.resources.C.Tag.PRODUCT_BRAND
 import com.android.sample.resources.C.Tag.PRODUCT_CATEGORIES
-import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE
-import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_SMALL
+import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_NORMAL_URL
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_SMALL_URL
-import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_THUMBNAIL
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_THUMBNAIL_URL
-import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_URL
 import com.android.sample.resources.C.Tag.PRODUCT_ID
 import com.android.sample.resources.C.Tag.PRODUCT_NAME
 import com.android.sample.resources.C.Tag.PRODUCT_QUANTITY
-import java.io.ByteArrayInputStream
 import java.io.IOException
-import java.net.URL
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
@@ -31,11 +19,15 @@ import okhttp3.Response
 import org.json.JSONException
 import org.json.JSONObject
 
-class OpenFoodFactsIngredientRepository(
-    private val client: OkHttpClient,
-    private val imageStorage: ImageRepositoryFirebase
-) : IngredientRepository {
+class OpenFoodFactsIngredientRepository(private val client: OkHttpClient) : IngredientRepository {
 
+  /**
+   * Parses a JSON object from the Open Food Facts API to create an Ingredient object.
+   *
+   * @param json The JSON object containing the ingredient data.
+   * @return The Ingredient object created from the JSON data.
+   * @throws Exception if the ingredient name is not provided in the JSON data.
+   */
   private fun parseOpenFoodFactsJsonToIngredient(json: JSONObject): Ingredient {
 
     val ingredientName = json.getString(PRODUCT_NAME)
@@ -48,25 +40,19 @@ class OpenFoodFactsIngredientRepository(
     val barcode = json.getLong(PRODUCT_ID)
     val quantity = json.getString(PRODUCT_QUANTITY) ?: null
     val categories = json.getString(PRODUCT_CATEGORIES).split(", ")
-
-    val images = mutableListOf<String>()
-    val displayNormal = json.getString(PRODUCT_FRONT_IMAGE_URL)
-    if (displayNormal.isNotEmpty()) {
-      uploadImageToStorage(displayNormal, barcode, PRODUCT_FRONT_IMAGE)
-      images.add(PRODUCT_FRONT_IMAGE)
-    }
-
+    val displayNormal = json.getString(PRODUCT_FRONT_IMAGE_NORMAL_URL)
     val displayThumbnail = json.getString(PRODUCT_FRONT_IMAGE_THUMBNAIL_URL)
-    if (displayThumbnail.isNotEmpty()) {
-      uploadImageToStorage(displayThumbnail, barcode, PRODUCT_FRONT_IMAGE_THUMBNAIL)
-      images.add(PRODUCT_FRONT_IMAGE_THUMBNAIL)
-    }
-
     val displaySmall = json.getString(PRODUCT_FRONT_IMAGE_SMALL_URL)
-    if (displaySmall.isNotEmpty()) {
-      uploadImageToStorage(displaySmall, barcode, PRODUCT_FRONT_IMAGE_SMALL)
-      images.add(PRODUCT_FRONT_IMAGE_SMALL)
-    }
+
+    println("displayNormal: $displayNormal")
+    println("displayThumbnail: $displayThumbnail")
+    println("displaySmall: $displaySmall")
+    // Mapping the image URLs to the respective image sizes
+    val imageMap =
+        mutableMapOf(
+            PRODUCT_FRONT_IMAGE_NORMAL_URL to displayNormal,
+            PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to displayThumbnail,
+            PRODUCT_FRONT_IMAGE_SMALL_URL to displaySmall)
 
     return Ingredient(
         barCode = barcode,
@@ -74,25 +60,7 @@ class OpenFoodFactsIngredientRepository(
         brands = brands,
         quantity = quantity,
         categories = categories,
-        images = images.toList())
-  }
-
-  private fun uploadImageToStorage(imageURL: String, barcode: Long, fileName: String) {
-    val imageUrl = URL(imageURL)
-    val imageInputStream = imageUrl.openStream().readBytes()
-    val bitmapImage =
-        BitmapFactory.decodeStream(ByteArrayInputStream(imageInputStream)).asImageBitmap()
-    imageStorage.uploadImage(
-        barcode.toString(),
-        fileName,
-        ImageDirectoryType.INGREDIENT,
-        bitmapImage,
-        onSuccess = {
-          Log.i(OPEN_FOOD_FACTS_INGREDIENT_REPOSITORY_TAG, INGREDIENT_IMAGE_ADDED_SUCCESSFULLY)
-        },
-        onFailure = { e ->
-          e.message?.let { Log.e(OPEN_FOOD_FACTS_INGREDIENT_REPOSITORY_TAG, it) }
-        })
+        images = imageMap)
   }
 
   override fun get(
@@ -126,7 +94,7 @@ class OpenFoodFactsIngredientRepository(
                     onSuccess(null)
                   } else {
                     val productJson = body.getJSONObject("product")
-
+                    println("productJson: $productJson")
                     onSuccess(parseOpenFoodFactsJsonToIngredient(productJson))
                   }
                 } catch (e: JSONException) {

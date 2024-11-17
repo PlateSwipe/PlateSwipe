@@ -31,6 +31,9 @@ import com.android.sample.model.recipe.RecipesRepository
 import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.model.user.UserRepository
 import com.android.sample.model.user.UserViewModel
+import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_NORMAL_URL
+import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_SMALL_URL
+import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_THUMBNAIL_URL
 import com.android.sample.resources.C.Tag.SAVE_BUTTON_TAG
 import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen
 import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.INSTRUCTION_LIST_ITEM
@@ -107,7 +110,14 @@ class EndToEndTest {
 
   private val ingredient1 =
       Ingredient(
-          name = "ingredient1", quantity = "50mg", categories = emptyList(), images = emptyList())
+          name = "ingredient1",
+          quantity = "50mg",
+          categories = emptyList(),
+          images =
+              mutableMapOf(
+                  PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
+                  PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
+                  PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
 
   private val mockedRecipesList = listOf(recipe1, recipe2)
 

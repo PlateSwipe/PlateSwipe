@@ -1,5 +1,8 @@
 package com.android.sample.model.ingredient
 
+import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_NORMAL_URL
+import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_SMALL_URL
+import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_THUMBNAIL_URL
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.CollectionReference
@@ -59,7 +62,11 @@ class FirestoreIngredientRepositoryTest {
                   "Colas",
                   "Carbonated soft drinks without fruit juice with sugar",
                   "Sweetened beverages"),
-          images = listOf("display_normal", "display_thumbnail", "display_small"))
+          images =
+              mutableMapOf(
+                  PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
+                  PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
+                  PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
 
   @Before
   fun setup() {

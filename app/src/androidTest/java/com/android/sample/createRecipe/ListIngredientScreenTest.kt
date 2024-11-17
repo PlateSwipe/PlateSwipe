@@ -12,6 +12,9 @@ import com.android.sample.model.ingredient.AggregatorIngredientRepository
 import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.ingredient.IngredientViewModel
 import com.android.sample.model.recipe.CreateRecipeViewModel
+import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_NORMAL_URL
+import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_SMALL_URL
+import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_THUMBNAIL_URL
 import com.android.sample.resources.C.TestTag.IngredientListScreen.ADD_INGREDIENT_ICON
 import com.android.sample.resources.C.TestTag.IngredientListScreen.NEXT_STEP_BUTTON
 import com.android.sample.resources.C.TestTag.IngredientListScreen.RECIPE_NAME
@@ -45,8 +48,28 @@ class ListIngredientScreenTest {
   // Sample ingredients list for testing
   private val testIngredients =
       listOf(
-          Ingredient("1", 1234L, "Tomato", "Description", "2 cups", emptyList(), emptyList()),
-          Ingredient("2", 5678L, "Onion", "Description", "1 tbsp", emptyList(), emptyList()))
+          Ingredient(
+              "1",
+              1234L,
+              "Tomato",
+              "Description",
+              "2 cups",
+              emptyList(),
+              mutableMapOf(
+                  PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
+                  PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
+                  PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small")),
+          Ingredient(
+              "2",
+              5678L,
+              "Onion",
+              "Description",
+              "1 tbsp",
+              emptyList(),
+              mutableMapOf(
+                  PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
+                  PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
+                  PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small")))
 
   private val ingredientPairs: List<Pair<String, String?>> =
       testIngredients.map { it.name to it.quantity }
