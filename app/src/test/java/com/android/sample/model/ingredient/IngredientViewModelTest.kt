@@ -264,4 +264,12 @@ class IngredientViewModelTest {
     assertNotNull(updatedIngredient)
     assertEquals(newQuantity, updatedIngredient?.quantity)
   }
+
+  @Test
+  fun testFactory() {
+    val factory = IngredientViewModel.Factory
+    val ingredientViewModel = factory.create(IngredientViewModel::class.java)
+    assertNotNull(ingredientViewModel)
+    assertTrue(ingredientViewModel is IngredientViewModel)
+  }
 }
