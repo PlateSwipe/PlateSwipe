@@ -80,7 +80,7 @@ class CreateRecipeViewModelTest {
     assertEquals(
         newName,
         createRecipeViewModel.recipeBuilder.javaClass
-            .getDeclaredField("strMeal")
+            .getDeclaredField("name")
             .apply { isAccessible = true }
             .get(createRecipeViewModel.recipeBuilder))
   }
@@ -92,7 +92,7 @@ class CreateRecipeViewModelTest {
     assertEquals(
         newCategory,
         createRecipeViewModel.recipeBuilder.javaClass
-            .getDeclaredField("strCategory")
+            .getDeclaredField("category")
             .apply { isAccessible = true }
             .get(createRecipeViewModel.recipeBuilder))
   }
@@ -104,7 +104,7 @@ class CreateRecipeViewModelTest {
     assertEquals(
         newInstructions,
         createRecipeViewModel.recipeBuilder.javaClass
-            .getDeclaredField("strInstructions")
+            .getDeclaredField("instructions")
             .apply { isAccessible = true }
             .get(createRecipeViewModel.recipeBuilder))
   }
@@ -415,7 +415,7 @@ class CreateRecipeViewModelTest {
 
     val updatedArea =
         createRecipeViewModel.recipeBuilder.javaClass
-            .getDeclaredField("strArea")
+            .getDeclaredField("origin")
             .apply { isAccessible = true }
             .get(createRecipeViewModel.recipeBuilder)
 
