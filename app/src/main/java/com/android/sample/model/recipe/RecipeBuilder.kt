@@ -43,9 +43,9 @@ class RecipeBuilder {
   /**
    * Sets the area of the recipe.
    *
-   * @param strArea The area of the recipe.
+   * @param origin The area of the recipe.
    */
-  fun setArea(strArea: String) = apply { this.origin = strArea }
+  fun setOrigin(origin: String) = apply { this.origin = origin }
 
   /**
    * Sets the instructions for the recipe. WARNING : This method should be updated in the next
