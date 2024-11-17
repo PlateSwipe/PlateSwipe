@@ -1,5 +1,9 @@
 package com.android.sample.model.recipe
 
+import com.android.sample.resources.C.Tag.ICON_AXE
+import com.android.sample.resources.C.Tag.ICON_FIRE
+import com.android.sample.resources.C.Tag.ICON_MORTAR
+import com.android.sample.resources.C.Tag.ICON_SALT
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -19,7 +23,7 @@ class IconTypeTest {
 
   @Test
   fun `test valid icon name fire`() {
-    val iconType = IconType("fire")
+    val iconType = IconType(ICON_FIRE)
 
     // Assert that iconResId and descriptionResId return correct values for fire
     assertEquals(FIRE_ICON_RES, iconType.iconResId)
@@ -28,7 +32,7 @@ class IconTypeTest {
 
   @Test
   fun `test valid icon name salt`() {
-    val iconType = IconType("salt")
+    val iconType = IconType(ICON_SALT)
 
     // Assert that iconResId and descriptionResId return correct values for salt
     assertEquals(SALT_ICON_RES, iconType.iconResId)
@@ -37,7 +41,7 @@ class IconTypeTest {
 
   @Test
   fun `test valid icon name mortar`() {
-    val iconType = IconType("mortar")
+    val iconType = IconType(ICON_MORTAR)
 
     // Assert that iconResId and descriptionResId return correct values for mortar
     assertEquals(MORTAR_ICON_RES, iconType.iconResId)
@@ -46,7 +50,7 @@ class IconTypeTest {
 
   @Test
   fun `test valid icon name axe`() {
-    val iconType = IconType("axe")
+    val iconType = IconType(ICON_AXE)
 
     // Assert that iconResId and descriptionResId return correct values for axe
     assertEquals(AXE_ICON_RES, iconType.iconResId)

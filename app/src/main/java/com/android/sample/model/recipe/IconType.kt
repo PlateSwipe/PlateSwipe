@@ -3,6 +3,10 @@ package com.android.sample.model.recipe
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.android.sample.R
+import com.android.sample.resources.C.Tag.ICON_AXE
+import com.android.sample.resources.C.Tag.ICON_FIRE
+import com.android.sample.resources.C.Tag.ICON_MORTAR
+import com.android.sample.resources.C.Tag.ICON_SALT
 
 /**
  * A data class representing an icon and its associated description. The class takes an icon name as
@@ -25,10 +29,10 @@ data class IconType(val iconName: String) {
   val iconResId: Int
     get() =
         when (iconName) {
-          "fire" -> R.drawable.fire
-          "salt" -> R.drawable.salt
-          "mortar" -> R.drawable.mortar
-          "axe" -> R.drawable.axe
+          ICON_FIRE -> R.drawable.fire
+          ICON_SALT -> R.drawable.salt
+          ICON_MORTAR -> R.drawable.mortar
+          ICON_AXE -> R.drawable.axe
           else -> R.drawable.fire // Default to fire icon if unknown
         }
 
@@ -44,10 +48,10 @@ data class IconType(val iconName: String) {
   val descriptionResId: Int
     get() =
         when (iconName) {
-          "fire" -> R.string.fire_icon_description
-          "salt" -> R.string.salt_icon_description
-          "mortar" -> R.string.mortar_icon_description
-          "axe" -> R.string.axe_icon_description
+          ICON_FIRE -> R.string.fire_icon_description
+          ICON_SALT -> R.string.salt_icon_description
+          ICON_MORTAR -> R.string.mortar_icon_description
+          ICON_AXE -> R.string.axe_icon_description
           else -> R.string.fire_icon_description // Default to fire description if unknown
         }
 }
