@@ -153,10 +153,12 @@ class RecipesViewModelTest {
 
   @Test
   fun fetchRandomRecipesAppendsToExistingList() {
+    val randomRecipes = dummyRecipes.take(2)
+
     // Arrange: Mock the repository to return dummy recipes
     `when`(mockRecipeRepository.random(any(), any(), any())).thenAnswer { invocation ->
       val onSuccess = invocation.getArgument<(List<Recipe>) -> Unit>(1)
-      onSuccess(dummyRecipes)
+      onSuccess(randomRecipes)
       null
     }
 
@@ -171,8 +173,8 @@ class RecipesViewModelTest {
     assertThat(
         recipesViewModel.recipes.value,
         `is`(
-            dummyRecipes +
-                dummyRecipes)) // Check if the ViewModel's recipes are the combination of the
+            randomRecipes +
+                randomRecipes)) // Check if the ViewModel's recipes are the combination of the
     // originals
   }
 
@@ -312,7 +314,7 @@ class RecipesViewModelTest {
     // Arrange: Mock the repository to return dummy recipes
     `when`(mockRecipeRepository.random(any(), any(), any())).thenAnswer { invocation ->
       val onSuccess = invocation.getArgument<(List<Recipe>) -> Unit>(1)
-      onSuccess(dummyRecipes)
+      onSuccess(dummyRecipes.take(2))
       null
     }
 

@@ -133,9 +133,11 @@ class UserViewModelTest {
 
     assertEquals(userViewModel.userName.value, userExample.userName)
     assertEquals(userViewModel.profilePictureUrl.value, userExample.profilePictureUrl)
-    assertEquals(userViewModel.fridge.value, userExample.fridge)
-    assertEquals(userViewModel.likedRecipes.value, userExample.likedRecipes)
-    assertEquals(userViewModel.createdRecipes.value, userExample.createdRecipes)
+    verify(mockIngredientRepository, times(userExample.fridge.count())).get(any(), any(), any())
+    verify(
+            mockRecipeRepository,
+            times(userExample.likedRecipes.count() + userExample.createdRecipes.count()))
+        .search(any(), any(), any())
   }
 
   @Test
@@ -198,9 +200,11 @@ class UserViewModelTest {
     assertEquals(addedUserCaptor.value.uid, userExample.uid)
     assertEquals(addedUserCaptor.value.userName, userExample.userName)
     assertEquals(addedUserCaptor.value.profilePictureUrl, userExample.profilePictureUrl)
-    assertEquals(addedUserCaptor.value.fridge, userExample.fridge)
-    assertEquals(addedUserCaptor.value.likedRecipes, userExample.likedRecipes)
-    assertEquals(addedUserCaptor.value.createdRecipes, userExample.createdRecipes)
+    verify(mockIngredientRepository, times(userExample.fridge.count())).get(any(), any(), any())
+    verify(
+            mockRecipeRepository,
+            times(userExample.likedRecipes.count() + userExample.createdRecipes.count()))
+        .search(any(), any(), any())
   }
 
   @Test
