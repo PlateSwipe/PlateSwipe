@@ -19,6 +19,7 @@ import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.ui.filter.FilterPage
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
+import com.android.sample.ui.utils.testRecipes
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -31,7 +32,6 @@ import org.junit.runner.RunWith
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
-import testUtils.testRecipes
 
 @RunWith(AndroidJUnit4::class)
 class FilterPageTest {
@@ -42,7 +42,7 @@ class FilterPageTest {
   private val difficultyNames =
       listOf(Difficulty.Easy.toString(), Difficulty.Medium.toString(), Difficulty.Hard.toString())
 
-  private val mockedRecipesList = testUtils.testRecipes
+  private val mockedRecipesList = testRecipes
 
   private val mockedCategoriesList = Recipe.getCategories()
 

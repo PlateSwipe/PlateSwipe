@@ -33,6 +33,7 @@ import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.swipePage.SwipePage
+import com.android.sample.ui.utils.testRecipes
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -48,7 +49,6 @@ import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
-import testUtils.testRecipes
 
 @RunWith(AndroidJUnit4::class)
 class SwipePageTest : TestCase() {
@@ -56,7 +56,7 @@ class SwipePageTest : TestCase() {
   private lateinit var mockRepository: RecipesRepository
   private lateinit var recipesViewModel: RecipesViewModel
 
-  private val mockedRecipesList = testUtils.testRecipes
+  private val mockedRecipesList = testRecipes
 
   @get:Rule val composeTestRule = createComposeRule()
 

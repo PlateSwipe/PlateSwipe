@@ -38,6 +38,7 @@ import com.android.sample.resources.C.TestTag.Utils.TOP_BAR
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.recipeOverview.RecipeOverview
+import com.android.sample.ui.utils.testRecipes
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -47,7 +48,6 @@ import org.junit.Test
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
-import testUtils.testRecipes
 
 class RecipeOverviewTest {
   private lateinit var mockNavigationActions: NavigationActions
@@ -56,13 +56,13 @@ class RecipeOverviewTest {
 
   private val mockedRecipesList =
       listOf(
-          testUtils.testRecipes[0].copy(
+          testRecipes[0].copy(
               ingredientsAndMeasurements =
                   listOf(
                       Pair("Ingredient 1", "Ingredient 1x"),
                       Pair("Ingredient 2", "Ingredient 2x"),
                       Pair("Ingredient 3", "Ingredient 3x"))),
-          testUtils.testRecipes[1],
+          testRecipes[1],
       )
 
   @get:Rule val composeTestRule = createComposeRule()
