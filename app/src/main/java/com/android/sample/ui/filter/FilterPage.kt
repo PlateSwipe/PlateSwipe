@@ -33,24 +33,28 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.android.sample.R
 import com.android.sample.model.filter.Difficulty
 import com.android.sample.model.filter.FilterPageViewModel
 import com.android.sample.model.filter.FloatRange
+import com.android.sample.resources.C.Dimension.PADDING_16
+import com.android.sample.resources.C.Dimension.PADDING_4
+import com.android.sample.resources.C.Dimension.PADDING_8
 import com.android.sample.resources.C.Dimension.SwipePage.BUTTON_ELEVATION
 import com.android.sample.resources.C.Dimension.SwipePage.BUTTON_RADIUS
-import com.android.sample.resources.C.Tag.CATEGORY_NAME
-import com.android.sample.resources.C.Tag.DIFFICULTY_NAME
-import com.android.sample.resources.C.Tag.MAX_ITEM_IN_ROW
-import com.android.sample.resources.C.Tag.PRICE_RANGE_MAX
-import com.android.sample.resources.C.Tag.PRICE_RANGE_MIN
-import com.android.sample.resources.C.Tag.PRICE_RANGE_NAME
-import com.android.sample.resources.C.Tag.PRICE_RANGE_UNIT
-import com.android.sample.resources.C.Tag.SMALL_PADDING
-import com.android.sample.resources.C.Tag.TIME_RANGE_MAX
-import com.android.sample.resources.C.Tag.TIME_RANGE_MIN
-import com.android.sample.resources.C.Tag.TIME_RANGE_NAME
-import com.android.sample.resources.C.Tag.TIME_RANGE_UNIT
+import com.android.sample.resources.C.Tag.FilterPage.MAX_ITEM_IN_ROW
+import com.android.sample.resources.C.Tag.FilterPage.PRICE_RANGE_MAX
+import com.android.sample.resources.C.Tag.FilterPage.PRICE_RANGE_MIN
+import com.android.sample.resources.C.Tag.FilterPage.SLIDER_COLOR_ACTIVE
+import com.android.sample.resources.C.Tag.FilterPage.SLIDER_COLOR_INACTIVE
+import com.android.sample.resources.C.Tag.FilterPage.TIME_RANGE_MAX
+import com.android.sample.resources.C.Tag.FilterPage.TIME_RANGE_MIN
+import com.android.sample.resources.C.TestTag.FilterPage.TEST_TAG_CATEGORY
+import com.android.sample.resources.C.TestTag.FilterPage.TEST_TAG_DIFFICULTY
+import com.android.sample.resources.C.TestTag.FilterPage.TEST_TAG_PRICE_RANGE_SLIDER
+import com.android.sample.resources.C.TestTag.FilterPage.TEST_TAG_TIME_RANGE_SLIDER
 import com.android.sample.resources.C.TestTag.SwipePage.VIEW_RECIPE_BUTTON
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
@@ -93,19 +97,19 @@ fun FilterBox(
         val filter by filterViewModel.tmpFilter.collectAsState()
 
         ValueRangeSlider(
-            modifier = Modifier.testTag("timeRangeSlider"),
-            name = TIME_RANGE_NAME,
+            modifier = Modifier.testTag(TEST_TAG_TIME_RANGE_SLIDER),
+            name = stringResource(id = R.string.time_range_name),
             min = TIME_RANGE_MIN,
             max = TIME_RANGE_MAX,
-            unit = TIME_RANGE_UNIT,
+            unit = stringResource(id = R.string.time_unit),
             range = MutableStateFlow(filter.timeRange),
             updateRange = { newMin, newMax -> filterViewModel.updateTimeRange(newMin, newMax) })
         ValueRangeSlider(
-            modifier = Modifier.testTag("priceRangeSlider"),
-            name = PRICE_RANGE_NAME,
+            modifier = Modifier.testTag(TEST_TAG_PRICE_RANGE_SLIDER),
+            name = stringResource(id = R.string.price_range_name),
             min = PRICE_RANGE_MIN,
             max = PRICE_RANGE_MAX,
-            unit = PRICE_RANGE_UNIT,
+            unit = stringResource(id = R.string.price_unit),
             range = MutableStateFlow(filter.priceRange),
             updateRange = { newMin, newMax -> filterViewModel.updatePriceRange(newMin, newMax) })
 
@@ -114,11 +118,11 @@ fun FilterBox(
         val emptyDifficulty = Difficulty.Undefined
 
         CheckboxGroup(
-            title = DIFFICULTY_NAME,
+            title = stringResource(id = R.string.difficulty_name),
             items = difficultyLevels,
             selectedItem = MutableStateFlow(selectedDifficulty),
             onItemSelect = { newDifficulty -> filterViewModel.updateDifficulty(newDifficulty) },
-            testTagPrefix = "difficulty",
+            testTagPrefix = TEST_TAG_DIFFICULTY,
             emptyValue = emptyDifficulty)
 
         val categories = filterViewModel.categories.value
@@ -126,11 +130,11 @@ fun FilterBox(
         val emptyCategory: String? = null
 
         CheckboxGroup(
-            title = CATEGORY_NAME,
+            title = stringResource(id = R.string.category_name),
             items = categories,
             selectedItem = MutableStateFlow(selectedCategory),
             onItemSelect = { newCategory -> filterViewModel.updateCategory(newCategory) },
-            testTagPrefix = "category",
+            testTagPrefix = TEST_TAG_CATEGORY,
             emptyValue = emptyCategory)
 
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
@@ -146,11 +150,11 @@ fun FilterBox(
               elevation = ButtonDefaults.buttonElevation(BUTTON_ELEVATION.dp),
               shape = RoundedCornerShape(BUTTON_RADIUS.dp),
               modifier =
-                  Modifier.padding(horizontal = SMALL_PADDING.dp, vertical = (SMALL_PADDING / 2).dp)
+                  Modifier.padding(horizontal = PADDING_8.dp, vertical = (PADDING_4).dp)
                       .wrapContentSize()
                       .testTag(VIEW_RECIPE_BUTTON)) {
                 Text(
-                    text = "Apply",
+                    text = stringResource(id = R.string.apply_filter),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimary,
                 )
@@ -165,11 +169,11 @@ fun FilterBox(
               elevation = ButtonDefaults.buttonElevation(BUTTON_ELEVATION.dp),
               shape = RoundedCornerShape(BUTTON_RADIUS.dp),
               modifier =
-                  Modifier.padding(horizontal = SMALL_PADDING.dp, vertical = (SMALL_PADDING / 2).dp)
+                  Modifier.padding(horizontal = PADDING_8.dp, vertical = (PADDING_4).dp)
                       .wrapContentSize()
                       .testTag(VIEW_RECIPE_BUTTON)) {
                 Text(
-                    text = "Reset",
+                    text = stringResource(id = R.string.reset_filter),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.background,
                 )
@@ -207,43 +211,47 @@ fun ValueRangeSlider(
   val currentRange by range.collectAsState()
   val rangeSlider = mutableStateOf(currentRange.min..currentRange.max)
 
-  Column(modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-    Text(
-        text = name,
-        style = MaterialTheme.typography.titleMedium,
-        modifier = Modifier.align(Alignment.Start))
+  Column(
+      modifier = Modifier.padding(PADDING_16.dp),
+      horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            text = name,
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.align(Alignment.Start))
 
-    Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(PADDING_8.dp))
 
-    // Display selected min and max values
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-      Text(
-          "${rangeSlider.value.start.toInt()} " + unit,
-          style = MaterialTheme.typography.bodyMedium,
-          color = MaterialTheme.colorScheme.onPrimary)
-      Text(
-          "${rangeSlider.value.endInclusive.toInt()} " + unit,
-          style = MaterialTheme.typography.bodyMedium,
-          color = MaterialTheme.colorScheme.onPrimary)
-    }
+        // Display selected min and max values
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+          Text(
+              "${rangeSlider.value.start.toInt()} " + unit,
+              style = MaterialTheme.typography.bodyMedium,
+              color = MaterialTheme.colorScheme.onPrimary)
+          Text(
+              "${rangeSlider.value.endInclusive.toInt()} " + unit,
+              style = MaterialTheme.typography.bodyMedium,
+              color = MaterialTheme.colorScheme.onPrimary)
+        }
 
-    Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(PADDING_8.dp))
 
-    // Range slider with minimum 0 and maximum 120 minutes
-    RangeSlider(
-        modifier = modifier.fillMaxWidth(),
-        value = rangeSlider.value,
-        onValueChange = {
-          rangeSlider.value = it
-          updateRange(it.start, it.endInclusive)
-        },
-        valueRange = min..max,
-        colors =
-            SliderDefaults.colors(
-                thumbColor = MaterialTheme.colorScheme.primary,
-                activeTrackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
-                inactiveTrackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)))
-  }
+        // Range slider with minimum 0 and maximum 120 minutes
+        RangeSlider(
+            modifier = modifier.fillMaxWidth(),
+            value = rangeSlider.value,
+            onValueChange = {
+              rangeSlider.value = it
+              updateRange(it.start, it.endInclusive)
+            },
+            valueRange = min..max,
+            colors =
+                SliderDefaults.colors(
+                    thumbColor = MaterialTheme.colorScheme.primary,
+                    activeTrackColor =
+                        MaterialTheme.colorScheme.primary.copy(alpha = SLIDER_COLOR_ACTIVE),
+                    inactiveTrackColor =
+                        MaterialTheme.colorScheme.onSurface.copy(alpha = SLIDER_COLOR_INACTIVE)))
+      }
 }
 
 /**
@@ -280,37 +288,39 @@ fun <T> CheckboxGroup(
     }
   }
 
-  Column(modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-    Text(
-        text = title,
-        style = MaterialTheme.typography.titleMedium,
-        modifier = Modifier.align(Alignment.Start))
+  Column(
+      modifier = Modifier.padding(PADDING_16.dp),
+      horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.align(Alignment.Start))
 
-    FlowRow(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center,
-        verticalArrangement = Arrangement.Center,
-        maxItemsInEachRow = MAX_ITEM_IN_ROW) {
-          itemStates.forEach { (item, checked) ->
-            Row(verticalAlignment = Alignment.CenterVertically) {
-              Spacer(modifier = Modifier.height(4.dp))
+        FlowRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalArrangement = Arrangement.Center,
+            maxItemsInEachRow = MAX_ITEM_IN_ROW) {
+              itemStates.forEach { (item, checked) ->
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                  Spacer(modifier = Modifier.height(PADDING_4.dp))
 
-              Text(
-                  text = item.toString(),
-                  style = MaterialTheme.typography.bodyMedium,
-                  color = MaterialTheme.colorScheme.onPrimary)
-              Checkbox(
-                  modifier = Modifier.testTag("${testTagPrefix}Checkbox$item"),
-                  checked = checked,
-                  onCheckedChange = { isChecked ->
-                    // Uncheck all other items and select the new item
-                    itemStates.keys.forEach { itemStates[it] = false }
-                    itemStates[item] = isChecked
-                    onItemSelect(item)
-                  })
-              Spacer(modifier = Modifier.height(4.dp))
+                  Text(
+                      text = item.toString(),
+                      style = MaterialTheme.typography.bodyMedium,
+                      color = MaterialTheme.colorScheme.onPrimary)
+                  Checkbox(
+                      modifier = Modifier.testTag("${testTagPrefix}Checkbox$item"),
+                      checked = checked,
+                      onCheckedChange = { isChecked ->
+                        // Uncheck all other items and select the new item
+                        itemStates.keys.forEach { itemStates[it] = false }
+                        itemStates[item] = isChecked
+                        onItemSelect(item)
+                      })
+                  Spacer(modifier = Modifier.height(PADDING_4.dp))
+                }
+              }
             }
-          }
-        }
-  }
+      }
 }

@@ -288,7 +288,7 @@ fun RecipeDisplay(
                         label =
                             "${filter.timeRange.min.toInt()} - ${filter.timeRange.max.toInt()} min",
                         testTag = TIME_RANGE_CHIP,
-                        contentDescription = stringResource(R.string.time_range_input_description))
+                        contentDescription = stringResource(R.string.time_range_name))
 
                     FilterChip(
                         displayState = displayPriceRange,
@@ -301,7 +301,7 @@ fun RecipeDisplay(
                         label =
                             "${filter.priceRange.min.toInt()} - ${filter.priceRange.max.toInt()} $",
                         testTag = PRICE_RANGE_CHIP,
-                        contentDescription = stringResource(R.string.price_range_input_description))
+                        contentDescription = stringResource(R.string.price_range_name))
 
                     FilterChip(
                         displayState = displayDifficulty,
@@ -311,7 +311,7 @@ fun RecipeDisplay(
                         },
                         label = filter.difficulty.toString(),
                         testTag = DIFFICULTY_CHIP,
-                        contentDescription = stringResource(R.string.difficulty_input_description))
+                        contentDescription = stringResource(R.string.difficulty_name))
 
                     FilterChip(
                         displayState = displayCategory,
@@ -321,7 +321,7 @@ fun RecipeDisplay(
                         },
                         label = filter.category.orEmpty(),
                         testTag = CATEGORY_CHIP,
-                        contentDescription = stringResource(R.string.category_input_description))
+                        contentDescription = stringResource(R.string.category_name))
                   }
 
               // Space between the filter chips and the recipe cards

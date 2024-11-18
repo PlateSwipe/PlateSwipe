@@ -17,10 +17,10 @@ import com.android.sample.model.filter.Filter
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.recipe.RecipesRepository
 import com.android.sample.model.recipe.RecipesViewModel
-import com.android.sample.resources.C.Tag.PRICE_RANGE_MAX
-import com.android.sample.resources.C.Tag.PRICE_RANGE_MIN
-import com.android.sample.resources.C.Tag.TIME_RANGE_MAX
-import com.android.sample.resources.C.Tag.TIME_RANGE_MIN
+import com.android.sample.resources.C.Tag.FilterPage.PRICE_RANGE_MAX
+import com.android.sample.resources.C.Tag.FilterPage.PRICE_RANGE_MIN
+import com.android.sample.resources.C.Tag.FilterPage.TIME_RANGE_MAX
+import com.android.sample.resources.C.Tag.FilterPage.TIME_RANGE_MIN
 import com.android.sample.ui.filter.FilterPage
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route

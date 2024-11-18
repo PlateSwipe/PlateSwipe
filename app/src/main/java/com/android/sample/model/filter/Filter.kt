@@ -1,15 +1,15 @@
 package com.android.sample.model.filter
 
-import com.android.sample.resources.C.Tag.MAX_BORN_SHOULD_NOT_BE_NEGATIVE
-import com.android.sample.resources.C.Tag.MAX_SHOULD_NOT_BE_NEGATIVE
-import com.android.sample.resources.C.Tag.MIN_BORN_SHOULD_NOT_BE_NEGATIVE
-import com.android.sample.resources.C.Tag.MIN_SHOULD_NOT_BE_GREATER_THAN_MAX
-import com.android.sample.resources.C.Tag.MIN_SHOULD_NOT_BE_NEGATIVE
-import com.android.sample.resources.C.Tag.NEW_MAX_SHOULD_NOT_BE_NEGATIVE
-import com.android.sample.resources.C.Tag.NEW_MIN_AND_NEW_MAX_SHOULD_BE_WITHIN_RANGE
-import com.android.sample.resources.C.Tag.NEW_MIN_SHOULD_NOT_BE_NEGATIVE
-import com.android.sample.resources.C.Tag.NEW_MIN_SHOULD_NOT_EXCEED_MAX
-import com.android.sample.resources.C.Tag.UNINITIALIZED_BORN_VALUE
+import com.android.sample.resources.C.Tag.Filter.MAX_BORN_SHOULD_NOT_BE_NEGATIVE
+import com.android.sample.resources.C.Tag.Filter.MAX_SHOULD_NOT_BE_NEGATIVE
+import com.android.sample.resources.C.Tag.Filter.MIN_BORN_SHOULD_NOT_BE_NEGATIVE
+import com.android.sample.resources.C.Tag.Filter.MIN_SHOULD_NOT_BE_GREATER_THAN_MAX
+import com.android.sample.resources.C.Tag.Filter.MIN_SHOULD_NOT_BE_NEGATIVE
+import com.android.sample.resources.C.Tag.Filter.NEW_MAX_SHOULD_NOT_BE_NEGATIVE
+import com.android.sample.resources.C.Tag.Filter.NEW_MIN_AND_NEW_MAX_SHOULD_BE_WITHIN_RANGE
+import com.android.sample.resources.C.Tag.Filter.NEW_MIN_SHOULD_NOT_BE_NEGATIVE
+import com.android.sample.resources.C.Tag.Filter.NEW_MIN_SHOULD_NOT_EXCEED_MAX
+import com.android.sample.resources.C.Tag.Filter.UNINITIALIZED_BORN_VALUE
 import kotlin.math.roundToInt
 
 /** Filter class to store filter types. */
