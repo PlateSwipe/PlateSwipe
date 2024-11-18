@@ -7,7 +7,9 @@ import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_AREA
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_CATEGORY
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_DIFFICULTY
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_INGREDIENTS
-import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_INSTRUCTIONS
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_INSTRUCTIONS_TEXT
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_INSTRUCTION_ICON
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_INSTRUCTION_TIME
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_MEASUREMENTS
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_NAME
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_PICTURE_ID
@@ -64,7 +66,24 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
       val name = document.getString(FIRESTORE_RECIPE_NAME) ?: return null
       val category = document.getString(FIRESTORE_RECIPE_CATEGORY)
       val area = document.getString(FIRESTORE_RECIPE_AREA)
-      val instructions = document.getString(FIRESTORE_RECIPE_INSTRUCTIONS) ?: return null
+      /*
+      get the values for the intstruction and create all the list of instructions
+       */
+      val instructionsText =
+          document.get(FIRESTORE_RECIPE_INSTRUCTIONS_TEXT) as List<*>? ?: return null
+      val instructionsIcon =
+          document.get(FIRESTORE_RECIPE_INSTRUCTION_ICON) as List<*>? ?: return null
+      val instructionsTime =
+          document.get(FIRESTORE_RECIPE_INSTRUCTION_TIME) as List<*>? ?: return null
+
+      val instructions =
+          instructionsText.mapIndexed { index, text ->
+            val time = instructionsTime[index] as? String ?: return null // Ensure time is an Int
+            val icon = instructionsIcon[index] as? String ?: return null // Ensure icon is a String
+            Instruction(
+                description = text as String, time = time, iconType = icon) // Cast text to String
+          }
+
       val pictureID = document.getString(FIRESTORE_RECIPE_PICTURE_ID) ?: return null
       val ingredientsData = document.get(FIRESTORE_RECIPE_INGREDIENTS) as List<*>? ?: return null
       val measurementsData = document.get(FIRESTORE_RECIPE_MEASUREMENTS) as List<*>? ?: return null
