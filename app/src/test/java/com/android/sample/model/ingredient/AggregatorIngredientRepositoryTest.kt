@@ -1,18 +1,19 @@
 package com.android.sample.model.ingredient
 
 import android.graphics.Bitmap
-import android.net.Uri
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.sample.model.image.ImageRepositoryFirebase
+import com.android.sample.model.image.ImageUploader
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_NORMAL_URL
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_SMALL_URL
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_THUMBNAIL_URL
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
-import org.junit.Assert.assertThrows
+import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -24,6 +25,7 @@ import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
 import org.mockito.kotlin.capture
 import org.mockito.kotlin.doNothing
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -36,12 +38,15 @@ class AggregatorIngredientRepositoryTest {
   @Mock
   private lateinit var mockOpenFoodFactsIngredientRepository: OpenFoodFactsIngredientRepository
 
+  @Mock private lateinit var mockImageUploader: ImageUploader
+
   @Captor private lateinit var onSuccessSingleCapture: ArgumentCaptor<Function1<Ingredient?, Unit>>
   @Captor
   private lateinit var onSuccessCollectionCapture: ArgumentCaptor<Function1<List<Ingredient>, Unit>>
   @Captor private lateinit var onFailureCapture: ArgumentCaptor<Function1<Exception, Unit>>
 
   private lateinit var aggregatorIngredientRepository: AggregatorIngredientRepository
+  private val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
   private val ingredient =
       Ingredient(
           uid = "1",
@@ -69,6 +74,7 @@ class AggregatorIngredientRepositoryTest {
   fun setUp() {
     MockitoAnnotations.openMocks(this)
 
+    whenever(mockImageRepository.urlToBitmap(any())).thenReturn(bitmap)
     doNothing()
         .`when`(mockFirestoreIngredientRepository)
         .get(any(), capture(onSuccessSingleCapture), capture(onFailureCapture))
@@ -89,7 +95,8 @@ class AggregatorIngredientRepositoryTest {
         AggregatorIngredientRepository(
             mockFirestoreIngredientRepository,
             mockOpenFoodFactsIngredientRepository,
-            mockImageRepository)
+            mockImageRepository,
+            mockImageUploader)
   }
 
   @Test
@@ -249,193 +256,164 @@ class AggregatorIngredientRepositoryTest {
     assertNull(resultingIngredient)
   }
 
+  @OptIn(ExperimentalCoroutinesApi::class)
   @Test
-  fun testUploadAndRetrieveUrlAsyncFailWithIncorrectFormat() {
+  fun testGetCallAddFirestoreOnSucces() = runTest {
+    `when`(mockFirestoreIngredientRepository.get(any(), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.arguments[1] as (Ingredient?) -> Unit
+      onSuccess(null)
+    }
+    `when`(mockOpenFoodFactsIngredientRepository.get(any(), any(), any())).thenAnswer { invocation
+      ->
+      val onSuccess = invocation.arguments[1] as (Ingredient?) -> Unit
+      onSuccess(ingredient)
+    }
 
-    val imageFormat = "not_valid"
-    val exception =
-        assertThrows(AssertionError::class.java) {
-          runBlocking {
-            aggregatorIngredientRepository.uploadAndRetrieveUrlAsync(ingredient, imageFormat)
-          }
-        }
-    assert(exception.message!!.contains("Image format $imageFormat not found in ingredient"))
+    // Mock uploadAndRetrieveUrlAsync for 3 images format
+    ingredient.images.forEach { (format, url) ->
+      `when`(mockImageUploader.uploadAndRetrieveUrlAsync(ingredient, format, mockImageRepository))
+          .thenReturn(format to url)
+    }
+
+    aggregatorIngredientRepository.get(
+        barCode = 12345L,
+        onSuccess = { returnedIngredient ->
+          // Assert the ingredient from OpenFoodFacts is immediately returned
+          assertEquals(ingredient, returnedIngredient)
+        },
+        onFailure = { exception -> fail("Should not reach onFailure: ${exception.message}") })
+
+    // Wait for background process
+    advanceUntilIdle()
+
+    verify(mockFirestoreIngredientRepository).add(eq(ingredient), any(), any())
   }
 
   @Test
-  fun testUploadAndRetrieveUrlAsyncFailWithNullUrl() {
+  fun testGetFailWhenFireStoreGetFail() = runTest {
+    var resultingException: Exception? = null
 
-    val ingredient =
-        Ingredient(
-            uid = "1",
-            name = "Coca-Cola",
-            barCode = 5449000214911L,
-            brands = "Coca cola",
-            quantity = "330 mL",
-            categories = listOf("Beverages and beverages preparations"),
-            images = mutableMapOf(PRODUCT_FRONT_IMAGE_NORMAL_URL to ""))
+    `when`(mockFirestoreIngredientRepository.get(any(), any(), any())).thenAnswer { invocation ->
+      val onFailure = invocation.arguments[2] as (Exception) -> Unit
+      onFailure(Exception("Error"))
+    }
 
-    val imageFormat = "image_front_url"
+    aggregatorIngredientRepository.get(
+        barCode = 12345L,
+        onSuccess = { returnedIngredient ->
+          // Assert the ingredient from OpenFoodFacts is immediately returned
+          fail("Should not reach onSuccess: $returnedIngredient")
+        },
+        onFailure = { exception -> resultingException = exception })
 
-    val exception =
-        assertThrows(AssertionError::class.java) {
-          runBlocking {
-            aggregatorIngredientRepository.uploadAndRetrieveUrlAsync(ingredient, imageFormat)
-          }
-        }
-    assert(exception.message!!.contains("Image URL for format $imageFormat is blank"))
+    assertNotNull(resultingException)
   }
 
   @Test
-  fun testUploadAndRetrieveUrlAsyncFailWithNullBarcode() {
+  fun testGetFailWhenOpenFoodFactsGetFail() = runTest {
+    var resultingException: Exception? = null
 
-    val ingredient =
-        Ingredient(
-            uid = "1",
-            name = "Coca-Cola",
-            brands = "Coca cola",
-            quantity = "330 mL",
-            categories = listOf("Beverages and beverages preparations"),
-            images = mutableMapOf(PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal"))
+    `when`(mockFirestoreIngredientRepository.get(any(), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.arguments[1] as (Ingredient?) -> Unit
+      onSuccess(null)
+    }
+    `when`(mockOpenFoodFactsIngredientRepository.get(any(), any(), any())).thenAnswer { invocation
+      ->
+      val onFailure = invocation.arguments[2] as (Exception) -> Unit
+      onFailure(Exception("Error"))
+    }
 
-    val imageFormat = "image_front_url"
+    aggregatorIngredientRepository.get(
+        barCode = 12345L,
+        onSuccess = { returnedIngredient ->
+          // Assert the ingredient from OpenFoodFacts is immediately returned
+          fail("Should not reach onSuccess: $returnedIngredient")
+        },
+        onFailure = { exception -> resultingException = exception })
 
-    val exception =
-        assertThrows(AssertionError::class.java) {
-          runBlocking {
-            aggregatorIngredientRepository.uploadAndRetrieveUrlAsync(ingredient, imageFormat)
-          }
-        }
-    assert(exception.message!!.contains("Ingredient barcode is null"))
+    assertNotNull(resultingException)
   }
 
+  @OptIn(ExperimentalCoroutinesApi::class)
   @Test
-  fun testUploadAndRetrieveUrlAsyncFailWithUnsupportImageFormat() {
-    val imageFormat = "image_big_url"
-    val ingredient =
-        Ingredient(
-            uid = "1",
-            barCode = 5449000214911L,
-            name = "Coca-Cola",
-            brands = "Coca cola",
-            quantity = "330 mL",
-            categories = listOf("Beverages and beverages preparations"),
-            images = mutableMapOf(imageFormat to "https://display_normal"))
+  fun testGetFailWhenAddFirestoreFail() = runTest {
+    var resultingException: Exception? = null
+    `when`(mockFirestoreIngredientRepository.get(any(), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.arguments[1] as (Ingredient?) -> Unit
+      onSuccess(null)
+    }
+    `when`(mockOpenFoodFactsIngredientRepository.get(any(), any(), any())).thenAnswer { invocation
+      ->
+      val onSuccess = invocation.arguments[1] as (Ingredient?) -> Unit
+      onSuccess(ingredient)
+    }
 
-    val exception =
-        assertThrows(AssertionError::class.java) {
-          runBlocking {
-            aggregatorIngredientRepository.uploadAndRetrieveUrlAsync(ingredient, imageFormat)
-          }
-        }
-    assert(exception.message!!.contains("Image format : $imageFormat is not supported"))
+    // Mock uploadAndRetrieveUrlAsync for 3 images format
+    ingredient.images.forEach { (format, url) ->
+      `when`(mockImageUploader.uploadAndRetrieveUrlAsync(ingredient, format, mockImageRepository))
+          .thenReturn(format to url)
+    }
+
+    `when`(mockFirestoreIngredientRepository.add(eq(ingredient), any(), any())).thenAnswer {
+        invocation ->
+      val onFailure = invocation.arguments[2] as (Exception) -> Unit
+      onFailure(Exception("Error"))
+    }
+
+    aggregatorIngredientRepository.get(
+        barCode = 12345L,
+        onSuccess = { returnedIngredient ->
+          // Assert the ingredient from OpenFoodFacts is immediately returned
+          assertEquals(ingredient, returnedIngredient)
+        },
+        onFailure = { exception ->
+          println("exception: $exception")
+          resultingException = exception
+        })
+
+    // Wait for background process
+    advanceUntilIdle()
+    println(resultingException)
+    assertNull(resultingException)
   }
 
+  @OptIn(ExperimentalCoroutinesApi::class)
   @Test
-  fun urlToName() {
-    val url = "image_front_small_url"
-    val name = aggregatorIngredientRepository.urlToName(url)
-    assertEquals("display_small", name)
+  fun testGetFailWhenRetrieveUrlFail() = runTest {
+    var resultingException: Exception? = null
+    `when`(mockFirestoreIngredientRepository.get(any(), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.arguments[1] as (Ingredient?) -> Unit
+      onSuccess(null)
+    }
+    `when`(mockOpenFoodFactsIngredientRepository.get(any(), any(), any())).thenAnswer { invocation
+      ->
+      val onSuccess = invocation.arguments[1] as (Ingredient?) -> Unit
+      onSuccess(ingredient)
+    }
 
-    val url2 = "image_front_url"
-    val name2 = aggregatorIngredientRepository.urlToName(url2)
-    assert(name2 == "display_normal")
+    // Mock uploadAndRetrieveUrlAsync for 3 images format
+    ingredient.images.forEach { (format, url) ->
+      `when`(mockImageUploader.uploadAndRetrieveUrlAsync(ingredient, format, mockImageRepository))
+          .thenThrow((RuntimeException("upload failed")))
+    }
 
-    val url3 = "image_front_thumb_url"
-    val name3 = aggregatorIngredientRepository.urlToName(url3)
-    assert(name3 == "display_thumbnail")
+    `when`(mockFirestoreIngredientRepository.add(eq(ingredient), any(), any())).thenAnswer {
+        invocation ->
+      val onFailure = invocation.arguments[2] as (Exception) -> Unit
+      onFailure(Exception("Error"))
+    }
 
-    val url4 = "invalid_url"
-    val exception =
-        assertThrows(IllegalArgumentException::class.java) {
-          aggregatorIngredientRepository.urlToName(url4)
-        }
-    assert(exception.message!!.contains("Unsupported image format: $url4"))
-  }
+    aggregatorIngredientRepository.get(
+        barCode = 12345L,
+        onSuccess = { returnedIngredient ->
+          // Assert the ingredient from OpenFoodFacts is immediately returned
+          assertEquals(ingredient, returnedIngredient)
+        },
+        onFailure = { exception -> resultingException = exception })
 
-  @Test
-  fun testUploadAndRetrieveUrlAsyncSuccess() = runTest {
-    val imageFormat = PRODUCT_FRONT_IMAGE_NORMAL_URL
-    val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+    // Wait for background process
+    advanceUntilIdle()
 
-    whenever(mockImageRepository.urlToBitmap(any())).thenReturn(bitmap)
-    // Mock uploadImage
-    `when`(
-            mockImageRepository.uploadImage(
-                any(), any(), any(), any(), onSuccess = any(), onFailure = any()))
-        .thenAnswer { invocation ->
-          val onSuccessCallback = invocation.arguments[4] as () -> Unit
-          onSuccessCallback()
-        }
-
-    `when`(
-            mockImageRepository.getImageUrl(
-                any(), any(), any(), onSuccess = any(), onFailure = any()))
-        .thenAnswer { invocation ->
-          val onSuccessCallback = invocation.arguments[3] as (Uri) -> Unit
-          onSuccessCallback(Uri.EMPTY)
-        }
-
-    val result = aggregatorIngredientRepository.uploadAndRetrieveUrlAsync(ingredient, imageFormat)
-
-    assertNotNull(result)
-    assertEquals(imageFormat, result?.first)
-    assertEquals(Uri.EMPTY.toString(), result?.second)
-  }
-
-  @Test
-  fun testUploadAndRetrieveUrlAsyncFailUploadReturnNull() = runTest {
-    val imageFormat = PRODUCT_FRONT_IMAGE_NORMAL_URL
-    val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
-
-    whenever(mockImageRepository.urlToBitmap(any())).thenReturn(bitmap)
-    // Mock uploadImage
-    `when`(
-            mockImageRepository.uploadImage(
-                any(), any(), any(), any(), onSuccess = any(), onFailure = any()))
-        .thenAnswer { invocation ->
-          val onSuccessCallback = invocation.arguments[4] as () -> Unit
-          onSuccessCallback()
-        }
-
-    `when`(
-            mockImageRepository.getImageUrl(
-                any(), any(), any(), onSuccess = any(), onFailure = any()))
-        .thenAnswer { invocation ->
-          val onFailureCallBack = invocation.arguments[4] as (Exception) -> Unit
-          onFailureCallBack(
-              Exception("Image download from Firebase storage has failed or image does not exist"))
-        }
-
-    val result = aggregatorIngredientRepository.uploadAndRetrieveUrlAsync(ingredient, imageFormat)
-    assertNull(result)
-  }
-
-  @Test
-  fun testUploadAndRetrieveUrlAsyncFailRetrieveUrlReturnNull() = runTest {
-    val imageFormat = PRODUCT_FRONT_IMAGE_NORMAL_URL
-    val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
-
-    whenever(mockImageRepository.urlToBitmap(any())).thenReturn(bitmap)
-    // Mock uploadImage
-    `when`(
-            mockImageRepository.uploadImage(
-                any(), any(), any(), any(), onSuccess = any(), onFailure = any()))
-        .thenAnswer { invocation ->
-          val onFailureCallback = invocation.arguments[5] as (Exception) -> Unit
-          onFailureCallback(Exception("Image upload to Firebase storage has failed"))
-        }
-
-    `when`(
-            mockImageRepository.getImageUrl(
-                any(), any(), any(), onSuccess = any(), onFailure = any()))
-        .thenAnswer { invocation ->
-          val onFailureCallBack = invocation.arguments[4] as (Exception) -> Unit
-          onFailureCallBack(
-              Exception("Image download from Firebase storage has failed or image does not exist"))
-        }
-
-    val result = aggregatorIngredientRepository.uploadAndRetrieveUrlAsync(ingredient, imageFormat)
-    assertNull(result)
+    assertNull(resultingException)
   }
 }

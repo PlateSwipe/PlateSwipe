@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.android.sample.model.image.ImageRepositoryFirebase
+import com.android.sample.model.image.ImageUploader
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.storage
@@ -111,7 +112,8 @@ class IngredientViewModel(private val repository: IngredientRepository) : ViewMo
                 AggregatorIngredientRepository(
                     FirestoreIngredientRepository(Firebase.firestore),
                     OpenFoodFactsIngredientRepository(OkHttpClient()),
-                    ImageRepositoryFirebase(Firebase.storage)))
+                    ImageRepositoryFirebase(Firebase.storage),
+                    ImageUploader()))
                 as T
           }
         }
