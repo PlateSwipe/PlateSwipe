@@ -7,7 +7,7 @@ import com.android.sample.resources.C.TestTag.Instruction.DEFAULT_ICON
  *
  * @property description The description of the instruction.
  * @property time The time required to complete the instruction in minutes. Nullable.
- * @property icon The icon representing the instruction, see IconType class to see the different
+ * @property iconType The icon representing the instruction, see IconType class to see the different
  *   icons.
  */
 data class Instruction(
@@ -19,7 +19,7 @@ data class Instruction(
       if (!iconType.isNullOrEmpty()) IconType(iconType) else IconType(DEFAULT_ICON)
 
   /** Returns the icon representing the instruction. */
-  fun icon(): IconType {
+  fun getIcon(): IconType {
     return icon
   }
 }
