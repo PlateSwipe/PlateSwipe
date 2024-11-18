@@ -466,7 +466,6 @@ class EndToEndTest {
         composable(Screen.CREATE_RECIPE_INGREDIENTS) {
           RecipeIngredientsScreen(
               navigationActions = navigationActions,
-              createRecipeViewModel = createRecipeViewModel,
               currentStep = 1)
         }
         composable(Screen.CREATE_RECIPE_INSTRUCTIONS) {

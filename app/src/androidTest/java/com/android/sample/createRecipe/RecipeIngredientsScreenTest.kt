@@ -27,7 +27,6 @@ class RecipeIngredientsScreenTest {
     composeTestRule.setContent {
       RecipeIngredientsScreen(
           navigationActions = mockNavigationActions,
-          createRecipeViewModel = mockCreateRecipeViewModel,
           currentStep = 1)
     }
 
@@ -42,7 +41,6 @@ class RecipeIngredientsScreenTest {
     composeTestRule.setContent {
       RecipeIngredientsScreen(
           navigationActions = mockNavigationActions,
-          createRecipeViewModel = mockCreateRecipeViewModel,
           currentStep = 1)
     }
 
