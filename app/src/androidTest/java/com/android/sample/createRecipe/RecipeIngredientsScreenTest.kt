@@ -25,10 +25,7 @@ class RecipeIngredientsScreenTest {
   @Test
   fun testRecipeIngredientsScreenComponentsAreDisplayed() {
     composeTestRule.setContent {
-      RecipeIngredientsScreen(
-          navigationActions = mockNavigationActions,
-          createRecipeViewModel = mockCreateRecipeViewModel,
-          currentStep = 1)
+      RecipeIngredientsScreen(navigationActions = mockNavigationActions, currentStep = 1)
     }
 
     composeTestRule.onNodeWithText(titleText).assertExists().assertIsDisplayed()
@@ -40,10 +37,7 @@ class RecipeIngredientsScreenTest {
   @Test
   fun testAddIngredientsButtonNavigatesToNextScreen() {
     composeTestRule.setContent {
-      RecipeIngredientsScreen(
-          navigationActions = mockNavigationActions,
-          createRecipeViewModel = mockCreateRecipeViewModel,
-          currentStep = 1)
+      RecipeIngredientsScreen(navigationActions = mockNavigationActions, currentStep = 1)
     }
 
     composeTestRule.onNodeWithText(buttonText).assertExists().performClick()
