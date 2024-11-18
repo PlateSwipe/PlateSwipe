@@ -39,7 +39,12 @@ fun IconDropdownMenu(
   val isDropDownExpanded = remember { mutableStateOf(false) }
 
   val iconOptions =
-      listOf(IconType(ICON_FIRE), IconType(ICON_SALT), IconType(ICON_MORTAR), IconType(ICON_AXE), IconType(ICON_CHEF_HAT))
+      listOf(
+          IconType(ICON_FIRE),
+          IconType(ICON_SALT),
+          IconType(ICON_MORTAR),
+          IconType(ICON_AXE),
+          IconType(ICON_CHEF_HAT))
 
   Box(
       modifier =

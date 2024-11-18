@@ -48,7 +48,6 @@ class IconDropdownMenuTest {
     composeTestRule.onNodeWithText("Season", useUnmergedTree = true).assertIsDisplayed()
     composeTestRule.onNodeWithText("Mix", useUnmergedTree = true).assertIsDisplayed()
     composeTestRule.onNodeWithText("Prep", useUnmergedTree = true).assertIsDisplayed()
-
   }
 
   @OptIn(ExperimentalCoroutinesApi::class)
@@ -85,8 +84,8 @@ class IconDropdownMenuTest {
     composeTestRule
         .onNode(hasText("Prep").and(hasAnyAncestor(keyIsDefined(SemanticsProperties.IsPopup))))
         .assertIsDisplayed()
-    composeTestRule
-      .onNode(hasText("Cook").and(hasAnyAncestor(keyIsDefined(SemanticsProperties.IsPopup))))
+    composeTestRule.onNode(
+        hasText("Cook").and(hasAnyAncestor(keyIsDefined(SemanticsProperties.IsPopup))))
   }
 
   @Test
