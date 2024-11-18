@@ -281,6 +281,7 @@ object C {
     const val ICON_SALT = "salt"
     const val ICON_MORTAR = "mortar"
     const val ICON_AXE = "axe"
+    const val ICON_CHEF_HAT = "chef hat"
 
     // UserViewModel
     object UserViewModel {

@@ -14,11 +14,13 @@ class IconTypeTest {
     const val SALT_ICON_RES = 2131165483
     const val MORTAR_ICON_RES = 2131165426
     const val AXE_ICON_RES = 2131165315
+    const val CHEF_S_HAT_RES = 2131165329
 
-    const val FIRE_DESCRIPTION_RES = 2131820658
-    const val SALT_DESCRIPTION_RES = 2131820965
-    const val MORTAR_DESCRIPTION_RES = 2131820868
+    const val FIRE_DESCRIPTION_RES = 2131820659
+    const val SALT_DESCRIPTION_RES = 2131820966
+    const val MORTAR_DESCRIPTION_RES = 2131820869
     const val AXE_DESCRIPTION_RES = 2131820589
+    const val CHEF_HAT_DESCRIPTION_RES = 2131820608
   }
 
   @Test
@@ -58,20 +60,20 @@ class IconTypeTest {
   }
 
   @Test
-  fun `test invalid icon name returns default fire`() {
+  fun `test invalid icon name returns default hat`() {
     val iconType = IconType("unknown")
 
     // Assert that iconResId and descriptionResId return default values for unknown name
-    assertEquals(FIRE_ICON_RES, iconType.iconResId)
-    assertEquals(FIRE_DESCRIPTION_RES, iconType.descriptionResId)
+    assertEquals(CHEF_S_HAT_RES, iconType.iconResId)
+    assertEquals(CHEF_HAT_DESCRIPTION_RES, iconType.descriptionResId)
   }
 
   @Test
-  fun `test empty icon name returns default fire`() {
+  fun `test empty icon name returns default hat`() {
     val iconType = IconType("")
 
     // Assert that iconResId and descriptionResId return default values for empty name
-    assertEquals(FIRE_ICON_RES, iconType.iconResId)
-    assertEquals(FIRE_DESCRIPTION_RES, iconType.descriptionResId)
+    assertEquals(CHEF_S_HAT_RES, iconType.iconResId)
+    assertEquals(CHEF_HAT_DESCRIPTION_RES, iconType.descriptionResId)
   }
 }
