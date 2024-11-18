@@ -7,6 +7,7 @@ import com.android.sample.model.image.ImageUploader
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_NORMAL_URL
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_SMALL_URL
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_THUMBNAIL_URL
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -47,6 +48,7 @@ class AggregatorIngredientRepositoryTest {
 
   private lateinit var aggregatorIngredientRepository: AggregatorIngredientRepository
   private val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+  private val dispatcher = Dispatchers.IO
   private val ingredient =
       Ingredient(
           uid = "1",
@@ -317,7 +319,9 @@ class AggregatorIngredientRepositoryTest {
 
     // Mock uploadAndRetrieveUrlAsync for 3 images format
     ingredient.images.forEach { (format, url) ->
-      `when`(mockImageUploader.uploadAndRetrieveUrlAsync(ingredient, format, mockImageRepository))
+      `when`(
+              mockImageUploader.uploadAndRetrieveUrlAsync(
+                  ingredient, format, mockImageRepository, dispatcher))
           .thenReturn(format to url)
     }
 
@@ -360,7 +364,9 @@ class AggregatorIngredientRepositoryTest {
 
     // Mock uploadAndRetrieveUrlAsync for 3 images format
     ingredient.images.forEach { (format, url) ->
-      `when`(mockImageUploader.uploadAndRetrieveUrlAsync(ingredient, format, mockImageRepository))
+      `when`(
+              mockImageUploader.uploadAndRetrieveUrlAsync(
+                  ingredient, format, mockImageRepository, dispatcher))
           .thenThrow((RuntimeException("upload failed")))
     }
 

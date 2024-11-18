@@ -153,7 +153,8 @@ open class AggregatorIngredientRepository(
             imageFormats.map { format ->
               async {
                 try {
-                  imageUploader.uploadAndRetrieveUrlAsync(ingredient, format, imageStorage)
+                  imageUploader.uploadAndRetrieveUrlAsync(
+                      ingredient, format, imageStorage, dispatcher)
                 } catch (e: Exception) {
                   Log.e(
                       "AggregatorIngredientRepository",

@@ -9,6 +9,7 @@ import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_NORMAL_URL
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_SMALL_URL
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_THUMBNAIL_URL
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -30,6 +31,7 @@ class ImageUploaderTest {
   @Mock private lateinit var mockImageRepository: ImageRepositoryFirebase
 
   private val imageUploader = ImageUploader()
+  private val dispatcher = Dispatchers.IO
   private val ingredient =
       Ingredient(
           uid = "1",
@@ -56,7 +58,8 @@ class ImageUploaderTest {
     val exception =
         assertThrows(AssertionError::class.java) {
           runBlocking {
-            imageUploader.uploadAndRetrieveUrlAsync(ingredient, imageFormat, mockImageRepository)
+            imageUploader.uploadAndRetrieveUrlAsync(
+                ingredient, imageFormat, mockImageRepository, dispatcher)
           }
         }
     assert(exception.message!!.contains("Image format $imageFormat not found in ingredient"))
@@ -80,7 +83,8 @@ class ImageUploaderTest {
     val exception =
         assertThrows(AssertionError::class.java) {
           runBlocking {
-            imageUploader.uploadAndRetrieveUrlAsync(ingredient, imageFormat, mockImageRepository)
+            imageUploader.uploadAndRetrieveUrlAsync(
+                ingredient, imageFormat, mockImageRepository, dispatcher)
           }
         }
     assert(exception.message!!.contains("Image URL for format $imageFormat is blank"))
@@ -103,7 +107,8 @@ class ImageUploaderTest {
     val exception =
         assertThrows(AssertionError::class.java) {
           runBlocking {
-            imageUploader.uploadAndRetrieveUrlAsync(ingredient, imageFormat, mockImageRepository)
+            imageUploader.uploadAndRetrieveUrlAsync(
+                ingredient, imageFormat, mockImageRepository, dispatcher)
           }
         }
     assert(exception.message!!.contains("Ingredient barcode is null"))
@@ -125,7 +130,8 @@ class ImageUploaderTest {
     val exception =
         assertThrows(AssertionError::class.java) {
           runBlocking {
-            imageUploader.uploadAndRetrieveUrlAsync(ingredient, imageFormat, mockImageRepository)
+            imageUploader.uploadAndRetrieveUrlAsync(
+                ingredient, imageFormat, mockImageRepository, dispatcher)
           }
         }
     assert(exception.message!!.contains("Image format : $imageFormat is not supported"))
@@ -175,7 +181,8 @@ class ImageUploaderTest {
         }
 
     val result =
-        imageUploader.uploadAndRetrieveUrlAsync(ingredient, imageFormat, mockImageRepository)
+        imageUploader.uploadAndRetrieveUrlAsync(
+            ingredient, imageFormat, mockImageRepository, dispatcher)
 
     assertNotNull(result)
     assertEquals(imageFormat, result?.first)
@@ -207,7 +214,8 @@ class ImageUploaderTest {
         }
 
     val result =
-        imageUploader.uploadAndRetrieveUrlAsync(ingredient, imageFormat, mockImageRepository)
+        imageUploader.uploadAndRetrieveUrlAsync(
+            ingredient, imageFormat, mockImageRepository, dispatcher)
     assertNull(result)
   }
 
@@ -234,7 +242,8 @@ class ImageUploaderTest {
         }
 
     val result =
-        imageUploader.uploadAndRetrieveUrlAsync(ingredient, imageFormat, mockImageRepository)
+        imageUploader.uploadAndRetrieveUrlAsync(
+            ingredient, imageFormat, mockImageRepository, dispatcher)
     assertNull(result)
   }
 }

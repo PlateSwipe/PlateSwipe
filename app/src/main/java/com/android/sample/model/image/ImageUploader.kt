@@ -9,8 +9,8 @@ import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_SMALL
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_SMALL_URL
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_THUMBNAIL
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_THUMBNAIL_URL
+import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class ImageUploader {
@@ -25,8 +25,9 @@ class ImageUploader {
       ingredient: Ingredient,
       imageFormat: String,
       imageStorage: ImageRepositoryFirebase,
+      dispatcher: CoroutineContext
   ): Pair<String, String>? {
-    return withContext(Dispatchers.IO) {
+    return withContext(dispatcher) {
       try {
         assert(ingredient.images.containsKey(imageFormat)) {
           "Image format $imageFormat not found in ingredient"
