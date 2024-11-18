@@ -19,12 +19,12 @@ class InstructionTest {
   @Test
   fun `instruction default icon is the DEFAULT_ICON`() {
     val instruction = Instruction(description = text, time = time, iconType = null)
-    assert(instruction.icon().iconName == DEFAULT_ICON)
+    assert(instruction.getIcon().iconName == DEFAULT_ICON)
   }
 
   @Test
   fun `instruction icon is the iconType`() {
     val instruction = Instruction(description = text, time = time, iconType = icon)
-    assert(instruction.icon().iconName == icon)
+    assert(instruction.getIcon().iconName == icon)
   }
 }
