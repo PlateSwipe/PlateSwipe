@@ -260,9 +260,9 @@ class RecipeBuilder {
    *
    * @param i The index of the instruction.
    */
-  fun getInstruction(i: Int): String {
+  fun getInstruction(i: Int): Instruction {
     require(i in instructions.indices) { "Index out of bounds" }
-    return instructions[i].description
+    return instructions[i]
   }
 
   /**
