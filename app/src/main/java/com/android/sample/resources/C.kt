@@ -35,7 +35,6 @@ object C {
       const val END_ANIMATION = 1500f
       const val INITIAL_RETRIEVE_NEXT_RECIPE = false
       const val INITIAL_DISPLAY_CARD_1 = true
-      const val INITIAL_DISPLAY_CARD_2 = false
       const val INITIAL_IS_CLICKING = false
       const val INITIAL_DISPLAY_LIKE = false
       const val INITIAL_DISPLAY_DISLIKE = false
@@ -336,7 +335,6 @@ object C {
       const val BUTTON_ELEVATION = 4
       const val BUTTON_RADIUS = 12
       const val BUTTON_PADDING = 12
-      const val ANIMATION_PADDING_SWIPE = 200
       const val ANIMATION_PADDING_TOP = 64
       const val ANIMATION_SWIPE_TIME = 50
       const val ANIMATION_OPACITY_TIME = 300
