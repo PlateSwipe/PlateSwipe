@@ -32,15 +32,19 @@ class CreateRecipeViewModel(
   val recipeBuilder = RecipeBuilder()
 
   // Fields for the selected Instruction when modifying a recipe
-  private val selectedDescription = MutableStateFlow<Int?>(null)
+  private val selectedInstruction = MutableStateFlow<Int?>(null)
 
   /**
    * Selects the description at the given index. This is used when modifying a recipe.
    *
    * @param index The index of the description to select.
    */
-  fun selectDescription(index: Int) {
-    selectedDescription.value = index
+  fun selectInstruction(index: Int) {
+    selectedInstruction.value = index
+  }
+
+  fun getSelectedInstruction(): Int? {
+    return selectedInstruction.value
   }
 
   private val _publishStatus = MutableStateFlow<String?>(null)
