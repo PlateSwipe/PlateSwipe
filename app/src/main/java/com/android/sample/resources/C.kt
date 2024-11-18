@@ -209,6 +209,8 @@ object C {
     const val PRODUCT_FRONT_IMAGE_SMALL = "display_small"
     const val INGREDIENT_IMAGE_ADDED_SUCCESSFULLY =
         "Ingredient image added successfully to the storage"
+    const val INGREDIENT_UPDATE_FAILED_MESSAGE = "Failed to update ingredient"
+    const val IMAGE_UPLOAD_FAILED_MESSAGE = "Image upload failed"
 
     // EXCEPTION MESSAGES
     const val LIMIT_MUST_BE_POSITIVE_MESSAGE = "Limit must be greater than 0"
