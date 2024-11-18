@@ -14,7 +14,8 @@ data class Instruction(
     val time: String?,
     val iconType: String?,
 ) {
-  private val icon: IconType = if (!iconType.isNullOrEmpty()) IconType(iconType) else IconType(DEFAULT_ICON)
+  private val icon: IconType =
+      if (!iconType.isNullOrEmpty()) IconType(iconType) else IconType(DEFAULT_ICON)
 
   fun icon(): IconType {
     return icon
