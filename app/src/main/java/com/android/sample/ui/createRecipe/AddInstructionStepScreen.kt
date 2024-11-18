@@ -70,7 +70,10 @@ fun AddInstructionStepContent(
   var stepDescription by remember { mutableStateOf(createRecipeViewModel.getRecipeInstructions()) }
   var stepTime by remember { mutableStateOf(createRecipeViewModel.getRecipeTime()) }
   var selectedIcon by remember {
-    mutableStateOf<IconType?>(createRecipeViewModel.getSelectedIcon())
+    mutableStateOf<IconType?>(
+        if(createRecipeViewModel.getSelectedDescription() != null){
+            createRecipeViewModel.getRecipeInstruction(createRecipeViewModel.getSelectedDescription()!!).getIcon()
+        } else null)
   }
   var showError by remember { mutableStateOf(false) }
 
@@ -216,7 +219,7 @@ fun confirmAndAssignStep(
     onSuccess: () -> Unit
 ) {
   if (stepDescription.isNotEmpty()) {
-    createRecipeViewModel.updateRecipeInstructions(stepDescription)
+    createRecipeViewModel.addRecipeInstruction(stepDescription)
     if (!stepTime.isNullOrEmpty()) {
       createRecipeViewModel.updateRecipeTime(stepTime.toString())
     }
