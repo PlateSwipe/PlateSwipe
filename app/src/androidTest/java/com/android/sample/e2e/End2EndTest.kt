@@ -47,7 +47,6 @@ import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_FAVORITE_ICON_TE
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_TITLE_TEST_TAG
 import com.android.sample.resources.C.TestTag.RecipeOverview.RECIPE_TITLE
 import com.android.sample.resources.C.TestTag.SwipePage.DRAGGABLE_ITEM
-import com.android.sample.resources.C.TestTag.SwipePage.FILTER
 import com.android.sample.resources.C.TestTag.Utils.BACK_ARROW_ICON
 import com.android.sample.ui.account.AccountScreen
 import com.android.sample.ui.camera.CameraScanCodeBarScreen
@@ -292,14 +291,14 @@ class EndToEndTest {
 
     composeTestRule
         .onNodeWithTag(RECIPE_TITLE_TEST_TAG, useUnmergedTree = true)
-        .assertTextContains(likedRecipe.strMeal)
+        .assertTextContains(likedRecipe.name)
 
     composeTestRule.onNodeWithTag(RECIPE_CARD_TEST_TAG, useUnmergedTree = true).performClick()
 
     composeTestRule
         .onNodeWithTag(RECIPE_TITLE, useUnmergedTree = true)
         .assertExists()
-        .assertTextContains(likedRecipe.strMeal)
+        .assertTextContains(likedRecipe.name)
 
     composeTestRule
         .onNodeWithTag(BACK_ARROW_ICON, useUnmergedTree = true)

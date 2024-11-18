@@ -79,8 +79,8 @@ class RecipeBuilderTest {
             }
             .build()
 
-    assertEquals("Pasta", recipe.strMeal)
-    assertEquals("Boil water, cook pasta", recipe.strInstructions)
+    assertEquals("Pasta", recipe.name)
+    assertEquals("Boil water, cook pasta", recipe.instructions)
     assertEquals("200g", recipe.ingredientsAndMeasurements[0].second)
   }
 
@@ -120,7 +120,7 @@ class RecipeBuilderTest {
               setInstructions("Mix ingredients")
               addIngredientAndMeasurement("Lettuce", "100g")
               setCategory("Vegetarian")
-              setArea("French")
+              setOrigin("French")
               setPictureID("http://example.com/image.jpg")
               setTime("15 mins")
               setDifficulty("Easy")
@@ -129,8 +129,8 @@ class RecipeBuilderTest {
             }
             .build()
 
-    assertEquals("Vegetarian", recipe.strCategory)
-    assertEquals("French", recipe.strArea)
+    assertEquals("Vegetarian", recipe.category)
+    assertEquals("French", recipe.origin)
     assertEquals("http://example.com/image.jpg", recipe.strMealThumbUrl)
     assertEquals("15 mins", recipe.time)
     assertEquals("Easy", recipe.difficulty)
@@ -145,7 +145,7 @@ class RecipeBuilderTest {
     builder.setInstructions("Mix ingredients")
     builder.addIngredientAndMeasurement("Lettuce", "100g")
     builder.setCategory("Vegetarian")
-    builder.setArea("French")
+    builder.setOrigin("French")
     builder.setPictureID("http://example.com/image.jpg")
     builder.setTime("15 mins")
     builder.setDifficulty("Easy")
@@ -162,7 +162,7 @@ class RecipeBuilderTest {
     assertEquals("", builder.getInstructions())
     assertEquals(emptyList<Pair<String, String>>(), builder.getIngredientsAndMeasurements())
     assertNull(builder.getCategory())
-    assertNull(builder.getArea())
+    assertNull(builder.getOrigin())
     assertEquals("", builder.getPictureID())
     assertNull(builder.getTime())
     assertNull(builder.getDifficulty())
@@ -180,7 +180,7 @@ class RecipeBuilderTest {
       setInstructions("Mix ingredients")
       addIngredientAndMeasurement("Lettuce", "100g")
       setCategory("Vegetarian")
-      setArea("French")
+      setOrigin("French")
       setPictureID("http://example.com/image.jpg")
       setTime("15 mins")
       setDifficulty("Easy")
@@ -190,7 +190,7 @@ class RecipeBuilderTest {
     assertEquals("Salad", builder.getName())
     assertEquals("Mix ingredients", builder.getInstructions())
     assertEquals("Vegetarian", builder.getCategory())
-    assertEquals("French", builder.getArea())
+    assertEquals("French", builder.getOrigin())
     assertEquals("http://example.com/image.jpg", builder.getPictureID())
     assertEquals("15 mins", builder.getTime())
     assertEquals("Easy", builder.getDifficulty())
