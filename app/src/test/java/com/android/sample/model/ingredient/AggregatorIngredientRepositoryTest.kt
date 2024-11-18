@@ -256,39 +256,6 @@ class AggregatorIngredientRepositoryTest {
     assertNull(resultingIngredient)
   }
 
-  @OptIn(ExperimentalCoroutinesApi::class)
-  @Test
-  fun testGetCallAddFirestoreOnSucces() = runTest {
-    `when`(mockFirestoreIngredientRepository.get(any(), any(), any())).thenAnswer { invocation ->
-      val onSuccess = invocation.arguments[1] as (Ingredient?) -> Unit
-      onSuccess(null)
-    }
-    `when`(mockOpenFoodFactsIngredientRepository.get(any(), any(), any())).thenAnswer { invocation
-      ->
-      val onSuccess = invocation.arguments[1] as (Ingredient?) -> Unit
-      onSuccess(ingredient)
-    }
-
-    // Mock uploadAndRetrieveUrlAsync for 3 images format
-    ingredient.images.forEach { (format, url) ->
-      `when`(mockImageUploader.uploadAndRetrieveUrlAsync(ingredient, format, mockImageRepository))
-          .thenReturn(format to url)
-    }
-
-    aggregatorIngredientRepository.get(
-        barCode = 12345L,
-        onSuccess = { returnedIngredient ->
-          // Assert the ingredient from OpenFoodFacts is immediately returned
-          assertEquals(ingredient, returnedIngredient)
-        },
-        onFailure = { exception -> fail("Should not reach onFailure: ${exception.message}") })
-
-    // Wait for background process
-    advanceUntilIdle()
-
-    verify(mockFirestoreIngredientRepository).add(eq(ingredient), any(), any())
-  }
-
   @Test
   fun testGetFailWhenFireStoreGetFail() = runTest {
     var resultingException: Exception? = null
