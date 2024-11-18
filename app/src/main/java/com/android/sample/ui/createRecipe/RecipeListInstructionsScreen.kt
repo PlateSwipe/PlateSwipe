@@ -150,7 +150,7 @@ fun RecipeListInstructionsContent(
                 index = 0,
                 time = createRecipeViewModel.getRecipeTime(),
                 onClick = { index ->
-                  createRecipeViewModel.selectDescription(index = index)
+                  createRecipeViewModel.selectInstruction(index = index)
                   navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_INSTRUCTION)
                 })
           }
