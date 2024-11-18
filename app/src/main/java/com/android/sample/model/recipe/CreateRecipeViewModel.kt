@@ -309,27 +309,32 @@ class CreateRecipeViewModel(
                   C.Tag.FIRESTORE_RECIPE_IMAGE_NAME,
                   ImageDirectoryType.RECIPE,
                   onSuccess = { uri ->
+                    try {
 
-                    // Set the URL to the Builder
-                    val url = uri.toString()
-                    recipeBuilder.setUrl(url)
+                      // Set the URL to the Builder
+                      val url = uri.toString()
+                      recipeBuilder.setUrl(url)
 
-                    // Build the Recipe
-                    val recipe = recipeBuilder.build()
+                      // Build the Recipe
+                      val recipe = recipeBuilder.build()
 
-                    // Add the Recipe to the Repository
-                    repository.addRecipe(
-                        recipe,
-                        onSuccess = {
-                          onSuccess(recipe)
-                          _publishStatus.value = RECIPE_PUBLISHED_SUCCESS_MESSAGE
-                          recipeBuilder.clear()
-                        },
-                        onFailure = { exception ->
-                          _publishStatus.value =
-                              RECIPE_PUBLISH_ERROR_MESSAGE.format(exception.message)
-                          onFailure(exception)
-                        })
+                      // Add the Recipe to the Repository
+                      repository.addRecipe(
+                          recipe,
+                          onSuccess = {
+                            onSuccess(recipe)
+                            _publishStatus.value = RECIPE_PUBLISHED_SUCCESS_MESSAGE
+                            recipeBuilder.clear()
+                          },
+                          onFailure = { exception ->
+                            _publishStatus.value =
+                                RECIPE_PUBLISH_ERROR_MESSAGE.format(exception.message)
+                            onFailure(exception)
+                          })
+                    } catch (e: IllegalArgumentException) {
+                      _publishStatus.value = e.message
+                      onFailure(e)
+                    }
                   },
                   onFailure = { exception ->
                     _publishStatus.value = RECIPE_PUBLISH_ERROR_MESSAGE.format(exception.message)
