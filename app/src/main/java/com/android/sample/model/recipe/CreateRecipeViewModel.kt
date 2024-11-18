@@ -100,9 +100,8 @@ class CreateRecipeViewModel(
    *
    * @param instructions The new instructions for the recipe.
    */
-  fun updateRecipeInstructions(instructions: String) {
-    require(instructions.isNotBlank()) { "Instructions must not be blank." }
-    recipeBuilder.setInstructions(instructions)
+  fun addRecipeInstruction(instructions: Instruction) {
+    recipeBuilder.addInstruction(instructions)
   }
 
   /**
@@ -209,8 +208,18 @@ class CreateRecipeViewModel(
    *
    * @return The instructions for the recipe.
    */
-  fun getRecipeInstructions(): String {
+  fun getRecipeInstructions(): List<Instruction> {
     return recipeBuilder.getInstructions()
+  }
+
+  /**
+   * Gets the i th instruction of the recipe.
+   *
+   * @param index The index of the instruction.
+   * @return The instruction at the given index.
+   */
+  fun getRecipeInstruction(index: Int): Instruction {
+    return recipeBuilder.getInstruction(index)
   }
 
   /**
