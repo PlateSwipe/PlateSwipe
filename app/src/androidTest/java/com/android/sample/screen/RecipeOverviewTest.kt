@@ -47,25 +47,23 @@ import org.junit.Test
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
+import testUtils.testRecipes
 
 class RecipeOverviewTest {
   private lateinit var mockNavigationActions: NavigationActions
   private lateinit var mockRepository: RecipesRepository
   private lateinit var recipesViewModel: RecipesViewModel
 
-  private val recipe1 =
-      Recipe(
-          "Recipe 1",
-          "Recipe 1",
-          "url1",
-          "Instructions 1",
-          "Category 1",
-          "Area 1",
-          listOf(
-              Pair("Ingredient 1", "Ingredient 1x"),
-              Pair("Ingredient 2", "Ingredient 1x"),
-              Pair("Ingredient 3", "Ingredient 2x")))
-  private val mockedRecipesList = listOf(recipe1)
+  private val mockedRecipesList =
+      listOf(
+          testUtils.testRecipes[0].copy(
+              ingredientsAndMeasurements =
+                  listOf(
+                      Pair("Ingredient 1", "Ingredient 1x"),
+                      Pair("Ingredient 2", "Ingredient 2x"),
+                      Pair("Ingredient 3", "Ingredient 3x"))),
+          testUtils.testRecipes[1],
+      )
 
   @get:Rule val composeTestRule = createComposeRule()
 

@@ -1,5 +1,6 @@
 package com.android.sample.model.user
 
+import com.android.sample.ui.utils.testUsers
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.CollectionReference
@@ -32,7 +33,7 @@ class UserRepositoryFirestoreTest {
 
   private lateinit var userRepositoryFirestore: UserRepositoryFirestore
 
-  private val user = User("1", "Gigel Frone", "", listOf(), listOf(), listOf())
+  private val user = testUsers[0]
 
   @Captor
   lateinit var onCompleteListenerCaptor: ArgumentCaptor<OnCompleteListener<DocumentSnapshot>>

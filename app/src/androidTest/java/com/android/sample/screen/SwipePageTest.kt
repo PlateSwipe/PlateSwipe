@@ -48,6 +48,7 @@ import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
+import testUtils.testRecipes
 
 @RunWith(AndroidJUnit4::class)
 class SwipePageTest : TestCase() {
@@ -55,25 +56,7 @@ class SwipePageTest : TestCase() {
   private lateinit var mockRepository: RecipesRepository
   private lateinit var recipesViewModel: RecipesViewModel
 
-  private val recipe1 =
-      Recipe(
-          "Recipe 1",
-          "",
-          "url1",
-          "Instructions 1",
-          "Category 1",
-          "Area 1",
-          listOf(Pair("Ingredient 1", "Ingredient 1")))
-  private val recipe2 =
-      Recipe(
-          "Recipe 2",
-          "",
-          "url2",
-          "Instructions 2",
-          "Category 2",
-          "Area 2",
-          listOf(Pair("Ingredient 2", "Ingredient 2")))
-  private val mockedRecipesList = listOf(recipe1, recipe2)
+  private val mockedRecipesList = testUtils.testRecipes
 
   @get:Rule val composeTestRule = createComposeRule()
 

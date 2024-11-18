@@ -69,6 +69,7 @@ import com.android.sample.ui.navigation.TopLevelDestinations
 import com.android.sample.ui.recipe.SearchRecipeScreen
 import com.android.sample.ui.recipeOverview.RecipeOverview
 import com.android.sample.ui.swipePage.SwipePage
+import com.android.sample.ui.utils.testRecipes
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import io.mockk.mockk
@@ -85,30 +86,12 @@ import org.mockito.kotlin.any
 
 @RunWith(AndroidJUnit4::class)
 class EndToEndTest {
-  private val recipe1 =
-      Recipe(
-          "Recipe 1",
-          "",
-          "url1",
-          "Instructions 1",
-          "Category 1",
-          "Area 1",
-          listOf(Pair("Ingredient 1", "Ingredient 1")))
-  private val recipe2 =
-      Recipe(
-          "Recipe 2",
-          "",
-          "url2",
-          "Instructions 2",
-          "Category 2",
-          "Area 2",
-          listOf(Pair("Ingredient 2", "Ingredient 2")))
 
   private val ingredient1 =
       Ingredient(
           name = "ingredient1", quantity = "50mg", categories = emptyList(), images = emptyList())
 
-  private val mockedRecipesList = listOf(recipe1, recipe2)
+  private val mockedRecipesList = testRecipes
 
   private lateinit var navigationActions: NavigationActions
   private lateinit var mockUserRepository: UserRepository
@@ -463,9 +446,7 @@ class EndToEndTest {
               navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
         }
         composable(Screen.CREATE_RECIPE_INGREDIENTS) {
-          RecipeIngredientsScreen(
-              navigationActions = navigationActions,
-              currentStep = 1)
+          RecipeIngredientsScreen(navigationActions = navigationActions, currentStep = 1)
         }
         composable(Screen.CREATE_RECIPE_INSTRUCTIONS) {
           RecipeInstructionsScreen(navigationActions = navigationActions, currentStep = 2)

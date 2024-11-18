@@ -1,6 +1,7 @@
 package com.android.sample.model.recipe
 
 import com.android.sample.model.filter.Difficulty
+import com.android.sample.ui.utils.testRecipes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -31,28 +32,7 @@ class RecipesViewModelTest {
   private lateinit var recipesViewModel: RecipesViewModel
 
   // Dummy recipes for testing
-  private val dummyRecipes: List<Recipe> =
-      listOf(
-          Recipe(
-              uid = "1",
-              name = "Spicy Arrabiata Penne",
-              category = "Vegetarian",
-              origin = "Italian",
-              instructions = "Instructions here...",
-              strMealThumbUrl =
-                  "https://www.recipetineats.com/penne-all-arrabbiata-spicy-tomato-pasta/",
-              ingredientsAndMeasurements =
-                  listOf(Pair("Penne", "1 pound"), Pair("Olive oil", "1/4 cup"))),
-          Recipe(
-              uid = "2",
-              name = "Chicken Curry",
-              category = "Non-Vegetarian",
-              origin = "Indian",
-              instructions = "Instructions here...",
-              strMealThumbUrl =
-                  "https://www.foodfashionparty.com/2023/08/05/everyday-chicken-curry/",
-              ingredientsAndMeasurements =
-                  listOf(Pair("Chicken", "1 pound"), Pair("Curry powder", "2 tbsp"))))
+  private val dummyRecipes: List<Recipe> = testRecipes
 
   @OptIn(ExperimentalCoroutinesApi::class)
   @Before

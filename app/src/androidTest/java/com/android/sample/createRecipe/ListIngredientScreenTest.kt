@@ -19,6 +19,7 @@ import com.android.sample.ui.createRecipe.IngredientListScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
+import com.android.sample.ui.utils.testIngredients
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -43,13 +44,10 @@ class ListIngredientScreenTest {
   @Mock private lateinit var aggregatorIngredientRepository: AggregatorIngredientRepository
 
   // Sample ingredients list for testing
-  private val testIngredients =
-      listOf(
-          Ingredient("1", 1234L, "Tomato", "Description", "2 cups", emptyList(), emptyList()),
-          Ingredient("2", 5678L, "Onion", "Description", "1 tbsp", emptyList(), emptyList()))
+  private val mockedIngredients = testIngredients
 
   private val ingredientPairs: List<Pair<String, String?>> =
-      testIngredients.map { it.name to it.quantity }
+      mockedIngredients.map { it.name to it.quantity }
 
   @Before
   fun setup() {
@@ -62,14 +60,14 @@ class ListIngredientScreenTest {
     `when`(aggregatorIngredientRepository.search(any(), any(), any(), any())).thenAnswer {
         invocation ->
       val onSuccess = invocation.getArgument<(List<Ingredient>) -> Unit>(1)
-      onSuccess(testIngredients)
+      onSuccess(mockedIngredients)
       null
     }
     ingredientViewModel = IngredientViewModel(aggregatorIngredientRepository)
     createRecipeViewModel = CreateRecipeViewModel.Factory.create(CreateRecipeViewModel::class.java)
     createRecipeViewModel.recipeBuilder.setName("Test Recipe")
 
-    for (ingredient in testIngredients) {
+    for (ingredient in mockedIngredients) {
       ingredientViewModel.addIngredient(ingredient)
     }
 
@@ -92,7 +90,7 @@ class ListIngredientScreenTest {
   @Test
   fun testIngredientListDisplaysIngredients() {
     // Check that each ingredient is displayed
-    testIngredients.forEach { ingredient ->
+    mockedIngredients.forEach { ingredient ->
       composeTestRule.onNodeWithText(ingredient.name, useUnmergedTree = true).assertIsDisplayed()
     }
   }
@@ -142,17 +140,17 @@ class ListIngredientScreenTest {
   fun testIngredientRemoveFunctionality() {
     // Simulate clicking the remove icon for the first ingredient
     composeTestRule
-        .onNodeWithTag("removeIngredientIcon${testIngredients[0].name}", useUnmergedTree = true)
+        .onNodeWithTag("removeIngredientIcon${mockedIngredients[0].name}", useUnmergedTree = true)
         .performClick()
 
     // Verify that the ingredient was removed from the view model
-    assertEquals(ingredientViewModel.ingredientList.value, listOf(testIngredients[1]))
+    assertEquals(ingredientViewModel.ingredientList.value, listOf(mockedIngredients[1]))
   }
 
   @Test
   fun testIngredientQuantityUpdateInTextField() {
     // Given the initial ingredient with a quantity
-    val ingredient = testIngredients[0]
+    val ingredient = mockedIngredients[0]
     val initialQuantity = ingredient.quantity
     val updatedQuantity = "3 cups" // New quantity to simulate user input
 
