@@ -22,6 +22,7 @@ import com.android.sample.R
 import com.android.sample.model.recipe.IconType
 import com.android.sample.resources.C.Tag.HORIZONTAL_PADDING_ICON_DROPDOWN
 import com.android.sample.resources.C.Tag.ICON_AXE
+import com.android.sample.resources.C.Tag.ICON_CHEF_HAT
 import com.android.sample.resources.C.Tag.ICON_FIRE
 import com.android.sample.resources.C.Tag.ICON_MORTAR
 import com.android.sample.resources.C.Tag.ICON_SALT
@@ -38,7 +39,7 @@ fun IconDropdownMenu(
   val isDropDownExpanded = remember { mutableStateOf(false) }
 
   val iconOptions =
-      listOf(IconType(ICON_FIRE), IconType(ICON_SALT), IconType(ICON_MORTAR), IconType(ICON_AXE))
+      listOf(IconType(ICON_FIRE), IconType(ICON_SALT), IconType(ICON_MORTAR), IconType(ICON_AXE), IconType(ICON_CHEF_HAT))
 
   Box(
       modifier =
