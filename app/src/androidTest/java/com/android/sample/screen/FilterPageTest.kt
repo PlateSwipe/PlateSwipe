@@ -13,9 +13,14 @@ import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipe
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.sample.model.filter.Difficulty
+import com.android.sample.model.filter.Filter
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.recipe.RecipesRepository
 import com.android.sample.model.recipe.RecipesViewModel
+import com.android.sample.resources.C.Tag.PRICE_RANGE_MAX
+import com.android.sample.resources.C.Tag.PRICE_RANGE_MIN
+import com.android.sample.resources.C.Tag.TIME_RANGE_MAX
+import com.android.sample.resources.C.Tag.TIME_RANGE_MIN
 import com.android.sample.ui.filter.FilterPage
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
@@ -24,6 +29,7 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -118,6 +124,15 @@ class FilterPageTest {
 
     composeTestRule.onNodeWithTag("priceRangeSlider", useUnmergedTree = true).assertIsDisplayed()
 
+    composeTestRule
+        .onNodeWithText("Reset", useUnmergedTree = true)
+        .performScrollTo()
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithText("Apply", useUnmergedTree = true)
+        .performScrollTo()
+        .assertIsDisplayed()
+
     difficultyNames.forEach { difficulty ->
       composeTestRule
           .onNodeWithTag("difficultyCheckbox${difficulty}", useUnmergedTree = true)
@@ -142,6 +157,9 @@ class FilterPageTest {
           start = Offset(sliderBounds.left, sliderBounds.height),
           end = Offset(sliderBounds.right, sliderBounds.height))
     }
+    composeTestRule.onNodeWithText("Apply", useUnmergedTree = true).performScrollTo().performClick()
+
+    composeTestRule.waitForIdle()
 
     // Assert that the range has changed
     assertNotEquals(recipesViewModel.filter.value.timeRange.min, min)
@@ -163,6 +181,7 @@ class FilterPageTest {
           start = Offset(sliderBounds.right, sliderBounds.height),
           end = Offset(sliderBounds.left, sliderBounds.height))
     }
+    composeTestRule.onNodeWithText("Apply", useUnmergedTree = true).performScrollTo().performClick()
 
     composeTestRule.waitForIdle()
     // Assert that the range has changed
@@ -265,6 +284,9 @@ class FilterPageTest {
         composeTestRule.onNodeWithTag(
             "difficultyCheckbox${Difficulty.Easy}", useUnmergedTree = true)
     easyCheckbox.performClick()
+
+    composeTestRule.onNodeWithText("Apply", useUnmergedTree = true).performScrollTo().performClick()
+
     composeTestRule.waitForIdle()
 
     // Verify the ViewModel's updateDifficulty method was called with Difficulty.Easy
@@ -283,6 +305,9 @@ class FilterPageTest {
         composeTestRule.onNodeWithTag(
             "difficultyCheckbox${Difficulty.Medium}", useUnmergedTree = true)
     mediumCheckbox.performClick()
+
+    composeTestRule.onNodeWithText("Apply", useUnmergedTree = true).performScrollTo().performClick()
+
     composeTestRule.waitForIdle()
 
     // Verify the ViewModel's updateDifficulty method was called with Difficulty.Medium
@@ -301,6 +326,8 @@ class FilterPageTest {
         composeTestRule.onNodeWithTag(
             "difficultyCheckbox${Difficulty.Hard}", useUnmergedTree = true)
     hardCheckbox.performClick()
+
+    composeTestRule.onNodeWithText("Apply", useUnmergedTree = true).performScrollTo().performClick()
     composeTestRule.waitForIdle()
 
     // Verify the ViewModel's updateDifficulty method was called with Difficulty.Hard
@@ -334,6 +361,7 @@ class FilterPageTest {
     composeTestRule
         .onNodeWithTag("categoryCheckboxDessert", useUnmergedTree = true)
         .performScrollTo()
+
     composeTestRule.waitForIdle()
 
     advanceUntilIdle()
@@ -341,6 +369,8 @@ class FilterPageTest {
     // Select the "Dessert" checkbox
     composeTestRule.onNodeWithTag("categoryCheckboxDessert", useUnmergedTree = true).performClick()
     composeTestRule.waitForIdle()
+
+    composeTestRule.onNodeWithText("Apply", useUnmergedTree = true).performScrollTo().performClick()
 
     advanceUntilIdle()
 
@@ -350,12 +380,16 @@ class FilterPageTest {
     composeTestRule
         .onNodeWithTag("categoryCheckboxVegetarian", useUnmergedTree = true)
         .performScrollTo()
+
     composeTestRule.waitForIdle()
 
     // Select the "Main Course" checkbox
     composeTestRule
         .onNodeWithTag("categoryCheckboxVegetarian", useUnmergedTree = true)
         .performClick()
+
+    composeTestRule.onNodeWithText("Apply", useUnmergedTree = true).performScrollTo().performClick()
+
     composeTestRule.waitForIdle()
 
     advanceUntilIdle()
@@ -405,5 +439,136 @@ class FilterPageTest {
         .performScrollTo()
     composeTestRule.waitForIdle()
     composeTestRule.onNodeWithTag("categoryCheckboxDessert", useUnmergedTree = true).assertIsOff()
+  }
+
+  @Test
+  fun nothingChangedWhenNewTimeRangeNotApplied() = runTest {
+    val min = recipesViewModel.filter.value.timeRange.min
+    composeTestRule.onNodeWithTag("timeRangeSlider", useUnmergedTree = true).performScrollTo()
+    composeTestRule.waitForIdle()
+
+    // Find the RangeSlider node and calculate its bounds
+    val sliderNode = composeTestRule.onNodeWithTag("timeRangeSlider", useUnmergedTree = true)
+    val sliderBounds = sliderNode.fetchSemanticsNode().boundsInRoot
+
+    // Swipe from start to end on the RangeSlider's horizontal bounds
+    sliderNode.performTouchInput {
+      swipe(
+          start = Offset(sliderBounds.left, sliderBounds.height),
+          end = Offset(sliderBounds.right, sliderBounds.height))
+    }
+    composeTestRule.waitForIdle()
+
+    assertEquals(recipesViewModel.filter.value.timeRange.min, min)
+  }
+
+  @Test
+  fun nothingChangedWhenNewValueRangeNotApplied() = runTest {
+    val max = recipesViewModel.filter.value.priceRange.max
+    composeTestRule.onNodeWithTag("priceRangeSlider", useUnmergedTree = true).performScrollTo()
+    composeTestRule.waitForIdle()
+
+    // Find the RangeSlider node and calculate its bounds
+    val sliderNode = composeTestRule.onNodeWithTag("priceRangeSlider", useUnmergedTree = true)
+    val sliderBounds = sliderNode.fetchSemanticsNode().boundsInRoot
+
+    // Swipe from start to end on the RangeSlider's horizontal bounds
+    sliderNode.performTouchInput {
+      swipe(
+          start = Offset(sliderBounds.right, sliderBounds.height),
+          end = Offset(sliderBounds.left, sliderBounds.height))
+    }
+    composeTestRule.waitForIdle()
+
+    assertEquals(recipesViewModel.filter.value.priceRange.max, max)
+  }
+
+  @Test
+  fun nothingChangedWhenNewDifficultyNotApplied() = runTest {
+    composeTestRule
+        .onNodeWithTag("difficultyCheckbox${Difficulty.Hard}", useUnmergedTree = true)
+        .performScrollTo()
+        .performClick()
+    composeTestRule.waitForIdle()
+
+    // Verify the ViewModel's updateDifficulty method was called with Difficulty.Easy
+    assertEquals(Difficulty.Undefined, recipesViewModel.filter.value.difficulty)
+  }
+
+  @Test
+  fun nothingChangedWhenNewCategoryNotApplied() = runTest {
+    composeTestRule
+        .onNodeWithTag("categoryCheckboxVegetarian", useUnmergedTree = true)
+        .performScrollTo()
+        .performClick()
+
+    composeTestRule.waitForIdle()
+
+    // Verify the ViewModel's updateDifficulty method was called with Difficulty.Easy
+    assertNull(recipesViewModel.filter.value.category)
+  }
+
+  @Test
+  fun resetCorrectlyAllValues() = runTest {
+    composeTestRule
+        .onNodeWithTag("categoryCheckboxVegetarian", useUnmergedTree = true)
+        .performScrollTo()
+        .performClick()
+
+    composeTestRule
+        .onNodeWithTag("difficultyCheckbox${Difficulty.Hard}", useUnmergedTree = true)
+        .performScrollTo()
+        .performClick()
+    composeTestRule
+        .onNodeWithTag("difficultyCheckbox${Difficulty.Hard}", useUnmergedTree = true)
+        .performScrollTo()
+        .performClick()
+
+    composeTestRule.onNodeWithTag("priceRangeSlider", useUnmergedTree = true).performScrollTo()
+    composeTestRule.waitForIdle()
+
+    // Find the RangeSlider node and calculate its bounds
+    var sliderNode = composeTestRule.onNodeWithTag("priceRangeSlider", useUnmergedTree = true)
+    var sliderBounds = sliderNode.fetchSemanticsNode().boundsInRoot
+
+    // Swipe from start to end on the RangeSlider's horizontal bounds
+    sliderNode.performTouchInput {
+      swipe(
+          start = Offset(sliderBounds.right, sliderBounds.height),
+          end = Offset(sliderBounds.left, sliderBounds.height))
+    }
+
+    composeTestRule.onNodeWithTag("timeRangeSlider", useUnmergedTree = true).performScrollTo()
+    composeTestRule.waitForIdle()
+
+    // Find the RangeSlider node and calculate its bounds
+    sliderNode = composeTestRule.onNodeWithTag("timeRangeSlider", useUnmergedTree = true)
+    sliderBounds = sliderNode.fetchSemanticsNode().boundsInRoot
+
+    // Swipe from start to end on the RangeSlider's horizontal bounds
+    sliderNode.performTouchInput {
+      swipe(
+          start = Offset(sliderBounds.left, sliderBounds.height),
+          end = Offset(sliderBounds.right, sliderBounds.height))
+    }
+    composeTestRule.onNodeWithText("Apply", useUnmergedTree = true).performScrollTo().performClick()
+
+    composeTestRule.waitForIdle()
+
+    composeTestRule.onNodeWithText("Reset", useUnmergedTree = true).performScrollTo().performClick()
+
+    composeTestRule.waitForIdle()
+
+    composeTestRule.onNodeWithText("Apply", useUnmergedTree = true).performScrollTo().performClick()
+
+    composeTestRule.waitForIdle()
+
+    // Verify the ViewModel's updateDifficulty method was called with Difficulty.Easy
+    assertEquals(TIME_RANGE_MIN, recipesViewModel.filter.value.timeRange.min)
+    assertEquals(TIME_RANGE_MAX, recipesViewModel.filter.value.timeRange.max)
+    assertEquals(PRICE_RANGE_MIN, recipesViewModel.filter.value.priceRange.min)
+    assertEquals(PRICE_RANGE_MAX, recipesViewModel.filter.value.priceRange.max)
+    assertEquals(Filter().category, recipesViewModel.filter.value.category)
+    assertEquals(Filter().difficulty, recipesViewModel.filter.value.difficulty)
   }
 }

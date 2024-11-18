@@ -46,6 +46,10 @@ class RecipesViewModel(private val repository: RecipesRepository) :
   override val filter: StateFlow<Filter>
     get() = _filter
 
+  private val _tmpFilter = MutableStateFlow(Filter())
+  override val tmpFilter: StateFlow<Filter>
+    get() = _tmpFilter
+
   private val _categories = MutableStateFlow<List<String>>(emptyList())
   override val categories: StateFlow<List<String>>
     get() = _categories
@@ -75,7 +79,7 @@ class RecipesViewModel(private val repository: RecipesRepository) :
    * @param difficulty The difficulty to filter by.
    */
   override fun updateDifficulty(difficulty: Difficulty) {
-    filter.value.difficulty = difficulty
+    _tmpFilter.value.difficulty = difficulty
   }
 
   /**
@@ -85,7 +89,7 @@ class RecipesViewModel(private val repository: RecipesRepository) :
    * @param max The maximum price.
    */
   override fun updatePriceRange(min: Float, max: Float) {
-    filter.value.priceRange.update(min, max)
+    _tmpFilter.value.priceRange.update(min, max)
   }
 
   /**
@@ -95,15 +99,46 @@ class RecipesViewModel(private val repository: RecipesRepository) :
    * @param max The maximum time.
    */
   override fun updateTimeRange(min: Float, max: Float) {
-    filter.value.timeRange.update(min, max)
+    _tmpFilter.value.timeRange.update(min, max)
   }
 
+  override fun applyChanges() {
+    _filter.value = _tmpFilter.value
+    viewModelScope.launch {
+      _recipes.value = emptyList()
+      _currentRecipe.value = null
+      _nextRecipe.value = null
+      fetchRandomRecipes(NUMBER_RECIPES_TO_FETCH)
+      _loading.collect { isLoading ->
+        if (!isLoading) {
+          updateCurrentRecipe(_recipes.value.first())
+          return@collect
+        }
+      }
+    }
+  }
+
+  override fun resetFilters() {
+    _tmpFilter.value = Filter()
+  }
+
+  override fun initFilter() {
+
+    _tmpFilter.value =
+        Filter(
+            _filter.value.timeRange.copy(),
+            _filter.value.priceRange.copy(),
+            _filter.value.difficulty,
+            _filter.value.category)
+  }
   /**
    * Updates the category filter.
    *
    * @param category The category to filter by.
    */
   override fun updateCategory(category: String?) {
+    _tmpFilter.value.category = category
+    /*
     viewModelScope.launch {
       _recipes.value = emptyList()
       _currentRecipe.value = null
@@ -116,7 +151,7 @@ class RecipesViewModel(private val repository: RecipesRepository) :
           return@collect
         }
       }
-    }
+    }*/
   }
 
   /**

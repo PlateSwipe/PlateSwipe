@@ -252,6 +252,7 @@ fun RecipeDisplay(
                         contentDescription = stringResource(R.string.filter_icon),
                         modifier =
                             Modifier.testTag(FILTER).size(FILTER_ICON_SIZE.dp).clickable {
+                              recipesViewModel.initFilter()
                               navigationActions.navigateTo(Screen.FILTER)
                             },
                         tint = graySlate)

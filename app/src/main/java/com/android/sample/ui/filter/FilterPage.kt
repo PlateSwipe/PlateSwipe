@@ -12,8 +12,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RangeSlider
@@ -26,7 +30,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -34,6 +37,8 @@ import androidx.compose.ui.unit.dp
 import com.android.sample.model.filter.Difficulty
 import com.android.sample.model.filter.FilterPageViewModel
 import com.android.sample.model.filter.FloatRange
+import com.android.sample.resources.C.Dimension.SwipePage.BUTTON_ELEVATION
+import com.android.sample.resources.C.Dimension.SwipePage.BUTTON_RADIUS
 import com.android.sample.resources.C.Tag.CATEGORY_NAME
 import com.android.sample.resources.C.Tag.DIFFICULTY_NAME
 import com.android.sample.resources.C.Tag.MAX_ITEM_IN_ROW
@@ -41,12 +46,17 @@ import com.android.sample.resources.C.Tag.PRICE_RANGE_MAX
 import com.android.sample.resources.C.Tag.PRICE_RANGE_MIN
 import com.android.sample.resources.C.Tag.PRICE_RANGE_NAME
 import com.android.sample.resources.C.Tag.PRICE_RANGE_UNIT
+import com.android.sample.resources.C.Tag.SMALL_PADDING
 import com.android.sample.resources.C.Tag.TIME_RANGE_MAX
 import com.android.sample.resources.C.Tag.TIME_RANGE_MIN
 import com.android.sample.resources.C.Tag.TIME_RANGE_NAME
 import com.android.sample.resources.C.Tag.TIME_RANGE_UNIT
+import com.android.sample.resources.C.TestTag.SwipePage.VIEW_RECIPE_BUTTON
 import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.utils.PlateSwipeScaffold
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 /**
  * Composable function to display the filter page.
@@ -61,7 +71,7 @@ fun FilterPage(navigationActions: NavigationActions, filterViewModel: FilterPage
       navigationActions = navigationActions,
       selectedItem = selectedItem,
       showBackArrow = true,
-      content = { paddingValues -> FilterBox(paddingValues, filterViewModel) })
+      content = { paddingValues -> FilterBox(paddingValues, filterViewModel, navigationActions) })
 }
 
 /**
@@ -72,18 +82,23 @@ fun FilterPage(navigationActions: NavigationActions, filterViewModel: FilterPage
  */
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun FilterBox(paddingValues: PaddingValues, filterViewModel: FilterPageViewModel) {
-  val filter by filterViewModel.filter.collectAsState()
+fun FilterBox(
+    paddingValues: PaddingValues,
+    filterViewModel: FilterPageViewModel,
+    navigationActions: NavigationActions
+) {
   Column(
       modifier =
           Modifier.padding(paddingValues).fillMaxSize().verticalScroll(rememberScrollState())) {
+        val filter by filterViewModel.tmpFilter.collectAsState()
+
         ValueRangeSlider(
             modifier = Modifier.testTag("timeRangeSlider"),
             name = TIME_RANGE_NAME,
             min = TIME_RANGE_MIN,
             max = TIME_RANGE_MAX,
             unit = TIME_RANGE_UNIT,
-            range = filter.timeRange,
+            range = MutableStateFlow(filter.timeRange),
             updateRange = { newMin, newMax -> filterViewModel.updateTimeRange(newMin, newMax) })
         ValueRangeSlider(
             modifier = Modifier.testTag("priceRangeSlider"),
@@ -91,7 +106,7 @@ fun FilterBox(paddingValues: PaddingValues, filterViewModel: FilterPageViewModel
             min = PRICE_RANGE_MIN,
             max = PRICE_RANGE_MAX,
             unit = PRICE_RANGE_UNIT,
-            range = filter.priceRange,
+            range = MutableStateFlow(filter.priceRange),
             updateRange = { newMin, newMax -> filterViewModel.updatePriceRange(newMin, newMax) })
 
         val difficultyLevels = listOf(Difficulty.Easy, Difficulty.Medium, Difficulty.Hard)
@@ -101,7 +116,7 @@ fun FilterBox(paddingValues: PaddingValues, filterViewModel: FilterPageViewModel
         CheckboxGroup(
             title = DIFFICULTY_NAME,
             items = difficultyLevels,
-            selectedItem = selectedDifficulty,
+            selectedItem = MutableStateFlow(selectedDifficulty),
             onItemSelect = { newDifficulty -> filterViewModel.updateDifficulty(newDifficulty) },
             testTagPrefix = "difficulty",
             emptyValue = emptyDifficulty)
@@ -113,10 +128,53 @@ fun FilterBox(paddingValues: PaddingValues, filterViewModel: FilterPageViewModel
         CheckboxGroup(
             title = CATEGORY_NAME,
             items = categories,
-            selectedItem = selectedCategory,
+            selectedItem = MutableStateFlow(selectedCategory),
             onItemSelect = { newCategory -> filterViewModel.updateCategory(newCategory) },
             testTagPrefix = "category",
             emptyValue = emptyCategory)
+
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+          Button(
+              onClick = {
+                filterViewModel.applyChanges()
+                navigationActions.navigateTo(Screen.SWIPE)
+              },
+              colors =
+                  ButtonDefaults.buttonColors(
+                      containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                      contentColor = MaterialTheme.colorScheme.onPrimary),
+              elevation = ButtonDefaults.buttonElevation(BUTTON_ELEVATION.dp),
+              shape = RoundedCornerShape(BUTTON_RADIUS.dp),
+              modifier =
+                  Modifier.padding(horizontal = SMALL_PADDING.dp, vertical = (SMALL_PADDING / 2).dp)
+                      .wrapContentSize()
+                      .testTag(VIEW_RECIPE_BUTTON)) {
+                Text(
+                    text = "Apply",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                )
+              }
+
+          Button(
+              onClick = { filterViewModel.resetFilters() },
+              colors =
+                  ButtonDefaults.buttonColors(
+                      containerColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                      contentColor = MaterialTheme.colorScheme.background),
+              elevation = ButtonDefaults.buttonElevation(BUTTON_ELEVATION.dp),
+              shape = RoundedCornerShape(BUTTON_RADIUS.dp),
+              modifier =
+                  Modifier.padding(horizontal = SMALL_PADDING.dp, vertical = (SMALL_PADDING / 2).dp)
+                      .wrapContentSize()
+                      .testTag(VIEW_RECIPE_BUTTON)) {
+                Text(
+                    text = "Reset",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.background,
+                )
+              }
+        }
       }
 }
 
@@ -130,6 +188,7 @@ fun FilterBox(paddingValues: PaddingValues, filterViewModel: FilterPageViewModel
  * @param range The range of the slider.
  * @param updateRange The function to update the range.
  */
+@SuppressLint("StateFlowValueCalledInComposition", "UnrememberedMutableState")
 @Composable
 fun ValueRangeSlider(
     modifier: Modifier,
@@ -137,16 +196,17 @@ fun ValueRangeSlider(
     min: Float,
     max: Float,
     unit: String,
-    range: FloatRange,
+    range: StateFlow<FloatRange>,
     updateRange: (Float, Float) -> Unit,
 ) {
   // Update the range to the [min, max] if it is unbounded
-  if (range.isLimited()) {
-    range.update(min, max)
+  if (range.value.isLimited()) {
+    range.value.update(min, max)
   }
   // Mutable state to store the slider position
+  val currentRange by range.collectAsState()
+  val rangeSlider = mutableStateOf(currentRange.min..currentRange.max)
 
-  var sliderPosition by remember { mutableStateOf(range.min..range.max) }
   Column(modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
     Text(
         text = name,
@@ -158,11 +218,11 @@ fun ValueRangeSlider(
     // Display selected min and max values
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
       Text(
-          "${sliderPosition.start.toInt()} " + unit,
+          "${rangeSlider.value.start.toInt()} " + unit,
           style = MaterialTheme.typography.bodyMedium,
           color = MaterialTheme.colorScheme.onPrimary)
       Text(
-          "${sliderPosition.endInclusive.toInt()} " + unit,
+          "${rangeSlider.value.endInclusive.toInt()} " + unit,
           style = MaterialTheme.typography.bodyMedium,
           color = MaterialTheme.colorScheme.onPrimary)
     }
@@ -172,9 +232,9 @@ fun ValueRangeSlider(
     // Range slider with minimum 0 and maximum 120 minutes
     RangeSlider(
         modifier = modifier.fillMaxWidth(),
-        value = sliderPosition,
+        value = rangeSlider.value,
         onValueChange = {
-          sliderPosition = it
+          rangeSlider.value = it
           updateRange(it.start, it.endInclusive)
         },
         valueRange = min..max,
@@ -202,7 +262,7 @@ fun ValueRangeSlider(
 fun <T> CheckboxGroup(
     title: String,
     items: List<T>,
-    selectedItem: T?,
+    selectedItem: StateFlow<T?>,
     onItemSelect: (T) -> Unit,
     testTagPrefix: String,
     emptyValue: T?
@@ -215,8 +275,8 @@ fun <T> CheckboxGroup(
   // Synchronize item states with selectedItem on updates
   LaunchedEffect(selectedItem) {
     itemStates.keys.forEach { itemStates[it] = false }
-    if (selectedItem != emptyValue) {
-      itemStates[selectedItem!!] = true
+    if (selectedItem.value != emptyValue) {
+      itemStates[selectedItem.value!!] = true
     }
   }
 

@@ -14,8 +14,18 @@ import kotlin.math.roundToInt
 
 /** Filter class to store filter types. */
 open class Filter(
-    var timeRange: FloatRange = FloatRange.TIME_RANGE,
-    var priceRange: FloatRange = FloatRange.PRICE_RANGE,
+    var timeRange: FloatRange =
+        FloatRange(
+            UNINITIALIZED_BORN_VALUE,
+            UNINITIALIZED_BORN_VALUE,
+            UNINITIALIZED_BORN_VALUE,
+            UNINITIALIZED_BORN_VALUE),
+    var priceRange: FloatRange =
+        FloatRange(
+            UNINITIALIZED_BORN_VALUE,
+            UNINITIALIZED_BORN_VALUE,
+            UNINITIALIZED_BORN_VALUE,
+            UNINITIALIZED_BORN_VALUE),
     var difficulty: Difficulty = Difficulty.Undefined,
     var category: String? = null,
 )
@@ -41,21 +51,6 @@ data class FloatRange(var min: Float, var max: Float, var minBorn: Float, var ma
     require(newMin >= minBorn && newMax <= maxBorn) { NEW_MIN_AND_NEW_MAX_SHOULD_BE_WITHIN_RANGE }
     min = newMin.roundToInt().toFloat()
     max = newMax.roundToInt().toFloat()
-  }
-
-  companion object {
-    val TIME_RANGE =
-        FloatRange(
-            UNINITIALIZED_BORN_VALUE,
-            UNINITIALIZED_BORN_VALUE,
-            UNINITIALIZED_BORN_VALUE,
-            UNINITIALIZED_BORN_VALUE)
-    val PRICE_RANGE =
-        FloatRange(
-            UNINITIALIZED_BORN_VALUE,
-            UNINITIALIZED_BORN_VALUE,
-            UNINITIALIZED_BORN_VALUE,
-            UNINITIALIZED_BORN_VALUE)
   }
 
   fun isLimited() = min == minBorn && max == maxBorn
