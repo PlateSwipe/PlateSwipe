@@ -720,5 +720,9 @@ object C {
       const val ADD_INGREDIENT_ICON = "addIngredientIcon"
       const val NEXT_STEP_BUTTON = "nextStepButton"
     }
+
+    object Instruction {
+      const val DEFAULT_ICON = "fire"
+    }
   }
 }

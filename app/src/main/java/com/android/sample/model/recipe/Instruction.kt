@@ -1,6 +1,6 @@
 package com.android.sample.model.recipe
 
-import com.android.sample.ui.createRecipe.IconType
+import com.android.sample.resources.C.TestTag.Instruction.DEFAULT_ICON
 
 /**
  * Data class representing an instruction in a recipe.
@@ -12,5 +12,11 @@ import com.android.sample.ui.createRecipe.IconType
 data class Instruction(
     val description: String,
     val time: String?,
-    val icon: IconType?,
-) {}
+    val iconType: String?,
+) {
+  private val icon: IconType = if (iconType != null) IconType(iconType) else IconType(DEFAULT_ICON)
+
+  fun icon(): IconType {
+    return icon
+  }
+}
