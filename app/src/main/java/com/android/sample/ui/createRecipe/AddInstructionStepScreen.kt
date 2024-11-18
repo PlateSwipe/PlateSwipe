@@ -71,8 +71,8 @@ fun AddInstructionStepContent(
   var stepTime by remember { mutableStateOf(createRecipeViewModel.getRecipeTime()) }
   var selectedIcon by remember {
     mutableStateOf<IconType?>(
-        if(createRecipeViewModel.getSelectedDescription() != null){
-            createRecipeViewModel.getRecipeInstruction(createRecipeViewModel.getSelectedDescription()!!).getIcon()
+        if(createRecipeViewModel.getSelectedInstruction() != null){
+            createRecipeViewModel.getRecipeInstruction(createRecipeViewModel.getSelectedInstruction()!!).getIcon()
         } else null)
   }
   var showError by remember { mutableStateOf(false) }
