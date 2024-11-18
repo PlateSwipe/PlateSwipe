@@ -33,7 +33,6 @@ class CreateRecipeViewModel(
 
   // Fields for the selected Instruction when modifying a recipe
   private val selectedDescription = MutableStateFlow<Int?>(null)
-  private val selectedIcon = MutableStateFlow<IconType?>(null)
 
   /**
    * Selects the description at the given index. This is used when modifying a recipe.
@@ -345,37 +344,6 @@ class CreateRecipeViewModel(
     } catch (e: NullPointerException) {
       _publishStatus.value = e.message
     }
-  }
-
-  /**
-   * Selects the icon for the recipe. WARNING : This method should be updated in the next version of
-   * the instruction implementation.
-   *
-   * @param icon The icon to select.
-   */
-  fun selectIcon(icon: IconType) {
-    selectedIcon.value = icon
-  }
-
-  /**
-   * Gets the selected icon for the recipe. WARNING : This method should be updated in the next
-   * version of the instruction implementation.
-   *
-   * @return The selected icon for the recipe.
-   */
-  fun getSelectedIcon(): IconType? {
-    return selectedIcon.value
-  }
-
-  /**
-   * Gets the icon at the given index. WARNING : This method should be updated in the next version
-   * of the instruction implementation.
-   *
-   * @param index The index of the icon to get.
-   * @return The icon at the given index.
-   */
-  fun getIcon(index: Int): IconType? {
-    return selectedIcon.value
   }
 
   companion object {
