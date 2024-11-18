@@ -89,10 +89,10 @@ class CreateRecipeViewModel(
   /**
    * Updates the area of the recipe.
    *
-   * @param area The new area of the recipe.
+   * @param origin The new area of the recipe.
    */
-  fun updateRecipeArea(area: String) {
-    recipeBuilder.setOrigin(area)
+  fun updateRecipeOrigin(origin: String) {
+    recipeBuilder.setOrigin(origin)
   }
 
   /**
@@ -149,7 +149,7 @@ class CreateRecipeViewModel(
    * @param ingredient The ingredient to add.
    * @param measurement The measurement of the ingredient.
    */
-  fun addIngredient(ingredient: String, measurement: String) {
+  fun addIngredientAndMeasurement(ingredient: String, measurement: String) {
     require(ingredient.isNotBlank()) { "Ingredient must not be blank." }
     require(measurement.isNotBlank()) { "Measurement must not be blank." }
     recipeBuilder.addIngredientAndMeasurement(ingredient, measurement)
@@ -228,7 +228,7 @@ class CreateRecipeViewModel(
    *
    * @return The area of the recipe.
    */
-  fun getRecipeArea(): String? {
+  fun getRecipeOrigin(): String? {
     return recipeBuilder.getOrigin()
   }
 

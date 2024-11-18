@@ -91,7 +91,7 @@ class PublishRecipeScreenTest {
     createRecipeViewModel.updateRecipeName("Test Recipe")
     createRecipeViewModel.updateRecipeInstructions("Test instructions")
     createRecipeViewModel.updateRecipeThumbnail("https://example.com/image.jpg")
-    createRecipeViewModel.addIngredient("Ingredient", "1 cup")
+    createRecipeViewModel.addIngredientAndMeasurement("Ingredient", "1 cup")
 
     composeTestRule.setContent {
       PublishRecipeScreen(
@@ -124,11 +124,11 @@ class PublishRecipeScreenTest {
    */
   @Test(expected = IllegalArgumentException::class)
   fun publishRecipeScreen_throwsErrorWhenIngredientOrMeasurementIsBlank() {
-    createRecipeViewModel.addIngredient("", "1 cup")
+    createRecipeViewModel.addIngredientAndMeasurement("", "1 cup")
   }
 
   @Test(expected = IllegalArgumentException::class)
   fun publishRecipeScreen_throwsErrorWhenMeasurementIsBlank() {
-    createRecipeViewModel.addIngredient("Sugar", "")
+    createRecipeViewModel.addIngredientAndMeasurement("Sugar", "")
   }
 }

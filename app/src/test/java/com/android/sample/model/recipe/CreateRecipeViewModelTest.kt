@@ -113,7 +113,7 @@ class CreateRecipeViewModelTest {
   fun `test addIngredient adds the ingredient correctly`() {
     val ingredient = "Sugar"
     val measurement = "1 cup"
-    createRecipeViewModel.addIngredient(ingredient, measurement)
+    createRecipeViewModel.addIngredientAndMeasurement(ingredient, measurement)
     val ingredients =
         createRecipeViewModel.recipeBuilder.javaClass
             .getDeclaredField("ingredientsAndMeasurements")
@@ -220,6 +220,7 @@ class CreateRecipeViewModelTest {
     createRecipeViewModel.updateRecipeName(defaultRecipe.name)
     createRecipeViewModel.updateRecipeInstructions(defaultRecipe.instructions)
     createRecipeViewModel.addIngredient("Banana", "3")
+    createRecipeViewModel.addIngredientAndMeasurement("Banana", "3")
     createRecipeViewModel.setBitmap(bitmap, 90)
 
     `when`(mockRepository.getNewUid()).thenReturn(defaultRecipe.uid)
@@ -248,9 +249,9 @@ class CreateRecipeViewModelTest {
     createRecipeViewModel.updateRecipeName(defaultRecipe.name)
     createRecipeViewModel.updateRecipeInstructions(defaultRecipe.instructions)
     createRecipeViewModel.updateRecipeThumbnail(defaultRecipe.strMealThumbUrl)
-    createRecipeViewModel.addIngredient("Banana", "3")
+    createRecipeViewModel.addIngredientAndMeasurement("Banana", "3")
     defaultRecipe.category?.let { createRecipeViewModel.updateRecipeCategory(it) }
-    defaultRecipe.origin?.let { createRecipeViewModel.updateRecipeArea(it) }
+    defaultRecipe.origin?.let { createRecipeViewModel.updateRecipeOrigin(it) }
     createRecipeViewModel.setBitmap(bitmap, 90)
 
     `when`(mockRepository.getNewUid()).thenReturn(defaultRecipe.uid)
@@ -307,6 +308,7 @@ class CreateRecipeViewModelTest {
     createRecipeViewModel.updateRecipeName(defaultRecipe.name)
     createRecipeViewModel.updateRecipeInstructions(defaultRecipe.instructions)
     createRecipeViewModel.addIngredient("Banana", "3")
+    createRecipeViewModel.addIngredientAndMeasurement("Banana", "3")
     createRecipeViewModel.setBitmap(bitmap, 90)
 
     `when`(mockRepository.getNewUid()).thenReturn(defaultRecipe.uid)
@@ -340,6 +342,7 @@ class CreateRecipeViewModelTest {
     createRecipeViewModel.updateRecipeName(defaultRecipe.name)
     createRecipeViewModel.updateRecipeInstructions(defaultRecipe.instructions)
     createRecipeViewModel.addIngredient("Banana", "3")
+    createRecipeViewModel.addIngredientAndMeasurement("Banana", "3")
     createRecipeViewModel.setBitmap(bitmap, 90)
 
     `when`(mockRepository.getNewUid()).thenReturn(defaultRecipe.uid)
@@ -411,7 +414,7 @@ class CreateRecipeViewModelTest {
   @Test
   fun `test updateRecipeArea updates the area correctly`() {
     val newArea = "Italian"
-    createRecipeViewModel.updateRecipeArea(newArea)
+    createRecipeViewModel.updateRecipeOrigin(newArea)
 
     val updatedArea =
         createRecipeViewModel.recipeBuilder.javaClass
@@ -429,12 +432,12 @@ class CreateRecipeViewModelTest {
 
   @Test(expected = IllegalArgumentException::class)
   fun `test addIngredient throws exception for blank ingredient`() {
-    createRecipeViewModel.addIngredient("", "1 cup")
+    createRecipeViewModel.addIngredientAndMeasurement("", "1 cup")
   }
 
   @Test(expected = IllegalArgumentException::class)
   fun `test addIngredient throws exception for blank measurement`() {
-    createRecipeViewModel.addIngredient("Sugar", "")
+    createRecipeViewModel.addIngredientAndMeasurement("Sugar", "")
   }
 
   @Test(expected = IllegalArgumentException::class)
@@ -448,12 +451,12 @@ class CreateRecipeViewModelTest {
     createRecipeViewModel.updateRecipeName(recipe.name)
     createRecipeViewModel.updateRecipeInstructions(recipe.instructions)
     createRecipeViewModel.updateRecipeThumbnail(recipe.strMealThumbUrl)
-    createRecipeViewModel.addIngredient("Banana", "3")
+    createRecipeViewModel.addIngredientAndMeasurement("Banana", "3")
     createRecipeViewModel.updateRecipeTime("30 minutes")
     createRecipeViewModel.updateRecipeDifficulty("Medium")
     createRecipeViewModel.updateRecipePrice("15.99")
     createRecipeViewModel.updateRecipeCategory("Dessert")
-    createRecipeViewModel.updateRecipeArea("Italian")
+    createRecipeViewModel.updateRecipeOrigin("Italian")
 
     assertEquals(recipe.name, createRecipeViewModel.getRecipeName())
     assertEquals(recipe.instructions, createRecipeViewModel.getRecipeInstructions())
@@ -463,7 +466,7 @@ class CreateRecipeViewModelTest {
     assertEquals("Medium", createRecipeViewModel.getRecipeDifficulty())
     assertEquals("15.99", createRecipeViewModel.getRecipePrice())
     assertEquals("Dessert", createRecipeViewModel.getRecipeCategory())
-    assertEquals("Italian", createRecipeViewModel.getRecipeArea())
+    assertEquals("Italian", createRecipeViewModel.getRecipeOrigin())
   }
 
   @Test
@@ -472,12 +475,12 @@ class CreateRecipeViewModelTest {
     createRecipeViewModel.updateRecipeName(recipe.name)
     createRecipeViewModel.updateRecipeInstructions(recipe.instructions)
     createRecipeViewModel.updateRecipeThumbnail(recipe.strMealThumbUrl)
-    createRecipeViewModel.addIngredient("Banana", "3")
+    createRecipeViewModel.addIngredientAndMeasurement("Banana", "3")
     createRecipeViewModel.updateRecipeTime("30 minutes")
     createRecipeViewModel.updateRecipeDifficulty("Medium")
     createRecipeViewModel.updateRecipePrice("15.99")
     createRecipeViewModel.updateRecipeCategory("Dessert")
-    createRecipeViewModel.updateRecipeArea("Italian")
+    createRecipeViewModel.updateRecipeOrigin("Italian")
 
     createRecipeViewModel.updateIngredientAndMeasurement("Banana", "3", "Apple", "4")
     assertEquals(listOf(Pair("Apple", "4")), createRecipeViewModel.getIngredientsAndMeasurements())
@@ -489,12 +492,12 @@ class CreateRecipeViewModelTest {
     createRecipeViewModel.updateRecipeName(recipe.name)
     createRecipeViewModel.updateRecipeInstructions(recipe.instructions)
     createRecipeViewModel.updateRecipeThumbnail(recipe.strMealThumbUrl)
-    createRecipeViewModel.addIngredient("Banana", "3")
+    createRecipeViewModel.addIngredientAndMeasurement("Banana", "3")
     createRecipeViewModel.updateRecipeTime("30 minutes")
     createRecipeViewModel.updateRecipeDifficulty("Medium")
     createRecipeViewModel.updateRecipePrice("15.99")
     createRecipeViewModel.updateRecipeCategory("Dessert")
-    createRecipeViewModel.updateRecipeArea("Italian")
+    createRecipeViewModel.updateRecipeOrigin("Italian")
 
     createRecipeViewModel.removeIngredientAndMeasurement("Banana", "3")
     assertEquals(
