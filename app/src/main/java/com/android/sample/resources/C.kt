@@ -276,6 +276,12 @@ object C {
     const val RECIPE_PUBLISHED_SUCCESS_MESSAGE = "Recipe published successfully!"
     const val RECIPE_PUBLISH_ERROR_MESSAGE = "Failed to publish recipe: %1\$s"
 
+    // IconType
+    const val ICON_FIRE = "fire"
+    const val ICON_SALT = "salt"
+    const val ICON_MORTAR = "mortar"
+    const val ICON_AXE = "axe"
+
     // UserViewModel
     object UserViewModel {
       const val REMOVED_TOO_MANY_INGREDIENTS_ERROR =

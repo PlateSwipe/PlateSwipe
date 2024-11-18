@@ -19,20 +19,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.android.sample.R
+import com.android.sample.model.recipe.IconType
 import com.android.sample.resources.C.Tag.HORIZONTAL_PADDING_ICON_DROPDOWN
+import com.android.sample.resources.C.Tag.ICON_AXE
+import com.android.sample.resources.C.Tag.ICON_FIRE
+import com.android.sample.resources.C.Tag.ICON_MORTAR
+import com.android.sample.resources.C.Tag.ICON_SALT
 import com.android.sample.resources.C.Tag.SIZE_DROPDOWN_ICON
 import com.android.sample.resources.C.Tag.VERTICAL_PADDING_ICON_DROPDOWN
 import com.android.sample.ui.theme.Typography
-
-sealed class IconType(val iconResId: Int, val descriptionResId: Int) {
-  object Fire : IconType(R.drawable.fire, R.string.fire_icon_description)
-
-  object Salt : IconType(R.drawable.salt, R.string.salt_icon_description)
-
-  object Mortar : IconType(R.drawable.mortar, R.string.mortar_icon_description)
-
-  object Axe : IconType(R.drawable.axe, R.string.axe_icon_description)
-}
 
 @Composable
 fun IconDropdownMenu(
@@ -41,7 +36,9 @@ fun IconDropdownMenu(
     modifier: Modifier = Modifier
 ) {
   val isDropDownExpanded = remember { mutableStateOf(false) }
-  val iconOptions = listOf(IconType.Fire, IconType.Salt, IconType.Mortar, IconType.Axe)
+
+  val iconOptions =
+      listOf(IconType(ICON_FIRE), IconType(ICON_SALT), IconType(ICON_MORTAR), IconType(ICON_AXE))
 
   Box(
       modifier =

@@ -22,38 +22,38 @@ class RecipeBuilder {
   /**
    * Sets the ID of the recipe.
    *
-   * @param idMeal The ID of the recipe.
+   * @param uid The ID of the recipe.
    */
-  fun setId(idMeal: String) = apply { this.uid = idMeal }
+  fun setId(uid: String) = apply { this.uid = uid }
 
   /**
    * Sets the name of the recipe.
    *
-   * @param strMeal The name of the recipe.
+   * @param name The name of the recipe.
    */
-  fun setName(strMeal: String) = apply { this.name = strMeal }
+  fun setName(name: String) = apply { this.name = name }
 
   /**
    * Sets the category of the recipe.
    *
-   * @param strCategory The category of the recipe.
+   * @param category The category of the recipe.
    */
-  fun setCategory(strCategory: String) = apply { this.category = strCategory }
+  fun setCategory(category: String) = apply { this.category = category }
 
   /**
    * Sets the area of the recipe.
    *
-   * @param strArea The area of the recipe.
+   * @param origin The area of the recipe.
    */
-  fun setArea(strArea: String) = apply { this.origin = strArea }
+  fun setOrigin(origin: String) = apply { this.origin = origin }
 
   /**
    * Sets the instructions for the recipe. WARNING : This method should be updated in the next
    * version of the instruction implementation.
    *
-   * @param strInstructions The instructions for the recipe.
+   * @param instruction The instructions for the recipe.
    */
-  fun setInstructions(strInstructions: String) = apply { this.instructions = strInstructions }
+  fun setInstructions(instruction: String) = apply { this.instructions = instruction }
 
   /**
    * Sets the UID of the thumbnail image for the recipe.
@@ -203,7 +203,7 @@ class RecipeBuilder {
    *
    * @return The area of the recipe.
    */
-  fun getArea(): String? = origin
+  fun getOrigin(): String? = origin
 
   /**
    * Returns the instructions for the recipe.
