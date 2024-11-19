@@ -125,8 +125,8 @@ object C {
     }
 
     // RecipesViewModel
-    const val MINIMUM_RECIPES_BEFORE_FETCH = 3
-    const val NUMBER_RECIPES_TO_FETCH = 2
+    const val MINIMUM_RECIPES_BEFORE_FETCH = 5
+    const val NUMBER_RECIPES_TO_FETCH = 15
 
     // ImageRepositoryFirebase
     const val USER_IMAGE_DIR = "images/user/"

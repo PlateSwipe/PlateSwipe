@@ -1,6 +1,7 @@
 package com.android.sample.model.recipe
 
 import com.android.sample.model.filter.Difficulty
+import com.android.sample.resources.C.Tag.NUMBER_RECIPES_TO_FETCH
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -351,7 +352,7 @@ class RecipesViewModelTest {
 
     // Assert: Verify that fetchRandomRecipes is called twice (once during init and once during the
     // test)
-    verify(spyViewModel, times(2)).fetchRandomRecipes(eq(2))
+    verify(spyViewModel, times(2)).fetchRandomRecipes(eq(NUMBER_RECIPES_TO_FETCH))
   }
 
   @OptIn(ExperimentalCoroutinesApi::class)
