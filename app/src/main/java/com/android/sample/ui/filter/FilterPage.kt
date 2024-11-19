@@ -138,6 +138,7 @@ fun FilterBox(
             emptyValue = emptyCategory)
 
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+          // Apply button to apply the changes made to the filters
           Button(
               onClick = {
                 filterViewModel.applyChanges()
@@ -160,6 +161,7 @@ fun FilterBox(
                 )
               }
 
+          // Reset button to reset all filters to their default values
           Button(
               onClick = { filterViewModel.resetFilters() },
               colors =
