@@ -52,6 +52,7 @@ import com.android.sample.ui.account.AccountScreen
 import com.android.sample.ui.camera.CameraScanCodeBarScreen
 import com.android.sample.ui.camera.CameraTakePhotoScreen
 import com.android.sample.ui.createRecipe.AddInstructionStepScreen
+import com.android.sample.ui.createRecipe.CategoryScreen
 import com.android.sample.ui.createRecipe.CreateRecipeScreen
 import com.android.sample.ui.createRecipe.IngredientListScreen
 import com.android.sample.ui.createRecipe.IngredientSearchScreen
@@ -339,6 +340,25 @@ class EndToEndTest {
     composeTestRule.onNodeWithTag("NextStepButton").performClick()
     composeTestRule.waitForIdle()
 
+    // category -------------------------------------------------------
+
+    // Verify the category screen is displayed by checking the title
+    composeTestRule.onNodeWithText("Select A Category").assertExists()
+
+    // Open the dropdown menu
+    composeTestRule.onNodeWithTag("DropdownMenuButton").performClick()
+    composeTestRule.waitForIdle()
+
+    // Select a category from the dropdown menu
+    composeTestRule.onNodeWithTag("DropdownMenuItem_Vegan").performClick()
+    composeTestRule.waitForIdle()
+
+    // Verify the selected category is displayed in the dropdown button
+    composeTestRule.onNodeWithTag("DropdownMenuButton").assertTextEquals("Vegan")
+
+    composeTestRule.onNodeWithTag("NextStepButton").performClick()
+    composeTestRule.waitForIdle()
+
     // ingredients -------------------------------------------------------
 
     // get to ingredients step page
@@ -460,6 +480,10 @@ class EndToEndTest {
       ) {
         composable(Screen.CREATE_RECIPE) {
           CreateRecipeScreen(
+              navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
+        }
+        composable(Screen.CATEGORY_SCREEN) {
+          CategoryScreen(
               navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
         }
         composable(Screen.CREATE_RECIPE_INGREDIENTS) {

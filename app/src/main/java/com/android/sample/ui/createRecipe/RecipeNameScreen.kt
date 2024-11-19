@@ -160,9 +160,7 @@ fun RecipeNameScreen(
                   recipeName = recipeName,
                   onShowErrorChange = { showError = it },
                   onUpdateRecipeName = { createRecipeViewModel.updateRecipeName(it) },
-                  onNavigateToNextScreen = {
-                    navigationActions.navigateTo(Screen.CREATE_RECIPE_INGREDIENTS)
-                  })
+                  onNavigateToNextScreen = { navigationActions.navigateTo(Screen.CATEGORY_SCREEN) })
             })
       }
 }
