@@ -3,6 +3,7 @@ package com.android.sample.resources
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.sample.R
+import com.android.sample.resources.C.Tag.ICON_CHEF_HAT
 import com.android.sample.resources.C.Tag.PADDING
 
 // Like R, but C
@@ -281,6 +282,7 @@ object C {
     const val ICON_SALT = "salt"
     const val ICON_MORTAR = "mortar"
     const val ICON_AXE = "axe"
+    const val ICON_CHEF_HAT = "chef hat"
 
     // UserViewModel
     object UserViewModel {
@@ -719,6 +721,10 @@ object C {
       const val RECIPE_NAME = "recipeName"
       const val ADD_INGREDIENT_ICON = "addIngredientIcon"
       const val NEXT_STEP_BUTTON = "nextStepButton"
+    }
+
+    object Instruction {
+      const val DEFAULT_ICON = ICON_CHEF_HAT
     }
   }
 }
