@@ -118,7 +118,6 @@ class EndToEndTest {
   private lateinit var mockRepository: RecipesRepository
   private lateinit var userViewModel: UserViewModel
   private lateinit var createRecipeViewModel: CreateRecipeViewModel
-  private lateinit var spykCreateRecipeViewModel: CreateRecipeViewModel
   private lateinit var mockImageRepo: ImageRepositoryFirebase
   private lateinit var recipesViewModel: RecipesViewModel
   private lateinit var ingredientViewModel: IngredientViewModel
@@ -258,9 +257,11 @@ class EndToEndTest {
     composeTestRule.onNodeWithTag(DRAGGABLE_ITEM, useUnmergedTree = true).assertIsDisplayed()
 
     // dislike recipe 1
+
     composeTestRule.onNodeWithTag(DRAGGABLE_ITEM).performTouchInput { swipeLeft(0f, -10000f) }
 
     composeTestRule.waitForIdle()
+    composeTestRule.waitUntil(5000) { recipesViewModel.currentRecipe.value != currentRecipe }
 
     // still 0 liked recipe
     assertEquals(0, userViewModel.likedRecipes.value.size)
@@ -274,6 +275,8 @@ class EndToEndTest {
 
     // Like recipe 2
     composeTestRule.onNodeWithTag(DRAGGABLE_ITEM).performTouchInput { swipeRight(0f, 10000f) }
+
+    composeTestRule.waitUntil(5000) { recipesViewModel.currentRecipe.value != currentRecipe }
 
     composeTestRule.waitForIdle()
 
