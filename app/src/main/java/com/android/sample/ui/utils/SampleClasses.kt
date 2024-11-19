@@ -98,6 +98,7 @@ val ingredientImages =
 val testIngredients =
     ingredientNames.mapIndexed { index, name ->
       Ingredient(
+          uid = (index + 1).toString(),
           barCode = index.toLong(),
           name = name,
           brands = ingredientBrands[index],
