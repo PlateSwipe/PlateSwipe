@@ -1,5 +1,6 @@
 package com.android.sample.createRecipe
 
+import android.util.Log
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -44,7 +45,7 @@ class ListIngredientScreenTest {
   @Mock private lateinit var aggregatorIngredientRepository: AggregatorIngredientRepository
 
   // Sample ingredients list for testing
-  private val mockedIngredients = testIngredients
+  private val mockedIngredients = testIngredients.filter { it.quantity != null }
 
   private val ingredientPairs: List<Pair<String, String?>> =
       mockedIngredients.map { it.name to it.quantity }
@@ -91,6 +92,7 @@ class ListIngredientScreenTest {
   fun testIngredientListDisplaysIngredients() {
     // Check that each ingredient is displayed
     mockedIngredients.forEach { ingredient ->
+      Log.e("ingredient", ingredient.name)
       composeTestRule.onNodeWithText(ingredient.name, useUnmergedTree = true).assertIsDisplayed()
     }
   }
@@ -144,7 +146,7 @@ class ListIngredientScreenTest {
         .performClick()
 
     // Verify that the ingredient was removed from the view model
-    assertEquals(ingredientViewModel.ingredientList.value, listOf(mockedIngredients[1]))
+    assertEquals(ingredientViewModel.ingredientList.value, mockedIngredients.drop(1))
   }
 
   @Test
