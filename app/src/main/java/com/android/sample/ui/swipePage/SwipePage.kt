@@ -294,6 +294,7 @@ fun RecipeDisplay(
                           recipesViewModel.updateTimeRange(
                               recipesViewModel.filter.value.timeRange.minBorn,
                               recipesViewModel.filter.value.timeRange.maxBorn)
+                          recipesViewModel.applyChanges()
                         },
                         label =
                             "${filter.timeRange.min.toInt()} - ${filter.timeRange.max.toInt()} min",
@@ -307,6 +308,7 @@ fun RecipeDisplay(
                           recipesViewModel.updatePriceRange(
                               recipesViewModel.filter.value.priceRange.minBorn,
                               recipesViewModel.filter.value.priceRange.maxBorn)
+                          recipesViewModel.applyChanges()
                         },
                         label =
                             "${filter.priceRange.min.toInt()} - ${filter.priceRange.max.toInt()} $",
@@ -318,6 +320,7 @@ fun RecipeDisplay(
                         onDelete = {
                           displayDifficulty = false
                           recipesViewModel.updateDifficulty(Difficulty.Undefined)
+                          recipesViewModel.applyChanges()
                         },
                         label = filter.difficulty.toString(),
                         testTag = DIFFICULTY_CHIP,
@@ -328,6 +331,7 @@ fun RecipeDisplay(
                         onDelete = {
                           displayCategory = false
                           recipesViewModel.updateCategory(null)
+                          recipesViewModel.applyChanges()
                         },
                         label = filter.category.orEmpty(),
                         testTag = CATEGORY_CHIP,
