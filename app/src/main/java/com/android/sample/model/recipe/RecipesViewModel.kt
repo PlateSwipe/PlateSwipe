@@ -102,6 +102,7 @@ class RecipesViewModel(private val repository: RecipesRepository) :
     _tmpFilter.value.timeRange.update(min, max)
   }
 
+  /** Applies the changes made to the filters. */
   override fun applyChanges() {
     _filter.value = _tmpFilter.value
     viewModelScope.launch {
@@ -118,10 +119,12 @@ class RecipesViewModel(private val repository: RecipesRepository) :
     }
   }
 
+  /** Resets all filters to their default values. */
   override fun resetFilters() {
     _tmpFilter.value = Filter()
   }
 
+  /** Initializes the filter. */
   override fun initFilter() {
 
     _tmpFilter.value =
@@ -138,20 +141,6 @@ class RecipesViewModel(private val repository: RecipesRepository) :
    */
   override fun updateCategory(category: String?) {
     _tmpFilter.value.category = category
-    /*
-    viewModelScope.launch {
-      _recipes.value = emptyList()
-      _currentRecipe.value = null
-      _nextRecipe.value = null
-      _filter.value.category = category
-      fetchRandomRecipes(NUMBER_RECIPES_TO_FETCH)
-      _loading.collect { isLoading ->
-        if (!isLoading) {
-          updateCurrentRecipe(_recipes.value.first())
-          return@collect
-        }
-      }
-    }*/
   }
 
   /**
