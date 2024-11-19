@@ -15,10 +15,6 @@ data class Instruction(
     val time: String?,
     val iconType: String?,
 ) {
-  private val icon: IconType = IconType(iconType ?: DEFAULT_ICON)
-
-  /** Returns the icon representing the instruction. */
-  fun getIcon(): IconType {
-    return icon
-  }
+  val icon: IconType
+    get() = IconType(iconType ?: DEFAULT_ICON)
 }
