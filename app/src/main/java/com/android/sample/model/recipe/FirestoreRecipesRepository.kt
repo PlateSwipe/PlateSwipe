@@ -135,35 +135,48 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
       onFailure: (Exception) -> Unit
   ) {
     require(nbOfElements > 0) { LIMIT_MUST_BE_POSITIVE_MESSAGE }
-
     // Generate a random UID
     val randomUID = generateRandomUID()
     Log.d("TestRecipeRepo", "generateRandomUID :$randomUID")
 
     Log.d("TestRecipeRepo", (nbOfElements / 2).toString())
     // Query for UIDs greater than or equal to the random UID
+    val recipes = mutableListOf<Recipe>()
+    var counter = 0
+    var error: java.lang.Exception? = null
 
-    db.collection(FIRESTORE_COLLECTION_NAME)
-        .whereGreaterThanOrEqualTo(FieldPath.documentId(), randomUID)
-        .limit(nbOfElements.toLong())
-        .get()
-        .addOnCompleteListener { task ->
-          if (task.isSuccessful) {
-            val recipes = mutableListOf<Recipe>()
-            task.result?.documents?.forEach { document ->
-              val recipe = documentToRecipe(document)
-              if (recipe != null) {
-                recipes.add(recipe)
+    while (counter < 5 && (counter == 0 || (recipes.size in 1 ..< nbOfElements))) {
+      db.collection(FIRESTORE_COLLECTION_NAME)
+          .whereGreaterThanOrEqualTo(FieldPath.documentId(), randomUID)
+          .limit(nbOfElements.toLong())
+          .get()
+          .addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+
+              task.result?.documents?.forEach { document ->
+                val recipe =
+                    documentToRecipe(document).takeIf { counter == 0 || !recipes.contains(it) }
+                recipe?.let { recipes.add(it) }
+              }
+            } else {
+              task.exception?.let { e ->
+                Log.e("FirestoreRecipesRepository", "Error getting documents", e)
+                error = e
+                onFailure(e)
               }
             }
-            onSuccess(recipes)
-          } else {
-            task.exception?.let { e ->
-              Log.e("FirestoreRecipesRepository", "Error getting documents", e)
-              onFailure(e)
-            }
           }
-        }
+      counter++
+    }
+    if (recipes.size == nbOfElements) {
+      // shuffle the list to get random recipes
+      recipes.shuffle()
+      onSuccess(recipes)
+    } else if (recipes.size in 1 ..< nbOfElements) {
+      recipes.shuffle()
+      onSuccess(recipes)
+      Log.e("FirestoreRecipesRepository", "Not enough recipes found", error)
+    }
   }
 
   override fun search(mealID: String, onSuccess: (Recipe) -> Unit, onFailure: (Exception) -> Unit) {
