@@ -273,7 +273,6 @@ class EndToEndTest {
         .onNodeWithTag(RECIPE_FAVORITE_ICON_TEST_TAG, useUnmergedTree = true)
         .performClick()
 
-    // TODO fix
     composeTestRule
         .onAllNodesWithTag(RECIPE_TITLE_TEST_TAG, useUnmergedTree = true)
         .assertAny(hasText(likedRecipe.name))
