@@ -209,7 +209,7 @@ fun AddInstructionStepContent(
                   selectedIcon,
                   createRecipeViewModel,
                   onSuccess = {
-                    createRecipeViewModel.selectInstruction(null)
+                    createRecipeViewModel.resetSelectedInstruction()
                     navigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INSTRUCTIONS)
                   })
             })

@@ -43,6 +43,10 @@ class CreateRecipeViewModel(
     selectedInstruction.value = index
   }
 
+  fun resetSelectedInstruction() {
+    selectedInstruction.value = null
+  }
+
   fun getSelectedInstruction(): Int? {
     return selectedInstruction.value
   }
