@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Star
@@ -234,29 +235,51 @@ private fun RecipeTitle(recipe: Recipe, modifier: Modifier) {
  * @param recipe the recipe to like.
  */
 @Composable
-fun TopCornerLikeButton(recipe: Recipe, userViewModel: UserViewModel) {
+fun TopCornerLikeButton(recipe: Recipe, userViewModel: UserViewModel, removeLikedRecipe: Boolean) {
   var recipeUnlike: Boolean by remember { mutableStateOf(false) }
-
+  var recipeDelete: Boolean by remember { mutableStateOf(false) }
   Icon(
-      imageVector = if (!recipeUnlike) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+      imageVector =
+          if (removeLikedRecipe)
+              (if (!recipeUnlike) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder)
+          else Icons.Filled.Delete,
       contentDescription = RECIPE_FAVORITE_ICON_CONTENT_DESCRIPTION,
       modifier =
           Modifier.padding(4.dp).testTag(RECIPE_FAVORITE_ICON_TEST_TAG).clickable {
-            recipeUnlike = true
+            if (removeLikedRecipe) {
+              recipeUnlike = true
+            } else {
+              recipeDelete = true
+            }
           },
       tint = valencia)
-  if (recipeUnlike) {
+  if (removeLikedRecipe && recipeUnlike) {
     ConfirmationPopUp(
         {
           userViewModel.removeRecipeFromUserLikedRecipes(recipe)
           recipeUnlike = false
         },
-        { recipeUnlike = false })
+        { recipeUnlike = false },
+        true)
+  } else {
+    if (recipeDelete) {
+      ConfirmationPopUp(
+          {
+            userViewModel.removeRecipeFromUserCreatedRecipes(recipe)
+            recipeDelete = false
+          },
+          { recipeDelete = false },
+          false)
+    }
   }
 }
 
 @Composable
-private fun ConfirmationPopUp(onConfirm: () -> Unit, onDismiss: () -> Unit) {
+private fun ConfirmationPopUp(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+    removeLikedRecipe: Boolean
+) {
   AlertDialog(
       onDismissRequest = onDismiss,
       modifier =
@@ -266,7 +289,10 @@ private fun ConfirmationPopUp(onConfirm: () -> Unit, onDismiss: () -> Unit) {
               .testTag(CONFIRMATION_POP_UP),
       title = {
         Text(
-            text = stringResource(R.string.message_pop_up),
+            text =
+                stringResource(
+                    if (removeLikedRecipe) R.string.message_pop_up_remove_liked
+                    else R.string.message_pop_up_delete_created),
             style = MaterialTheme.typography.titleSmall,
             fontSize = POP_UP_DESCRIPTION_FONT_SIZE.sp,
             color = MaterialTheme.colorScheme.onPrimary)

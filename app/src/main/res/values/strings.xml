@@ -106,8 +106,9 @@
     <string name="add">Add</string>
     <string name="close">Close</string>
 
-    //RemoveRecipeFromLikedPopUp
-    <string name="message_pop_up">Are you sure that you want to delete the recipe from your liked recipes?</string>
+    //RemoveRecipePopUp
+    <string name="message_pop_up_delete_created">Are you sure that you want to delete this recipe?</string>
+    <string name="message_pop_up_remove_liked">Are you sure that you want to remove this recipe from your liked recipes?</string>
     <string name="pop_up_confirm_removal_liked_recipe">Yes</string>>
     <string name="pop_up_confirm_cancel_removal_liked_recipe">No</string>
 

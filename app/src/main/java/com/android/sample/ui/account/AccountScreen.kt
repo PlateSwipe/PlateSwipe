@@ -53,7 +53,10 @@ import com.android.sample.ui.utils.TopCornerLikeButton
 
 @Composable
 fun AccountScreen(navigationActions: NavigationActions, userViewModel: UserViewModel) {
-  userViewModel.getCurrentUser()
+  /*LaunchedEffect(Unit){
+      Log.i("AccountScreen","Launched effect called")
+      userViewModel.getCurrentUser()
+  }*/
 
   PlateSwipeScaffold(
       navigationActions = navigationActions,
@@ -158,7 +161,11 @@ private fun ListSelection(
           navigationActions.navigateTo(Screen.OVERVIEW_RECIPE_ACCOUNT)
         },
         topCornerButton = { recipe ->
-          if (selectedListIndex == 0) TopCornerLikeButton(recipe, userViewModel)
+          if (selectedListIndex == 0) {
+            TopCornerLikeButton(recipe, userViewModel, true)
+          } else {
+            TopCornerLikeButton(recipe, userViewModel, false)
+          }
         })
   }
 }

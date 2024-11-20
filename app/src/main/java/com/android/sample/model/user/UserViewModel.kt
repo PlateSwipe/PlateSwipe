@@ -3,6 +3,8 @@ package com.android.sample.model.user
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.android.sample.model.image.ImageDirectoryType
+import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.ingredient.FirestoreIngredientRepository
 import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.recipe.FirestoreRecipesRepository
@@ -19,6 +21,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -28,7 +31,9 @@ class UserViewModel(
     private val recipesRepository: FirestoreRecipesRepository =
         FirestoreRecipesRepository(Firebase.firestore),
     private val ingredientRepository: FirestoreIngredientRepository =
-        FirestoreIngredientRepository(Firebase.firestore)
+        FirestoreIngredientRepository(Firebase.firestore),
+    private val imageRepositoryFirebase: ImageRepositoryFirebase =
+        ImageRepositoryFirebase(Firebase.storage)
 ) : ViewModel(), RecipeOverviewViewModel {
 
   private val _userName: MutableStateFlow<String?> = MutableStateFlow(null)
@@ -71,6 +76,7 @@ class UserViewModel(
    */
   fun getCurrentUser() {
     val userId: String = firebaseAuth.currentUser?.uid ?: return
+    val tempLikedList = _likedRecipes.value.toMutableList()
 
     userRepository.getUserById(
         id = userId,
@@ -92,20 +98,43 @@ class UserViewModel(
                 })
           }
           user.likedRecipes.forEach { uid ->
-            recipesRepository.search(
+            recipesRepository.recipeExists(
                 uid,
-                onSuccess = { recipe -> addRecipeToUserLikedRecipes(recipe) },
-                onFailure = { e ->
-                  Log.e(LOG_TAG, FAILED_TO_FETCH_LIKED_RECIPE_FROM_DATABASE_ERROR, e)
-                })
+                onSuccess = {
+                  recipesRepository.search(
+                      uid,
+                      onSuccess = { recipe ->
+                        if (_likedRecipes.value.contains(recipe)) {
+                          tempLikedList.remove(recipe)
+                        } else {
+                          addRecipeToUserLikedRecipes(recipe)
+                        }
+                      },
+                      onFailure = { e ->
+                        Log.e(LOG_TAG, FAILED_TO_FETCH_LIKED_RECIPE_FROM_DATABASE_ERROR, e)
+                      })
+                },
+                onFailure = { e -> Log.i("UserViewModel", "Recipe no longer exists", e) })
+          }
+          if (tempLikedList.isNotEmpty()) {
+            tempLikedList.forEach { recipe -> removeRecipeFromUserLikedRecipes(recipe) }
           }
           user.createdRecipes.forEach { uid ->
-            recipesRepository.search(
+            recipesRepository.recipeExists(
                 uid,
-                onSuccess = { recipe -> addRecipeToUserCreatedRecipes(recipe) },
-                onFailure = { e ->
-                  Log.e(LOG_TAG, FAILED_TO_FETCH_CREATED_RECIPE_FROM_DATABASE_ERROR, e)
-                })
+                {
+                  recipesRepository.search(
+                      uid,
+                      onSuccess = { recipe ->
+                        if (!_createdRecipes.value.contains(recipe)) {
+                          addRecipeToUserCreatedRecipes(recipe)
+                        }
+                      },
+                      onFailure = { e ->
+                        Log.e(LOG_TAG, FAILED_TO_FETCH_CREATED_RECIPE_FROM_DATABASE_ERROR, e)
+                      })
+                },
+                { e -> Log.i("UserViewModel", "Recipe no longer exists", e) })
           }
         },
         onFailure = {
@@ -270,6 +299,16 @@ class UserViewModel(
    */
   fun removeRecipeFromUserCreatedRecipes(recipe: Recipe) {
     updateList(_createdRecipes, recipe, false)
+    recipesRepository.deleteRecipe(
+        recipe.uid,
+        onSuccess = { Log.i("UserViewModel", "Recipe deleted successfully") },
+        onFailure = { e -> Log.e("UserViewModel", "Recipe deletion unsuccessful", e) })
+    imageRepositoryFirebase.deleteImage(
+        recipe.uid,
+        "Main",
+        ImageDirectoryType.RECIPE,
+        { Log.i("UserViewModel", "Recipe image deleted successfully") },
+        { e -> Log.e("UserViewModel", "Recipe image deletion unsuccessful", e) })
     updateCurrentUser()
   }
 
