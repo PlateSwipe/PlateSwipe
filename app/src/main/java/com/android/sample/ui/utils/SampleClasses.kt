@@ -1,6 +1,7 @@
 package com.android.sample.ui.utils
 
 import com.android.sample.model.ingredient.Ingredient
+import com.android.sample.model.recipe.Instruction
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.user.User
 
