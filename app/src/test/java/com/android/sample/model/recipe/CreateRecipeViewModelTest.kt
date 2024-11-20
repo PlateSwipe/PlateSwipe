@@ -500,4 +500,47 @@ class CreateRecipeViewModelTest {
     assertEquals(
         emptyList<Pair<String, String>>(), createRecipeViewModel.getIngredientsAndMeasurements())
   }
+
+  @Test
+  fun `test publishRecipe with incorrect recipe field throw error`() = runTest {
+    val defaultRecipe = createDefaultRecipe()
+    val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+
+    createRecipeViewModel.updateRecipeName("Chocolat") // Blank name
+    createRecipeViewModel.updateRecipeInstructions("ww www www")
+    createRecipeViewModel.setBitmap(bitmap, 90)
+
+    `when`(mockRepository.getNewUid()).thenReturn(defaultRecipe.uid)
+    createRecipeViewModel.setBitmap(bitmap, 90)
+    // Define the onFailure callback to validate if it was called correctly
+    var onFailureCalled = false
+    createRecipeViewModel.publishRecipe(
+        onSuccess = { fail("Expected onFailure, but onSuccess was called instead.") },
+        onFailure = { errorMessage ->
+          onFailureCalled = true
+          assertEquals("At least one ingredient is required.", errorMessage.message)
+        })
+
+    advanceUntilIdle()
+
+    `when`(
+            mockImageRepository.uploadImage(
+                any(), any(), any(), any(), onSuccess = any(), onFailure = any()))
+        .thenAnswer { invocation ->
+          val onSuccessCallback = invocation.arguments[4] as () -> Unit
+          onSuccessCallback()
+        }
+    `when`(mockRepository.getNewUid()).thenReturn(defaultRecipe.uid)
+
+    `when`(
+            mockImageRepository.getImageUrl(
+                any(), any(), any(), onSuccess = any(), onFailure = any()))
+        .thenAnswer { invocation ->
+          val onSuccessCallback = invocation.arguments[3] as (Uri) -> Unit
+          onSuccessCallback(Uri.EMPTY)
+        }
+
+    createRecipeViewModel.publishRecipe(onSuccess = {}, onFailure = {})
+    assertEquals("At least one ingredient is required.", createRecipeViewModel.publishStatus.value)
+  }
 }

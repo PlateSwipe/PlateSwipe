@@ -309,12 +309,11 @@ class CreateRecipeViewModel(
                   C.Tag.FIRESTORE_RECIPE_IMAGE_NAME,
                   ImageDirectoryType.RECIPE,
                   onSuccess = { uri ->
+                    // Set the URL to the Builder
+                    val url = uri.toString()
+                    recipeBuilder.setUrl(url)
+
                     try {
-
-                      // Set the URL to the Builder
-                      val url = uri.toString()
-                      recipeBuilder.setUrl(url)
-
                       // Build the Recipe
                       val recipe = recipeBuilder.build()
 
