@@ -79,7 +79,7 @@ class CreateRecipeViewModelTest {
   }
 
   @Test
-  fun `test updateRecipeCategory updates the category correctly`() {
+  fun `test addRecipeInstruction updates the category correctly`() {
     val newCategory = "Dessert"
     createRecipeViewModel.updateRecipeCategory(newCategory)
     assertEquals(
@@ -91,7 +91,7 @@ class CreateRecipeViewModelTest {
   }
 
   @Test
-  fun `test updateRecipeInstructions updates the instructions correctly`() {
+  fun `test addRecipeInstruction updates the instructions correctly`() {
     val newInstructions = "New Instructions"
     createRecipeViewModel.addRecipeInstruction(Instruction(newInstructions, null, null))
     assertEquals(
@@ -441,7 +441,7 @@ class CreateRecipeViewModelTest {
   }
 
   @Test(expected = IllegalArgumentException::class)
-  fun `test updateRecipeInstructions throws exception for blank instructions`() {
+  fun `test addRecipeInstruction throws exception for blank instructions`() {
     createRecipeViewModel.addRecipeInstruction(Instruction("", null, null))
   }
 
