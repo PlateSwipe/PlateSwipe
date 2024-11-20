@@ -43,10 +43,20 @@ class CreateRecipeViewModel(
     selectedInstruction.value = index
   }
 
+  /**
+   * Resets the selected instruction. This is used when modifying a recipe.
+   *
+   * This function resets the selected instruction to null.
+   */
   fun resetSelectedInstruction() {
     selectedInstruction.value = null
   }
 
+  /**
+   * Gets the selected instruction. This is used when modifying a recipe.
+   *
+   * @return The selected instruction index.
+   */
   fun getSelectedInstruction(): Int? {
     return selectedInstruction.value
   }
