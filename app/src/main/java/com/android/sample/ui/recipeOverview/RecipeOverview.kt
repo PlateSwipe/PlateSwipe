@@ -81,7 +81,6 @@ import com.android.sample.resources.C.TestTag.RecipeOverview.DRAGGABLE_ITEM
 import com.android.sample.resources.C.TestTag.RecipeOverview.INGREDIENTS_VIEW
 import com.android.sample.resources.C.TestTag.RecipeOverview.INGREDIENT_CHECKBOX
 import com.android.sample.resources.C.TestTag.RecipeOverview.INGREDIENT_PREFIX
-import com.android.sample.resources.C.TestTag.RecipeOverview.INSTRUCTIONS_TEXT
 import com.android.sample.resources.C.TestTag.RecipeOverview.INSTRUCTIONS_VIEW
 import com.android.sample.resources.C.TestTag.RecipeOverview.NUMBER_SERVINGS
 import com.android.sample.resources.C.TestTag.RecipeOverview.PREP_TIME_TEXT
@@ -525,11 +524,5 @@ private fun InstructionView(currentRecipe: Recipe) {
                   bottom = OVERVIEW_INSTRUCTION_BOTTOM.dp)
               .testTag(INSTRUCTIONS_VIEW)) {
         // Display of the instructions
-
-        Text(
-            text = currentRecipe.instructions,
-            color = Color.Black,
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.testTag(INSTRUCTIONS_TEXT))
       }
 }
