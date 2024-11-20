@@ -233,15 +233,17 @@ fun RecipeDisplay(
                                 displayCard1,
                                 swipeThreshold,
                                 currentRecipe,
-                                userViewModel,
-                                { retrieveNextRecipe = false })
+                                userViewModel) {
+                                  retrieveNextRecipe = false
+                                }
                             manageRecipeLiked(
                                 offsetXCard2,
                                 !displayCard1,
                                 swipeThreshold,
                                 currentRecipe,
-                                userViewModel,
-                                { retrieveNextRecipe = true })
+                                userViewModel) {
+                                  retrieveNextRecipe = true
+                                }
                           },
                           onDragCancel = { isClicking = false },
                           onHorizontalDrag = { _, dragAmount ->
@@ -508,26 +510,23 @@ private suspend fun animateCard(
     offsetX.snapTo(INITIAL_OFFSET_X)
   }
 
-  // if the user is not clicking, animate the card back to the initial position
-  if (!isClicking) {
-    // ensure the card doesn't update anything while the animation is running
-    if (!isSwiping) {
-      val animationTarget =
-          when {
-            offsetX.value > swipeThreshold -> END_ANIMATION
-            offsetX.value < -swipeThreshold -> -END_ANIMATION
-            else -> INITIAL_OFFSET_X
-          }
-      displayIcons(animationTarget)
+  // ensure the card doesn't update anything while the animation is running
+  if (!isClicking && !isSwiping) {
+    val animationTarget =
+        when {
+          offsetX.value > swipeThreshold -> END_ANIMATION
+          offsetX.value < -swipeThreshold -> -END_ANIMATION
+          else -> INITIAL_OFFSET_X
+        }
+    displayIcons(animationTarget)
 
-      // update the displayed recipe
-      if (retrieveNextRecipe && offsetX.value == INITIAL_OFFSET_X) {
-        recipesViewModel.nextRecipe()
-        // block the retrieve next recipe to avoid multiple calls during the animation
-        blockRetrieveNextRecipe()
-      }
-      offsetX.animateTo(animationTarget, animationSpec = tween(ANIMATION_SWIPE_TIME))
+    // update the displayed recipe
+    if (retrieveNextRecipe && offsetX.value == INITIAL_OFFSET_X) {
+      recipesViewModel.nextRecipe()
+      // block the retrieve next recipe to avoid multiple calls during the animation
+      blockRetrieveNextRecipe()
     }
+    offsetX.animateTo(animationTarget, animationSpec = tween(ANIMATION_SWIPE_TIME))
   }
 }
 
