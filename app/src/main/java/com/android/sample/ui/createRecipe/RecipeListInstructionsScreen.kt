@@ -144,13 +144,13 @@ fun RecipeListInstructionsContent(
            * recipeBuilder.getTime(), onClick =
            * {navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_INSTRUCTION)}) }
            */
-          item {
+          items(createRecipeViewModel.getRecipeInstructions().size - 1) { index ->
             InstructionValue(
                 createRecipeViewModel = createRecipeViewModel,
-                index = 0,
-                time = createRecipeViewModel.getRecipeTime(),
-                onClick = { index ->
-                  createRecipeViewModel.selectInstruction(index = index)
+                index = index,
+                time = createRecipeViewModel.getRecipeInstruction(index).time,
+                onClick = { x ->
+                  createRecipeViewModel.selectInstruction(index = x)
                   navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_INSTRUCTION)
                 })
           }
@@ -207,11 +207,7 @@ fun InstructionValue(
                 Image(
                     painter =
                         painterResource(
-                            if (createRecipeViewModel.getIcon(index) != null) {
-                              createRecipeViewModel.getIcon(index)!!.iconResId
-                            } else {
-                              R.drawable.fire
-                            }),
+                            id = createRecipeViewModel.getRecipeInstruction(index).icon.iconResId),
                     contentDescription = "Icon",
                     modifier = Modifier.size(ICON_SIZE.dp).testTag(RECIPE_LIST_INSTRUCTION_ICON))
 
