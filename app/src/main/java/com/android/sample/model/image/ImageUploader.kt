@@ -1,6 +1,5 @@
 package com.android.sample.model.image
 
-import android.util.Log
 import androidx.compose.ui.graphics.asImageBitmap
 import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_NORMAL
@@ -44,7 +43,6 @@ class ImageUploader {
                     PRODUCT_FRONT_IMAGE_THUMBNAIL_URL)) {
               "Image format : $imageFormat is not supported"
             }
-        Log.d("AggregatorIngredientRepository", "Uploading and Retrieving image $imageFormat")
         val url = ingredient.images[imageFormat]
         val bitmap = imageStorage.urlToBitmap(url!!)
         val imageName = urlToName(imageFormat)
@@ -62,7 +60,6 @@ class ImageUploader {
 
         // Wait for upload to complete
         uploadResult.await()
-        Log.d("AggregatorIngredientRepository", "Image $imageFormat uploaded successfully")
 
         // Retrieve URL
         val urlResult = CompletableDeferred<String>()
@@ -75,13 +72,9 @@ class ImageUploader {
 
         // Wait for URL retrieval to complete
         val newUrl = urlResult.await()
-        Log.d(
-            "AggregatorIngredientRepository",
-            "URL for $imageFormat retrieved successfully : $newUrl")
         // Return the pair of format -> new Url
         imageFormat to newUrl
       } catch (e: Exception) {
-        Log.e("AggregatorIngredientRepository", "Error in uploadAndRetrieveUrlAsync: ${e.message}")
         e.printStackTrace()
         null
       }

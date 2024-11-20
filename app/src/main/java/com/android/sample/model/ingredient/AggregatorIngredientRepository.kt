@@ -4,6 +4,14 @@ import android.util.Log
 import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.image.ImageUploader
 import com.android.sample.resources.C
+import com.android.sample.resources.C.Tag.AGGREGATOR_ERROR_FIRESTORE_ADD_INGR
+import com.android.sample.resources.C.Tag.AGGREGATOR_ERROR_GET_INGR_FIRESTORE
+import com.android.sample.resources.C.Tag.AGGREGATOR_ERROR_OPENFOOD_INGR_NOT_FOUND
+import com.android.sample.resources.C.Tag.AGGREGATOR_ERROR_OPENFOOD_INGR_NULL
+import com.android.sample.resources.C.Tag.AGGREGATOR_ERROR_UPLOAD_FORMAT_IMAGE
+import com.android.sample.resources.C.Tag.AGGREGATOR_ERROR_UPLOAD_IMAGE
+import com.android.sample.resources.C.Tag.AGGREGATOR_LOG_TAG
+import com.android.sample.resources.C.Tag.AGGREGATOR_SUCCESS_FIRESTORE_ADD_INGR
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -35,36 +43,29 @@ open class AggregatorIngredientRepository(
         barCode,
         onSuccess = { ingredientFirestore ->
           if (ingredientFirestore != null) {
-            Log.d("AggregatorIngredientRepository", "Ingredient found in Firestore")
             onSuccess(ingredientFirestore)
           } else {
-            Log.d("AggregatorIngredientRepository", "Ingredient not found in Firestore")
             openFoodFactsIngredientRepository.get(
                 barCode,
                 onSuccess = { ingredientOpenFoodFacts ->
-                  Log.d("AggregatorIngredientRepository", "Ingredient found in OpenFoodFacts")
                   if (ingredientOpenFoodFacts != null) {
                     // Immediately return the ingredient from OpenFoodFacts
                     onSuccess(ingredientOpenFoodFacts)
                     // Start the background upload and update process
                     uploadAndSaveIngredientImages(ingredientOpenFoodFacts, Dispatchers.IO)
                   } else {
-                    Log.d("AggregatorIngredientRepository", "Ingredient not found in OpenFoodFacts")
+                    Log.e(AGGREGATOR_LOG_TAG, AGGREGATOR_ERROR_OPENFOOD_INGR_NOT_FOUND)
                     onFailure(Exception(C.Tag.INGREDIENT_NOT_FOUND_MESSAGE))
                   }
                 },
                 onFailure = { exception ->
-                  Log.d(
-                      "AggregatorIngredientRepository",
-                      "Ingredient not found in OpenFoodFacts : ${exception.message}")
+                  Log.e(AGGREGATOR_LOG_TAG, AGGREGATOR_ERROR_OPENFOOD_INGR_NULL + exception.message)
                   onFailure(exception)
                 })
           }
         },
         onFailure = { exception ->
-          Log.e(
-              "AggregatorIngredientRepository",
-              "Error getting ingredient from Firestore: ${exception.message}")
+          Log.e(AGGREGATOR_LOG_TAG, AGGREGATOR_ERROR_GET_INGR_FIRESTORE + exception.message)
           onFailure(exception)
         })
   }
@@ -156,9 +157,8 @@ open class AggregatorIngredientRepository(
                   imageUploader.uploadAndRetrieveUrlAsync(
                       ingredient, format, imageStorage, dispatcher)
                 } catch (e: Exception) {
-                  Log.e(
-                      "AggregatorIngredientRepository",
-                      "Error uploading format $format: ${e.message}")
+                  Log.d(
+                      AGGREGATOR_LOG_TAG, AGGREGATOR_ERROR_UPLOAD_FORMAT_IMAGE + format + e.message)
                   null
                 }
               }
@@ -174,22 +174,15 @@ open class AggregatorIngredientRepository(
           // Save the updated ingredient to Firestore
           firestoreIngredientRepository.add(
               ingredient,
-              onSuccess = {
-                Log.d(
-                    "AggregatorIngredientRepository",
-                    "Ingredient successfully updated in Firestore")
-              },
+              onSuccess = { Log.e(AGGREGATOR_LOG_TAG, AGGREGATOR_SUCCESS_FIRESTORE_ADD_INGR) },
               onFailure = { exception ->
-                println("Error adding ingredient to Firestore: ${exception.message}")
-                Log.e(
-                    "AggregatorIngredientRepository",
-                    "Error adding ingredient to Firestore: ${exception.message}")
+                Log.e(AGGREGATOR_LOG_TAG, AGGREGATOR_ERROR_FIRESTORE_ADD_INGR + exception.message)
               })
         } else {
-          Log.e("AggregatorIngredientRepository", "Failed to upload all images")
+          Log.e(AGGREGATOR_LOG_TAG, AGGREGATOR_ERROR_UPLOAD_IMAGE)
         }
       } catch (e: Exception) {
-        Log.e("AggregatorIngredientRepository", "Background upload failed: ${e.message}")
+        Log.e(AGGREGATOR_LOG_TAG, AGGREGATOR_ERROR_UPLOAD_IMAGE + e.message)
       }
     }
   }

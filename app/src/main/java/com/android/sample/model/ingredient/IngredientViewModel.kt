@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.image.ImageUploader
+import com.android.sample.resources.C.Tag.INGREDIENT_NOT_FOUND_MESSAGE
+import com.android.sample.resources.C.Tag.INGREDIENT_VIEWMODEL_LOG_TAG
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.storage
@@ -45,7 +47,7 @@ class IngredientViewModel(private val repository: IngredientRepository) : ViewMo
         barCode,
         onSuccess = { ingredient -> _ingredient.value = ingredient },
         onFailure = {
-          Log.e("IngredientViewModel", "Failed to fetch ingredient")
+          Log.e(INGREDIENT_VIEWMODEL_LOG_TAG, INGREDIENT_NOT_FOUND_MESSAGE)
           _ingredient.value = null
         })
   }

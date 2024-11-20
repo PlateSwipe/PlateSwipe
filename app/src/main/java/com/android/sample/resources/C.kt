@@ -192,7 +192,17 @@ object C {
     const val FIRESTORE_INGREDIENT_IMAGES = "images"
 
     // AggregatorIngredientRepository
+    const val AGGREGATOR_LOG_TAG = "AggregatorIngredientRepository"
+    const val AGGREGATOR_ERROR_FIRESTORE_ADD_INGR = "Error adding ingredient to Firestore:"
+    const val AGGREGATOR_SUCCESS_FIRESTORE_ADD_INGR = "Ingredient successfully updated in Firestore"
     const val AGGREGATOR_TAG_ON_INGREDIENT_ADDED = "Ingredient added successfully"
+    const val AGGREGATOR_ERROR_UPLOAD_IMAGE = "Failed to upload all images"
+    const val AGGREGATOR_ERROR_UPLOAD_FORMAT_IMAGE = "Error uploading format"
+    const val AGGREGATOR_ERROR_OPENFOOD_INGR_NOT_FOUND = "Ingredient not found in OpenFoodFacts: "
+    const val AGGREGATOR_ERROR_OPENFOOD_INGR_NULL = "Ingredient from OpenFoodFacts is null: "
+    const val AGGREGATOR_ERROR_GET_INGR_FIRESTORE = "Error getting ingredient from Firestore:"
+    const val OPENFOODFACT_REPO_IMAGE_ULR_INVALID = "Image URLs are not provided"
+    const val INGREDIENT_VIEWMODEL_LOG_TAG = "IngredientViewModel"
 
     // OpenFoodFactsIngredientRepository
     const val OPEN_FOOD_FACTS_URL = "https://world.openfoodfacts.org"
