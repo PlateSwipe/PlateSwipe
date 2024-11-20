@@ -8,6 +8,8 @@ interface FilterPageViewModel {
   // filter that is being edited before applying changes -> to define in the ViewModel
   val tmpFilter: StateFlow<Filter>
   val categories: StateFlow<List<String>>
+  val timeRangeState: StateFlow<FloatRange>
+  val priceRangeState: StateFlow<FloatRange>
 
   /** Fetches the list of categories from the repository. */
   fun getCategoryList()

@@ -73,7 +73,7 @@ class IconDropdownMenuTest {
 
     // Step 2: Verify that each option is displayed within the popup
     composeTestRule
-        .onNode(hasText("Cook").and(hasAnyAncestor(keyIsDefined(SemanticsProperties.IsPopup))))
+        .onNode(hasText("Heat").and(hasAnyAncestor(keyIsDefined(SemanticsProperties.IsPopup))))
         .assertIsDisplayed()
     composeTestRule
         .onNode(hasText("Season").and(hasAnyAncestor(keyIsDefined(SemanticsProperties.IsPopup))))
@@ -84,6 +84,8 @@ class IconDropdownMenuTest {
     composeTestRule
         .onNode(hasText("Prep").and(hasAnyAncestor(keyIsDefined(SemanticsProperties.IsPopup))))
         .assertIsDisplayed()
+    composeTestRule.onNode(
+        hasText("Cook").and(hasAnyAncestor(keyIsDefined(SemanticsProperties.IsPopup))))
   }
 
   @Test

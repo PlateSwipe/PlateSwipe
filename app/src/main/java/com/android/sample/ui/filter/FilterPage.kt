@@ -102,7 +102,7 @@ fun FilterBox(
             min = TIME_RANGE_MIN,
             max = TIME_RANGE_MAX,
             unit = stringResource(id = R.string.time_unit),
-            range = MutableStateFlow(filter.timeRange),
+            range = filterViewModel.timeRangeState,
             updateRange = { newMin, newMax -> filterViewModel.updateTimeRange(newMin, newMax) })
         ValueRangeSlider(
             modifier = Modifier.testTag(TEST_TAG_PRICE_RANGE_SLIDER),
@@ -110,7 +110,7 @@ fun FilterBox(
             min = PRICE_RANGE_MIN,
             max = PRICE_RANGE_MAX,
             unit = stringResource(id = R.string.price_unit),
-            range = MutableStateFlow(filter.priceRange),
+            range = filterViewModel.priceRangeState,
             updateRange = { newMin, newMax -> filterViewModel.updatePriceRange(newMin, newMax) })
 
         val difficultyLevels = listOf(Difficulty.Easy, Difficulty.Medium, Difficulty.Hard)
@@ -138,6 +138,7 @@ fun FilterBox(
             emptyValue = emptyCategory)
 
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+          // Apply button to apply the changes made to the filters
           Button(
               onClick = {
                 filterViewModel.applyChanges()
@@ -160,6 +161,7 @@ fun FilterBox(
                 )
               }
 
+          // Reset button to reset all filters to their default values
           Button(
               onClick = { filterViewModel.resetFilters() },
               colors =

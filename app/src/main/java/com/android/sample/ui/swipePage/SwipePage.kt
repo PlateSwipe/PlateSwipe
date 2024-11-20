@@ -233,15 +233,17 @@ fun RecipeDisplay(
                                 displayCard1,
                                 swipeThreshold,
                                 currentRecipe,
-                                userViewModel,
-                                { retrieveNextRecipe = false })
+                                userViewModel) {
+                                  retrieveNextRecipe = false
+                                }
                             manageRecipeLiked(
                                 offsetXCard2,
                                 !displayCard1,
                                 swipeThreshold,
                                 currentRecipe,
-                                userViewModel,
-                                { retrieveNextRecipe = true })
+                                userViewModel) {
+                                  retrieveNextRecipe = true
+                                }
                           },
                           onDragCancel = { isClicking = false },
                           onHorizontalDrag = { _, dragAmount ->
@@ -442,6 +444,16 @@ fun RecipeDisplay(
       }
 }
 
+/**
+ * Manage the Recipe Liked state
+ *
+ * @param offsetX - Offset for the swipe animation
+ * @param retrieveRecipeAuthorized - Retrieve Recipe Authorized state
+ * @param swipeThreshold - Swipe Threshold
+ * @param currentRecipe - Current Recipe
+ * @param userViewModel - User View Model
+ * @param authorizeRetrieveNextRecipe - Authorize Retrieve Next Recipe function
+ */
 private fun manageRecipeLiked(
     offsetX: Animatable<Float, AnimationVector1D>,
     retrieveRecipeAuthorized: Boolean,
@@ -488,32 +500,33 @@ private suspend fun animateCard(
 ) {
   val swipeThreshold = screenWidth * SWIPE_THRESHOLD
 
+  // Check if the card has been swiped and animate it back to the initial position
   if (abs(offsetX.value) > screenWidth) {
     startSwiping()
+    // delay the animation to allow the user to see the swipe animation
     delay(ANIMATION_SWIPE_TIME.toLong())
     updateDisplayCard()
     endSwiping()
     offsetX.snapTo(INITIAL_OFFSET_X)
   }
-  if (!isClicking) {
 
-    if (isSwiping) {
-      offsetX.animateTo(INITIAL_OFFSET_X, animationSpec = tween(ANIMATION_SWIPE_TIME))
-    } else {
-      val animationTarget =
-          when {
-            offsetX.value > swipeThreshold -> END_ANIMATION
-            offsetX.value < -swipeThreshold -> -END_ANIMATION
-            else -> INITIAL_OFFSET_X
-          }
-      displayIcons(animationTarget)
+  // ensure the card doesn't update anything while the animation is running
+  if (!isClicking && !isSwiping) {
+    val animationTarget =
+        when {
+          offsetX.value > swipeThreshold -> END_ANIMATION
+          offsetX.value < -swipeThreshold -> -END_ANIMATION
+          else -> INITIAL_OFFSET_X
+        }
+    displayIcons(animationTarget)
 
-      if (retrieveNextRecipe && offsetX.value == INITIAL_OFFSET_X) {
-        recipesViewModel.nextRecipe()
-        blockRetrieveNextRecipe()
-      }
-      offsetX.animateTo(animationTarget, animationSpec = tween(ANIMATION_SWIPE_TIME))
+    // update the displayed recipe
+    if (retrieveNextRecipe && offsetX.value == INITIAL_OFFSET_X) {
+      recipesViewModel.nextRecipe()
+      // block the retrieve next recipe to avoid multiple calls during the animation
+      blockRetrieveNextRecipe()
     }
+    offsetX.animateTo(animationTarget, animationSpec = tween(ANIMATION_SWIPE_TIME))
   }
 }
 

@@ -38,6 +38,7 @@ import com.android.sample.resources.C.TestTag.Utils.TOP_BAR
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.recipeOverview.RecipeOverview
+import com.android.sample.ui.utils.testRecipes
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -53,19 +54,16 @@ class RecipeOverviewTest {
   private lateinit var mockRepository: RecipesRepository
   private lateinit var recipesViewModel: RecipesViewModel
 
-  private val recipe1 =
-      Recipe(
-          "Recipe 1",
-          "Recipe 1",
-          "url1",
-          "Instructions 1",
-          "Category 1",
-          "Area 1",
-          listOf(
-              Pair("Ingredient 1", "Ingredient 1x"),
-              Pair("Ingredient 2", "Ingredient 1x"),
-              Pair("Ingredient 3", "Ingredient 2x")))
-  private val mockedRecipesList = listOf(recipe1)
+  private val mockedRecipesList =
+      listOf(
+          testRecipes[0].copy(
+              ingredientsAndMeasurements =
+                  listOf(
+                      Pair("Ingredient 1", "Ingredient 1x"),
+                      Pair("Ingredient 2", "Ingredient 2x"),
+                      Pair("Ingredient 3", "Ingredient 3x"))),
+          testRecipes[1],
+      )
 
   @get:Rule val composeTestRule = createComposeRule()
 

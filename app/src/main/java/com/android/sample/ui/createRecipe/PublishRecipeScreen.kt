@@ -1,6 +1,5 @@
 package com.android.sample.ui.createRecipe
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -104,15 +103,12 @@ fun PublishRecipeContent(
             onClick = {
               createRecipeViewModel.publishRecipe(
                   onSuccess = { recipe ->
-                    Log.d("PublishRecipe", "Recipe successfully published: $recipe")
                     userViewModel.addRecipeToUserCreatedRecipes(recipe)
-                    Log.d("PublishRecipe", "Recipe added to user created recipes")
+                    navigationActions.navigateTo(Screen.SWIPE)
                   },
                   onFailure = { exception ->
                     Toast.makeText(context, exception.message, Toast.LENGTH_SHORT).show()
                   })
-
-              navigationActions.navigateTo(Screen.SWIPE)
             },
             colors =
                 ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
