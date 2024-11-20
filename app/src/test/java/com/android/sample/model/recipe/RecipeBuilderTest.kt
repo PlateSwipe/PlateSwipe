@@ -21,7 +21,7 @@ class RecipeBuilderTest {
         builder
             .apply {
               setName("Cake")
-              setInstructions("Mix all ingredients")
+              addInstruction(Instruction("Mix all ingredients"))
               addIngredientAndMeasurement("Flour", "200g")
               addIngredientAndMeasurement("Sugar", "100g")
               setPictureID("http://example.com/image.jpg")
@@ -38,7 +38,7 @@ class RecipeBuilderTest {
         builder
             .apply {
               setName("Cake")
-              setInstructions("Mix all ingredients")
+              addInstruction(Instruction("Mix all ingredients"))
               addIngredientAndMeasurement("Flour", "200g")
               addIngredientAndMeasurement("Sugar", "100g")
               setPictureID("http://example.com/image.jpg")
@@ -55,7 +55,7 @@ class RecipeBuilderTest {
         builder
             .apply {
               setName("Cake")
-              setInstructions("Mix all ingredients")
+              addInstruction(Instruction("Mix all ingredients"))
               addIngredientAndMeasurement("Flour", "200g")
               addIngredientAndMeasurement("Sugar", "100g")
               setPictureID("http://example.com/image.jpg")
@@ -71,7 +71,7 @@ class RecipeBuilderTest {
         builder
             .apply {
               setName("Pasta")
-              setInstructions("Boil water, cook pasta")
+              addInstruction(Instruction("Boil water, cook pasta"))
               addIngredientAndMeasurement("Pasta", "200g")
               addIngredientAndMeasurement("Salt", "1 tsp")
               setPictureID("http://example.com/image.jpg")
@@ -86,7 +86,7 @@ class RecipeBuilderTest {
 
   @Test
   fun `test build throws exception when strMeal is blank`() {
-    builder.setInstructions("Instructions for the recipe")
+    builder.addInstruction(Instruction("Instructions for the recipe"))
     builder.addIngredientAndMeasurement("Ingredient", "Measurement")
 
     val exception = assertThrows(IllegalArgumentException::class.java) { builder.build() }
@@ -105,7 +105,7 @@ class RecipeBuilderTest {
   @Test
   fun `test build throws exception when no ingredients are added`() {
     builder.setName("Recipe name")
-    builder.setInstructions("Recipe instructions")
+    builder.addInstruction(Instruction("Recipe instructions"))
 
     val exception = assertThrows(IllegalArgumentException::class.java) { builder.build() }
     assertEquals("At least one ingredient is required.", exception.message)
@@ -117,7 +117,7 @@ class RecipeBuilderTest {
         builder
             .apply {
               setName("Salad")
-              setInstructions("Mix ingredients")
+              addInstruction(Instruction("Mix ingredients"))
               addIngredientAndMeasurement("Lettuce", "100g")
               setCategory("Vegetarian")
               setOrigin("French")
@@ -142,7 +142,7 @@ class RecipeBuilderTest {
     // Set initial values for all fields
     builder.setId("1")
     builder.setName("Salad")
-    builder.setInstructions("Mix ingredients")
+    builder.addInstruction(Instruction("Mix ingredients"))
     builder.addIngredientAndMeasurement("Lettuce", "100g")
     builder.setCategory("Vegetarian")
     builder.setOrigin("French")
@@ -159,7 +159,7 @@ class RecipeBuilderTest {
     // Assertions to verify each field was cleared
     assertEquals("", builder.getId())
     assertEquals("", builder.getName())
-    assertEquals("", builder.getInstructions())
+    assertEquals(emptyList<Instruction>(), builder.getInstructions())
     assertEquals(emptyList<Pair<String, String>>(), builder.getIngredientsAndMeasurements())
     assertNull(builder.getCategory())
     assertNull(builder.getOrigin())
@@ -177,7 +177,7 @@ class RecipeBuilderTest {
   fun `test all getters`() {
     builder.apply {
       setName("Salad")
-      setInstructions("Mix ingredients")
+      addInstruction(Instruction("Mix ingredients"))
       addIngredientAndMeasurement("Lettuce", "100g")
       setCategory("Vegetarian")
       setOrigin("French")
