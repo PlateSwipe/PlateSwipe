@@ -95,7 +95,7 @@ class CreateRecipeViewModelTest {
     val newInstructions = "New Instructions"
     createRecipeViewModel.addRecipeInstruction(Instruction(newInstructions, null, null))
     assertEquals(
-        newInstructions,
+        listOf(Instruction(newInstructions, null, null)),
         createRecipeViewModel.recipeBuilder.javaClass
             .getDeclaredField("instructions")
             .apply { isAccessible = true }
