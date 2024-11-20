@@ -1,6 +1,7 @@
 package com.android.sample.model.ingredient
 
 import com.android.sample.resources.C
+import com.android.sample.resources.C.Tag.OPENFOODFACT_REPO_IMAGE_ULR_INVALID
 import com.android.sample.resources.C.Tag.OPEN_FOOD_FACTS_URL
 import com.android.sample.resources.C.Tag.PRODUCT_BRAND
 import com.android.sample.resources.C.Tag.PRODUCT_CATEGORIES
@@ -44,10 +45,12 @@ class OpenFoodFactsIngredientRepository(private val client: OkHttpClient) : Ingr
     val displayThumbnail = json.getString(PRODUCT_FRONT_IMAGE_THUMBNAIL_URL)
     val displaySmall = json.getString(PRODUCT_FRONT_IMAGE_SMALL_URL)
 
-    println("displayNormal: $displayNormal")
-    println("displayThumbnail: $displayThumbnail")
-    println("displaySmall: $displaySmall")
     // Mapping the image URLs to the respective image sizes
+    if (displayNormal.isNullOrEmpty() ||
+        displayThumbnail.isNullOrEmpty() ||
+        displaySmall.isNullOrEmpty()) {
+      throw JSONException(OPENFOODFACT_REPO_IMAGE_ULR_INVALID)
+    }
     val imageMap =
         mutableMapOf(
             PRODUCT_FRONT_IMAGE_NORMAL_URL to displayNormal,
@@ -94,7 +97,6 @@ class OpenFoodFactsIngredientRepository(private val client: OkHttpClient) : Ingr
                     onSuccess(null)
                   } else {
                     val productJson = body.getJSONObject("product")
-                    println("productJson: $productJson")
                     onSuccess(parseOpenFoodFactsJsonToIngredient(productJson))
                   }
                 } catch (e: JSONException) {
