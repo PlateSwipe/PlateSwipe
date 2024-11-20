@@ -211,7 +211,7 @@ class CreateRecipeViewModelTest {
     val defaultRecipe = createDefaultRecipe()
     val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
     createRecipeViewModel.updateRecipeName(defaultRecipe.name)
-    for(instruction in defaultRecipe.instructions) {
+    for (instruction in defaultRecipe.instructions) {
       createRecipeViewModel.addRecipeInstruction(instruction)
     }
     createRecipeViewModel.addIngredientAndMeasurement("Banana", "3")
@@ -241,7 +241,7 @@ class CreateRecipeViewModelTest {
     val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
 
     createRecipeViewModel.updateRecipeName(defaultRecipe.name)
-    for(instruction in defaultRecipe.instructions) {
+    for (instruction in defaultRecipe.instructions) {
       createRecipeViewModel.addRecipeInstruction(instruction)
     }
     createRecipeViewModel.updateRecipeThumbnail(defaultRecipe.strMealThumbUrl)
@@ -304,7 +304,7 @@ class CreateRecipeViewModelTest {
     val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
 
     createRecipeViewModel.updateRecipeName(defaultRecipe.name)
-    for(instruction in defaultRecipe.instructions) {
+    for (instruction in defaultRecipe.instructions) {
       createRecipeViewModel.addRecipeInstruction(instruction)
     }
     createRecipeViewModel.addIngredientAndMeasurement("Banana", "3")
@@ -339,7 +339,7 @@ class CreateRecipeViewModelTest {
     val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
 
     createRecipeViewModel.updateRecipeName(defaultRecipe.name)
-    for(instruction in defaultRecipe.instructions) {
+    for (instruction in defaultRecipe.instructions) {
       createRecipeViewModel.addRecipeInstruction(instruction)
     }
     createRecipeViewModel.addIngredientAndMeasurement("Banana", "3")
@@ -449,9 +449,9 @@ class CreateRecipeViewModelTest {
   fun `test all getters`() {
     val recipe = createDefaultRecipe()
     createRecipeViewModel.updateRecipeName(recipe.name)
-      for (instruction in recipe.instructions) {
-        createRecipeViewModel.addRecipeInstruction(instruction)
-      }
+    for (instruction in recipe.instructions) {
+      createRecipeViewModel.addRecipeInstruction(instruction)
+    }
     createRecipeViewModel.updateRecipeThumbnail(recipe.strMealThumbUrl)
     createRecipeViewModel.addIngredientAndMeasurement("Banana", "3")
     createRecipeViewModel.updateRecipeTime("30 minutes")
@@ -475,7 +475,7 @@ class CreateRecipeViewModelTest {
   fun `test update ingredientAndMeasurement`() {
     val recipe = createDefaultRecipe()
     createRecipeViewModel.updateRecipeName(recipe.name)
-    for(instruction in recipe.instructions) {
+    for (instruction in recipe.instructions) {
       createRecipeViewModel.addRecipeInstruction(instruction)
     }
     createRecipeViewModel.updateRecipeThumbnail(recipe.strMealThumbUrl)
@@ -494,7 +494,7 @@ class CreateRecipeViewModelTest {
   fun `test remove ingredientAndMeasurement`() {
     val recipe = createDefaultRecipe()
     createRecipeViewModel.updateRecipeName(recipe.name)
-    for(instruction in recipe.instructions) {
+    for (instruction in recipe.instructions) {
       createRecipeViewModel.addRecipeInstruction(instruction)
     }
     createRecipeViewModel.updateRecipeThumbnail(recipe.strMealThumbUrl)
