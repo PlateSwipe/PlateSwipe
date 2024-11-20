@@ -6,6 +6,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.model.recipe.FirestoreRecipesRepository
+import com.android.sample.model.recipe.Instruction
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.user.UserRepository
 import com.android.sample.model.user.UserViewModel
@@ -89,7 +90,7 @@ class PublishRecipeScreenTest {
   fun publishRecipeScreen_publishButtonTriggersPublishAndNavigation() = runTest {
     // Set up required fields in the CreateRecipeViewModel
     createRecipeViewModel.updateRecipeName("Test Recipe")
-    createRecipeViewModel.updateRecipeInstructions("Test instructions")
+    createRecipeViewModel.addRecipeInstruction(Instruction("Test instructions"))
     createRecipeViewModel.updateRecipeThumbnail("https://example.com/image.jpg")
     createRecipeViewModel.addIngredientAndMeasurement("Ingredient", "1 cup")
 
