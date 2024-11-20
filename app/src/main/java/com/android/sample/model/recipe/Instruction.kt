@@ -12,8 +12,8 @@ import com.android.sample.resources.C.TestTag.Instruction.DEFAULT_ICON
  */
 data class Instruction(
     val description: String,
-    val time: String?,
-    val iconType: String?,
+    val time: String? = "",
+    val iconType: String? = DEFAULT_ICON,
 ) {
   val icon: IconType
     get() = IconType(iconType ?: DEFAULT_ICON)
