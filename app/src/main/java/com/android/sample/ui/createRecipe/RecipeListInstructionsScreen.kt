@@ -144,7 +144,7 @@ fun RecipeListInstructionsContent(
            * recipeBuilder.getTime(), onClick =
            * {navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_INSTRUCTION)}) }
            */
-          items(createRecipeViewModel.getRecipeInstructions().size - 1) { index ->
+          items(createRecipeViewModel.getRecipeInstructions().size) { index ->
             InstructionValue(
                 createRecipeViewModel = createRecipeViewModel,
                 index = index,
