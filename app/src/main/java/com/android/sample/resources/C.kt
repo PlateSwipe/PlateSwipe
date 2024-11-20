@@ -36,7 +36,6 @@ object C {
       const val END_ANIMATION = 1500f
       const val INITIAL_RETRIEVE_NEXT_RECIPE = false
       const val INITIAL_DISPLAY_CARD_1 = true
-      const val INITIAL_DISPLAY_CARD_2 = false
       const val INITIAL_IS_CLICKING = false
       const val INITIAL_DISPLAY_LIKE = false
       const val INITIAL_DISPLAY_DISLIKE = false
@@ -73,59 +72,58 @@ object C {
       const val INITIAL_LOADING_STATE = false
     }
 
-    // Filter
-    const val MIN_SHOULD_NOT_BE_GREATER_THAN_MAX = "min should not be greater than max"
-    const val NEW_MIN_SHOULD_NOT_EXCEED_MAX = "newMin should not exceed max"
-    const val NEW_MAX_SHOULD_NOT_BE_NEGATIVE = "newMax should not be negative"
-    const val NEW_MIN_SHOULD_NOT_BE_NEGATIVE = "newMin should not be negative"
-    const val MIN_SHOULD_NOT_BE_NEGATIVE = "Min should not be negative or different from -1"
-    const val MAX_SHOULD_NOT_BE_NEGATIVE = "Max should not be negative or different from -1"
-    const val MIN_BORN_SHOULD_NOT_BE_NEGATIVE =
-        "Born min should not be negative or different from -1"
-    const val MAX_BORN_SHOULD_NOT_BE_NEGATIVE =
-        "Born max should not be negative or different from -1"
-    const val NEW_MIN_AND_NEW_MAX_SHOULD_BE_WITHIN_RANGE =
-        "newMin and newMax should be within range"
-    const val UNINITIALIZED_BORN_VALUE = -1f
+    object Filter {
+      const val MIN_SHOULD_NOT_BE_GREATER_THAN_MAX = "min should not be greater than max"
+      const val NEW_MIN_SHOULD_NOT_EXCEED_MAX = "newMin should not exceed max"
+      const val NEW_MAX_SHOULD_NOT_BE_NEGATIVE = "newMax should not be negative"
+      const val NEW_MIN_SHOULD_NOT_BE_NEGATIVE = "newMin should not be negative"
+      const val MIN_SHOULD_NOT_BE_NEGATIVE = "Min should not be negative or different from -1"
+      const val MAX_SHOULD_NOT_BE_NEGATIVE = "Max should not be negative or different from -1"
+      const val MIN_BORN_SHOULD_NOT_BE_NEGATIVE =
+          "Born min should not be negative or different from -1"
+      const val MAX_BORN_SHOULD_NOT_BE_NEGATIVE =
+          "Born max should not be negative or different from -1"
+      const val NEW_MIN_AND_NEW_MAX_SHOULD_BE_WITHIN_RANGE =
+          "newMin and newMax should be within range"
+      const val UNINITIALIZED_BORN_VALUE = -1f
+    }
 
-    // Filter Page
-    const val TIME_RANGE_NAME = "Time"
-    const val TIME_RANGE_MIN = 0f
-    const val TIME_RANGE_MAX = 200f
-    const val TIME_RANGE_UNIT = "min"
-    const val PRICE_RANGE_NAME = "Price"
-    const val PRICE_RANGE_MIN = 0f
-    const val PRICE_RANGE_MAX = 100f
-    const val PRICE_RANGE_UNIT = "$"
-    const val DIFFICULTY_NAME = "Difficulty"
-    const val CATEGORY_NAME = "Category"
-    const val MAX_ITEM_IN_ROW = 3 // Choose to optimize with medium and small phone
+    object FilterPage {
+      const val TIME_RANGE_MIN = 0f
+      const val TIME_RANGE_MAX = 200f
+      const val PRICE_RANGE_MIN = 0f
+      const val PRICE_RANGE_MAX = 100f
+      const val MAX_ITEM_IN_ROW = 3 // Choose to optimize with medium and small phone
+      const val SLIDER_COLOR_ACTIVE = 0.4f
+      const val SLIDER_COLOR_INACTIVE = 0.2f
+    }
 
-    // LoadingAnimation
-    const val GRAVITY = 9.8f
-    const val INITIAL_SPEED = 100
-    val fruitImages =
-        listOf(
-            R.drawable.taco,
-            R.drawable.sushi,
-            R.drawable.avocado,
-            R.drawable.tomato,
-            R.drawable.pancakes,
-            R.drawable.broccoli,
-            R.drawable.pasta,
-            R.drawable.salad,
-            R.drawable.pepper)
+    object LoadingAnimation {
+      const val GRAVITY = 9.8f
+      const val INITIAL_SPEED = 100
+      val fruitImages =
+          listOf(
+              R.drawable.taco,
+              R.drawable.sushi,
+              R.drawable.avocado,
+              R.drawable.tomato,
+              R.drawable.pancakes,
+              R.drawable.broccoli,
+              R.drawable.pasta,
+              R.drawable.salad,
+              R.drawable.pepper)
 
-    const val MAX_ROTATION_START = 90
-    const val UNIT = 1
-    const val TIME_INIT = 0f
-    const val TIME_DELTA = 0.016f
-    const val TIME_DELAY = 16L
-    const val ROTATION_DELTA = 0.03f
-    const val DELAY_RESPAWN = 150L
-    const val DELAY_SPAWN = 300L
-    const val NUMBER_FRUIT_MAX = 8
-    const val FRUIT_SIZE = 120
+      const val MAX_ROTATION_START = 90
+      const val UNIT = 1
+      const val TIME_INIT = 0f
+      const val TIME_DELTA = 0.016f
+      const val TIME_DELAY = 16L
+      const val ROTATION_DELTA = 0.03f
+      const val DELAY_RESPAWN = 150L
+      const val DELAY_SPAWN = 300L
+      const val NUMBER_FRUIT_MAX = 8
+      const val FRUIT_SIZE = 120
+    }
 
     // RecipesViewModel
     const val MINIMUM_RECIPES_BEFORE_FETCH = 3
@@ -339,7 +337,6 @@ object C {
       const val BUTTON_ELEVATION = 4
       const val BUTTON_RADIUS = 12
       const val BUTTON_PADDING = 12
-      const val ANIMATION_PADDING_SWIPE = 200
       const val ANIMATION_PADDING_TOP = 64
       const val ANIMATION_SWIPE_TIME = 50
       const val ANIMATION_OPACITY_TIME = 300
@@ -458,9 +455,6 @@ object C {
       const val GOOGLE_LOGO_SIZE = 30
     }
 
-    const val PAD_4 = 4
-    const val PAD_8 = 8
-    const val PAD_16 = 16
     // CameraScanCodeBarScreen
     object CameraScanCodeBarScreen {
 
@@ -721,6 +715,13 @@ object C {
       const val RECIPE_NAME = "recipeName"
       const val ADD_INGREDIENT_ICON = "addIngredientIcon"
       const val NEXT_STEP_BUTTON = "nextStepButton"
+    }
+
+    object FilterPage {
+      const val TEST_TAG_TIME_RANGE_SLIDER = "timeRangeSlider"
+      const val TEST_TAG_PRICE_RANGE_SLIDER = "priceRangeSlider"
+      const val TEST_TAG_DIFFICULTY = "difficulty"
+      const val TEST_TAG_CATEGORY = "category"
     }
 
     object Instruction {

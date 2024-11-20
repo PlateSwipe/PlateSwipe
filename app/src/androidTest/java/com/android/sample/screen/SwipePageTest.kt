@@ -93,6 +93,7 @@ class SwipePageTest : TestCase() {
     recipesViewModel.updatePriceRange(5f, 52f)
     recipesViewModel.updateDifficulty(Difficulty.Easy)
     recipesViewModel.updateCategory("Dessert")
+    recipesViewModel.applyChanges()
 
     composeTestRule.setContent {
       SwipePage(mockNavigationActions, recipesViewModel) // Set up the SignInScreen directly
@@ -153,6 +154,8 @@ class SwipePageTest : TestCase() {
     advanceUntilIdle()
 
     composeTestRule.waitForIdle()
+
+    composeTestRule.waitUntil(5000) { recipesViewModel.currentRecipe.value != currentRecipe }
     assertNotEquals(currentRecipe, recipesViewModel.currentRecipe.value)
   }
 
@@ -170,6 +173,8 @@ class SwipePageTest : TestCase() {
     advanceUntilIdle()
 
     composeTestRule.waitForIdle()
+
+    composeTestRule.waitUntil(5000) { recipesViewModel.currentRecipe.value != currentRecipe }
 
     assertNotEquals(currentRecipe, recipesViewModel.currentRecipe.value)
   }
@@ -217,6 +222,10 @@ class SwipePageTest : TestCase() {
     // Confirm that the chip is no longer visible in the hierarchy
     composeTestRule.onNodeWithTag(TIME_RANGE_CHIP, useUnmergedTree = true).assertDoesNotExist()
 
+    composeTestRule.waitUntil(5000) {
+      recipesViewModel.filter.value.timeRange.min == recipesViewModel.filter.value.timeRange.minBorn
+    }
+
     // Verify the ViewModel time range has been reset
     assertEquals(
         recipesViewModel.filter.value.timeRange.min,
@@ -246,6 +255,13 @@ class SwipePageTest : TestCase() {
 
     // Confirm that the chip is no longer visible in the hierarchy
     composeTestRule.onNodeWithTag(PRICE_RANGE_CHIP, useUnmergedTree = true).assertDoesNotExist()
+
+    composeTestRule.waitUntil(5000) {
+      recipesViewModel.filter.value.priceRange.min ==
+          recipesViewModel.filter.value.priceRange.minBorn &&
+          recipesViewModel.filter.value.priceRange.max ==
+              recipesViewModel.filter.value.priceRange.maxBorn
+    }
 
     // Verify the ViewModel price range has been reset
     assertEquals(
@@ -278,6 +294,9 @@ class SwipePageTest : TestCase() {
     composeTestRule.onNodeWithTag(DIFFICULTY_CHIP, useUnmergedTree = true).assertDoesNotExist()
 
     // Verify the ViewModel difficulty has been reset
+    composeTestRule.waitUntil(5000) {
+      recipesViewModel.filter.value.difficulty == Difficulty.Undefined
+    }
     assertEquals(recipesViewModel.filter.value.difficulty, Difficulty.Undefined)
   }
 
@@ -301,6 +320,8 @@ class SwipePageTest : TestCase() {
 
     // Confirm that the chip is no longer visible in the hierarchy
     composeTestRule.onNodeWithTag(CATEGORY_CHIP, useUnmergedTree = true).assertDoesNotExist()
+
+    composeTestRule.waitUntil(5000) { recipesViewModel.filter.value.category == null }
 
     // Verify the ViewModel category has been reset
     assertNull(recipesViewModel.filter.value.category)

@@ -427,7 +427,7 @@ class RecipesViewModelTest {
     val newDifficulty = Difficulty.Medium
     recipesViewModel.updateDifficulty(newDifficulty)
 
-    assertEquals(newDifficulty, recipesViewModel.filter.value.difficulty)
+    assertEquals(newDifficulty, recipesViewModel.tmpFilter.value.difficulty)
   }
 
   /** Tests for the filter price range functionality. */
@@ -437,8 +437,8 @@ class RecipesViewModelTest {
     val newMax = 50f
     recipesViewModel.updatePriceRange(newMin, newMax)
 
-    assertEquals(newMin, recipesViewModel.filter.value.priceRange.min, 0.001f)
-    assertEquals(newMax, recipesViewModel.filter.value.priceRange.max, 0.001f)
+    assertEquals(newMin, recipesViewModel.tmpFilter.value.priceRange.min, 0.001f)
+    assertEquals(newMax, recipesViewModel.tmpFilter.value.priceRange.max, 0.001f)
   }
 
   /** Tests for the filter time range functionality. */
@@ -448,8 +448,8 @@ class RecipesViewModelTest {
     val newMax = 5f
     recipesViewModel.updateTimeRange(newMin, newMax)
 
-    assertEquals(newMin, recipesViewModel.filter.value.timeRange.min, 0.001f)
-    assertEquals(newMax, recipesViewModel.filter.value.timeRange.max, 0.001f)
+    assertEquals(newMin, recipesViewModel.tmpFilter.value.timeRange.min, 0.001f)
+    assertEquals(newMax, recipesViewModel.tmpFilter.value.timeRange.max, 0.001f)
   }
 
   /** Tests for the filter category functionality. */
@@ -459,6 +459,30 @@ class RecipesViewModelTest {
     val newCategory = "Dessert"
     recipesViewModel.updateCategory(newCategory)
     advanceUntilIdle()
-    assertEquals(newCategory, recipesViewModel.filter.value.category)
+    assertEquals(newCategory, recipesViewModel.tmpFilter.value.category)
+  }
+
+  @Test
+  fun `test init filter updates filter correctly`() {
+    recipesViewModel.initFilter()
+    assertEquals(
+        recipesViewModel.filter.value.difficulty, recipesViewModel.tmpFilter.value.difficulty)
+    assertEquals(recipesViewModel.filter.value.category, recipesViewModel.tmpFilter.value.category)
+    assertEquals(
+        recipesViewModel.filter.value.priceRange.min,
+        recipesViewModel.tmpFilter.value.priceRange.min,
+        0.001f)
+    assertEquals(
+        recipesViewModel.filter.value.priceRange.max,
+        recipesViewModel.tmpFilter.value.priceRange.max,
+        0.001f)
+    assertEquals(
+        recipesViewModel.filter.value.timeRange.min,
+        recipesViewModel.tmpFilter.value.timeRange.min,
+        0.001f)
+    assertEquals(
+        recipesViewModel.filter.value.timeRange.max,
+        recipesViewModel.tmpFilter.value.timeRange.max,
+        0.001f)
   }
 }
