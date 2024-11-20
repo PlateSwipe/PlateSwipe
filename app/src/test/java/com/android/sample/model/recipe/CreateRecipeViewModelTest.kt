@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.sample.feature.camera.rotateBitmap
 import com.android.sample.model.image.ImageRepositoryFirebase
+import com.android.sample.ui.utils.testRecipes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -52,15 +53,7 @@ class CreateRecipeViewModelTest {
   }
 
   private fun createDefaultRecipe(): Recipe {
-    return Recipe(
-        uid = "unique-id",
-        name = "Test Recipe",
-        category = "Dessert",
-        origin = "Italian",
-        instructions = "Some instructions",
-        strMealThumbUrl = "unique-id",
-        ingredientsAndMeasurements = listOf(Pair("Banana", "3")),
-        url = null)
+    return testRecipes[0]
   }
 
   @Test
@@ -219,7 +212,6 @@ class CreateRecipeViewModelTest {
     val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
     createRecipeViewModel.updateRecipeName(defaultRecipe.name)
     createRecipeViewModel.updateRecipeInstructions(defaultRecipe.instructions)
-    createRecipeViewModel.addIngredient("Banana", "3")
     createRecipeViewModel.addIngredientAndMeasurement("Banana", "3")
     createRecipeViewModel.setBitmap(bitmap, 90)
 
@@ -249,7 +241,9 @@ class CreateRecipeViewModelTest {
     createRecipeViewModel.updateRecipeName(defaultRecipe.name)
     createRecipeViewModel.updateRecipeInstructions(defaultRecipe.instructions)
     createRecipeViewModel.updateRecipeThumbnail(defaultRecipe.strMealThumbUrl)
-    createRecipeViewModel.addIngredientAndMeasurement("Banana", "3")
+    defaultRecipe.ingredientsAndMeasurements.forEach {
+      createRecipeViewModel.addIngredientAndMeasurement(it.first, it.second)
+    }
     defaultRecipe.category?.let { createRecipeViewModel.updateRecipeCategory(it) }
     defaultRecipe.origin?.let { createRecipeViewModel.updateRecipeOrigin(it) }
     createRecipeViewModel.setBitmap(bitmap, 90)
@@ -307,7 +301,6 @@ class CreateRecipeViewModelTest {
 
     createRecipeViewModel.updateRecipeName(defaultRecipe.name)
     createRecipeViewModel.updateRecipeInstructions(defaultRecipe.instructions)
-    createRecipeViewModel.addIngredient("Banana", "3")
     createRecipeViewModel.addIngredientAndMeasurement("Banana", "3")
     createRecipeViewModel.setBitmap(bitmap, 90)
 
@@ -341,7 +334,6 @@ class CreateRecipeViewModelTest {
 
     createRecipeViewModel.updateRecipeName(defaultRecipe.name)
     createRecipeViewModel.updateRecipeInstructions(defaultRecipe.instructions)
-    createRecipeViewModel.addIngredient("Banana", "3")
     createRecipeViewModel.addIngredientAndMeasurement("Banana", "3")
     createRecipeViewModel.setBitmap(bitmap, 90)
 

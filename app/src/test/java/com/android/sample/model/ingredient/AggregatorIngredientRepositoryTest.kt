@@ -1,5 +1,6 @@
 package com.android.sample.model.ingredient
 
+import com.android.sample.ui.utils.testIngredients
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
@@ -28,24 +29,7 @@ class AggregatorIngredientRepositoryTest {
 
   private lateinit var aggregatorIngredientRepository: AggregatorIngredientRepository
 
-  private val ingredient =
-      Ingredient(
-          uid = "1",
-          name = "Coca-Cola",
-          barCode = 5449000214911L,
-          brands = "Coca cola",
-          quantity = "330 mL",
-          categories =
-              listOf(
-                  "Beverages and beverages preparations",
-                  "Beverages",
-                  "Carbonated drinks",
-                  "Sodas",
-                  "Carbonated soft drinks without fruit juice",
-                  "Colas",
-                  "Carbonated soft drinks without fruit juice with sugar",
-                  "Sweetened beverages"),
-          images = listOf("display_normal", "display_thumbnail", "display_small"))
+  private val ingredient = testIngredients[0]
 
   @Before
   fun setUp() {

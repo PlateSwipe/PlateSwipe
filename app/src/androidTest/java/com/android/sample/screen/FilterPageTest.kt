@@ -19,6 +19,7 @@ import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.ui.filter.FilterPage
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
+import com.android.sample.ui.utils.testRecipes
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -41,25 +42,7 @@ class FilterPageTest {
   private val difficultyNames =
       listOf(Difficulty.Easy.toString(), Difficulty.Medium.toString(), Difficulty.Hard.toString())
 
-  private val recipe1 =
-      Recipe(
-          "Recipe 1",
-          "",
-          "url1",
-          "Instructions 1",
-          "Category 1",
-          "Area 1",
-          listOf(Pair("Ingredient 1", "Ingredient 1")))
-  private val recipe2 =
-      Recipe(
-          "Recipe 2",
-          "",
-          "url2",
-          "Instructions 2",
-          "Category 2",
-          "Area 2",
-          listOf(Pair("Ingredient 2", "Ingredient 2")))
-  private val mockedRecipesList = listOf(recipe1, recipe2)
+  private val mockedRecipesList = testRecipes
 
   private val mockedCategoriesList = Recipe.getCategories()
 
