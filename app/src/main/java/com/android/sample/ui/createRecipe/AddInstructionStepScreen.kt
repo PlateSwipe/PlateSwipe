@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.android.sample.R
 import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.model.recipe.IconType
+import com.android.sample.model.recipe.Instruction
 import com.android.sample.resources.C.Tag.CONTAINER_PADDING
 import com.android.sample.resources.C.Tag.HORIZONTAL_PADDING
 import com.android.sample.resources.C.Tag.INSTRUCTION_VERTICAL_PADDING
@@ -67,13 +68,36 @@ fun AddInstructionStepContent(
     navigationActions: NavigationActions,
     modifier: Modifier = Modifier
 ) {
-  var stepDescription by remember { mutableStateOf(createRecipeViewModel.getRecipeInstructions()) }
-  var stepTime by remember { mutableStateOf(createRecipeViewModel.getRecipeTime()) }
+  var stepDescription by remember {
+    mutableStateOf(
+        if (createRecipeViewModel.getSelectedInstruction() != null) {
+          createRecipeViewModel
+              .getInstruction(createRecipeViewModel.getSelectedInstruction()!!)
+              .description
+        } else {
+          ""
+        })
+  }
+
+  var stepTime by remember {
+    mutableStateOf(
+        if (createRecipeViewModel.getSelectedInstruction() != null) {
+          createRecipeViewModel
+              .getInstruction(createRecipeViewModel.getSelectedInstruction()!!)
+              .time
+        } else {
+          ""
+        })
+  }
   var selectedIcon by remember {
     mutableStateOf<IconType?>(
-        if(createRecipeViewModel.getSelectedInstruction() != null){
-            createRecipeViewModel.getRecipeInstruction(createRecipeViewModel.getSelectedInstruction()!!).getIcon()
-        } else null)
+        if (createRecipeViewModel.getSelectedInstruction() != null) {
+          createRecipeViewModel
+              .getInstruction(createRecipeViewModel.getSelectedInstruction()!!)
+              .icon
+        } else {
+          null
+        })
   }
   var showError by remember { mutableStateOf(false) }
 
@@ -218,14 +242,17 @@ fun confirmAndAssignStep(
     createRecipeViewModel: CreateRecipeViewModel,
     onSuccess: () -> Unit
 ) {
+  if (createRecipeViewModel.getSelectedInstruction() != null) {
+    createRecipeViewModel.updateRecipeInstruction(
+        createRecipeViewModel.getSelectedInstruction()!!,
+        Instruction(
+            description = stepDescription, time = stepTime, iconType = selectedIcon?.iconName))
+    onSuccess()
+  }
   if (stepDescription.isNotEmpty()) {
-    createRecipeViewModel.addRecipeInstruction(stepDescription)
-    if (!stepTime.isNullOrEmpty()) {
-      createRecipeViewModel.updateRecipeTime(stepTime.toString())
-    }
-    if (selectedIcon != null) {
-      createRecipeViewModel.selectIcon(selectedIcon)
-    }
+    createRecipeViewModel.addRecipeInstruction(
+        Instruction(
+            description = stepDescription, time = stepTime, iconType = selectedIcon?.iconName))
     onSuccess()
   }
 }

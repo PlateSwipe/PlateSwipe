@@ -47,6 +47,15 @@ class CreateRecipeViewModel(
     return selectedInstruction.value
   }
 
+  /**
+   * Gets a single instruction at the given index.
+   *
+   * @param index The index of the instruction to get.
+   */
+  fun getInstruction(index: Int): Instruction {
+    return recipeBuilder.getInstruction(index)
+  }
+
   private val _publishStatus = MutableStateFlow<String?>(null)
   val publishStatus: StateFlow<String?>
     get() = _publishStatus
@@ -106,6 +115,16 @@ class CreateRecipeViewModel(
    */
   fun addRecipeInstruction(instructions: Instruction) {
     recipeBuilder.addInstruction(instructions)
+  }
+
+  /**
+   * Updates an instruction for the recipe.
+   *
+   * @param index The index of the instruction to update.
+   * @param instruction The new instruction to replace the old one.
+   */
+  fun updateRecipeInstruction(index: Int, instruction: Instruction) {
+    recipeBuilder.modifyInstruction(index, instruction)
   }
 
   /**
