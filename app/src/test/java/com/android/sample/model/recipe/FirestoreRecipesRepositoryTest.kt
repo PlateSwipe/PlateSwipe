@@ -12,6 +12,7 @@ import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_NAME
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_PICTURE_ID
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_PRICE
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_TIME
+import com.android.sample.ui.utils.testRecipes
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.CollectionReference
@@ -49,18 +50,7 @@ class FirestoreRecipesRepositoryTest {
 
   private lateinit var firestoreFirebaseRepository: FirestoreRecipesRepository
 
-  private val recipe =
-      Recipe(
-          uid = "1",
-          name = "Chicken",
-          category = "Main",
-          origin = "Italian",
-          instructions = "Instructions",
-          strMealThumbUrl = "https://www.themealdb.com/images/media/meals/1548772327.jpg",
-          ingredientsAndMeasurements = listOf(Pair("Chicken", "1"), Pair("Salt", "1 tsp")),
-          time = "30 mins",
-          difficulty = "Easy",
-          price = "Low")
+  private val recipe = testRecipes[0]
 
   @Before
   fun setup() {
