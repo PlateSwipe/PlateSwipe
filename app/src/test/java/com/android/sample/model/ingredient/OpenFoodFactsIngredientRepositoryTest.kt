@@ -66,9 +66,9 @@ class OpenFoodFactsIngredientRepositoryTest {
                         "brands": "Brand 1",
                         "categories": "",
                         "quantity": "",
-                        "image_front_url": "",
-                        "image_front_thumb_url": "",
-                        "image_front_small_url": ""
+                        "image_front_url": "ww",
+                        "image_front_thumb_url": "ww",
+                        "image_front_small_url": "ww"
                     },
                     {
                         "_id": 9876543210,
@@ -76,9 +76,9 @@ class OpenFoodFactsIngredientRepositoryTest {
                         "brands": "Brand 2",
                         "categories": "",
                         "quantity": "",
-                        "image_front_url": "",
-                        "image_front_thumb_url": "",
-                        "image_front_small_url": ""
+                        "image_front_url": "ww",
+                        "image_front_thumb_url": "ww",
+                        "image_front_small_url": "ww"
                     },
                     {
                         "_id": 1357924680,
@@ -86,9 +86,9 @@ class OpenFoodFactsIngredientRepositoryTest {
                         "brands": "Brand 3",
                         "categories": "",
                         "quantity": "",
-                        "image_front_url": "",
-                        "image_front_thumb_url": "",
-                        "image_front_small_url": ""
+                        "image_front_url": "ww",
+                        "image_front_thumb_url": "ww",
+                        "image_front_small_url": "ww"
                     }
                 ],
                 "skip": 0

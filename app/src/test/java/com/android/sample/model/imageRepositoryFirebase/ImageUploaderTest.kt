@@ -5,10 +5,8 @@ import android.net.Uri
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.image.ImageUploader
-import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_NORMAL_URL
-import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_SMALL_URL
-import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_THUMBNAIL_URL
+import com.android.sample.ui.utils.testIngredients
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
@@ -32,19 +30,7 @@ class ImageUploaderTest {
 
   private val imageUploader = ImageUploader()
   private val dispatcher = Dispatchers.IO
-  private val ingredient =
-      Ingredient(
-          uid = "1",
-          name = "Coca-Cola",
-          barCode = 5449000214911L,
-          brands = "Coca cola",
-          quantity = "330 mL",
-          categories = listOf("Beverages and beverages preparations"),
-          images =
-              mutableMapOf(
-                  PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
-                  PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
-                  PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
+  private val ingredient = testIngredients[0]
 
   @Before
   fun setUp() {
@@ -69,14 +55,7 @@ class ImageUploaderTest {
   fun testUploadAndRetrieveUrlAsyncFailWithNullUrl() {
 
     val ingredient =
-        Ingredient(
-            uid = "1",
-            name = "Coca-Cola",
-            barCode = 5449000214911L,
-            brands = "Coca cola",
-            quantity = "330 mL",
-            categories = listOf("Beverages and beverages preparations"),
-            images = mutableMapOf(PRODUCT_FRONT_IMAGE_NORMAL_URL to ""))
+        testIngredients[0].copy(images = mutableMapOf(PRODUCT_FRONT_IMAGE_NORMAL_URL to ""))
 
     val imageFormat = "image_front_url"
 
@@ -94,14 +73,9 @@ class ImageUploaderTest {
   fun testUploadAndRetrieveUrlAsyncFailWithNullBarcode() {
 
     val ingredient =
-        Ingredient(
-            uid = "1",
-            name = "Coca-Cola",
-            brands = "Coca cola",
-            quantity = "330 mL",
-            categories = listOf("Beverages and beverages preparations"),
+        testIngredients[0].copy(
+            barCode = null,
             images = mutableMapOf(PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal"))
-
     val imageFormat = "image_front_url"
 
     val exception =
@@ -118,14 +92,7 @@ class ImageUploaderTest {
   fun testUploadAndRetrieveUrlAsyncFailWithUnsupportImageFormat() {
     val imageFormat = "image_big_url"
     val ingredient =
-        Ingredient(
-            uid = "1",
-            barCode = 5449000214911L,
-            name = "Coca-Cola",
-            brands = "Coca cola",
-            quantity = "330 mL",
-            categories = listOf("Beverages and beverages preparations"),
-            images = mutableMapOf(imageFormat to "https://display_normal"))
+        testIngredients[0].copy(images = mutableMapOf(imageFormat to "https://display_normal"))
 
     val exception =
         assertThrows(AssertionError::class.java) {
