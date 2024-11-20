@@ -170,7 +170,12 @@ class FirestoreRecipesRepositoryTest {
     assertEquals("Test Recipe", recipe?.name)
     assertEquals("Category", recipe?.category)
     assertEquals("Area", recipe?.origin)
-    assertEquals("Instructions", recipe?.instructions)
+    assertEquals(
+        listOf(
+            Instruction("Instructions1", "Time1", "Cook"),
+            Instruction("Instructions2", "", ""),
+            Instruction("Instructions3", "Time3", "Fire")),
+        recipe?.instructions)
     assertEquals("ThumbUrl", recipe?.strMealThumbUrl)
     assertEquals(
         listOf("Ingredient1" to "Measurement1", "Ingredient2" to "Measurement2"),
@@ -375,7 +380,12 @@ class FirestoreRecipesRepositoryTest {
         onSuccess = { recipe ->
           assertNotNull(recipe)
           assertEquals("Chicken", recipe.name)
-          assertEquals("Instructions", recipe.instructions)
+          assertEquals(
+              listOf(
+                  Instruction("Instructions1", "Time1", "Cook"),
+                  Instruction("Instructions2", "", ""),
+                  Instruction("Instructions3", "Time3", "Fire")),
+              recipe.instructions)
           assertEquals("https://image.url", recipe.strMealThumbUrl)
           assertEquals(
               listOf("Chicken" to "1", "Salt" to "1 tsp"), recipe.ingredientsAndMeasurements)
