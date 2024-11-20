@@ -1,8 +1,5 @@
 package com.android.sample.model.ingredient
 
-import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_NORMAL_URL
-import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_SMALL_URL
-import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_THUMBNAIL_URL
 import com.android.sample.ui.utils.testIngredients
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task

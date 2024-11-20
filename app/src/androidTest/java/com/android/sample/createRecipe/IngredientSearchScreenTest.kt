@@ -8,9 +8,6 @@ import androidx.compose.ui.test.performTextInput
 import com.android.sample.model.ingredient.AggregatorIngredientRepository
 import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.ingredient.IngredientViewModel
-import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_NORMAL_URL
-import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_SMALL_URL
-import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_THUMBNAIL_URL
 import com.android.sample.resources.C.TestTag.IngredientSearchScreen.CANCEL_BUTTON
 import com.android.sample.resources.C.TestTag.IngredientSearchScreen.CONFIRMATION_BUTTON
 import com.android.sample.resources.C.TestTag.IngredientSearchScreen.CONFIRMATION_POPUP
