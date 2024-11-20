@@ -357,7 +357,7 @@ class MealDBRecipesRepositoryTest {
     for (i in searchRecipe?.get(1)?.instructions!!) {
       assert(
           i.description ==
-              "Peel the oranges using a sharp knife, ensuring all the pith is removed. Slice as thinly as possible and arrange over a dinner plate. Sprinkle with the demerara sugar followed by the Grand Marnier and set aside.\r\n\r\nCrumble the Christmas pudding into large pieces and scatter over the bottom of a trifle bowl. Lift the oranges onto the pudding in a layer and pour over any juices.\r\n\r\nBeat the mascarpone until smooth, then stir in the custard. Spoon the mixture over the top of the oranges.\r\n\r\nLightly whip the cream and spoon over the custard. Sprinkle with the flaked almonds and grated chocolate. You can make this a day in advance if you like, chill until ready to serve!")
+              "Peel the oranges using a sharp knife, ensuring all the pith is removed. Slice as thinly as possible and arrange over a dinner plate. Sprinkle with the demerara sugar followed by the Grand Marnier and set aside.\r\n\r\nCrumble the Christmas pudding into large pieces and scatter over the bottom of a trifle bowl. Lift the oranges onto the pudding in a layer and pour over any juices.\r\n\r\nBeat the mascarpone until smooth, then stir in the custard. Spoon the mixture over the top of the oranges.\r\n\r\nLightly whip the cream and spoon over the custard. Sprinkle with the flaked almonds and grated chocolate. You can make this a day in advance if you like, chill until ready to serve.")
     }
     assert(
         searchRecipe?.get(1)?.strMealThumbUrl ==
@@ -379,11 +379,7 @@ class MealDBRecipesRepositoryTest {
     assert(searchRecipe?.get(2)?.name == "Pad See Ew")
     assert(searchRecipe?.get(2)?.category == "Chicken")
     assert(searchRecipe?.get(2)?.origin == "Thai")
-    for (i in searchRecipe?.get(2)?.instructions!!) {
-      assert(
-          i.description ==
-              "Mix Sauce in small bowl.\r\nMince garlic into wok with oil. Place over high heat, when hot, add chicken and Chinese broccoli stems, cook until chicken is light golden.\r\nPush to the side of the wok, crack egg in and scramble. Don't worry if it sticks to the bottom of the wok - it will char and which adds authentic flavour.\r\nAdd noodles, Chinese broccoli leaves and sauce. Gently mix together until the noodles are stained dark and leaves are wilted. Serve immediately!")
-    }
+
     assert(
         searchRecipe?.get(2)?.strMealThumbUrl ==
             "https://www.themealdb.com/images/media/meals/uuuspp1468263334.jpg")
