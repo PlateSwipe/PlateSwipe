@@ -15,6 +15,10 @@ data class Instruction(
     val time: String? = "",
     val iconType: String? = DEFAULT_ICON,
 ) {
+  init {
+    require(description.isNotBlank()) { "Description must not be empty" }
+  }
+
   val icon: IconType
     get() = IconType(iconType ?: DEFAULT_ICON)
 }
