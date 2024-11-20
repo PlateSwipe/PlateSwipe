@@ -80,7 +80,7 @@ class RecipeBuilderTest {
             .build()
 
     assertEquals("Pasta", recipe.name)
-    assertEquals("Boil water, cook pasta", recipe.instructions)
+    assertEquals(listOf(Instruction("Boil water, cook pasta")), recipe.instructions)
     assertEquals("200g", recipe.ingredientsAndMeasurements[0].second)
   }
 
@@ -188,7 +188,7 @@ class RecipeBuilderTest {
       setId("1")
     }
     assertEquals("Salad", builder.getName())
-    assertEquals("Mix ingredients", builder.getInstructions())
+    assertEquals(listOf(Instruction("Mix ingredients")), builder.getInstructions())
     assertEquals("Vegetarian", builder.getCategory())
     assertEquals("French", builder.getOrigin())
     assertEquals("http://example.com/image.jpg", builder.getPictureID())
