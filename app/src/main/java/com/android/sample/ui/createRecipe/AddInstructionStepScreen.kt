@@ -16,6 +16,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.android.sample.R
 import com.android.sample.model.recipe.CreateRecipeViewModel
+import com.android.sample.model.recipe.IconType
 import com.android.sample.resources.C.Tag.CONTAINER_PADDING
 import com.android.sample.resources.C.Tag.HORIZONTAL_PADDING
 import com.android.sample.resources.C.Tag.INSTRUCTION_VERTICAL_PADDING
@@ -220,7 +221,7 @@ fun confirmAndAssignStep(
       createRecipeViewModel.updateRecipeTime(stepTime.toString())
     }
     if (selectedIcon != null) {
-      createRecipeViewModel.selectIcon(selectedIcon!!)
+      createRecipeViewModel.selectIcon(selectedIcon)
     }
     onSuccess()
   }

@@ -7,11 +7,11 @@ import com.android.sample.resources.C.Tag.ERROR_STR_THUMBNAIL
 
 /** Builder class for creating a Recipe instance. */
 class RecipeBuilder {
-  private var idMeal: String = ""
-  private var strMeal: String = ""
-  private var strCategory: String? = null
-  private var strArea: String? = null
-  private var strInstructions: String = ""
+  private var uid: String = ""
+  private var name: String = ""
+  private var category: String? = null
+  private var origin: String? = null
+  private var instructions: String = ""
   private var strMealThumbUrl: String = ""
   private val ingredientsAndMeasurements: MutableList<Pair<String, String>> = mutableListOf()
   private var time: String? = null
@@ -22,38 +22,38 @@ class RecipeBuilder {
   /**
    * Sets the ID of the recipe.
    *
-   * @param idMeal The ID of the recipe.
+   * @param uid The ID of the recipe.
    */
-  fun setId(idMeal: String) = apply { this.idMeal = idMeal }
+  fun setId(uid: String) = apply { this.uid = uid }
 
   /**
    * Sets the name of the recipe.
    *
-   * @param strMeal The name of the recipe.
+   * @param name The name of the recipe.
    */
-  fun setName(strMeal: String) = apply { this.strMeal = strMeal }
+  fun setName(name: String) = apply { this.name = name }
 
   /**
    * Sets the category of the recipe.
    *
-   * @param strCategory The category of the recipe.
+   * @param category The category of the recipe.
    */
-  fun setCategory(strCategory: String) = apply { this.strCategory = strCategory }
+  fun setCategory(category: String) = apply { this.category = category }
 
   /**
    * Sets the area of the recipe.
    *
-   * @param strArea The area of the recipe.
+   * @param origin The area of the recipe.
    */
-  fun setArea(strArea: String) = apply { this.strArea = strArea }
+  fun setOrigin(origin: String) = apply { this.origin = origin }
 
   /**
    * Sets the instructions for the recipe. WARNING : This method should be updated in the next
    * version of the instruction implementation.
    *
-   * @param strInstructions The instructions for the recipe.
+   * @param instruction The instructions for the recipe.
    */
-  fun setInstructions(strInstructions: String) = apply { this.strInstructions = strInstructions }
+  fun setInstructions(instruction: String) = apply { this.instructions = instruction }
 
   /**
    * Sets the UID of the thumbnail image for the recipe.
@@ -144,16 +144,16 @@ class RecipeBuilder {
    */
   fun build(): Recipe {
     // Validation for essential fields
-    require(strMeal.isNotBlank()) { ERROR_STR_MEAL_BLANK }
-    require(strInstructions.isNotBlank()) { ERROR_STR_INSTR_BLANK }
+    require(name.isNotBlank()) { ERROR_STR_MEAL_BLANK }
+    require(instructions.isNotBlank()) { ERROR_STR_INSTR_BLANK }
     require(ingredientsAndMeasurements.isNotEmpty()) { ERROR_LIST_INGREDIENT_EMPTY }
     require(strMealThumbUrl.isNotBlank()) { ERROR_STR_THUMBNAIL }
     return Recipe(
-        idMeal = idMeal,
-        strMeal = strMeal,
-        strCategory = strCategory,
-        strArea = strArea,
-        strInstructions = strInstructions,
+        uid = uid,
+        name = name,
+        category = category,
+        origin = origin,
+        instructions = instructions,
         strMealThumbUrl = strMealThumbUrl,
         ingredientsAndMeasurements = ingredientsAndMeasurements,
         time = time,
@@ -164,11 +164,11 @@ class RecipeBuilder {
 
   /** Clears all fields in the builder. */
   fun clear() {
-    this.idMeal = ""
-    this.strMeal = ""
-    this.strCategory = null
-    this.strArea = null
-    this.strInstructions = ""
+    this.uid = ""
+    this.name = ""
+    this.category = null
+    this.origin = null
+    this.instructions = ""
     this.strMealThumbUrl = ""
     this.ingredientsAndMeasurements.clear()
     this.time = null
@@ -182,35 +182,35 @@ class RecipeBuilder {
    *
    * @return The ID of the recipe.
    */
-  fun getId(): String = idMeal
+  fun getId(): String = uid
 
   /**
    * Returns the name of the recipe.
    *
    * @return The name of the recipe.
    */
-  fun getName(): String = strMeal
+  fun getName(): String = name
 
   /**
    * Returns the category of the recipe.
    *
    * @return The category of the recipe.
    */
-  fun getCategory(): String? = strCategory
+  fun getCategory(): String? = category
 
   /**
    * Returns the area of the recipe.
    *
    * @return The area of the recipe.
    */
-  fun getArea(): String? = strArea
+  fun getOrigin(): String? = origin
 
   /**
    * Returns the instructions for the recipe.
    *
    * @return The instructions for the recipe.
    */
-  fun getInstructions(): String = strInstructions
+  fun getInstructions(): String = instructions
 
   /**
    * Returns the URL of the thumbnail image for the recipe.
@@ -263,6 +263,6 @@ class RecipeBuilder {
    * @param i The index of the instruction.
    */
   fun getInstruction(i: Int): String {
-    return strInstructions
+    return instructions
   }
 }

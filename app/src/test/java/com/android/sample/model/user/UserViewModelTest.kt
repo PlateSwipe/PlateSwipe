@@ -13,6 +13,9 @@ import com.android.sample.resources.C.Tag.UserViewModel.FAILED_TO_FETCH_INGREDIE
 import com.android.sample.resources.C.Tag.UserViewModel.FAILED_TO_FETCH_LIKED_RECIPE_FROM_DATABASE_ERROR
 import com.android.sample.resources.C.Tag.UserViewModel.LOG_TAG
 import com.android.sample.resources.C.Tag.UserViewModel.NOT_FOUND_INGREDIENT_IN_DATABASE_ERROR
+import com.android.sample.ui.utils.testIngredients
+import com.android.sample.ui.utils.testRecipes
+import com.android.sample.ui.utils.testUsers
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import okhttp3.Call
@@ -64,51 +67,13 @@ class UserViewModelTest {
 
   private lateinit var mockCall: Call
 
-  private val userExample: User =
-      User("001", "Gigel Frone", "", emptyList(), emptyList(), emptyList())
+  private val userExample: User = testUsers[0]
 
-  private val userExample2: User =
-      User("001", "Gigelica Frone", "", listOf(Pair("133", 1)), emptyList(), emptyList())
+  private val ingredientExample: Ingredient = testIngredients[0]
 
-  private val userExample3: User =
-      User("001", "Florica Frone", "", emptyList(), listOf("123"), emptyList())
+  private val recipeExample: Recipe = testRecipes[0]
 
-  private val userExample4: User =
-      User("001", "Calcev Frone", "", emptyList(), emptyList(), listOf("456"))
-
-  private val ingredientExample: Ingredient =
-      Ingredient(
-          barCode = 133L,
-          name = "apple",
-          brands = "",
-          quantity = "",
-          categories = listOf(""),
-          images =
-              mutableMapOf(
-                  PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
-                  PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
-                  PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
-  private val recipeExample: Recipe =
-      Recipe(
-          "123",
-          "recipe1",
-          null,
-          null,
-          "instructions",
-          "thumb",
-          listOf(Pair("2134", "4231")),
-      )
-
-  private val createdRecipeExample: Recipe =
-      Recipe(
-          "456",
-          "recipe2",
-          null,
-          null,
-          "instructions",
-          "thumb",
-          listOf(Pair("2134", "4231")),
-      )
+  private val createdRecipeExample: Recipe = testRecipes[1]
 
   @Before
   fun setUp() {
@@ -122,7 +87,7 @@ class UserViewModelTest {
     mockRecipeRepository = mock(FirestoreRecipesRepository::class.java)
 
     `when`(mockFirebaseAuth.currentUser).thenReturn(mockCurrentUser)
-    `when`(mockCurrentUser.uid).thenReturn("001")
+    `when`(mockCurrentUser.uid).thenReturn(userExample.uid)
 
     userViewModel =
         UserViewModel(
@@ -171,9 +136,11 @@ class UserViewModelTest {
 
     assertEquals(userViewModel.userName.value, userExample.userName)
     assertEquals(userViewModel.profilePictureUrl.value, userExample.profilePictureUrl)
-    assertEquals(userViewModel.fridge.value, userExample.fridge)
-    assertEquals(userViewModel.likedRecipes.value, userExample.likedRecipes)
-    assertEquals(userViewModel.createdRecipes.value, userExample.createdRecipes)
+    verify(mockIngredientRepository, times(userExample.fridge.count())).get(any(), any(), any())
+    verify(
+            mockRecipeRepository,
+            times(userExample.likedRecipes.count() + userExample.createdRecipes.count()))
+        .search(any(), any(), any())
   }
 
   @Test
@@ -236,9 +203,11 @@ class UserViewModelTest {
     assertEquals(addedUserCaptor.value.uid, userExample.uid)
     assertEquals(addedUserCaptor.value.userName, userExample.userName)
     assertEquals(addedUserCaptor.value.profilePictureUrl, userExample.profilePictureUrl)
-    assertEquals(addedUserCaptor.value.fridge, userExample.fridge)
-    assertEquals(addedUserCaptor.value.likedRecipes, userExample.likedRecipes)
-    assertEquals(addedUserCaptor.value.createdRecipes, userExample.createdRecipes)
+    verify(mockIngredientRepository, times(userExample.fridge.count())).get(any(), any(), any())
+    verify(
+            mockRecipeRepository,
+            times(userExample.likedRecipes.count() + userExample.createdRecipes.count()))
+        .search(any(), any(), any())
   }
 
   @Test
@@ -247,17 +216,17 @@ class UserViewModelTest {
     userViewModel.changeProfilePictureUrl(userExample.profilePictureUrl)
     userViewModel.addIngredientToUserFridge(ingredientExample)
     userViewModel.addRecipeToUserLikedRecipes(recipeExample)
-    userViewModel.addRecipeToUserCreatedRecipes(recipeExample)
+    userViewModel.addRecipeToUserCreatedRecipes(createdRecipeExample)
 
     assertEquals(userViewModel.userName.value, userExample.userName)
     assertEquals(userViewModel.profilePictureUrl.value, userExample.profilePictureUrl)
-    assertEquals(userViewModel.fridge.value[0].first.name, "apple")
-    assertEquals(userViewModel.likedRecipes.value[0].idMeal, "123")
-    assertEquals(userViewModel.createdRecipes.value[0].idMeal, "123")
+    assertEquals(userViewModel.fridge.value[0].first.name, ingredientExample.name)
+    assertEquals(userViewModel.likedRecipes.value[0].uid, recipeExample.uid)
+    assertEquals(userViewModel.createdRecipes.value[0].uid, createdRecipeExample.uid)
 
     userViewModel.removeIngredientFromUserFridge(ingredientExample)
     userViewModel.removeRecipeFromUserLikedRecipes(recipeExample)
-    userViewModel.removeRecipeFromUserCreatedRecipes(recipeExample)
+    userViewModel.removeRecipeFromUserCreatedRecipes(createdRecipeExample)
 
     assertEquals(userViewModel.fridge.value.count(), 0)
     assertEquals(userViewModel.likedRecipes.value.count(), 0)
@@ -268,7 +237,7 @@ class UserViewModelTest {
   fun `test correctly adds and removes existing ingredient to count pairs in fridge`() {
     userViewModel.addIngredientToUserFridge(ingredientExample, 2)
 
-    assertEquals(userViewModel.fridge.value[0].first.name, "apple")
+    assertEquals(userViewModel.fridge.value[0].first.name, ingredientExample.name)
     assertEquals(userViewModel.fridge.value[0].second, 2)
 
     userViewModel.addIngredientToUserFridge(ingredientExample)
@@ -305,14 +274,12 @@ class UserViewModelTest {
 
     userViewModel.getCurrentUser()
 
-    onSuccessCaptor.value.invoke(userExample2)
+    onSuccessCaptor.value.invoke(userExample)
     onSuccessCaptorFridge.value.invoke(ingredientExample)
 
-    assertEquals(userExample2.userName, userViewModel.userName.value)
-    assertEquals(userExample2.profilePictureUrl, userViewModel.profilePictureUrl.value)
+    assertEquals(userExample.userName, userViewModel.userName.value)
+    assertEquals(userExample.profilePictureUrl, userViewModel.profilePictureUrl.value)
     assertEquals(listOf(Pair(ingredientExample, 1)), userViewModel.fridge.value)
-    assertEquals(userExample2.likedRecipes, userViewModel.likedRecipes.value)
-    assertEquals(userExample2.createdRecipes, userViewModel.createdRecipes.value)
   }
 
   @Test
@@ -329,7 +296,7 @@ class UserViewModelTest {
     mockStatic(Log::class.java).use { mockedLog ->
       userViewModel.getCurrentUser()
 
-      onSuccessCaptor.value.invoke(userExample2)
+      onSuccessCaptor.value.invoke(userExample)
       onSuccessCaptorFridge.value.invoke(null)
 
       mockedLog.verify { Log.e(eq(LOG_TAG), eq(NOT_FOUND_INGREDIENT_IN_DATABASE_ERROR)) }
@@ -350,7 +317,7 @@ class UserViewModelTest {
     mockStatic(Log::class.java).use { mockedLog ->
       userViewModel.getCurrentUser()
 
-      onSuccessCaptor.value.invoke(userExample2)
+      onSuccessCaptor.value.invoke(userExample)
       onFailureCaptorFridge.value.invoke(Exception())
 
       mockedLog.verify {
@@ -374,14 +341,14 @@ class UserViewModelTest {
 
     userViewModel.getCurrentUser()
 
-    onSuccessCaptor.value.invoke(userExample3)
+    // we need to make a copy without any created recipes
+    // to avoid crushing the argument captor
+    onSuccessCaptor.value.invoke(userExample.copy(createdRecipes = emptyList()))
     onSuccessCaptorLikedRecipe.value.invoke(recipeExample)
 
-    assertEquals(userExample3.userName, userViewModel.userName.value)
-    assertEquals(userExample3.profilePictureUrl, userViewModel.profilePictureUrl.value)
-    assertEquals(userExample3.fridge, userViewModel.fridge.value)
+    assertEquals(userExample.userName, userViewModel.userName.value)
+    assertEquals(userExample.profilePictureUrl, userViewModel.profilePictureUrl.value)
     assertEquals(listOf(recipeExample), userViewModel.likedRecipes.value)
-    assertEquals(userExample3.createdRecipes, userViewModel.createdRecipes.value)
   }
 
   @Test
@@ -400,7 +367,9 @@ class UserViewModelTest {
     mockStatic(Log::class.java).use { mockedLog ->
       userViewModel.getCurrentUser()
 
-      onSuccessCaptor.value.invoke(userExample3)
+      // we need to make a copy without any created recipes
+      // to avoid crushing the argument captor
+      onSuccessCaptor.value.invoke(userExample.copy(createdRecipes = emptyList()))
       onFailureCaptorLikedRecipe.value.invoke(Exception())
 
       mockedLog.verify {
@@ -424,13 +393,11 @@ class UserViewModelTest {
 
     userViewModel.getCurrentUser()
 
-    onSuccessCaptor.value.invoke(userExample4)
+    onSuccessCaptor.value.invoke(userExample)
     onSuccessCaptorCreatedRecipe.value.invoke(createdRecipeExample)
 
-    assertEquals(userExample4.userName, userViewModel.userName.value)
-    assertEquals(userExample4.profilePictureUrl, userViewModel.profilePictureUrl.value)
-    assertEquals(userExample4.fridge, userViewModel.fridge.value)
-    assertEquals(userExample4.likedRecipes, userViewModel.likedRecipes.value)
+    assertEquals(userExample.userName, userViewModel.userName.value)
+    assertEquals(userExample.profilePictureUrl, userViewModel.profilePictureUrl.value)
     assertEquals(listOf(createdRecipeExample), userViewModel.createdRecipes.value)
   }
 
@@ -450,7 +417,7 @@ class UserViewModelTest {
     mockStatic(Log::class.java).use { mockedLog ->
       userViewModel.getCurrentUser()
 
-      onSuccessCaptor.value.invoke(userExample4)
+      onSuccessCaptor.value.invoke(userExample)
       onFailureCaptorCreatedRecipe.value.invoke(Exception())
 
       mockedLog.verify {

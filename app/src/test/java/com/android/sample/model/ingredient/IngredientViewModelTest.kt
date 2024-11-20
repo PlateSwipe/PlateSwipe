@@ -4,6 +4,7 @@ import androidx.test.core.app.ApplicationProvider
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_NORMAL_URL
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_SMALL_URL
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_THUMBNAIL_URL
+import com.android.sample.ui.utils.testIngredients
 import com.google.firebase.Firebase
 import com.google.firebase.initialize
 import junit.framework.TestCase.assertEquals
@@ -38,18 +39,7 @@ class IngredientViewModelTest {
   @Test
   fun fetchIngredient_withNewBarcode_updatesIngredient() {
     val barCode = 123456L
-    val ingredient =
-        Ingredient(
-            barCode = barCode,
-            name = "Test Ingredient",
-            brands = "Brand",
-            quantity = "",
-            categories = listOf(""),
-            images =
-                mutableMapOf(
-                    PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
-                    PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
-                    PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
+    val ingredient = testIngredients[0].copy(barCode = barCode)
 
     `when`(ingredientRepository.get(eq(barCode), any(), any())).thenAnswer { invocation ->
       val onSuccess: (Ingredient?) -> Unit = invocation.getArgument(1)

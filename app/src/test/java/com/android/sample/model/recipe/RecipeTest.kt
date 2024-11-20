@@ -34,21 +34,21 @@ class RecipeTest {
     // Act
     val recipe =
         Recipe(
-            idMeal = idMeal,
-            strMeal = strMeal,
-            strCategory = strCategory,
-            strArea = strArea,
-            strInstructions = strInstructions,
+            uid = idMeal,
+            name = strMeal,
+            category = strCategory,
+            origin = strArea,
+            instructions = strInstructions,
             strMealThumbUrl = strMealThumbUrl,
             ingredientsAndMeasurements = ingredientsAndMeasurements,
             url = url)
 
     // Assert
-    assertThat(recipe.idMeal, `is`(idMeal))
-    assertThat(recipe.strMeal, `is`(strMeal))
-    assertThat(recipe.strCategory, `is`(strCategory))
-    assertThat(recipe.strArea, `is`(strArea))
-    assertThat(recipe.strInstructions, `is`(strInstructions))
+    assertThat(recipe.uid, `is`(idMeal))
+    assertThat(recipe.name, `is`(strMeal))
+    assertThat(recipe.category, `is`(strCategory))
+    assertThat(recipe.origin, `is`(strArea))
+    assertThat(recipe.instructions, `is`(strInstructions))
     assertThat(recipe.strMealThumbUrl, `is`(strMealThumbUrl))
     assertThat(recipe.ingredientsAndMeasurements, `is`(ingredientsAndMeasurements))
     assertThat(recipe.url, `is`(url))
@@ -67,21 +67,21 @@ class RecipeTest {
     // Act
     val recipe =
         Recipe(
-            idMeal = idMeal,
-            strMeal = strMeal,
-            strCategory = null, // Nullable
-            strArea = null, // Nullable
-            strInstructions = strInstructions,
+            uid = idMeal,
+            name = strMeal,
+            category = null, // Nullable
+            origin = null, // Nullable
+            instructions = strInstructions,
             strMealThumbUrl = strMealThumbUrl,
             ingredientsAndMeasurements = ingredientsAndMeasurements,
             url = null) // Nullable
 
     // Assert
-    assertThat(recipe.idMeal, `is`(idMeal))
-    assertThat(recipe.strMeal, `is`(strMeal))
-    assertThat(recipe.strCategory, `is`(nullValue())) // Use nullValue() matcher
-    assertThat(recipe.strArea, `is`(nullValue())) // Use nullValue() matcher
-    assertThat(recipe.strInstructions, `is`(strInstructions))
+    assertThat(recipe.uid, `is`(idMeal))
+    assertThat(recipe.name, `is`(strMeal))
+    assertThat(recipe.category, `is`(nullValue())) // Use nullValue() matcher
+    assertThat(recipe.origin, `is`(nullValue())) // Use nullValue() matcher
+    assertThat(recipe.instructions, `is`(strInstructions))
     assertThat(recipe.strMealThumbUrl, `is`(strMealThumbUrl))
     assertThat(recipe.ingredientsAndMeasurements, `is`(ingredientsAndMeasurements))
     assertThat(recipe.url, `is`(nullValue()))
@@ -99,11 +99,11 @@ class RecipeTest {
     val exception =
         assertThrows(IllegalArgumentException::class.java) {
           Recipe(
-              idMeal = idMeal,
-              strMeal = strMeal,
-              strCategory = null,
-              strArea = null,
-              strInstructions = strInstructions,
+              uid = idMeal,
+              name = strMeal,
+              category = null,
+              origin = null,
+              instructions = strInstructions,
               strMealThumbUrl = strMealThumbUrl,
               ingredientsAndMeasurements = emptyList())
         }
@@ -126,11 +126,11 @@ class RecipeTest {
 
     val recipe =
         Recipe(
-            idMeal = idMeal,
-            strMeal = strMeal,
-            strCategory = strCategory,
-            strArea = strArea,
-            strInstructions = strInstructions,
+            uid = idMeal,
+            name = strMeal,
+            category = strCategory,
+            origin = strArea,
+            instructions = strInstructions,
             strMealThumbUrl = strMealThumbUrl,
             ingredientsAndMeasurements = ingredientsAndMeasurements,
             time = time,

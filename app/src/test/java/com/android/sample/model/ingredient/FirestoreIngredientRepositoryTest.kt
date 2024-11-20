@@ -3,6 +3,7 @@ package com.android.sample.model.ingredient
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_NORMAL_URL
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_SMALL_URL
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_THUMBNAIL_URL
+import com.android.sample.ui.utils.testIngredients
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.CollectionReference
@@ -45,28 +46,7 @@ class FirestoreIngredientRepositoryTest {
 
   private lateinit var firestoreIngredientRepository: FirestoreIngredientRepository
 
-  private val ingredient: Ingredient =
-      Ingredient(
-          uid = "1",
-          name = "Coca-Cola",
-          barCode = 5449000214911L,
-          brands = "Coca cola",
-          quantity = "330 mL",
-          categories =
-              listOf(
-                  "Beverages and beverages preparations",
-                  "Beverages",
-                  "Carbonated drinks",
-                  "Sodas",
-                  "Carbonated soft drinks without fruit juice",
-                  "Colas",
-                  "Carbonated soft drinks without fruit juice with sugar",
-                  "Sweetened beverages"),
-          images =
-              mutableMapOf(
-                  PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
-                  PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
-                  PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
+  private val ingredient: Ingredient = testIngredients[0]
 
   @Before
   fun setup() {

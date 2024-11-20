@@ -33,6 +33,7 @@ import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.swipePage.SwipePage
+import com.android.sample.ui.utils.testRecipes
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -55,25 +56,7 @@ class SwipePageTest : TestCase() {
   private lateinit var mockRepository: RecipesRepository
   private lateinit var recipesViewModel: RecipesViewModel
 
-  private val recipe1 =
-      Recipe(
-          "Recipe 1",
-          "",
-          "url1",
-          "Instructions 1",
-          "Category 1",
-          "Area 1",
-          listOf(Pair("Ingredient 1", "Ingredient 1")))
-  private val recipe2 =
-      Recipe(
-          "Recipe 2",
-          "",
-          "url2",
-          "Instructions 2",
-          "Category 2",
-          "Area 2",
-          listOf(Pair("Ingredient 2", "Ingredient 2")))
-  private val mockedRecipesList = listOf(recipe1, recipe2)
+  private val mockedRecipesList = testRecipes
 
   @get:Rule val composeTestRule = createComposeRule()
 

@@ -259,13 +259,13 @@ private fun RecipeImage(currentRecipe: Recipe) {
 private fun RecipeDescription(currentRecipe: Recipe) {
   Column(horizontalAlignment = Alignment.Start, modifier = Modifier.padding(start = PADDING.dp)) {
     Text(
-        text = currentRecipe.strMeal,
+        text = currentRecipe.name,
         modifier = Modifier.testTag(RECIPE_TITLE),
         style = MaterialTheme.typography.bodyLarge,
         color = MaterialTheme.colorScheme.onSecondary)
 
     Spacer(modifier = Modifier.size(SMALL_PADDING.dp))
-    currentRecipe.strCategory?.let { Tag(it) }
+    currentRecipe.category?.let { Tag(it) }
     Spacer(modifier = Modifier.size(SMALL_PADDING.dp))
     Row(
         horizontalArrangement = Arrangement.Start,
@@ -527,7 +527,7 @@ private fun InstructionView(currentRecipe: Recipe) {
         // Display of the instructions
 
         Text(
-            text = currentRecipe.strInstructions,
+            text = currentRecipe.instructions,
             color = Color.Black,
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.testTag(INSTRUCTIONS_TEXT))

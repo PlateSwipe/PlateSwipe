@@ -2,11 +2,13 @@ package com.android.sample.e2e
 
 import android.graphics.Bitmap
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.test.assertAny
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -50,7 +52,6 @@ import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_FAVORITE_ICON_TE
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_TITLE_TEST_TAG
 import com.android.sample.resources.C.TestTag.RecipeOverview.RECIPE_TITLE
 import com.android.sample.resources.C.TestTag.SwipePage.DRAGGABLE_ITEM
-import com.android.sample.resources.C.TestTag.SwipePage.FILTER
 import com.android.sample.resources.C.TestTag.Utils.BACK_ARROW_ICON
 import com.android.sample.ui.account.AccountScreen
 import com.android.sample.ui.camera.CameraScanCodeBarScreen
@@ -73,6 +74,7 @@ import com.android.sample.ui.navigation.TopLevelDestinations
 import com.android.sample.ui.recipe.SearchRecipeScreen
 import com.android.sample.ui.recipeOverview.RecipeOverview
 import com.android.sample.ui.swipePage.SwipePage
+import com.android.sample.ui.utils.testRecipes
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import io.mockk.mockk
@@ -89,24 +91,6 @@ import org.mockito.kotlin.any
 
 @RunWith(AndroidJUnit4::class)
 class EndToEndTest {
-  private val recipe1 =
-      Recipe(
-          "Recipe 1",
-          "",
-          "url1",
-          "Instructions 1",
-          "Category 1",
-          "Area 1",
-          listOf(Pair("Ingredient 1", "Ingredient 1")))
-  private val recipe2 =
-      Recipe(
-          "Recipe 2",
-          "",
-          "url2",
-          "Instructions 2",
-          "Category 2",
-          "Area 2",
-          listOf(Pair("Ingredient 2", "Ingredient 2")))
 
   private val ingredient1 =
       Ingredient(
@@ -119,7 +103,7 @@ class EndToEndTest {
                   PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
                   PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
 
-  private val mockedRecipesList = listOf(recipe1, recipe2)
+  private val mockedRecipesList = testRecipes
 
   private lateinit var navigationActions: NavigationActions
   private lateinit var mockUserRepository: UserRepository
@@ -129,7 +113,6 @@ class EndToEndTest {
   private lateinit var mockRepository: RecipesRepository
   private lateinit var userViewModel: UserViewModel
   private lateinit var createRecipeViewModel: CreateRecipeViewModel
-  private lateinit var spykCreateRecipeViewModel: CreateRecipeViewModel
   private lateinit var mockImageRepo: ImageRepositoryFirebase
   private lateinit var recipesViewModel: RecipesViewModel
   private lateinit var ingredientViewModel: IngredientViewModel
@@ -301,15 +284,16 @@ class EndToEndTest {
         .performClick()
 
     composeTestRule
-        .onNodeWithTag(RECIPE_TITLE_TEST_TAG, useUnmergedTree = true)
-        .assertTextContains(likedRecipe.strMeal)
+        .onAllNodesWithTag(RECIPE_TITLE_TEST_TAG, useUnmergedTree = true)
+        .assertAny(hasText(likedRecipe.name))
 
     composeTestRule.onNodeWithTag(RECIPE_CARD_TEST_TAG, useUnmergedTree = true).performClick()
+    composeTestRule.waitForIdle()
 
     composeTestRule
         .onNodeWithTag(RECIPE_TITLE, useUnmergedTree = true)
-        .assertExists()
-        .assertTextContains(likedRecipe.strMeal)
+        .assertIsDisplayed()
+        .assertTextEquals(likedRecipe.name)
 
     composeTestRule
         .onNodeWithTag(BACK_ARROW_ICON, useUnmergedTree = true)
@@ -474,10 +458,7 @@ class EndToEndTest {
               navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
         }
         composable(Screen.CREATE_RECIPE_INGREDIENTS) {
-          RecipeIngredientsScreen(
-              navigationActions = navigationActions,
-              createRecipeViewModel = createRecipeViewModel,
-              currentStep = 1)
+          RecipeIngredientsScreen(navigationActions = navigationActions, currentStep = 1)
         }
         composable(Screen.CREATE_RECIPE_INSTRUCTIONS) {
           RecipeInstructionsScreen(navigationActions = navigationActions, currentStep = 2)
@@ -526,7 +507,7 @@ class EndToEndTest {
       ) {
         composable(Screen.ACCOUNT) { AccountScreen(navigationActions, userViewModel) }
         composable(Screen.OVERVIEW_RECIPE_ACCOUNT) {
-          RecipeOverview(navigationActions, recipesViewModel)
+          RecipeOverview(navigationActions, userViewModel)
         }
       }
     }

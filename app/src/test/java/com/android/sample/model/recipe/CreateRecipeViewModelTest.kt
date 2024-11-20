@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.sample.feature.camera.rotateBitmap
 import com.android.sample.model.image.ImageRepositoryFirebase
+import com.android.sample.ui.utils.testRecipes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -52,15 +53,7 @@ class CreateRecipeViewModelTest {
   }
 
   private fun createDefaultRecipe(): Recipe {
-    return Recipe(
-        idMeal = "unique-id",
-        strMeal = "Test Recipe",
-        strCategory = "Dessert",
-        strArea = "Italian",
-        strInstructions = "Some instructions",
-        strMealThumbUrl = "unique-id",
-        ingredientsAndMeasurements = listOf(Pair("Banana", "3")),
-        url = null)
+    return testRecipes[0]
   }
 
   @Test
@@ -80,7 +73,7 @@ class CreateRecipeViewModelTest {
     assertEquals(
         newName,
         createRecipeViewModel.recipeBuilder.javaClass
-            .getDeclaredField("strMeal")
+            .getDeclaredField("name")
             .apply { isAccessible = true }
             .get(createRecipeViewModel.recipeBuilder))
   }
@@ -92,7 +85,7 @@ class CreateRecipeViewModelTest {
     assertEquals(
         newCategory,
         createRecipeViewModel.recipeBuilder.javaClass
-            .getDeclaredField("strCategory")
+            .getDeclaredField("category")
             .apply { isAccessible = true }
             .get(createRecipeViewModel.recipeBuilder))
   }
@@ -104,7 +97,7 @@ class CreateRecipeViewModelTest {
     assertEquals(
         newInstructions,
         createRecipeViewModel.recipeBuilder.javaClass
-            .getDeclaredField("strInstructions")
+            .getDeclaredField("instructions")
             .apply { isAccessible = true }
             .get(createRecipeViewModel.recipeBuilder))
   }
@@ -175,7 +168,7 @@ class CreateRecipeViewModelTest {
     assert(createRecipeViewModel.photo.value == null)
     val defaultRecipe = createDefaultRecipe()
     // Check that the exception is thrown with the correct message
-    `when`(mockRepository.getNewUid()).thenReturn(defaultRecipe.idMeal)
+    `when`(mockRepository.getNewUid()).thenReturn(defaultRecipe.uid)
 
     createRecipeViewModel.publishRecipe(onSuccess = {}, onFailure = {})
 
@@ -186,7 +179,7 @@ class CreateRecipeViewModelTest {
   fun `test publishRecipe() with non null image call uploadImage`() {
     val defaultRecipe = createDefaultRecipe()
     // Check that the exception is thrown with the correct message
-    `when`(mockRepository.getNewUid()).thenReturn(defaultRecipe.idMeal)
+    `when`(mockRepository.getNewUid()).thenReturn(defaultRecipe.uid)
     val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
     createRecipeViewModel.setBitmap(bitmap, 90)
     createRecipeViewModel.publishRecipe(onSuccess = {}, onFailure = {})
@@ -198,7 +191,7 @@ class CreateRecipeViewModelTest {
   fun `test publishRecipe() fail to Upload Image throw IllegalArgument`() {
     val defaultRecipe = createDefaultRecipe()
     // Check that the exception is thrown with the correct message
-    `when`(mockRepository.getNewUid()).thenReturn(defaultRecipe.idMeal)
+    `when`(mockRepository.getNewUid()).thenReturn(defaultRecipe.uid)
     val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
     createRecipeViewModel.setBitmap(bitmap, 90)
     `when`(
@@ -217,12 +210,12 @@ class CreateRecipeViewModelTest {
   fun `test publisRecipe() with correct image call getImageUrl`() = runTest {
     val defaultRecipe = createDefaultRecipe()
     val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
-    createRecipeViewModel.updateRecipeName(defaultRecipe.strMeal)
-    createRecipeViewModel.updateRecipeInstructions(defaultRecipe.strInstructions)
+    createRecipeViewModel.updateRecipeName(defaultRecipe.name)
+    createRecipeViewModel.updateRecipeInstructions(defaultRecipe.instructions)
     createRecipeViewModel.addIngredient("Banana", "3")
     createRecipeViewModel.setBitmap(bitmap, 90)
 
-    `when`(mockRepository.getNewUid()).thenReturn(defaultRecipe.idMeal)
+    `when`(mockRepository.getNewUid()).thenReturn(defaultRecipe.uid)
 
     `when`(
             mockImageRepository.uploadImage(
@@ -245,15 +238,17 @@ class CreateRecipeViewModelTest {
     val defaultRecipe = createDefaultRecipe()
     val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
 
-    createRecipeViewModel.updateRecipeName(defaultRecipe.strMeal)
-    createRecipeViewModel.updateRecipeInstructions(defaultRecipe.strInstructions)
+    createRecipeViewModel.updateRecipeName(defaultRecipe.name)
+    createRecipeViewModel.updateRecipeInstructions(defaultRecipe.instructions)
     createRecipeViewModel.updateRecipeThumbnail(defaultRecipe.strMealThumbUrl)
-    createRecipeViewModel.addIngredient("Banana", "3")
-    defaultRecipe.strCategory?.let { createRecipeViewModel.updateRecipeCategory(it) }
-    defaultRecipe.strArea?.let { createRecipeViewModel.updateRecipeArea(it) }
+    defaultRecipe.ingredientsAndMeasurements.forEach {
+      createRecipeViewModel.addIngredient(it.first, it.second)
+    }
+    defaultRecipe.category?.let { createRecipeViewModel.updateRecipeCategory(it) }
+    defaultRecipe.origin?.let { createRecipeViewModel.updateRecipeArea(it) }
     createRecipeViewModel.setBitmap(bitmap, 90)
 
-    `when`(mockRepository.getNewUid()).thenReturn(defaultRecipe.idMeal)
+    `when`(mockRepository.getNewUid()).thenReturn(defaultRecipe.uid)
 
     `when`(
             mockImageRepository.uploadImage(
@@ -286,10 +281,10 @@ class CreateRecipeViewModelTest {
     verify(mockRepository)
         .addRecipe(recipeCaptor.capture(), onSuccessCaptor.capture(), onFailureCaptor.capture())
 
-    assertEquals(defaultRecipe.idMeal, recipeCaptor.firstValue.idMeal)
-    assertEquals(defaultRecipe.strMeal, recipeCaptor.firstValue.strMeal)
-    assertEquals(defaultRecipe.strInstructions, recipeCaptor.firstValue.strInstructions)
-    assertEquals(defaultRecipe.idMeal, recipeCaptor.firstValue.strMealThumbUrl)
+    assertEquals(defaultRecipe.uid, recipeCaptor.firstValue.uid)
+    assertEquals(defaultRecipe.name, recipeCaptor.firstValue.name)
+    assertEquals(defaultRecipe.instructions, recipeCaptor.firstValue.instructions)
+    assertEquals(defaultRecipe.uid, recipeCaptor.firstValue.strMealThumbUrl)
     assertEquals(
         defaultRecipe.ingredientsAndMeasurements,
         recipeCaptor.firstValue.ingredientsAndMeasurements)
@@ -304,12 +299,12 @@ class CreateRecipeViewModelTest {
     val defaultRecipe = createDefaultRecipe()
     val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
 
-    createRecipeViewModel.updateRecipeName(defaultRecipe.strMeal)
-    createRecipeViewModel.updateRecipeInstructions(defaultRecipe.strInstructions)
+    createRecipeViewModel.updateRecipeName(defaultRecipe.name)
+    createRecipeViewModel.updateRecipeInstructions(defaultRecipe.instructions)
     createRecipeViewModel.addIngredient("Banana", "3")
     createRecipeViewModel.setBitmap(bitmap, 90)
 
-    `when`(mockRepository.getNewUid()).thenReturn(defaultRecipe.idMeal)
+    `when`(mockRepository.getNewUid()).thenReturn(defaultRecipe.uid)
 
     `when`(
             mockImageRepository.uploadImage(
@@ -337,12 +332,12 @@ class CreateRecipeViewModelTest {
     val defaultRecipe = createDefaultRecipe()
     val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
 
-    createRecipeViewModel.updateRecipeName(defaultRecipe.strMeal)
-    createRecipeViewModel.updateRecipeInstructions(defaultRecipe.strInstructions)
+    createRecipeViewModel.updateRecipeName(defaultRecipe.name)
+    createRecipeViewModel.updateRecipeInstructions(defaultRecipe.instructions)
     createRecipeViewModel.addIngredient("Banana", "3")
     createRecipeViewModel.setBitmap(bitmap, 90)
 
-    `when`(mockRepository.getNewUid()).thenReturn(defaultRecipe.idMeal)
+    `when`(mockRepository.getNewUid()).thenReturn(defaultRecipe.uid)
     createRecipeViewModel.setBitmap(bitmap, 90)
     // Define the onFailure callback to validate if it was called correctly
     var onFailureCalled = false
@@ -362,7 +357,7 @@ class CreateRecipeViewModelTest {
           val onSuccessCallback = invocation.arguments[4] as () -> Unit
           onSuccessCallback()
         }
-    `when`(mockRepository.getNewUid()).thenReturn(defaultRecipe.idMeal)
+    `when`(mockRepository.getNewUid()).thenReturn(defaultRecipe.uid)
 
     `when`(
             mockImageRepository.getImageUrl(
@@ -415,7 +410,7 @@ class CreateRecipeViewModelTest {
 
     val updatedArea =
         createRecipeViewModel.recipeBuilder.javaClass
-            .getDeclaredField("strArea")
+            .getDeclaredField("origin")
             .apply { isAccessible = true }
             .get(createRecipeViewModel.recipeBuilder)
 
@@ -445,8 +440,8 @@ class CreateRecipeViewModelTest {
   @Test
   fun `test all getters`() {
     val recipe = createDefaultRecipe()
-    createRecipeViewModel.updateRecipeName(recipe.strMeal)
-    createRecipeViewModel.updateRecipeInstructions(recipe.strInstructions)
+    createRecipeViewModel.updateRecipeName(recipe.name)
+    createRecipeViewModel.updateRecipeInstructions(recipe.instructions)
     createRecipeViewModel.updateRecipeThumbnail(recipe.strMealThumbUrl)
     createRecipeViewModel.addIngredient("Banana", "3")
     createRecipeViewModel.updateRecipeTime("30 minutes")
@@ -455,8 +450,8 @@ class CreateRecipeViewModelTest {
     createRecipeViewModel.updateRecipeCategory("Dessert")
     createRecipeViewModel.updateRecipeArea("Italian")
 
-    assertEquals(recipe.strMeal, createRecipeViewModel.getRecipeName())
-    assertEquals(recipe.strInstructions, createRecipeViewModel.getRecipeInstructions())
+    assertEquals(recipe.name, createRecipeViewModel.getRecipeName())
+    assertEquals(recipe.instructions, createRecipeViewModel.getRecipeInstructions())
     assertEquals(recipe.strMealThumbUrl, createRecipeViewModel.getRecipeThumbnail())
     assertEquals(listOf(Pair("Banana", "3")), createRecipeViewModel.getIngredientsAndMeasurements())
     assertEquals("30 minutes", createRecipeViewModel.getRecipeTime())
@@ -469,8 +464,8 @@ class CreateRecipeViewModelTest {
   @Test
   fun `test update ingredientAndMeasurement`() {
     val recipe = createDefaultRecipe()
-    createRecipeViewModel.updateRecipeName(recipe.strMeal)
-    createRecipeViewModel.updateRecipeInstructions(recipe.strInstructions)
+    createRecipeViewModel.updateRecipeName(recipe.name)
+    createRecipeViewModel.updateRecipeInstructions(recipe.instructions)
     createRecipeViewModel.updateRecipeThumbnail(recipe.strMealThumbUrl)
     createRecipeViewModel.addIngredient("Banana", "3")
     createRecipeViewModel.updateRecipeTime("30 minutes")
@@ -486,8 +481,8 @@ class CreateRecipeViewModelTest {
   @Test
   fun `test remove ingredientAndMeasurement`() {
     val recipe = createDefaultRecipe()
-    createRecipeViewModel.updateRecipeName(recipe.strMeal)
-    createRecipeViewModel.updateRecipeInstructions(recipe.strInstructions)
+    createRecipeViewModel.updateRecipeName(recipe.name)
+    createRecipeViewModel.updateRecipeInstructions(recipe.instructions)
     createRecipeViewModel.updateRecipeThumbnail(recipe.strMealThumbUrl)
     createRecipeViewModel.addIngredient("Banana", "3")
     createRecipeViewModel.updateRecipeTime("30 minutes")

@@ -20,6 +20,7 @@ import com.android.sample.ui.createRecipe.IngredientSearchScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
+import com.android.sample.ui.utils.testIngredients
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
@@ -45,30 +46,7 @@ class IngredientSearchScreenTest {
   @Mock private lateinit var aggregatorIngredientRepository: AggregatorIngredientRepository
 
   // Setting up some test data
-  private val testIngredients =
-      listOf(
-          Ingredient(
-              "1",
-              1234L,
-              "Ingredient 1",
-              "Description",
-              "2 cups",
-              emptyList(),
-              mutableMapOf(
-                  PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
-                  PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
-                  PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small")),
-          Ingredient(
-              "2",
-              5678L,
-              "Ingredient 2",
-              "Description",
-              "1 tbsp",
-              emptyList(),
-              mutableMapOf(
-                  PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
-                  PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
-                  PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small")))
+  private val mockIngredients = testIngredients
 
   @Before
   fun setup() {
@@ -81,7 +59,7 @@ class IngredientSearchScreenTest {
     `when`(aggregatorIngredientRepository.search(any(), any(), any(), any())).thenAnswer {
         invocation ->
       val onSuccess = invocation.getArgument<(List<Ingredient>) -> Unit>(1)
-      onSuccess(testIngredients)
+      onSuccess(mockIngredients)
       null
     }
     ingredientViewModel = IngredientViewModel(aggregatorIngredientRepository)
@@ -118,7 +96,7 @@ class IngredientSearchScreenTest {
       ingredientViewModel.searchingIngredientList.value.isNotEmpty()
     }
     composeTestRule.waitForIdle()
-    testIngredients.forEach { ingredient ->
+    mockIngredients.forEach { ingredient ->
       composeTestRule
           .onNodeWithTag("ingredientItem${ingredient.name}", useUnmergedTree = true)
           .assertIsDisplayed()
@@ -136,7 +114,7 @@ class IngredientSearchScreenTest {
     composeTestRule.waitForIdle()
 
     composeTestRule
-        .onNodeWithTag("ingredientItem${testIngredients[0].name}", useUnmergedTree = true)
+        .onNodeWithTag("ingredientItem${mockIngredients[0].name}", useUnmergedTree = true)
         .performClick()
 
     composeTestRule.waitForIdle()
@@ -145,7 +123,7 @@ class IngredientSearchScreenTest {
 
     composeTestRule.onNodeWithTag(CONFIRMATION_BUTTON, useUnmergedTree = true).performClick()
     verify(mockNavigationActions).navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
-    assertEquals(ingredientViewModel.ingredientList.value, listOf(testIngredients[0]))
+    assertEquals(ingredientViewModel.ingredientList.value, listOf(mockIngredients[0]))
   }
 
   @Test
@@ -159,7 +137,7 @@ class IngredientSearchScreenTest {
     composeTestRule.waitForIdle()
 
     composeTestRule
-        .onNodeWithTag("ingredientItem${testIngredients[0].name}", useUnmergedTree = true)
+        .onNodeWithTag("ingredientItem${mockIngredients[0].name}", useUnmergedTree = true)
         .performClick()
 
     composeTestRule.waitForIdle()
@@ -171,6 +149,6 @@ class IngredientSearchScreenTest {
     composeTestRule.waitForIdle()
 
     verify(mockNavigationActions, never()).navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
-    assertNotEquals(ingredientViewModel.ingredientList.value, listOf(testIngredients[0]))
+    assertNotEquals(ingredientViewModel.ingredientList.value, listOf(mockIngredients[0]))
   }
 }

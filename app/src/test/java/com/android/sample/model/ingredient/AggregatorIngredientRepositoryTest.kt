@@ -1,5 +1,6 @@
 package com.android.sample.model.ingredient
 
+import com.android.sample.ui.utils.testIngredients
 import android.graphics.Bitmap
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.sample.model.image.ImageRepositoryFirebase
@@ -47,30 +48,9 @@ class AggregatorIngredientRepositoryTest {
   @Captor private lateinit var onFailureCapture: ArgumentCaptor<Function1<Exception, Unit>>
 
   private lateinit var aggregatorIngredientRepository: AggregatorIngredientRepository
-  private val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
-  private val dispatcher = Dispatchers.IO
-  private val ingredient =
-      Ingredient(
-          uid = "1",
-          name = "Coca-Cola",
-          barCode = 5449000214911L,
-          brands = "Coca cola",
-          quantity = "330 mL",
-          categories =
-              listOf(
-                  "Beverages and beverages preparations",
-                  "Beverages",
-                  "Carbonated drinks",
-                  "Sodas",
-                  "Carbonated soft drinks without fruit juice",
-                  "Colas",
-                  "Carbonated soft drinks without fruit juice with sugar",
-                  "Sweetened beverages"),
-          images =
-              mutableMapOf(
-                  PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
-                  PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
-                  PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
+    private val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+    private val dispatcher = Dispatchers.IO
+  private val ingredient = testIngredients[0]
 
   @Before
   fun setUp() {
@@ -136,27 +116,28 @@ class AggregatorIngredientRepositoryTest {
     assertNotNull(resultingException)
   }
 
-  //  @Test
-  //  fun testGetFindsFromOpenFoodFactsRepoWhenNotFoundInFirestore() {
-  //    var resultingIngredient: Ingredient? = null
-  //    var resultingException: Exception? = null
-  //
-  //    aggregatorIngredientRepository.get(
-  //        ingredient.barCode!!,
-  //        onSuccess = { resultingIngredient = it },
-  //        onFailure = { resultingException = it })
-  //
-  //    onSuccessSingleCapture.value.invoke(null)
-  //
-  //    onSuccessSingleCapture.value.invoke(ingredient)
-  //
-  //    verify(mockFirestoreIngredientRepository)
-  //        .add(any<Ingredient>(), onSuccess = any(), onFailure = any())
-  //
-  //    assertNull(resultingException)
-  //    assertNotNull(resultingIngredient)
-  //    assertEquals(ingredient, resultingIngredient)
-  //  }
+    // Mabye remove
+  @Test
+  fun testGetFindsFromOpenFoodFactsRepoWhenNotFoundInFirestore() {
+    var resultingIngredient: Ingredient? = null
+    var resultingException: Exception? = null
+
+    aggregatorIngredientRepository.get(
+        ingredient.barCode!!,
+        onSuccess = { resultingIngredient = it },
+        onFailure = { resultingException = it })
+
+    onSuccessSingleCapture.value.invoke(null)
+
+    onSuccessSingleCapture.value.invoke(ingredient)
+
+    verify(mockFirestoreIngredientRepository)
+        .add(any<Ingredient>(), onSuccess = any(), onFailure = any())
+
+    assertNull(resultingException)
+    assertNotNull(resultingIngredient)
+    assertEquals(ingredient, resultingIngredient)
+  }
 
   @Test
   fun testGetCallsOnFailureUsingOpenFoodFactsRepo() {

@@ -6,8 +6,9 @@ import androidx.compose.ui.test.SemanticsMatcher.Companion.keyIsDefined
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.espresso.Espresso
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.android.sample.model.recipe.IconType
 import com.android.sample.ui.createRecipe.IconDropdownMenu
-import com.android.sample.ui.createRecipe.IconType
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -49,6 +50,7 @@ class IconDropdownMenuTest {
     composeTestRule.onNodeWithText("Prep", useUnmergedTree = true).assertIsDisplayed()
   }
 
+  @OptIn(ExperimentalCoroutinesApi::class)
   @Test
   fun iconDropdownMenu_collapsesWhenIconIsSelected() = runTest {
     // Click on the dropdown trigger to expand the dropdown menu
@@ -71,7 +73,7 @@ class IconDropdownMenuTest {
 
     // Step 2: Verify that each option is displayed within the popup
     composeTestRule
-        .onNode(hasText("Cook").and(hasAnyAncestor(keyIsDefined(SemanticsProperties.IsPopup))))
+        .onNode(hasText("Heat").and(hasAnyAncestor(keyIsDefined(SemanticsProperties.IsPopup))))
         .assertIsDisplayed()
     composeTestRule
         .onNode(hasText("Season").and(hasAnyAncestor(keyIsDefined(SemanticsProperties.IsPopup))))
@@ -82,6 +84,8 @@ class IconDropdownMenuTest {
     composeTestRule
         .onNode(hasText("Prep").and(hasAnyAncestor(keyIsDefined(SemanticsProperties.IsPopup))))
         .assertIsDisplayed()
+    composeTestRule.onNode(
+        hasText("Cook").and(hasAnyAncestor(keyIsDefined(SemanticsProperties.IsPopup))))
   }
 
   @Test

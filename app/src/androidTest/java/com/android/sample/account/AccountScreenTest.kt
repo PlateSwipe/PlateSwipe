@@ -27,6 +27,7 @@ import com.android.sample.ui.account.AccountScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.SampleAppTheme
+import com.android.sample.ui.utils.testRecipes
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -42,39 +43,7 @@ class AccountScreenTest {
   @get:Rule val composeTestRule = createComposeRule()
 
   private val userName: String = "John Doe"
-  private val dummyRecipes: List<Recipe> =
-      listOf(
-          Recipe(
-              idMeal = "1",
-              strMeal = "Spicy Arrabiata Penne",
-              strCategory = "Vegetarian",
-              strArea = "Italian",
-              strInstructions = "Instructions here...",
-              strMealThumbUrl =
-                  "https://www.recipetineats.com/penne-all-arrabbiata-spicy-tomato-pasta/",
-              ingredientsAndMeasurements =
-                  listOf(Pair("Penne", "1 pound"), Pair("Olive oil", "1/4 cup"))),
-          Recipe(
-              idMeal = "2",
-              strMeal = "Chicken Curry",
-              strCategory = "Non-Vegetarian",
-              strArea = "Indian",
-              strInstructions = "Instructions here...",
-              strMealThumbUrl =
-                  "https://www.foodfashionparty.com/2023/08/05/everyday-chicken-curry/",
-              ingredientsAndMeasurements =
-                  listOf(Pair("Chicken", "1 pound"), Pair("Curry powder", "2 tbsp"))),
-          Recipe(
-              idMeal = "3",
-              strMeal = "Burger with Fries",
-              strCategory = "Fast Food",
-              strArea = "American",
-              strInstructions = "Instructions here...",
-              strMealThumbUrl =
-                  "https://www.recipetineats.com/penne-all-arrabbiata-spicy-tomato-pasta/",
-              ingredientsAndMeasurements =
-                  listOf(Pair("Penne", "1 pound"), Pair("Olive oil", "1/4 cup"))),
-      )
+  private val dummyRecipes: List<Recipe> = testRecipes
 
   @Before
   fun setUp() {
@@ -102,7 +71,7 @@ class AccountScreenTest {
     composeTestRule
         .onNodeWithTag(RECIPE_TITLE_TEST_TAG, useUnmergedTree = true)
         .assertIsDisplayed()
-        .assertTextEquals(dummyRecipes[0].strMeal)
+        .assertTextEquals(dummyRecipes[0].name)
   }
 
   @Test
@@ -119,7 +88,7 @@ class AccountScreenTest {
     composeTestRule
         .onNodeWithTag(RECIPE_TITLE_TEST_TAG, useUnmergedTree = true)
         .assertIsDisplayed()
-        .assertTextEquals(dummyRecipes[0].strMeal)
+        .assertTextEquals(dummyRecipes[0].name)
   }
 
   @Test
@@ -133,14 +102,14 @@ class AccountScreenTest {
     composeTestRule
         .onNodeWithTag(RECIPE_TITLE_TEST_TAG, useUnmergedTree = true)
         .assertIsDisplayed()
-        .assertTextEquals(dummyRecipes[1].strMeal)
+        .assertTextEquals(dummyRecipes[1].name)
 
     composeTestRule.onNodeWithTag(LIKED_RECIPES_BUTTON_TEST_TAG).performClick()
     composeTestRule.waitForIdle()
     composeTestRule
         .onNodeWithTag(RECIPE_TITLE_TEST_TAG, useUnmergedTree = true)
         .assertIsDisplayed()
-        .assertTextEquals(dummyRecipes[0].strMeal)
+        .assertTextEquals(dummyRecipes[0].name)
   }
 
   @Test
@@ -150,7 +119,7 @@ class AccountScreenTest {
     }
 
     composeTestRule
-        .onNodeWithText("Spicy Arrabiata Penne", useUnmergedTree = true)
+        .onNodeWithText(dummyRecipes[0].name, useUnmergedTree = true)
         .assertIsDisplayed()
         .performClick()
     verify(mockNavigationActions).navigateTo(Screen.OVERVIEW_RECIPE_ACCOUNT)
@@ -163,7 +132,7 @@ class AccountScreenTest {
     }
     composeTestRule
         .onNode(
-            hasAnySibling(hasText("Spicy Arrabiata Penne"))
+            hasAnySibling(hasText(dummyRecipes[0].name))
                 .and(hasContentDescription(RECIPE_FAVORITE_ICON_CONTENT_DESCRIPTION)),
             useUnmergedTree = true)
         .assertIsDisplayed()
@@ -182,7 +151,7 @@ class AccountScreenTest {
     }
     composeTestRule
         .onNode(
-            hasAnySibling(hasText("Spicy Arrabiata Penne"))
+            hasAnySibling(hasText(dummyRecipes[0].name))
                 .and(hasContentDescription(RECIPE_FAVORITE_ICON_CONTENT_DESCRIPTION)),
             useUnmergedTree = true)
         .assertIsDisplayed()
@@ -192,7 +161,7 @@ class AccountScreenTest {
     composeTestRule.onNodeWithTag(CONFIRMATION_BUTTON).performClick()
     assert(userViewModel.likedRecipes.value.isEmpty())
     assert(dummyRecipes != userViewModel.likedRecipes.value)
-    composeTestRule.onNodeWithText("Spicy Arrabiata Penne").assertIsNotDisplayed()
+    composeTestRule.onNodeWithText(dummyRecipes[0].name).assertIsNotDisplayed()
   }
 
   @Test
@@ -202,7 +171,7 @@ class AccountScreenTest {
     }
     composeTestRule
         .onNode(
-            hasAnySibling(hasText("Spicy Arrabiata Penne"))
+            hasAnySibling(hasText(dummyRecipes[0].name))
                 .and(hasContentDescription(RECIPE_FAVORITE_ICON_CONTENT_DESCRIPTION)),
             useUnmergedTree = true)
         .assertIsDisplayed()
@@ -212,6 +181,6 @@ class AccountScreenTest {
     composeTestRule.onNodeWithTag(CANCEL_BUTTON).performClick()
     assert(userViewModel.likedRecipes.value.isNotEmpty())
     assert(userViewModel.likedRecipes.value.contains(dummyRecipes[0]))
-    composeTestRule.onNodeWithText("Spicy Arrabiata Penne").assertIsDisplayed()
+    composeTestRule.onNodeWithText(dummyRecipes[0].name).assertIsDisplayed()
   }
 }

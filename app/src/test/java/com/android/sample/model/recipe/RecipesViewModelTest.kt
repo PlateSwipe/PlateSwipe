@@ -1,6 +1,7 @@
 package com.android.sample.model.recipe
 
 import com.android.sample.model.filter.Difficulty
+import com.android.sample.ui.utils.testRecipes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -31,28 +32,7 @@ class RecipesViewModelTest {
   private lateinit var recipesViewModel: RecipesViewModel
 
   // Dummy recipes for testing
-  private val dummyRecipes: List<Recipe> =
-      listOf(
-          Recipe(
-              idMeal = "1",
-              strMeal = "Spicy Arrabiata Penne",
-              strCategory = "Vegetarian",
-              strArea = "Italian",
-              strInstructions = "Instructions here...",
-              strMealThumbUrl =
-                  "https://www.recipetineats.com/penne-all-arrabbiata-spicy-tomato-pasta/",
-              ingredientsAndMeasurements =
-                  listOf(Pair("Penne", "1 pound"), Pair("Olive oil", "1/4 cup"))),
-          Recipe(
-              idMeal = "2",
-              strMeal = "Chicken Curry",
-              strCategory = "Non-Vegetarian",
-              strArea = "Indian",
-              strInstructions = "Instructions here...",
-              strMealThumbUrl =
-                  "https://www.foodfashionparty.com/2023/08/05/everyday-chicken-curry/",
-              ingredientsAndMeasurements =
-                  listOf(Pair("Chicken", "1 pound"), Pair("Curry powder", "2 tbsp"))))
+  private val dummyRecipes: List<Recipe> = testRecipes
 
   @OptIn(ExperimentalCoroutinesApi::class)
   @Before
@@ -173,10 +153,12 @@ class RecipesViewModelTest {
 
   @Test
   fun fetchRandomRecipesAppendsToExistingList() {
+    val randomRecipes = dummyRecipes.take(2)
+
     // Arrange: Mock the repository to return dummy recipes
     `when`(mockRecipeRepository.random(any(), any(), any())).thenAnswer { invocation ->
       val onSuccess = invocation.getArgument<(List<Recipe>) -> Unit>(1)
-      onSuccess(dummyRecipes)
+      onSuccess(randomRecipes)
       null
     }
 
@@ -191,8 +173,8 @@ class RecipesViewModelTest {
     assertThat(
         recipesViewModel.recipes.value,
         `is`(
-            dummyRecipes +
-                dummyRecipes)) // Check if the ViewModel's recipes are the combination of the
+            randomRecipes +
+                randomRecipes)) // Check if the ViewModel's recipes are the combination of the
     // originals
   }
 
@@ -290,11 +272,11 @@ class RecipesViewModelTest {
     val extendedDummyRecipes =
         dummyRecipes +
             Recipe(
-                idMeal = "3",
-                strMeal = "Beef Stroganoff",
-                strCategory = "Non-Vegetarian",
-                strArea = "Russian",
-                strInstructions = "Instructions here...",
+                uid = "3",
+                name = "Beef Stroganoff",
+                category = "Non-Vegetarian",
+                origin = "Russian",
+                instructions = "Instructions here...",
                 strMealThumbUrl = "https://www.example.com/beef-stroganoff/",
                 ingredientsAndMeasurements =
                     listOf(Pair("Beef", "1 pound"), Pair("Sour cream", "1 cup")))
@@ -332,7 +314,7 @@ class RecipesViewModelTest {
     // Arrange: Mock the repository to return dummy recipes
     `when`(mockRecipeRepository.random(any(), any(), any())).thenAnswer { invocation ->
       val onSuccess = invocation.getArgument<(List<Recipe>) -> Unit>(1)
-      onSuccess(dummyRecipes)
+      onSuccess(dummyRecipes.take(2))
       null
     }
 
@@ -362,20 +344,20 @@ class RecipesViewModelTest {
         dummyRecipes +
             listOf(
                 Recipe(
-                    idMeal = "3",
-                    strMeal = "Beef Stroganoff",
-                    strCategory = "Non-Vegetarian",
-                    strArea = "Russian",
-                    strInstructions = "Instructions here...",
+                    uid = "3",
+                    name = "Beef Stroganoff",
+                    category = "Non-Vegetarian",
+                    origin = "Russian",
+                    instructions = "Instructions here...",
                     strMealThumbUrl = "https://www.example.com/beef-stroganoff/",
                     ingredientsAndMeasurements =
                         listOf(Pair("Beef", "1 pound"), Pair("Sour cream", "1 cup"))),
                 Recipe(
-                    idMeal = "4",
-                    strMeal = "Chicken Curry",
-                    strCategory = "Non-Vegetarian",
-                    strArea = "Indian",
-                    strInstructions = "Instructions here...",
+                    uid = "4",
+                    name = "Chicken Curry",
+                    category = "Non-Vegetarian",
+                    origin = "Indian",
+                    instructions = "Instructions here...",
                     strMealThumbUrl = "https://www.example.com/chicken-curry/",
                     ingredientsAndMeasurements =
                         listOf(Pair("Chicken", "1 kg"), Pair("Curry powder", "2 tbsp"))))
