@@ -161,7 +161,10 @@ object C {
     const val MEAL_DB_CATEGORY_ARRAY = "categories"
 
     // FirestoreRecipeRepository
-    const val FIRESTORE_COLLECTION_NAME = "recipes with images"
+    object FirestoreRecipesRepository {
+      const val FIRESTORE_COLLECTION_NAME = "recipes with images"
+      const val MAX_FIRESTORE_FETCH = 5
+    }
 
     // Values for storage
     const val FIRESTORE_RECIPE_NAME = "name"

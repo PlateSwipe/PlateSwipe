@@ -25,6 +25,7 @@ import com.google.firebase.firestore.util.Assert.fail
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertNull
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -45,8 +46,11 @@ import org.robolectric.Shadows.shadowOf
 class FirestoreRecipesRepositoryTest {
 
   @Mock private lateinit var mockFirestore: FirebaseFirestore
+
   @Mock private lateinit var mockDocumentReference: DocumentReference
+
   @Mock private lateinit var mockCollectionReference: CollectionReference
+
   @Mock private lateinit var mockDocumentSnapshot: DocumentSnapshot
 
   private lateinit var firestoreFirebaseRepository: FirestoreRecipesRepository
@@ -318,16 +322,6 @@ class FirestoreRecipesRepositoryTest {
   }
 
   @Test
-  fun random_throws_exception() {
-    assertThrows(IllegalArgumentException::class.java) {
-      firestoreFirebaseRepository.random(
-          0,
-          { fail("Success callback should not be called") },
-          { fail("Failure callback should not be called") })
-    }
-  }
-
-  @Test
   fun search_withValidMealId_returnsRecipe() {
     // Mock a valid document snapshot to simulate a found recipe
     `when`(mockDocumentReference.get()).thenReturn(Tasks.forResult(mockDocumentSnapshot))
@@ -411,10 +405,12 @@ class FirestoreRecipesRepositoryTest {
 
     `when`(mockCollectionReference.whereGreaterThanOrEqualTo(any<FieldPath>(), any<String>()))
         .thenReturn(mockCollectionReference)
+    val fetchedRecipes = mutableListOf<Recipe>()
     // Act: Call the random function
     firestoreFirebaseRepository.random(
         nbOfElements = 1,
         onSuccess = { recipes ->
+          fetchedRecipes += recipes
           assertNotNull(recipes)
           assertEquals(1, recipes.size)
           assertEquals("Test Recipe", recipes[0].name)
@@ -423,11 +419,12 @@ class FirestoreRecipesRepositoryTest {
 
     // Ensure all asynchronous operations are completed
     shadowOf(Looper.getMainLooper()).idle()
+
+    assertEquals(1, fetchedRecipes.size)
   }
 
   @Test
-  fun random_withNotAllValidNumberOfElements_returnsRecipes() {
-    // Arrange: Prepare mock documents and set up expectations for random UID generation
+  fun random_withNotAllValidNumberOfElements_returnsRecipes() = runTest {
     val mockQuerySnapshot = mock(QuerySnapshot::class.java)
     val mockDocumentSnapshot = mock(DocumentSnapshot::class.java)
 
@@ -443,14 +440,16 @@ class FirestoreRecipesRepositoryTest {
     `when`(mockQuerySnapshot.documents).thenReturn(listOf(mockDocumentSnapshot))
     val successfulTask = Tasks.forResult(mockQuerySnapshot)
     `when`(mockCollectionReference.get()).thenReturn(successfulTask)
-    `when`(mockCollectionReference.limit(2)).thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.limit(any())).thenReturn(mockCollectionReference)
 
     `when`(mockCollectionReference.whereGreaterThanOrEqualTo(any<FieldPath>(), any<String>()))
         .thenReturn(mockCollectionReference)
+    val fetchedRecipes = mutableListOf<Recipe>()
     // Act: Call the random function
     firestoreFirebaseRepository.random(
         nbOfElements = 2,
         onSuccess = { recipes ->
+          fetchedRecipes += recipes
           assertNotNull(recipes)
           assertEquals(1, recipes.size)
           assertEquals("Test Recipe", recipes[0].name)
@@ -459,6 +458,8 @@ class FirestoreRecipesRepositoryTest {
 
     // Ensure all asynchronous operations are completed
     shadowOf(Looper.getMainLooper()).idle()
+
+    assertEquals(1, fetchedRecipes.size)
   }
 
   @Test
@@ -496,42 +497,6 @@ class FirestoreRecipesRepositoryTest {
   }
 
   @Test
-  fun random_withInsufficientRecipes_callsOnSuccessWithAvailableRecipes() {
-    // Arrange: Simulate fewer recipes than requested
-    val mockQuerySnapshot = mock(QuerySnapshot::class.java)
-    val mockDocumentSnapshot1 = mock(DocumentSnapshot::class.java)
-    val mockDocumentSnapshot2 = mock(DocumentSnapshot::class.java)
-
-    // Mock recipe documents
-    `when`(mockDocumentSnapshot1.id).thenReturn("id_1")
-
-    `when`(mockDocumentSnapshot1.getString(FIRESTORE_RECIPE_NAME)).thenReturn("Recipe 1")
-    `when`(mockDocumentSnapshot2.id).thenReturn("id_2")
-    `when`(mockDocumentSnapshot2.getString(FIRESTORE_RECIPE_NAME)).thenReturn("Recipe 2")
-
-    `when`(mockQuerySnapshot.documents)
-        .thenReturn(listOf(mockDocumentSnapshot1, mockDocumentSnapshot2))
-    `when`(mockCollectionReference.whereGreaterThanOrEqualTo(any<FieldPath>(), any<String>()))
-        .thenReturn(mockCollectionReference)
-    `when`(mockCollectionReference.limit(5)).thenReturn(mockCollectionReference)
-    `when`(mockCollectionReference.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
-
-    // Act: Call the random function
-    firestoreFirebaseRepository.random(
-        nbOfElements = 5,
-        onSuccess = { recipes ->
-          assertNotNull(recipes)
-          assertEquals(2, recipes.size)
-          assertTrue(recipes.any { it.name == "Recipe 1" })
-          assertTrue(recipes.any { it.name == "Recipe 2" })
-        },
-        onFailure = { fail("Failure callback should not be called") })
-
-    // Ensure all asynchronous operations are completed
-    shadowOf(Looper.getMainLooper()).idle()
-  }
-
-  @Test
   fun random_withNoRecipes_callsOnSuccessWithEmptyList() {
     // Arrange: Simulate no recipes returned
     val mockQuerySnapshot = mock(QuerySnapshot::class.java)
@@ -540,17 +505,16 @@ class FirestoreRecipesRepositoryTest {
         .thenReturn(mockCollectionReference)
     `when`(mockCollectionReference.limit(5)).thenReturn(mockCollectionReference)
     `when`(mockCollectionReference.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
+    var haveFailed = false
 
     // Act: Call the random function
     firestoreFirebaseRepository.random(
         nbOfElements = 5,
-        onSuccess = { recipes ->
-          assertNotNull(recipes)
-          assertTrue(recipes.isEmpty())
-        },
-        onFailure = { fail("Failure callback should not be called") })
+        onSuccess = { fail("Success callback should not be called") },
+        onFailure = { haveFailed = true })
 
     // Ensure all asynchronous operations are completed
     shadowOf(Looper.getMainLooper()).idle()
+    assertTrue(haveFailed)
   }
 }

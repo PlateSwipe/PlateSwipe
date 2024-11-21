@@ -2,7 +2,6 @@ package com.android.sample.model.recipe
 
 import android.util.Log
 import com.android.sample.resources.C.Tag.CHARACTERS
-import com.android.sample.resources.C.Tag.FIRESTORE_COLLECTION_NAME
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_AREA
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_CATEGORY
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_DIFFICULTY
@@ -14,6 +13,8 @@ import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_PICTURE_ID
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_PRICE
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_TIME
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_URL
+import com.android.sample.resources.C.Tag.FirestoreRecipesRepository.FIRESTORE_COLLECTION_NAME
+import com.android.sample.resources.C.Tag.FirestoreRecipesRepository.MAX_FIRESTORE_FETCH
 import com.android.sample.resources.C.Tag.LIMIT_MUST_BE_POSITIVE_MESSAGE
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.DocumentSnapshot
@@ -129,54 +130,87 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
     return (1..uidLength).map { characters.random() }.joinToString("")
   }
 
+  /**
+   * Private method to fetch random recipes from Firestore.
+   *
+   * @param nbOfElements The number of random recipes to fetch.
+   * @param onSuccess The callback to call if the operation is successful.
+   * @param onFailure The callback to call if the operation fails.
+   * @param recipes The list of recipes to fill.
+   * @param iterationNumber The number of iterations.
+   */
+  private fun randomFetch(
+      nbOfElements: Int,
+      onSuccess: (List<Recipe>) -> Unit,
+      onFailure: (Exception) -> Unit,
+      recipes: MutableList<Recipe>,
+      iterationNumber: Int
+  ) {
+    // Generate a random UID
+    val randomUID = generateRandomUID()
+
+    // Query for UIDs greater than or equal to the random UID
+    db.collection(FIRESTORE_COLLECTION_NAME)
+        .whereGreaterThanOrEqualTo(FieldPath.documentId(), randomUID)
+        .limit(nbOfElements.toLong() - recipes.size)
+        .get()
+        .addOnCompleteListener { task ->
+          if (task.isSuccessful) {
+
+            // Add the recipes to the list
+            task.result?.documents?.forEach { document ->
+              val recipe = documentToRecipe(document).takeIf { !recipes.contains(it) }
+              recipe?.let { recipes.add(it) }
+            }
+            // If we have enough recipes, shuffle the list and return it
+            if (recipes.size == nbOfElements) {
+              recipes.shuffle()
+              onSuccess(recipes)
+              return@addOnCompleteListener
+            } else if (iterationNumber == MAX_FIRESTORE_FETCH) {
+              if (recipes.isNotEmpty() && recipes.size < nbOfElements) {
+                // shuffle the list to get random recipes
+                Log.e("FirestoreRecipesRepository", "Not enough recipes found")
+                recipes.shuffle()
+                onSuccess(recipes)
+                return@addOnCompleteListener
+              } else {
+                Log.e("FirestoreRecipesRepository", "No recipes found")
+                onFailure(Exception("No recipes found"))
+                return@addOnCompleteListener
+              }
+            } else if (recipes.size < nbOfElements) {
+              // Fetch more recipes if we don't have enough
+              randomFetch(nbOfElements, onSuccess, onFailure, recipes, iterationNumber + 1)
+              return@addOnCompleteListener
+            } else {
+              Log.e("FirestoreRecipesRepository", "No recipes found")
+              onFailure(Exception("No recipes found"))
+            }
+          } else {
+            task.exception?.let { e ->
+              Log.e("FirestoreRecipesRepository", "Error getting documents", e)
+              onFailure(e)
+            }
+          }
+        }
+  }
+
+  /**
+   * Fetches a random list of recipes from Firestore.
+   *
+   * @param nbOfElements The number of random recipes to fetch.
+   * @param onSuccess The callback to call if the operation is successful.
+   * @param onFailure The callback to call if the operation fails.
+   */
   override fun random(
       nbOfElements: Int,
       onSuccess: (List<Recipe>) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
     require(nbOfElements > 0) { LIMIT_MUST_BE_POSITIVE_MESSAGE }
-    // Generate a random UID
-    val randomUID = generateRandomUID()
-    Log.d("TestRecipeRepo", "generateRandomUID :$randomUID")
-
-    Log.d("TestRecipeRepo", (nbOfElements / 2).toString())
-    // Query for UIDs greater than or equal to the random UID
     val recipes = mutableListOf<Recipe>()
-    var counter = 0
-    var error: java.lang.Exception? = null
-
-    while (counter < 5 && (counter == 0 || (recipes.size in 1 ..< nbOfElements))) {
-      db.collection(FIRESTORE_COLLECTION_NAME)
-          .whereGreaterThanOrEqualTo(FieldPath.documentId(), randomUID)
-          .limit(nbOfElements.toLong())
-          .get()
-          .addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-
-              task.result?.documents?.forEach { document ->
-                val recipe =
-                    documentToRecipe(document).takeIf { counter == 0 || !recipes.contains(it) }
-                recipe?.let { recipes.add(it) }
-              }
-            } else {
-              task.exception?.let { e ->
-                Log.e("FirestoreRecipesRepository", "Error getting documents", e)
-                error = e
-                onFailure(e)
-              }
-            }
-          }
-      counter++
-    }
-    if (recipes.size == nbOfElements) {
-      // shuffle the list to get random recipes
-      recipes.shuffle()
-      onSuccess(recipes)
-    } else if (recipes.size in 1 ..< nbOfElements) {
-      recipes.shuffle()
-      onSuccess(recipes)
-      Log.e("FirestoreRecipesRepository", "Not enough recipes found", error)
-    }
+    randomFetch(nbOfElements, onSuccess, onFailure, recipes, 0)
   }
 
   override fun search(mealID: String, onSuccess: (Recipe) -> Unit, onFailure: (Exception) -> Unit) {
