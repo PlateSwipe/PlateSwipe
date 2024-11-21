@@ -262,7 +262,7 @@ class RecipeBuilder {
    * @param i The index of the instruction.
    */
   fun getInstruction(i: Int): Instruction {
-    require(i in instructions.indices) { OUT_OF_BOUNDS_MESSAGE }
+    require(i in instructions.indices) { OUT_OF_BOUNDS_MESSAGE + "$i is out of bounds. Valid range: ${instructions.indices}\" }"}
     return instructions[i]
   }
 
@@ -273,7 +273,7 @@ class RecipeBuilder {
    * @param instruction The new instruction to replace the existing one.
    */
   fun modifyInstruction(i: Int, instruction: Instruction) {
-    require(i in instructions.indices) { OUT_OF_BOUNDS_MESSAGE }
+    require(i in instructions.indices) { OUT_OF_BOUNDS_MESSAGE + "$i is out of bounds. Valid range: ${instructions.indices}\" }" }
     instructions[i] = instruction
   }
 
@@ -283,7 +283,7 @@ class RecipeBuilder {
    * @param i The index of the instruction.
    */
   fun deleteInstruction(i: Int) {
-    require(i in instructions.indices) { OUT_OF_BOUNDS_MESSAGE }
+    require(i in instructions.indices) { OUT_OF_BOUNDS_MESSAGE + "$i is out of bounds. Valid range: ${instructions.indices}\" }"}
     instructions.removeAt(i)
   }
 }
