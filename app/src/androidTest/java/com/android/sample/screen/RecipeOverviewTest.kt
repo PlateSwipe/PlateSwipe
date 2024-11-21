@@ -1,5 +1,6 @@
 package com.android.sample.screen
 
+import android.util.Log
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsOff
@@ -249,5 +250,66 @@ class RecipeOverviewTest {
         .onNodeWithTag("ingredientIngredient 1", useUnmergedTree = true)
         .assertTextContains(
             "Ingredient 1: Ingredient 2x") // Assuming the ingredient quantity doubles
+  }
+
+  @Test
+  fun testInstructionsAreDisplayed() {
+    composeTestRule
+        .onNodeWithTag(DRAGGABLE_ITEM, useUnmergedTree = true)
+        .performScrollToNode(hasTestTag(INGREDIENTS_VIEW))
+    composeTestRule.waitForIdle()
+    // Initial state should show ingredients view
+    composeTestRule.onNodeWithTag(INGREDIENTS_VIEW, useUnmergedTree = true).assertIsDisplayed()
+
+    // Switch to instructions view and check if instructions are displayed
+    composeTestRule
+        .onNodeWithTag(SLIDING_BUTTON_INSTRUCTIONS, useUnmergedTree = true)
+        .performClick()
+    composeTestRule.onNodeWithTag(INSTRUCTIONS_VIEW, useUnmergedTree = true).assertIsDisplayed()
+
+    val displayedinstructionsLength = 2
+    val allInstructionsLength = testRecipes[0].instructions.size
+    composeTestRule
+        .onAllNodesWithTag("InstructionTitle", useUnmergedTree = true)
+        .assertCountEquals(allInstructionsLength)
+        .apply {
+          for (i in 0 until displayedinstructionsLength) {
+            Log.d("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "${get(i).toString()}")
+            get(i).assertIsDisplayed()
+          }
+        }
+
+    composeTestRule
+        .onAllNodesWithTag("InstructionIcon", useUnmergedTree = true)
+        .assertCountEquals(allInstructionsLength)
+        .apply {
+          for (i in 0 until displayedinstructionsLength) {
+            get(i).assertIsDisplayed()
+          }
+        }
+    composeTestRule
+        .onAllNodesWithTag("InstructionInfo", useUnmergedTree = true)
+        .assertCountEquals(allInstructionsLength)
+        .apply {
+          for (i in 0 until displayedinstructionsLength) {
+            get(i).assertIsDisplayed()
+          }
+        }
+    composeTestRule
+        .onAllNodesWithTag("InstructionTime", useUnmergedTree = true)
+        .assertCountEquals(allInstructionsLength)
+        .apply {
+          for (i in 0 until displayedinstructionsLength) {
+            get(i).assertIsDisplayed()
+          }
+        }
+    composeTestRule
+        .onAllNodesWithTag("InstructionValue", useUnmergedTree = true)
+        .assertCountEquals(allInstructionsLength)
+        .apply {
+          for (i in 0 until displayedinstructionsLength) {
+            get(i).assertIsDisplayed()
+          }
+        }
   }
 }
