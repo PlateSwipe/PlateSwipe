@@ -262,7 +262,7 @@ class RecipeBuilder {
    * @param i The index of the instruction.
    */
   fun getInstruction(i: Int): Instruction {
-    require(i in instructions.indices) {OUT_OF_BOUNDS_MESSAGE}
+    require(i in instructions.indices) { OUT_OF_BOUNDS_MESSAGE }
     return instructions[i]
   }
 
