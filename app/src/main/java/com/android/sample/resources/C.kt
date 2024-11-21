@@ -164,6 +164,9 @@ object C {
     object FirestoreRecipesRepository {
       const val FIRESTORE_COLLECTION_NAME = "recipes with images"
       const val MAX_FIRESTORE_FETCH = 5
+      const val NO_RECIPE_FOUND_MSG = "No recipes found"
+      const val NOT_ENOUGH_RECIPE_MSG = "Not enough recipes found"
+      const val REPOSITORY_TAG_MSG = "FirestoreRecipesRepository"
     }
 
     // Values for storage

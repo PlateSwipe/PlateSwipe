@@ -15,6 +15,9 @@ import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_TIME
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_URL
 import com.android.sample.resources.C.Tag.FirestoreRecipesRepository.FIRESTORE_COLLECTION_NAME
 import com.android.sample.resources.C.Tag.FirestoreRecipesRepository.MAX_FIRESTORE_FETCH
+import com.android.sample.resources.C.Tag.FirestoreRecipesRepository.NOT_ENOUGH_RECIPE_MSG
+import com.android.sample.resources.C.Tag.FirestoreRecipesRepository.NO_RECIPE_FOUND_MSG
+import com.android.sample.resources.C.Tag.FirestoreRecipesRepository.REPOSITORY_TAG_MSG
 import com.android.sample.resources.C.Tag.LIMIT_MUST_BE_POSITIVE_MESSAGE
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.DocumentSnapshot
@@ -149,6 +152,7 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
     // Generate a random UID
     val randomUID = generateRandomUID()
 
+    Log.d(REPOSITORY_TAG_MSG, "randomFetch: $randomUID")
     // Query for UIDs greater than or equal to the random UID
     db.collection(FIRESTORE_COLLECTION_NAME)
         .whereGreaterThanOrEqualTo(FieldPath.documentId(), randomUID)
@@ -162,34 +166,33 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
               val recipe = documentToRecipe(document).takeIf { !recipes.contains(it) }
               recipe?.let { recipes.add(it) }
             }
-            // If we have enough recipes, shuffle the list and return it
-            if (recipes.size == nbOfElements) {
-              recipes.shuffle()
-              onSuccess(recipes)
-              return@addOnCompleteListener
-            } else if (iterationNumber == MAX_FIRESTORE_FETCH) {
-              if (recipes.isNotEmpty() && recipes.size < nbOfElements) {
-                // shuffle the list to get random recipes
-                Log.e("FirestoreRecipesRepository", "Not enough recipes found")
+            when {
+              recipes.size == nbOfElements -> {
                 recipes.shuffle()
                 onSuccess(recipes)
-                return@addOnCompleteListener
-              } else {
-                Log.e("FirestoreRecipesRepository", "No recipes found")
-                onFailure(Exception("No recipes found"))
-                return@addOnCompleteListener
               }
-            } else if (recipes.size < nbOfElements) {
-              // Fetch more recipes if we don't have enough
-              randomFetch(nbOfElements, onSuccess, onFailure, recipes, iterationNumber + 1)
-              return@addOnCompleteListener
-            } else {
-              Log.e("FirestoreRecipesRepository", "No recipes found")
-              onFailure(Exception("No recipes found"))
+              iterationNumber == MAX_FIRESTORE_FETCH -> {
+                if (recipes.isNotEmpty()) {
+                  Log.e(REPOSITORY_TAG_MSG, NOT_ENOUGH_RECIPE_MSG)
+                  recipes.shuffle()
+                  onSuccess(recipes)
+                } else {
+                  Log.e(REPOSITORY_TAG_MSG, NO_RECIPE_FOUND_MSG)
+                  onFailure(Exception(NO_RECIPE_FOUND_MSG))
+                }
+              }
+              recipes.size < nbOfElements -> {
+                // Fetch more recipes if we don't have enough
+                randomFetch(nbOfElements, onSuccess, onFailure, recipes, iterationNumber + 1)
+              }
+              else -> {
+                Log.e(REPOSITORY_TAG_MSG, NO_RECIPE_FOUND_MSG)
+                onFailure(Exception(NO_RECIPE_FOUND_MSG))
+              }
             }
           } else {
             task.exception?.let { e ->
-              Log.e("FirestoreRecipesRepository", "Error getting documents", e)
+              Log.e(REPOSITORY_TAG_MSG, "Error getting documents", e)
               onFailure(e)
             }
           }
