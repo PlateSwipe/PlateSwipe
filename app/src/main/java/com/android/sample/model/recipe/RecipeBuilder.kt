@@ -4,6 +4,7 @@ import com.android.sample.resources.C.Tag.ERROR_LIST_INGREDIENT_EMPTY
 import com.android.sample.resources.C.Tag.ERROR_STR_INSTR_BLANK
 import com.android.sample.resources.C.Tag.ERROR_STR_MEAL_BLANK
 import com.android.sample.resources.C.Tag.ERROR_STR_THUMBNAIL
+import com.android.sample.resources.C.TestTag.RecipeBuilder.OUT_OF_BOUNDS_MESSAGE
 
 /** Builder class for creating a Recipe instance. */
 class RecipeBuilder {
@@ -261,7 +262,7 @@ class RecipeBuilder {
    * @param i The index of the instruction.
    */
   fun getInstruction(i: Int): Instruction {
-    require(i in instructions.indices) { "Index out of bounds" }
+    require(i in instructions.indices) {OUT_OF_BOUNDS_MESSAGE}
     return instructions[i]
   }
 
@@ -272,7 +273,7 @@ class RecipeBuilder {
    * @param instruction The new instruction to replace the existing one.
    */
   fun modifyInstruction(i: Int, instruction: Instruction) {
-    require(i in instructions.indices) { "Index out of bounds" }
+    require(i in instructions.indices) { OUT_OF_BOUNDS_MESSAGE }
     instructions[i] = instruction
   }
 
@@ -282,7 +283,7 @@ class RecipeBuilder {
    * @param i The index of the instruction.
    */
   fun deleteInstruction(i: Int) {
-    require(i in instructions.indices) { "Index out of bounds" }
+    require(i in instructions.indices) { OUT_OF_BOUNDS_MESSAGE }
     instructions.removeAt(i)
   }
 }

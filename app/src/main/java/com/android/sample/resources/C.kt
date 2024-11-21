@@ -745,5 +745,8 @@ object C {
     object Instruction {
       const val DEFAULT_ICON = ICON_CHEF_HAT
     }
+    object RecipeBuilder{
+      const val OUT_OF_BOUNDS_MESSAGE = "Index out of bounds"
+    }
   }
 }
