@@ -249,8 +249,7 @@ fun confirmAndAssignStep(
         Instruction(
             description = stepDescription, time = stepTime, iconType = selectedIcon?.iconName))
     onSuccess()
-  }
-  if (stepDescription.isNotEmpty()) {
+  } else if (stepDescription.isNotEmpty()) {
     createRecipeViewModel.addRecipeInstruction(
         Instruction(
             description = stepDescription, time = stepTime, iconType = selectedIcon?.iconName))
