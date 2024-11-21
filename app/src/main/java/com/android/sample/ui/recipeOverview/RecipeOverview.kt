@@ -87,9 +87,6 @@ import com.android.sample.resources.C.Tag.LOADING
 import com.android.sample.resources.C.Tag.PADDING
 import com.android.sample.resources.C.Tag.SMALL_PADDING
 import com.android.sample.resources.C.Tag.SwipePage.RATE_VALUE
-import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.EDIT_INSTRUCTION_ICON
-import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.INSTRUCTION_TEXT_IN_CARD
-import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.INSTRUCTION_TEXT_SPACE
 import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.INSTRUCTION_TIME
 import com.android.sample.resources.C.TestTag.RecipeOverview.ADD_SERVINGS
 import com.android.sample.resources.C.TestTag.RecipeOverview.COOK_TIME_TEXT
@@ -558,7 +555,8 @@ fun InstructionValue(instruction: Instruction, index: Int) {
               .clickable(onClick = { isExpanded = !isExpanded })
               .shadow(
                   elevation = CARD_SHADOW_ELEVATION.dp,
-                  shape = RoundedCornerShape(CARD_BORDER_ROUND.dp)),
+                  shape = RoundedCornerShape(CARD_BORDER_ROUND.dp))
+              .testTag("InstructionValue"),
       colors =
           CardDefaults.cardColors(
               containerColor = MaterialTheme.colorScheme.background,
@@ -571,11 +569,11 @@ fun InstructionValue(instruction: Instruction, index: Int) {
               Image(
                   painter = painterResource(id = instruction.icon.iconResId),
                   contentDescription = "Icon",
-                  modifier = Modifier.size(ICON_SIZE.dp))
+                  modifier = Modifier.size(ICON_SIZE.dp).testTag("InstructionIcon"))
 
-              Column(modifier = Modifier.testTag(INSTRUCTION_TEXT_SPACE)) {
+              Column(modifier = Modifier.testTag("InstructionInfo")) {
                 Text(
-                    modifier = Modifier.testTag(INSTRUCTION_TEXT_IN_CARD),
+                    modifier = Modifier.testTag("InstructionTitle"),
                     color = Color.Black,
                     text =
                         "${stringResource(R.string.RecipeListInstructionsScreen_Step)} ${officialStep}",
@@ -589,14 +587,14 @@ fun InstructionValue(instruction: Instruction, index: Int) {
                       text =
                           "${instruction.time} ${stringResource(R.string.RecipeListInstructionsScreen_Minutes)}",
                       style = MaterialTheme.typography.bodySmall,
-                      modifier = Modifier.testTag(INSTRUCTION_TIME))
+                      modifier = Modifier.testTag("InstructionTime"))
                 }
               }
               Icon(
                   imageVector =
                       if (isExpanded) Icons.Default.ArrowDownward else Icons.Default.ArrowUpward,
                   contentDescription = "Expand",
-                  modifier = Modifier.size(ICON_SIZE.dp).testTag(EDIT_INSTRUCTION_ICON),
+                  modifier = Modifier.size(ICON_SIZE.dp).testTag("ArrowIcon"),
                   tint = Color.Black)
             }
       }
@@ -605,6 +603,6 @@ fun InstructionValue(instruction: Instruction, index: Int) {
         text = instruction.description,
         color = Color.Black,
         style = MaterialTheme.typography.bodyMedium,
-        modifier = Modifier.padding(SMALL_PADDING.dp))
+        modifier = Modifier.padding(SMALL_PADDING.dp).testTag("InstructionText"))
   }
 }
