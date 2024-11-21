@@ -106,6 +106,27 @@ class RecipesViewModelTest {
   }
 
   @Test
+  fun fetchByCategoriesRecipesHandlesFailure() {
+    // Simulate the failure of the repository
+    `when`(mockRecipeRepository.searchByCategory(any(), any(), any(), any())).thenAnswer {
+        invocation ->
+      val onFailure = invocation.getArgument<(Throwable) -> Unit>(2)
+      onFailure(Exception("Network error")) // Simulate a failure
+      null
+    }
+
+    // Act
+    recipesViewModel.updateCategory("Dessert")
+    recipesViewModel.applyChanges()
+    recipesViewModel.fetchRandomRecipes(2)
+
+    // Assert
+    assertThat(recipesViewModel.loading.value, `is`(false)) // Check loading is false after fetch
+    assertThat(
+        recipesViewModel.recipes.value, `is`(emptyList())) // Ensure no recipes are set on failure
+  }
+
+  @Test
   fun fetchRandomRecipesCallsRepository() {
     // Arrange
     val numberOfRecipes = 2
