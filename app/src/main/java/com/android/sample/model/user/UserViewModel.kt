@@ -103,22 +103,20 @@ class UserViewModel(
                 })
           }
           user.likedRecipes.forEach { uid ->
-              fetchRecipe(
-                  uid,
-                  _likedRecipes,
-                  {recipe -> addRecipeToUserLikedRecipes(recipe)},
-                  {recipe -> removeRecipeFromUserLikedRecipes(recipe)},
-                  FAILED_TO_FETCH_LIKED_RECIPE_FROM_DATABASE_ERROR
-              )
+            fetchRecipe(
+                uid,
+                _likedRecipes,
+                { recipe -> addRecipeToUserLikedRecipes(recipe) },
+                { recipe -> removeRecipeFromUserLikedRecipes(recipe) },
+                FAILED_TO_FETCH_LIKED_RECIPE_FROM_DATABASE_ERROR)
           }
           user.createdRecipes.forEach { uid ->
             fetchRecipe(
                 uid,
                 _createdRecipes,
-                {recipe -> addRecipeToUserCreatedRecipes(recipe)},
-                {recipe -> removeRecipeFromUserCreatedRecipes(recipe)},
-                FAILED_TO_FETCH_CREATED_RECIPE_FROM_DATABASE_ERROR
-            )
+                { recipe -> addRecipeToUserCreatedRecipes(recipe) },
+                { recipe -> removeRecipeFromUserCreatedRecipes(recipe) },
+                FAILED_TO_FETCH_CREATED_RECIPE_FROM_DATABASE_ERROR)
           }
         },
         onFailure = {
@@ -136,7 +134,7 @@ class UserViewModel(
         })
   }
 
-    /**
+  /**
    * Updates the current user in the database with the values from the view model. If no user is
    * logged in, it does nothing.
    */
@@ -305,39 +303,39 @@ class UserViewModel(
     _currentRecipe.value = recipe
   }
 
-    /**
-     * Function that fetches a recipe based on the uid from the database for a user
-     *
-     * @param uid the uid of the recipe in the database
-     * @param recipes the list of recipes to where we add or from were we delete
-     * @param addRecipe the function that adds the recipe to recipes once found
-     * @param removeRecipe the function that removes the recipe from recipes if it is no longer in
-     *                      the database
-     * @param errorMessage error message that will be displayed in the logs
-     */
-    private fun fetchRecipe(
-        uid: String,
-        recipes: MutableStateFlow<List<Recipe>>,
-        addRecipe: (Recipe) -> Unit,
-        removeRecipe: (Recipe) -> Unit,
-        errorMessage: String)
-    {
-        val recipeFound = recipes.value.find { item -> item.uid == uid }
-        recipesRepository.search(
-            uid,
-            onSuccess = { recipe ->
-                if (recipeFound == null) {
-                    addRecipe(recipe)
-                }
-            },
-            onFailure = { e ->
-                if (e.message != RECIPE_NOT_FOUND) {
-                    Log.e(LOG_TAG, errorMessage, e)
-                } else {
-                    if (recipeFound != null) {
-                        removeRecipe(recipeFound)
-                    }
-                }
-            })
-    }
+  /**
+   * Function that fetches a recipe based on the uid from the database for a user
+   *
+   * @param uid the uid of the recipe in the database
+   * @param recipes the list of recipes to where we add or from were we delete
+   * @param addRecipe the function that adds the recipe to recipes once found
+   * @param removeRecipe the function that removes the recipe from recipes if it is no longer in the
+   *   database
+   * @param errorMessage error message that will be displayed in the logs
+   */
+  private fun fetchRecipe(
+      uid: String,
+      recipes: MutableStateFlow<List<Recipe>>,
+      addRecipe: (Recipe) -> Unit,
+      removeRecipe: (Recipe) -> Unit,
+      errorMessage: String
+  ) {
+    val recipeFound = recipes.value.find { item -> item.uid == uid }
+    recipesRepository.search(
+        uid,
+        onSuccess = { recipe ->
+          if (recipeFound == null) {
+            addRecipe(recipe)
+          }
+        },
+        onFailure = { e ->
+          if (e.message != RECIPE_NOT_FOUND) {
+            Log.e(LOG_TAG, errorMessage, e)
+          } else {
+            if (recipeFound != null) {
+              removeRecipe(recipeFound)
+            }
+          }
+        })
+  }
 }
