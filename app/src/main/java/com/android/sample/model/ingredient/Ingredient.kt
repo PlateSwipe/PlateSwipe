@@ -7,5 +7,5 @@ data class Ingredient(
     val brands: String? = null,
     val quantity: String? = null,
     val categories: List<String>,
-    val images: List<String>
+    val images: MutableMap<String, String> = mutableMapOf()
 )
