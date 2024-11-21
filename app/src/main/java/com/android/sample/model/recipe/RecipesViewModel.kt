@@ -92,7 +92,7 @@ class RecipesViewModel(private val repository: RecipesRepository) :
 
       _loading.collect { isLoading ->
         if (!isLoading) {
-          updateCurrentRecipe(_recipes.value.first())
+          if (_recipes.value.isNotEmpty()) updateCurrentRecipe(_recipes.value.first())
           return@collect
         }
       }
@@ -143,7 +143,7 @@ class RecipesViewModel(private val repository: RecipesRepository) :
       fetchRandomRecipes(NUMBER_RECIPES_TO_FETCH)
       _loading.collect { isLoading ->
         if (!isLoading) {
-          updateCurrentRecipe(_recipes.value.first())
+          if (_recipes.value.isNotEmpty()) updateCurrentRecipe(_recipes.value.first())
           return@collect
         }
       }

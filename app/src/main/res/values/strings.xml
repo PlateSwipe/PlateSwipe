@@ -23,7 +23,6 @@
     //SwipePage
     <string name="filter_icon">Filter Icon</string>
 
-
     //FilterPage
     <string name="apply_filter">Apply</string>
     <string name="reset_filter">Reset</string>
@@ -44,8 +43,8 @@
     <string name="counter_min">-</string>
     <string name="counter_max">+</string>
 
-
-
+    //RecipeOverview
+    <string name="unable_loading"> Unable to load recipe</string>
 
     //RecipeNameScreen
     <string name="create_your_recipe">Create your recipe</string>
