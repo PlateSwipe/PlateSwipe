@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
@@ -81,7 +82,7 @@ private fun PlateSwipeTopBar(navigationActions: NavigationActions, showBackArrow
           Modifier.fillMaxWidth()
               .height(TOP_BAR_HEIGHT.dp)
               .padding(SMALL_PADDING.dp)
-              .background(color = MaterialTheme.colorScheme.background)
+              .background(color = Color.Transparent)
               .testTag(TOP_BAR),
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.SpaceBetween,

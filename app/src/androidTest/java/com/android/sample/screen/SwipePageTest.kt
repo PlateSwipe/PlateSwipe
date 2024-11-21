@@ -33,6 +33,7 @@ import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.swipePage.SwipePage
+import com.android.sample.ui.utils.testRecipes
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -55,25 +56,7 @@ class SwipePageTest : TestCase() {
   private lateinit var mockRepository: RecipesRepository
   private lateinit var recipesViewModel: RecipesViewModel
 
-  private val recipe1 =
-      Recipe(
-          "Recipe 1",
-          "",
-          "url1",
-          "Instructions 1",
-          "Category 1",
-          "Area 1",
-          listOf(Pair("Ingredient 1", "Ingredient 1")))
-  private val recipe2 =
-      Recipe(
-          "Recipe 2",
-          "",
-          "url2",
-          "Instructions 2",
-          "Category 2",
-          "Area 2",
-          listOf(Pair("Ingredient 2", "Ingredient 2")))
-  private val mockedRecipesList = listOf(recipe1, recipe2)
+  private val mockedRecipesList = testRecipes
 
   @get:Rule val composeTestRule = createComposeRule()
 
@@ -110,6 +93,7 @@ class SwipePageTest : TestCase() {
     recipesViewModel.updatePriceRange(5f, 52f)
     recipesViewModel.updateDifficulty(Difficulty.Easy)
     recipesViewModel.updateCategory("Dessert")
+    recipesViewModel.applyChanges()
 
     composeTestRule.setContent {
       SwipePage(mockNavigationActions, recipesViewModel) // Set up the SignInScreen directly
@@ -170,6 +154,8 @@ class SwipePageTest : TestCase() {
     advanceUntilIdle()
 
     composeTestRule.waitForIdle()
+
+    composeTestRule.waitUntil(5000) { recipesViewModel.currentRecipe.value != currentRecipe }
     assertNotEquals(currentRecipe, recipesViewModel.currentRecipe.value)
   }
 
@@ -187,6 +173,8 @@ class SwipePageTest : TestCase() {
     advanceUntilIdle()
 
     composeTestRule.waitForIdle()
+
+    composeTestRule.waitUntil(5000) { recipesViewModel.currentRecipe.value != currentRecipe }
 
     assertNotEquals(currentRecipe, recipesViewModel.currentRecipe.value)
   }
@@ -234,6 +222,10 @@ class SwipePageTest : TestCase() {
     // Confirm that the chip is no longer visible in the hierarchy
     composeTestRule.onNodeWithTag(TIME_RANGE_CHIP, useUnmergedTree = true).assertDoesNotExist()
 
+    composeTestRule.waitUntil(5000) {
+      recipesViewModel.filter.value.timeRange.min == recipesViewModel.filter.value.timeRange.minBorn
+    }
+
     // Verify the ViewModel time range has been reset
     assertEquals(
         recipesViewModel.filter.value.timeRange.min,
@@ -263,6 +255,13 @@ class SwipePageTest : TestCase() {
 
     // Confirm that the chip is no longer visible in the hierarchy
     composeTestRule.onNodeWithTag(PRICE_RANGE_CHIP, useUnmergedTree = true).assertDoesNotExist()
+
+    composeTestRule.waitUntil(5000) {
+      recipesViewModel.filter.value.priceRange.min ==
+          recipesViewModel.filter.value.priceRange.minBorn &&
+          recipesViewModel.filter.value.priceRange.max ==
+              recipesViewModel.filter.value.priceRange.maxBorn
+    }
 
     // Verify the ViewModel price range has been reset
     assertEquals(
@@ -295,6 +294,9 @@ class SwipePageTest : TestCase() {
     composeTestRule.onNodeWithTag(DIFFICULTY_CHIP, useUnmergedTree = true).assertDoesNotExist()
 
     // Verify the ViewModel difficulty has been reset
+    composeTestRule.waitUntil(5000) {
+      recipesViewModel.filter.value.difficulty == Difficulty.Undefined
+    }
     assertEquals(recipesViewModel.filter.value.difficulty, Difficulty.Undefined)
   }
 
@@ -318,6 +320,8 @@ class SwipePageTest : TestCase() {
 
     // Confirm that the chip is no longer visible in the hierarchy
     composeTestRule.onNodeWithTag(CATEGORY_CHIP, useUnmergedTree = true).assertDoesNotExist()
+
+    composeTestRule.waitUntil(5000) { recipesViewModel.filter.value.category == null }
 
     // Verify the ViewModel category has been reset
     assertNull(recipesViewModel.filter.value.category)

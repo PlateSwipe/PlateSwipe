@@ -1,6 +1,7 @@
 package com.android.sample.model.ingredient
 
 import androidx.test.core.app.ApplicationProvider
+import com.android.sample.ui.utils.testIngredients
 import com.google.firebase.Firebase
 import com.google.firebase.initialize
 import junit.framework.TestCase.assertEquals
@@ -35,14 +36,7 @@ class IngredientViewModelTest {
   @Test
   fun fetchIngredient_withNewBarcode_updatesIngredient() {
     val barCode = 123456L
-    val ingredient =
-        Ingredient(
-            barCode = barCode,
-            name = "Test Ingredient",
-            brands = "Brand",
-            quantity = "",
-            categories = listOf(""),
-            images = listOf(""))
+    val ingredient = testIngredients[0].copy(barCode = barCode)
 
     `when`(ingredientRepository.get(eq(barCode), any(), any())).thenAnswer { invocation ->
       val onSuccess: (Ingredient?) -> Unit = invocation.getArgument(1)

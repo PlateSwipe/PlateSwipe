@@ -20,11 +20,19 @@
     <string name="photo_capture_failed">Photo capture failed: %1$s</string>
     <string name="take_photo">Take Photo</string>
 
+    //SwipePage
     <string name="filter_icon">Filter Icon</string>
-    <string name="time_range_input_description">Time Range</string>
-    <string name="price_range_input_description">Price Range</string>
-    <string name="difficulty_input_description">Difficulty</string>
-    <string name="category_input_description">Category</string>
+
+
+    //FilterPage
+    <string name="apply_filter">Apply</string>
+    <string name="reset_filter">Reset</string>
+    <string name="time_range_name">Time</string>
+    <string name="price_range_name">Price</string>
+    <string name="difficulty_name">Difficulty</string>
+    <string name="category_name">Category</string>
+    <string name="time_unit">min</string>
+    <string name="price_unit">$</string>
 
 
     <string name="prep_time">Prep time</string>
@@ -61,10 +69,11 @@
     //IconDropDownMenu
     <string name="add_icon">Add Icon</string>
     <string name="dropdown_icon">DropDown Icon</string>
-    <string name="fire_icon_description">Cook</string>
+    <string name="fire_icon_description">Heat</string>
     <string name="salt_icon_description">Season</string>
     <string name="mortar_icon_description">Mix</string>
     <string name="axe_icon_description">Prep</string>
+    <string name="chef_s_hat_icon_description">Cook</string>
 
 
 
