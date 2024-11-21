@@ -71,23 +71,17 @@ fun AddInstructionStepContent(
   var stepDescription by remember {
     mutableStateOf(
         defaultValues(
-            value =
-                createRecipeViewModel
-                    .getInstruction(createRecipeViewModel.getSelectedInstruction()!!)
-                    .description,
             defaultValue = "",
-            selectedInstruction = createRecipeViewModel.getSelectedInstruction()))
+            selectedInstruction = createRecipeViewModel.getSelectedInstruction(),
+            onSuccess = { createRecipeViewModel.getInstruction(it).description }))
   }
 
   var stepTime by remember {
     mutableStateOf(
         defaultValues(
-            value =
-                createRecipeViewModel
-                    .getInstruction(createRecipeViewModel.getSelectedInstruction()!!)
-                    .time,
             defaultValue = "",
-            selectedInstruction = createRecipeViewModel.getSelectedInstruction()))
+            selectedInstruction = createRecipeViewModel.getSelectedInstruction(),
+            onSuccess = { createRecipeViewModel.getInstruction(it).time }))
   }
   var selectedIcon by remember {
     mutableStateOf<IconType?>(
@@ -216,9 +210,9 @@ fun AddInstructionStepContent(
       }
 }
 
-fun <T> defaultValues(value: T, defaultValue: T, selectedInstruction: Int?): T {
+fun <T> defaultValues(defaultValue: T, selectedInstruction: Int?, onSuccess: (Int) -> T): T {
   return if (selectedInstruction != null) {
-    value
+    onSuccess(selectedInstruction)
   } else {
     defaultValue
   }
