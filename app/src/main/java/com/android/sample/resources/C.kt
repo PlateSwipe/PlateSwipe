@@ -289,6 +289,7 @@ object C {
       const val REMOVED_INGREDIENT_NOT_IN_FRIDGE_ERROR =
           "Cannot remove an ingredient that is not in the fridge."
       const val LOG_TAG = "UserViewModel"
+      const val IMAGE_NAME = "Main"
       const val NOT_FOUND_INGREDIENT_IN_DATABASE_ERROR = "Ingredient not found in the database."
       const val FAILED_TO_FETCH_INGREDIENT_FROM_DATABASE_ERROR =
           "Failed to fetch ingredient from the database."
@@ -296,6 +297,11 @@ object C {
           "Failed to fetch liked recipes from the database."
       const val FAILED_TO_FETCH_CREATED_RECIPE_FROM_DATABASE_ERROR =
           "Failed to fetch created recipes from the database."
+      const val RECIPE_DELETED_SUCCESSFULY = "Recipe deleted successfully"
+      const val FAILED_TO_DELETE_RECIPE = "Recipe deletion unsuccessful"
+      const val IMAGE_DELETION_SUCCESSFULY = "Recipe image deleted successfully"
+      const val FAILED_TO_DELETE_IMAGE = "Recipe image deletion unsuccessful"
+      const val RECIPE_NOT_FOUND = "Recipe not found"
     }
 
     // AccountScreen
@@ -638,7 +644,7 @@ object C {
       const val RECIPE_CATEGORIES_TEST_TAG = "recipeCategories"
       const val RECIPE_IMAGE_TEST_TAG = "recipeImage"
       const val RECIPE_TITLE_TEST_TAG = "recipeTitle"
-      const val RECIPE_FAVORITE_ICON_TEST_TAG = "recipeFavoriteIcon"
+      const val RECIPE_FAVORITE_ICON_TEST_TAG = "recipeFavoriteDeleteIcon"
       const val CONFIRMATION_POP_UP = "confirmationPopUp"
       const val CONFIRMATION_BUTTON = "confirmButton"
       const val CANCEL_BUTTON = "cancelButton"
