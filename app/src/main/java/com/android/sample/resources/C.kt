@@ -161,7 +161,7 @@ object C {
     const val MEAL_DB_CATEGORY_ARRAY = "categories"
 
     // FirestoreRecipeRepository
-    const val FIRESTORE_COLLECTION_NAME = "recipes with images"
+    const val FIRESTORE_COLLECTION_NAME = "Recipes with new Instructions"
 
     // Values for storage
     const val FIRESTORE_RECIPE_NAME = "name"

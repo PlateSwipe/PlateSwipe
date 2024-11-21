@@ -18,6 +18,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -35,6 +38,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -43,14 +47,22 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.android.sample.R
 import com.android.sample.animation.LoadingCook
+import com.android.sample.model.recipe.Instruction
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.recipe.RecipeOverviewViewModel
+import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScreen.CARD_BORDER_ROUND
+import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScreen.CARD_SHADOW_ELEVATION
+import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScreen.ICON_SIZE
+import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScreen.MEDIUM_PADDING
+import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScreen.REALLY_SMALL_PADDING
+import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScreen.ROW_SIZE
 import com.android.sample.resources.C.Dimension.RecipeOverview.COUNTER_MIN_MAX_SIZE
 import com.android.sample.resources.C.Dimension.RecipeOverview.COUNTER_ROUND_CORNER
 import com.android.sample.resources.C.Dimension.RecipeOverview.IMAGE_ROUND_CORNER
@@ -75,6 +87,10 @@ import com.android.sample.resources.C.Tag.LOADING
 import com.android.sample.resources.C.Tag.PADDING
 import com.android.sample.resources.C.Tag.SMALL_PADDING
 import com.android.sample.resources.C.Tag.SwipePage.RATE_VALUE
+import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.EDIT_INSTRUCTION_ICON
+import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.INSTRUCTION_TEXT_IN_CARD
+import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.INSTRUCTION_TEXT_SPACE
+import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.INSTRUCTION_TIME
 import com.android.sample.resources.C.TestTag.RecipeOverview.ADD_SERVINGS
 import com.android.sample.resources.C.TestTag.RecipeOverview.COOK_TIME_TEXT
 import com.android.sample.resources.C.TestTag.RecipeOverview.DRAGGABLE_ITEM
@@ -104,6 +120,7 @@ fun RecipeOverview(
     navigationActions: NavigationActions,
     recipeOverviewViewModel: RecipeOverviewViewModel
 ) {
+
   val currentRecipe by recipeOverviewViewModel.currentRecipe.collectAsState()
 
   PlateSwipeScaffold(
@@ -523,6 +540,71 @@ private fun InstructionView(currentRecipe: Recipe) {
                   top = OVERVIEW_INSTRUCTION_TOP.dp,
                   bottom = OVERVIEW_INSTRUCTION_BOTTOM.dp)
               .testTag(INSTRUCTIONS_VIEW)) {
-        // Display of the instructions
+        for (index in currentRecipe.instructions.indices) {
+          InstructionValue(currentRecipe.instructions[index], index)
+        }
       }
+}
+
+@Composable
+fun InstructionValue(instruction: Instruction, index: Int) {
+  val officialStep = index + 1
+  var isExpanded by remember { mutableStateOf(false) } // Track the expanded state
+
+  Card(
+      modifier =
+          Modifier.fillMaxWidth(1f)
+              .padding(horizontal = MEDIUM_PADDING.dp, vertical = REALLY_SMALL_PADDING.dp)
+              .clickable(onClick = { isExpanded = !isExpanded })
+              .shadow(
+                  elevation = CARD_SHADOW_ELEVATION.dp,
+                  shape = RoundedCornerShape(CARD_BORDER_ROUND.dp)),
+      colors =
+          CardDefaults.cardColors(
+              containerColor = MaterialTheme.colorScheme.background,
+              contentColor = MaterialTheme.colorScheme.onPrimary),
+      shape = RoundedCornerShape(CARD_BORDER_ROUND.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(ROW_SIZE).padding(SMALL_PADDING.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically) {
+              Image(
+                  painter = painterResource(id = instruction.icon.iconResId),
+                  contentDescription = "Icon",
+                  modifier = Modifier.size(ICON_SIZE.dp))
+
+              Column(modifier = Modifier.testTag(INSTRUCTION_TEXT_SPACE)) {
+                Text(
+                    modifier = Modifier.testTag(INSTRUCTION_TEXT_IN_CARD),
+                    color = Color.Black,
+                    text =
+                        "${stringResource(R.string.RecipeListInstructionsScreen_Step)} ${officialStep}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold)
+
+                // This text represents the time that it takes to do the step
+                if (!instruction.time.isNullOrBlank()) {
+                  Text(
+                      color = Color.Black,
+                      text =
+                          "${instruction.time} ${stringResource(R.string.RecipeListInstructionsScreen_Minutes)}",
+                      style = MaterialTheme.typography.bodySmall,
+                      modifier = Modifier.testTag(INSTRUCTION_TIME))
+                }
+              }
+              Icon(
+                  imageVector =
+                      if (isExpanded) Icons.Default.ArrowDownward else Icons.Default.ArrowUpward,
+                  contentDescription = "Expand",
+                  modifier = Modifier.size(ICON_SIZE.dp).testTag(EDIT_INSTRUCTION_ICON),
+                  tint = Color.Black)
+            }
+      }
+  if (isExpanded) {
+    Text(
+        text = instruction.description,
+        color = Color.Black,
+        style = MaterialTheme.typography.bodyMedium,
+        modifier = Modifier.padding(SMALL_PADDING.dp))
+  }
 }
