@@ -123,7 +123,7 @@ class RecipeListTest {
           list = recipesList,
           onRecipeSelected = {},
           topCornerButton = { recipe ->
-            TopCornerLikeButton(recipe = recipe, userViewModel = userViewModel)
+            TopCornerLikeButton(recipe = recipe, userViewModel = userViewModel, true)
           })
     }
 
