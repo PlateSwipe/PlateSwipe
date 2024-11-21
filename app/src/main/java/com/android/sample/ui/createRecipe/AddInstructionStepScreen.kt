@@ -70,24 +70,24 @@ fun AddInstructionStepContent(
 ) {
   var stepDescription by remember {
     mutableStateOf(
-        if (createRecipeViewModel.getSelectedInstruction() != null) {
-          createRecipeViewModel
-              .getInstruction(createRecipeViewModel.getSelectedInstruction()!!)
-              .description
-        } else {
-          ""
-        })
+        defaultValues(
+            value =
+                createRecipeViewModel
+                    .getInstruction(createRecipeViewModel.getSelectedInstruction()!!)
+                    .description,
+            defaultValue = "",
+            selectedInstruction = createRecipeViewModel.getSelectedInstruction()))
   }
 
   var stepTime by remember {
     mutableStateOf(
-        if (createRecipeViewModel.getSelectedInstruction() != null) {
-          createRecipeViewModel
-              .getInstruction(createRecipeViewModel.getSelectedInstruction()!!)
-              .time
-        } else {
-          ""
-        })
+        defaultValues(
+            value =
+                createRecipeViewModel
+                    .getInstruction(createRecipeViewModel.getSelectedInstruction()!!)
+                    .time,
+            defaultValue = "",
+            selectedInstruction = createRecipeViewModel.getSelectedInstruction()))
   }
   var selectedIcon by remember {
     mutableStateOf<IconType?>(
@@ -214,6 +214,14 @@ fun AddInstructionStepContent(
                   })
             })
       }
+}
+
+fun <T> defaultValues(value: T, defaultValue: T, selectedInstruction: Int?): T {
+  return if (selectedInstruction != null) {
+    value
+  } else {
+    defaultValue
+  }
 }
 
 /**
