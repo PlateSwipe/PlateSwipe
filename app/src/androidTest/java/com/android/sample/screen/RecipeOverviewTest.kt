@@ -297,6 +297,9 @@ class RecipeOverviewTest {
 
   @Test
   fun testInstructionsAreDisplayed() {
+    composeTestRule.setContent {
+      RecipeOverview(mockNavigationActions, recipesViewModel) // Set up the SignInScreen directly
+    }
     composeTestRule
         .onNodeWithTag(DRAGGABLE_ITEM, useUnmergedTree = true)
         .performScrollToNode(hasTestTag(INGREDIENTS_VIEW))
