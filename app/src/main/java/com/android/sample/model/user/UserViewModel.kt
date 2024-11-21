@@ -76,7 +76,6 @@ class UserViewModel(
    */
   fun getCurrentUser() {
     val userId: String = firebaseAuth.currentUser?.uid ?: return
-    val tempLikedList = _likedRecipes.value.toMutableList()
 
     userRepository.getUserById(
         id = userId,
@@ -98,43 +97,42 @@ class UserViewModel(
                 })
           }
           user.likedRecipes.forEach { uid ->
-            recipesRepository.recipeExists(
+            val recipeFound = _likedRecipes.value.find { item -> item.uid == uid }
+            recipesRepository.search(
                 uid,
-                onSuccess = {
-                  recipesRepository.search(
-                      uid,
-                      onSuccess = { recipe ->
-                        if (_likedRecipes.value.contains(recipe)) {
-                          tempLikedList.remove(recipe)
-                        } else {
-                          addRecipeToUserLikedRecipes(recipe)
-                        }
-                      },
-                      onFailure = { e ->
-                        Log.e(LOG_TAG, FAILED_TO_FETCH_LIKED_RECIPE_FROM_DATABASE_ERROR, e)
-                      })
+                onSuccess = { recipe ->
+                  if (recipeFound == null) {
+                    addRecipeToUserLikedRecipes(recipe)
+                  }
                 },
-                onFailure = { e -> Log.i("UserViewModel", "Recipe no longer exists", e) })
-          }
-          if (tempLikedList.isNotEmpty()) {
-            tempLikedList.forEach { recipe -> removeRecipeFromUserLikedRecipes(recipe) }
+                onFailure = { e ->
+                  if (e.message != "Recipe not found") {
+                    Log.e(LOG_TAG, FAILED_TO_FETCH_LIKED_RECIPE_FROM_DATABASE_ERROR, e)
+                  } else {
+                    if (recipeFound != null) {
+                      removeRecipeFromUserLikedRecipes(recipeFound)
+                    }
+                  }
+                })
           }
           user.createdRecipes.forEach { uid ->
-            recipesRepository.recipeExists(
+            val recipeFound = _createdRecipes.value.find { item -> item.uid == uid }
+            recipesRepository.search(
                 uid,
-                {
-                  recipesRepository.search(
-                      uid,
-                      onSuccess = { recipe ->
-                        if (!_createdRecipes.value.contains(recipe)) {
-                          addRecipeToUserCreatedRecipes(recipe)
-                        }
-                      },
-                      onFailure = { e ->
-                        Log.e(LOG_TAG, FAILED_TO_FETCH_CREATED_RECIPE_FROM_DATABASE_ERROR, e)
-                      })
+                onSuccess = { recipe ->
+                  if (recipeFound == null) {
+                    addRecipeToUserCreatedRecipes(recipe)
+                  }
                 },
-                { e -> Log.i("UserViewModel", "Recipe no longer exists", e) })
+                onFailure = { e ->
+                  if (e.message != "Recipe not found") {
+                    Log.e(LOG_TAG, FAILED_TO_FETCH_CREATED_RECIPE_FROM_DATABASE_ERROR, e)
+                  } else {
+                    if (recipeFound != null) {
+                      removeRecipeFromUserCreatedRecipes(recipeFound)
+                    }
+                  }
+                })
           }
         },
         onFailure = {

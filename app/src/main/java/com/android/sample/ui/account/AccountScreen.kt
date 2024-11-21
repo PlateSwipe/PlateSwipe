@@ -17,6 +17,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -53,10 +54,7 @@ import com.android.sample.ui.utils.TopCornerLikeButton
 
 @Composable
 fun AccountScreen(navigationActions: NavigationActions, userViewModel: UserViewModel) {
-  /*LaunchedEffect(Unit){
-      Log.i("AccountScreen","Launched effect called")
-      userViewModel.getCurrentUser()
-  }*/
+  LaunchedEffect(Unit) { userViewModel.getCurrentUser() }
 
   PlateSwipeScaffold(
       navigationActions = navigationActions,

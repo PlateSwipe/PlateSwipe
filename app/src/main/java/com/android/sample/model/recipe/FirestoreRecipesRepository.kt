@@ -211,17 +211,4 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
   override fun listCategories(onSuccess: (List<String>) -> Unit, onFailure: (Exception) -> Unit) {
     throw NotImplementedError("Not implemented")
   }
-
-  fun recipeExists(mealID: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-    db.collection(FIRESTORE_COLLECTION_NAME).document(mealID).get().addOnCompleteListener { task ->
-      if ((task.isSuccessful)) {
-        val recipe = documentToRecipe(task.result)
-        if (recipe != null) {
-          onSuccess()
-        }
-      } else {
-        task.exception?.let { onFailure(it) }
-      }
-    }
-  }
 }
