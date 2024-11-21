@@ -1,6 +1,5 @@
 package com.android.sample.screen
 
-import android.util.Log
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsOff
@@ -274,7 +273,6 @@ class RecipeOverviewTest {
         .assertCountEquals(allInstructionsLength)
         .apply {
           for (i in 0 until displayedinstructionsLength) {
-            Log.d("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "${get(i).toString()}")
             get(i).assertIsDisplayed()
           }
         }
