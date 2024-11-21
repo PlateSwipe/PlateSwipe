@@ -344,7 +344,7 @@ object C {
       const val BUTTON_RADIUS = 12
       const val BUTTON_PADDING = 12
       const val ANIMATION_PADDING_TOP = 64
-      const val ANIMATION_SWIPE_TIME = 50
+      const val ANIMATION_SWIPE_TIME = 60
       const val ANIMATION_OPACITY_TIME = 300
       const val ANIMATION_OPACITY_MIN = 0f
       const val ANIMATION_OPACITY_MAX = 1f
