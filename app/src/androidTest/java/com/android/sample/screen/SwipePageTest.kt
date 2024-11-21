@@ -150,15 +150,13 @@ class SwipePageTest : TestCase() {
     // Ensure the draggable item is displayed
     composeTestRule.onNodeWithTag(DRAGGABLE_ITEM).assertIsDisplayed()
 
-    // Perform multiple swipeLeft gestures in a loop
-
     composeTestRule.onNodeWithTag(DRAGGABLE_ITEM).performTouchInput {
       down(center) // Start a touch gesture at the center
-      moveBy(Offset(-1000f, 0f)) // Drag horizontally by 50 pixels
+      moveBy(Offset(-1000f, 0f))
       up()
 
-      down(center) // Start a touch gesture at the center
-      moveBy(Offset(-1000f, 0f)) // Drag horizontally by 50 pixels
+      down(center)
+      moveBy(Offset(-1000f, 0f))
       up()
     }
 
@@ -180,17 +178,14 @@ class SwipePageTest : TestCase() {
     // Ensure the draggable item is displayed
     composeTestRule.onNodeWithTag(DRAGGABLE_ITEM).assertIsDisplayed()
 
-    // Perform multiple swipeLeft gestures in a loop
-    repeat(2) {
-      composeTestRule.onNodeWithTag(DRAGGABLE_ITEM).performTouchInput {
-        down(center) // Start a touch gesture at the center
-        moveBy(Offset(1000f, 0f)) // Drag horizontally by 50 pixels
-        up()
+    composeTestRule.onNodeWithTag(DRAGGABLE_ITEM).performTouchInput {
+      down(center)
+      moveBy(Offset(1000f, 0f))
+      up()
 
-        down(center) // Start a touch gesture at the center
-        moveBy(Offset(1000f, 0f)) // Drag horizontally by 50 pixels
-        up()
-      }
+      down(center)
+      moveBy(Offset(1000f, 0f))
+      up()
     }
 
     advanceUntilIdle()
