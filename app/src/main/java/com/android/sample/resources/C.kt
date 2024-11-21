@@ -126,8 +126,8 @@ object C {
     }
 
     // RecipesViewModel
-    const val MINIMUM_RECIPES_BEFORE_FETCH = 3
-    const val NUMBER_RECIPES_TO_FETCH = 2
+    const val MINIMUM_RECIPES_BEFORE_FETCH = 5
+    const val NUMBER_RECIPES_TO_FETCH = 15
 
     // ImageRepositoryFirebase
     const val USER_IMAGE_DIR = "images/user/"
@@ -161,7 +161,14 @@ object C {
     const val MEAL_DB_CATEGORY_ARRAY = "categories"
 
     // FirestoreRecipeRepository
-    const val FIRESTORE_COLLECTION_NAME = "Recipes with new Instructions"
+    object FirestoreRecipesRepository {
+      const val FIRESTORE_COLLECTION_NAME = "Recipes with new Instructions"
+      const val MAX_FIRESTORE_FETCH = 5
+      const val NO_RECIPE_FOUND_MSG = "No recipes found"
+      const val NOT_ENOUGH_RECIPE_MSG = "Not enough recipes found"
+      const val REPOSITORY_TAG_MSG = "FirestoreRecipesRepository"
+      const val ERROR_GETTING_DOCUMENT = "Error getting documents"
+    }
 
     // Values for storage
     const val FIRESTORE_RECIPE_NAME = "name"
@@ -356,7 +363,7 @@ object C {
       const val BUTTON_RADIUS = 12
       const val BUTTON_PADDING = 12
       const val ANIMATION_PADDING_TOP = 64
-      const val ANIMATION_SWIPE_TIME = 50
+      const val ANIMATION_SWIPE_TIME = 60
       const val ANIMATION_OPACITY_TIME = 300
       const val ANIMATION_OPACITY_MIN = 0f
       const val ANIMATION_OPACITY_MAX = 1f

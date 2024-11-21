@@ -83,7 +83,6 @@ import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_RECIPE_R
 import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_RECIPE_ROUND_ROW
 import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_RECIPE_STAR_SIZE
 import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_TIME_DISPLAY_RATE
-import com.android.sample.resources.C.Tag.LOADING
 import com.android.sample.resources.C.Tag.PADDING
 import com.android.sample.resources.C.Tag.SMALL_PADDING
 import com.android.sample.resources.C.Tag.SwipePage.RATE_VALUE
@@ -126,7 +125,8 @@ fun RecipeOverview(
       content = { paddingValues ->
         Column(
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.Start,
+            horizontalAlignment =
+                if (currentRecipe == null) Alignment.CenterHorizontally else Alignment.Start,
             modifier =
                 Modifier.testTag(DRAGGABLE_ITEM)
                     .fillMaxSize()
@@ -136,7 +136,7 @@ fun RecipeOverview(
                 LoadingCook()
                 Spacer(modifier = Modifier.size(SMALL_PADDING.dp))
                 Text(
-                    text = LOADING,
+                    text = stringResource(R.string.unable_loading),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSecondary)
               } else {
