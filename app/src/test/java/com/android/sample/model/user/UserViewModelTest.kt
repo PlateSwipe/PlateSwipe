@@ -6,11 +6,15 @@ import com.android.sample.model.ingredient.FirestoreIngredientRepository
 import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.recipe.FirestoreRecipesRepository
 import com.android.sample.model.recipe.Recipe
+import com.android.sample.resources.C.Tag.UserViewModel.FAILED_TO_DELETE_IMAGE
+import com.android.sample.resources.C.Tag.UserViewModel.FAILED_TO_DELETE_RECIPE
 import com.android.sample.resources.C.Tag.UserViewModel.FAILED_TO_FETCH_CREATED_RECIPE_FROM_DATABASE_ERROR
 import com.android.sample.resources.C.Tag.UserViewModel.FAILED_TO_FETCH_INGREDIENT_FROM_DATABASE_ERROR
 import com.android.sample.resources.C.Tag.UserViewModel.FAILED_TO_FETCH_LIKED_RECIPE_FROM_DATABASE_ERROR
+import com.android.sample.resources.C.Tag.UserViewModel.IMAGE_DELETION_SUCCESSFULY
 import com.android.sample.resources.C.Tag.UserViewModel.LOG_TAG
 import com.android.sample.resources.C.Tag.UserViewModel.NOT_FOUND_INGREDIENT_IN_DATABASE_ERROR
+import com.android.sample.resources.C.Tag.UserViewModel.RECIPE_DELETED_SUCCESSFULY
 import com.android.sample.ui.utils.testIngredients
 import com.android.sample.ui.utils.testRecipes
 import com.android.sample.ui.utils.testUsers
@@ -50,6 +54,14 @@ class UserViewModelTest {
   @Suppress("UNCHECKED_CAST")
   private val onSuccessClassCreatedRecipes: Class<Function1<Recipe, Unit>> =
       Function1::class.java as Class<Function1<Recipe, Unit>>
+
+  @Suppress("UNCHECKED_CAST")
+  private val onSuccessRecipeDeletionClass: Class<Function0<Unit>> =
+      Function0::class.java as Class<Function0<Unit>>
+
+  @Suppress("UNCHECKED_CAST")
+  private val onSuccessImageDeletionClass: Class<Function0<Unit>> =
+      Function0::class.java as Class<Function0<Unit>>
 
   @Suppress("UNCHECKED_CAST")
   private val onFailureClass: Class<Function1<Exception, Unit>> =
@@ -426,6 +438,60 @@ class UserViewModelTest {
 
       mockedLog.verify {
         Log.e(eq(LOG_TAG), eq(FAILED_TO_FETCH_CREATED_RECIPE_FROM_DATABASE_ERROR), any<Exception>())
+      }
+    }
+  }
+
+  @Test
+  fun `test deletion of recipe and of its image from the database is successful`() {
+    val onSuccessRecipeDeletionCaptor: ArgumentCaptor<Function0<Unit>> =
+        ArgumentCaptor.forClass(onSuccessRecipeDeletionClass)
+
+    val onSuccessImageDeletionCaptor: ArgumentCaptor<Function0<Unit>> =
+        ArgumentCaptor.forClass(onSuccessImageDeletionClass)
+
+    doNothing()
+        .`when`(mockRecipeRepository)
+        .deleteRecipe(any(), capture(onSuccessRecipeDeletionCaptor), any())
+    doNothing()
+        .`when`(mockImageRepositoryFirebase)
+        .deleteImage(any(), any(), any(), capture(onSuccessImageDeletionCaptor), any())
+
+    mockStatic(Log::class.java).use { mockedLog ->
+      userViewModel.removeRecipeFromUserCreatedRecipes(recipeExample)
+      onSuccessRecipeDeletionCaptor.value.invoke()
+      onSuccessImageDeletionCaptor.value.invoke()
+
+      mockedLog.verify {
+        Log.i(LOG_TAG, RECIPE_DELETED_SUCCESSFULY)
+        Log.i(LOG_TAG, IMAGE_DELETION_SUCCESSFULY)
+      }
+    }
+  }
+
+  @Test
+  fun `test deletion of recipe and of its image from the database failed`() {
+    val onFailureRecipeDeletionCaptor: ArgumentCaptor<Function1<Exception, Unit>> =
+        ArgumentCaptor.forClass(onFailureClass)
+
+    val onFailureImageDeletionCaptor: ArgumentCaptor<Function1<Exception, Unit>> =
+        ArgumentCaptor.forClass(onFailureClass)
+
+    doNothing()
+        .`when`(mockRecipeRepository)
+        .deleteRecipe(any(), any(), capture(onFailureRecipeDeletionCaptor))
+    doNothing()
+        .`when`(mockImageRepositoryFirebase)
+        .deleteImage(any(), any(), any(), any(), capture(onFailureImageDeletionCaptor))
+
+    mockStatic(Log::class.java).use { mockedLog ->
+      userViewModel.removeRecipeFromUserCreatedRecipes(recipeExample)
+      onFailureRecipeDeletionCaptor.value.invoke(Exception())
+      onFailureImageDeletionCaptor.value.invoke(Exception())
+
+      mockedLog.verify {
+        Log.e(eq(LOG_TAG), eq(FAILED_TO_DELETE_RECIPE), any<Exception>())
+        Log.e(eq(LOG_TAG), eq(FAILED_TO_DELETE_IMAGE), any<Exception>())
       }
     }
   }

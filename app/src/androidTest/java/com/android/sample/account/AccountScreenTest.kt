@@ -21,6 +21,7 @@ import com.android.sample.resources.C.TestTag.AccountScreen.USERNAME_TEST_TAG
 import com.android.sample.resources.C.TestTag.RecipeList.CANCEL_BUTTON
 import com.android.sample.resources.C.TestTag.RecipeList.CONFIRMATION_BUTTON
 import com.android.sample.resources.C.TestTag.RecipeList.CONFIRMATION_POP_UP
+import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_CARD_TEST_TAG
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_LIST_TEST_TAG
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_TITLE_TEST_TAG
 import com.android.sample.ui.account.AccountScreen
@@ -137,6 +138,32 @@ class AccountScreenTest {
             useUnmergedTree = true)
         .assertIsDisplayed()
         .performClick()
+    composeTestRule.onNodeWithTag(CONFIRMATION_POP_UP).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CONFIRMATION_BUTTON).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CONFIRMATION_BUTTON).assertHasClickAction()
+    composeTestRule.onNodeWithTag(CANCEL_BUTTON).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CANCEL_BUTTON).assertHasClickAction()
+  }
+
+  @Test
+  fun testDeleteCreatedRecipePopUpDisplayed() {
+    composeTestRule.setContent {
+      SampleAppTheme { AccountScreen(mockNavigationActions, userViewModel) }
+    }
+
+    composeTestRule.onNodeWithTag(CREATED_RECIPES_BUTTON_TEST_TAG).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CREATED_RECIPES_BUTTON_TEST_TAG).assertHasClickAction()
+    composeTestRule.onNodeWithTag(CREATED_RECIPES_BUTTON_TEST_TAG).performClick()
+
+    composeTestRule.onNodeWithTag(RECIPE_CARD_TEST_TAG).assertIsDisplayed()
+    composeTestRule
+        .onNode(
+            hasAnySibling(hasText(dummyRecipes[1].name))
+                .and(hasContentDescription(RECIPE_FAVORITE_ICON_CONTENT_DESCRIPTION)),
+            useUnmergedTree = true)
+        .assertIsDisplayed()
+        .performClick()
+
     composeTestRule.onNodeWithTag(CONFIRMATION_POP_UP).assertIsDisplayed()
     composeTestRule.onNodeWithTag(CONFIRMATION_BUTTON).assertIsDisplayed()
     composeTestRule.onNodeWithTag(CONFIRMATION_BUTTON).assertHasClickAction()
