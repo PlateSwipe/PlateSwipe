@@ -478,7 +478,12 @@ class FirestoreRecipesRepositoryTest {
     // Set up a mock recipe document
     `when`(mockDocumentSnapshot.id).thenReturn("random_id_1")
     `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_NAME)).thenReturn("Test Recipe")
-    `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_INSTRUCTIONS)).thenReturn("Instructions")
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INSTRUCTIONS_TEXT))
+        .thenReturn(listOf("Instructions1", "Instructions2", "Instructions3"))
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INSTRUCTION_TIME))
+        .thenReturn(listOf("Time1", "", "Time3"))
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INSTRUCTION_ICON))
+        .thenReturn(listOf("Cook", "", "Fire"))
     `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_PICTURE_ID)).thenReturn("ThumbUrl")
     `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INGREDIENTS)).thenReturn(listOf("Ingredient1"))
     `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_MEASUREMENTS)).thenReturn(listOf("1 tsp"))
