@@ -1,5 +1,6 @@
 package com.android.sample.screen
 
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -150,8 +151,15 @@ class SwipePageTest : TestCase() {
     composeTestRule.onNodeWithTag(DRAGGABLE_ITEM).assertIsDisplayed()
 
     // Perform multiple swipeLeft gestures in a loop
-    repeat(2) {
-      composeTestRule.onNodeWithTag(DRAGGABLE_ITEM).performTouchInput { swipeLeft(0f, -10000f, 20) }
+
+    composeTestRule.onNodeWithTag(DRAGGABLE_ITEM).performTouchInput {
+      down(center) // Start a touch gesture at the center
+      moveBy(Offset(-1000f, 0f)) // Drag horizontally by 50 pixels
+      up()
+
+      down(center) // Start a touch gesture at the center
+      moveBy(Offset(-1000f, 0f)) // Drag horizontally by 50 pixels
+      up()
     }
 
     advanceUntilIdle()
@@ -174,7 +182,15 @@ class SwipePageTest : TestCase() {
 
     // Perform multiple swipeLeft gestures in a loop
     repeat(2) {
-      composeTestRule.onNodeWithTag(DRAGGABLE_ITEM).performTouchInput { swipeRight(0f, 10000f, 20) }
+      composeTestRule.onNodeWithTag(DRAGGABLE_ITEM).performTouchInput {
+        down(center) // Start a touch gesture at the center
+        moveBy(Offset(1000f, 0f)) // Drag horizontally by 50 pixels
+        up()
+
+        down(center) // Start a touch gesture at the center
+        moveBy(Offset(1000f, 0f)) // Drag horizontally by 50 pixels
+        up()
+      }
     }
 
     advanceUntilIdle()
@@ -256,11 +272,9 @@ class SwipePageTest : TestCase() {
 
     // Simulate a drag event
     composeTestRule.onNodeWithTag(DRAGGABLE_ITEM).performTouchInput {
-      down(center) // Start touch at the center of the draggable item
-      move(2)
-    }
-    composeTestRule.onNodeWithTag(DRAGGABLE_ITEM).performTouchInput {
-      up() // This should trigger `onDragCancel`
+      down(center) // Start a touch gesture at the center
+      moveBy(Offset(50f, 0f)) // Drag horizontally by 50 pixels
+      cancel() // Cancel the drag
     }
     advanceUntilIdle()
 

@@ -525,8 +525,6 @@ private suspend fun animateCard(
       blockRetrieveNextRecipe()
     }
 
-    // delay the animation to allow the user to see the swipe animation
-    // delay(ANIMATION_SWIPE_TIME.toLong())
     updateDisplayCard()
     endSwipe()
     offsetX.snapTo(INITIAL_OFFSET_X)
