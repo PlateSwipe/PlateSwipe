@@ -267,7 +267,7 @@ class RecipeOverviewTest {
         .performClick()
     composeTestRule.onNodeWithTag(INSTRUCTIONS_VIEW, useUnmergedTree = true).assertIsDisplayed()
 
-    val displayedinstructionsLength = 2
+    val displayedinstructionsLength = 1 // adapted to small phone
     val allInstructionsLength = testRecipes[0].instructions.size
     composeTestRule
         .onAllNodesWithTag("InstructionTitle", useUnmergedTree = true)
