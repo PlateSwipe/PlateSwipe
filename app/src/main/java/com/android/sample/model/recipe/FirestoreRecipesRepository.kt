@@ -13,6 +13,7 @@ import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_PICTURE_ID
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_PRICE
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_TIME
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_URL
+import com.android.sample.resources.C.Tag.FirestoreRecipesRepository.ERROR_GETTING_DOCUMENT
 import com.android.sample.resources.C.Tag.FirestoreRecipesRepository.FIRESTORE_COLLECTION_NAME
 import com.android.sample.resources.C.Tag.FirestoreRecipesRepository.MAX_FIRESTORE_FETCH
 import com.android.sample.resources.C.Tag.FirestoreRecipesRepository.NOT_ENOUGH_RECIPE_MSG
@@ -192,7 +193,7 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
             }
           } else {
             task.exception?.let { e ->
-              Log.e(REPOSITORY_TAG_MSG, "Error getting documents", e)
+              Log.e(REPOSITORY_TAG_MSG, ERROR_GETTING_DOCUMENT, e)
               onFailure(e)
             }
           }

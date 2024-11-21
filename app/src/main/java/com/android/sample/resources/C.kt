@@ -167,6 +167,7 @@ object C {
       const val NO_RECIPE_FOUND_MSG = "No recipes found"
       const val NOT_ENOUGH_RECIPE_MSG = "Not enough recipes found"
       const val REPOSITORY_TAG_MSG = "FirestoreRecipesRepository"
+      const val ERROR_GETTING_DOCUMENT = "Error getting documents"
     }
 
     // Values for storage

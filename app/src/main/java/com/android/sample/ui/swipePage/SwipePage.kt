@@ -460,9 +460,13 @@ private fun getTarget(
     offsetX: Animatable<Float, AnimationVector1D>,
     dragAmount: Float,
     swipeThreshold: Float
-) =
-    if (offsetX.value > 0) max(offsetX.value + dragAmount, swipeThreshold)
-    else min(offsetX.value + dragAmount, -swipeThreshold)
+): Float {
+  return if (offsetX.value > 0) {
+    max(offsetX.value + dragAmount, swipeThreshold)
+  } else {
+    min(offsetX.value + dragAmount, -swipeThreshold)
+  }
+}
 
 /**
  * Manage the Recipe Liked state
