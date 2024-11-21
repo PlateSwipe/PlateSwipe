@@ -135,7 +135,7 @@ fun RecipeListInstructionsContent(
                         0.7f to Color.Red,
                         1f to Color.Transparent))
                 .testTag(INSTRUCTION_LIST)) {
-          items(createRecipeViewModel.getRecipeInstructions().size) { index ->
+          items(createRecipeViewModel.getRecipeListOfInstructions().size) { index ->
             InstructionValue(
                 createRecipeViewModel = createRecipeViewModel,
                 index = index,

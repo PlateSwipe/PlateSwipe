@@ -242,7 +242,7 @@ class CreateRecipeViewModel(
    *
    * @return The instructions for the recipe.
    */
-  fun getRecipeInstructions(): List<Instruction> {
+  fun getRecipeListOfInstructions(): List<Instruction> {
     return recipeBuilder.getInstructions()
   }
 
