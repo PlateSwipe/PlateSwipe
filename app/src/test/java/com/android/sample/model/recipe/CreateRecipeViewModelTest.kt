@@ -516,7 +516,7 @@ class CreateRecipeViewModelTest {
     val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
 
     createRecipeViewModel.updateRecipeName("Chocolat") // Blank name
-    createRecipeViewModel.updateRecipeInstructions("ww www www")
+    createRecipeViewModel.addRecipeInstruction(Instruction("www www www", null, null))
     createRecipeViewModel.setBitmap(bitmap, 90)
 
     `when`(mockRepository.getNewUid()).thenReturn(defaultRecipe.uid)
