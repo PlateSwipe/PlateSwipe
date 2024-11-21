@@ -180,6 +180,7 @@ object C {
 
     // FirestoreIngredientRepository
     const val FIRESTORE_INGREDIENT_COLLECTION_NAME = "ingredients"
+    const val FIRESTORE_INGREDIENT_COLLECTION_NAME_TEST = "ingredients test"
     // Values for storage
     const val FIRESTORE_INGREDIENT_NAME = "name"
     const val FIRESTORE_INGREDIENT_BARCODE = "barCode"
@@ -189,7 +190,17 @@ object C {
     const val FIRESTORE_INGREDIENT_IMAGES = "images"
 
     // AggregatorIngredientRepository
+    const val AGGREGATOR_LOG_TAG = "AggregatorIngredientRepository"
+    const val AGGREGATOR_ERROR_FIRESTORE_ADD_INGR = "Error adding ingredient to Firestore:"
+    const val AGGREGATOR_SUCCESS_FIRESTORE_ADD_INGR = "Ingredient successfully updated in Firestore"
     const val AGGREGATOR_TAG_ON_INGREDIENT_ADDED = "Ingredient added successfully"
+    const val AGGREGATOR_ERROR_UPLOAD_IMAGE = "Failed to upload all images"
+    const val AGGREGATOR_ERROR_UPLOAD_FORMAT_IMAGE = "Error uploading format"
+    const val AGGREGATOR_ERROR_OPENFOOD_INGR_NOT_FOUND = "Ingredient not found in OpenFoodFacts: "
+    const val AGGREGATOR_ERROR_OPENFOOD_INGR_NULL = "Ingredient from OpenFoodFacts is null: "
+    const val AGGREGATOR_ERROR_GET_INGR_FIRESTORE = "Error getting ingredient from Firestore:"
+    const val OPENFOODFACT_REPO_IMAGE_ULR_INVALID = "Image URLs are not provided"
+    const val INGREDIENT_VIEWMODEL_LOG_TAG = "IngredientViewModel"
 
     // OpenFoodFactsIngredientRepository
     const val OPEN_FOOD_FACTS_URL = "https://world.openfoodfacts.org"
@@ -199,20 +210,25 @@ object C {
     const val PRODUCT_ID = "_id"
     const val PRODUCT_QUANTITY = "quantity"
     const val PRODUCT_CATEGORIES = "categories"
-    const val PRODUCT_FRONT_IMAGE_URL = "image_front_url"
-    const val PRODUCT_FRONT_IMAGE = "display_normal"
+    const val PRODUCT_FRONT_IMAGE_NORMAL_URL = "image_front_url"
+    const val PRODUCT_FRONT_IMAGE_NORMAL = "display_normal"
     const val PRODUCT_FRONT_IMAGE_THUMBNAIL_URL = "image_front_thumb_url"
     const val PRODUCT_FRONT_IMAGE_THUMBNAIL = "display_thumbnail"
     const val PRODUCT_FRONT_IMAGE_SMALL_URL = "image_front_small_url"
     const val PRODUCT_FRONT_IMAGE_SMALL = "display_small"
     const val INGREDIENT_IMAGE_ADDED_SUCCESSFULLY =
         "Ingredient image added successfully to the storage"
+    const val INGREDIENT_UPDATE_FAILED_MESSAGE = "Failed to update ingredient"
+    const val IMAGE_UPLOAD_FAILED_MESSAGE = "Image upload failed"
 
     // EXCEPTION MESSAGES
     const val LIMIT_MUST_BE_POSITIVE_MESSAGE = "Limit must be greater than 0"
     const val UNSUPPORTED_MESSAGE = "Operation not supported"
     const val INGREDIENT_NOT_FOUND_MESSAGE = "Ingredient not found"
+    const val IMAGE_UPLOAD_FAILED = "Image upload failed"
+    const val IMAGE_URL_RETRIEVAL_FAILED = "Image url retrieval failed"
     const val INGREDIENT_NAME_NOT_PROVIDED = "Ingredient name is required but has not been provided"
+    const val INGREDIENT_UPLOAD_FAILED = "Ingredient upload failed"
 
     // Camera Actions
     const val LOG_TAG_CAMERA_ACTIONS = "CameraActions"

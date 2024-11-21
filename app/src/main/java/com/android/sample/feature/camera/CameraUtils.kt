@@ -77,6 +77,7 @@ fun openGallery(photoPickerLauncher: ManagedActivityResultLauncher<PickVisualMed
   photoPickerLauncher.launch(
       PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
 }
+
 /**
  * Converts a URI to a Bitmap.
  *

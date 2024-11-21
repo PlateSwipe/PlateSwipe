@@ -1,8 +1,12 @@
 package com.android.sample.model.ingredient
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.android.sample.model.image.ImageRepositoryFirebase
+import com.android.sample.model.image.ImageUploader
+import com.android.sample.resources.C.Tag.INGREDIENT_NOT_FOUND_MESSAGE
+import com.android.sample.resources.C.Tag.INGREDIENT_VIEWMODEL_LOG_TAG
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.storage
@@ -42,7 +46,10 @@ class IngredientViewModel(private val repository: IngredientRepository) : ViewMo
     repository.get(
         barCode,
         onSuccess = { ingredient -> _ingredient.value = ingredient },
-        onFailure = { _ingredient.value = null })
+        onFailure = {
+          Log.e(INGREDIENT_VIEWMODEL_LOG_TAG, INGREDIENT_NOT_FOUND_MESSAGE)
+          _ingredient.value = null
+        })
   }
 
   /**
@@ -106,8 +113,9 @@ class IngredientViewModel(private val repository: IngredientRepository) : ViewMo
             return IngredientViewModel(
                 AggregatorIngredientRepository(
                     FirestoreIngredientRepository(Firebase.firestore),
-                    OpenFoodFactsIngredientRepository(
-                        OkHttpClient(), ImageRepositoryFirebase(Firebase.storage))))
+                    OpenFoodFactsIngredientRepository(OkHttpClient()),
+                    ImageRepositoryFirebase(Firebase.storage),
+                    ImageUploader()))
                 as T
           }
         }

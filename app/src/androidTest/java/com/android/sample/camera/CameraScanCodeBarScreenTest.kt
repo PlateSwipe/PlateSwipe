@@ -10,6 +10,9 @@ import androidx.test.rule.GrantPermissionRule
 import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.ingredient.IngredientRepository
 import com.android.sample.model.ingredient.IngredientViewModel
+import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_NORMAL_URL
+import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_SMALL_URL
+import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_THUMBNAIL_URL
 import com.android.sample.ui.camera.BarCodeFrame
 import com.android.sample.ui.camera.CameraScanCodeBarScreen
 import com.android.sample.ui.camera.IngredientOverlay
@@ -53,7 +56,11 @@ class CameraScanCodeBarScreenTest {
             name = "Test Ingredient",
             brands = "Test Brand",
             categories = listOf(""),
-            images = listOf(""))
+            images =
+                mutableMapOf(
+                    PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
+                    PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
+                    PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
 
     `when`(mockRepo.get(any(), any(), any())).thenAnswer { invocation ->
       val onSuccess = invocation.getArgument<(Ingredient) -> Unit>(1)
