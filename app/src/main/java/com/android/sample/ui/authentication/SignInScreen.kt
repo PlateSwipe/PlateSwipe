@@ -57,6 +57,7 @@ import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
 import com.android.sample.R
 import com.android.sample.animation.LoadingAnimation
+import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C.Dimension.SignInScreen.AVOCADO_MVM_DURATION
 import com.android.sample.resources.C.Dimension.SignInScreen.AVOCADO_MVM_RANGE
 import com.android.sample.resources.C.Dimension.SignInScreen.AVOCADO_ROTATION
@@ -162,7 +163,7 @@ import kotlinx.coroutines.tasks.await
  * @param navigationActions: NavigationActions object
  */
 @Composable
-fun SignInScreen(navigationActions: NavigationActions) {
+fun SignInScreen(navigationActions: NavigationActions, userViewModel: UserViewModel) {
   val context = LocalContext.current
   val registered = remember { mutableStateOf(false) }
   var isProcessing by remember { mutableStateOf(false) }
@@ -202,6 +203,7 @@ fun SignInScreen(navigationActions: NavigationActions) {
                             Toast.makeText(context, LOGIN_SUCCESSFUL, Toast.LENGTH_SHORT).show()
                             registered.value = true
                             isProcessing = false
+                            userViewModel.getCurrentUser()
                           },
                           onAuthError = {
                             Log.e(SIGN_IN_TAG, "$SIGN_IN_FAILED${it.message}")
