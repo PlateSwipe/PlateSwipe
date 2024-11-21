@@ -573,7 +573,7 @@ fun InstructionValue(instruction: Instruction, index: Int) {
               Column(modifier = Modifier.testTag("InstructionInfo")) {
                 Text(
                     modifier = Modifier.testTag("InstructionTitle"),
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     text =
                         "${stringResource(R.string.RecipeListInstructionsScreen_Step)} ${officialStep}",
                     style = MaterialTheme.typography.bodyMedium,
@@ -582,7 +582,7 @@ fun InstructionValue(instruction: Instruction, index: Int) {
                 // This text represents the time that it takes to do the step
                 if (!instruction.time.isNullOrBlank()) {
                   Text(
-                      color = Color.Black,
+                      color = MaterialTheme.colorScheme.onPrimary,
                       text =
                           "${instruction.time} ${stringResource(R.string.RecipeListInstructionsScreen_Minutes)}",
                       style = MaterialTheme.typography.bodySmall,
@@ -594,13 +594,13 @@ fun InstructionValue(instruction: Instruction, index: Int) {
                       if (isExpanded) Icons.Default.ArrowDownward else Icons.Default.ArrowUpward,
                   contentDescription = "Expand",
                   modifier = Modifier.size(ICON_SIZE.dp).testTag("ArrowIcon"),
-                  tint = Color.Black)
+                  tint = MaterialTheme.colorScheme.onPrimary)
             }
       }
   if (isExpanded) {
     Text(
         text = instruction.description,
-        color = Color.Black,
+        color = MaterialTheme.colorScheme.onPrimary,
         style = MaterialTheme.typography.bodyMedium,
         modifier = Modifier.padding(SMALL_PADDING.dp).testTag("InstructionText"))
   }
