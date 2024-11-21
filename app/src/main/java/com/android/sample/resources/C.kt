@@ -22,7 +22,7 @@ object C {
     // Error
     const val ERROR_NULL_IMAGE = "Image is null"
     const val ERROR_STR_MEAL_BLANK = "Recipe name is required and cannot be blank."
-    const val ERROR_STR_INSTR_BLANK = "Recipe instructions are required and cannot be blank."
+    const val ERROR_STR_INSTR_EMPTY = "Recipe instructions are required and cannot be empty."
     const val ERROR_LIST_INGREDIENT_EMPTY = "At least one ingredient is required."
     const val ERROR_STR_THUMBNAIL = "Recipe thumbnail is required and cannot be blank."
     // PlateSwipeButton
@@ -162,7 +162,7 @@ object C {
 
     // FirestoreRecipeRepository
     object FirestoreRecipesRepository {
-      const val FIRESTORE_COLLECTION_NAME = "recipes with images"
+      const val FIRESTORE_COLLECTION_NAME = "Recipes with new Instructions"
       const val MAX_FIRESTORE_FETCH = 5
       const val NO_RECIPE_FOUND_MSG = "No recipes found"
       const val NOT_ENOUGH_RECIPE_MSG = "Not enough recipes found"
@@ -175,7 +175,9 @@ object C {
     const val FIRESTORE_RECIPE_CATEGORY = "category"
     const val FIRESTORE_RECIPE_AREA = "area"
     const val FIRESTORE_RECIPE_PICTURE_ID = "pictureID"
-    const val FIRESTORE_RECIPE_INSTRUCTIONS = "instructions"
+    const val FIRESTORE_RECIPE_INSTRUCTIONS_TEXT = "instructions_text"
+    const val FIRESTORE_RECIPE_INSTRUCTION_TIME = "instruction_time"
+    const val FIRESTORE_RECIPE_INSTRUCTION_ICON = "instruction_icon"
     const val FIRESTORE_RECIPE_INGREDIENTS = "ingredients"
     const val FIRESTORE_RECIPE_MEASUREMENTS = "measurements"
     const val FIRESTORE_RECIPE_TIME = "time"
@@ -749,6 +751,10 @@ object C {
 
     object Instruction {
       const val DEFAULT_ICON = ICON_CHEF_HAT
+    }
+
+    object RecipeBuilder {
+      const val OUT_OF_BOUNDS_MESSAGE = "Index out of bounds"
     }
   }
 }

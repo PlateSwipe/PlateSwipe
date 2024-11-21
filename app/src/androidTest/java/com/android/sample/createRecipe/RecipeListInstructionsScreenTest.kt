@@ -7,6 +7,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.model.recipe.FirestoreRecipesRepository
+import com.android.sample.model.recipe.Instruction
 import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.INSTRUCTION_LIST_ITEM
 import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.INSTRUCTION_TEXT
 import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.NEXT_STEP_BUTTON
@@ -15,7 +16,6 @@ import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen
 import com.android.sample.ui.createRecipe.RecipeListInstructionsScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
-import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
@@ -37,12 +37,11 @@ class RecipeListInstructionsScreenTest {
   fun setUp() {
     navigationActions = mockk(relaxed = true)
     createRecipeViewModel = spyk(CreateRecipeViewModel(repository, repoImg))
+    createRecipeViewModel.addRecipeInstruction(Instruction("Instruction 1", "10"))
+    createRecipeViewModel.updateRecipeName("Recipe Name")
+    createRecipeViewModel.updateRecipeTime("30")
 
     Intents.init()
-
-    every { createRecipeViewModel.getRecipeName() } returns "Recipe Name"
-    every { createRecipeViewModel.getRecipeTime() } returns "30"
-    every { createRecipeViewModel.getRecipeInstructions() } returns "Instructions"
   }
 
   @After

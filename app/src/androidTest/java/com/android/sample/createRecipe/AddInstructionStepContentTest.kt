@@ -128,6 +128,6 @@ class AddInstructionStepScreenTest {
     advanceUntilIdle()
 
     // Verify time and category were updated with the new values
-    verify { createRecipeViewModel.updateRecipeTime("10") }
+    verify { createRecipeViewModel.addRecipeInstruction(any()) }
   }
 }

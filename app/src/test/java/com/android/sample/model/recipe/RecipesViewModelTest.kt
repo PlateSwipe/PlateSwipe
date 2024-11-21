@@ -298,7 +298,7 @@ class RecipesViewModelTest {
                 name = "Beef Stroganoff",
                 category = "Non-Vegetarian",
                 origin = "Russian",
-                instructions = "Instructions here...",
+                instructions = listOf(Instruction("Instructions here...")),
                 strMealThumbUrl = "https://www.example.com/beef-stroganoff/",
                 ingredientsAndMeasurements =
                     listOf(Pair("Beef", "1 pound"), Pair("Sour cream", "1 cup")))
@@ -370,7 +370,7 @@ class RecipesViewModelTest {
                     name = "Beef Stroganoff",
                     category = "Non-Vegetarian",
                     origin = "Russian",
-                    instructions = "Instructions here...",
+                    instructions = listOf(Instruction("Instructions here...")),
                     strMealThumbUrl = "https://www.example.com/beef-stroganoff/",
                     ingredientsAndMeasurements =
                         listOf(Pair("Beef", "1 pound"), Pair("Sour cream", "1 cup"))),
@@ -379,7 +379,7 @@ class RecipesViewModelTest {
                     name = "Chicken Curry",
                     category = "Non-Vegetarian",
                     origin = "Indian",
-                    instructions = "Instructions here...",
+                    instructions = listOf(Instruction("Instructions here...")),
                     strMealThumbUrl = "https://www.example.com/chicken-curry/",
                     ingredientsAndMeasurements =
                         listOf(Pair("Chicken", "1 kg"), Pair("Curry powder", "2 tbsp"))))

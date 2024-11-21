@@ -135,22 +135,13 @@ fun RecipeListInstructionsContent(
                         0.7f to Color.Red,
                         1f to Color.Transparent))
                 .testTag(INSTRUCTION_LIST)) {
-
-          /**
-           * This Part will be later improved by adding the list of instructions
-           *
-           * items(createRecipeViewModel.getInstructions().length) { index ->
-           * InstructionValue(createRecipeViewModel = createRecipeViewModel, index = index, time =
-           * recipeBuilder.getTime(), onClick =
-           * {navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_INSTRUCTION)}) }
-           */
-          item {
+          items(createRecipeViewModel.getRecipeListOfInstructions().size) { index ->
             InstructionValue(
                 createRecipeViewModel = createRecipeViewModel,
-                index = 0,
-                time = createRecipeViewModel.getRecipeTime(),
-                onClick = { index ->
-                  createRecipeViewModel.selectDescription(index = index)
+                index = index,
+                time = createRecipeViewModel.getRecipeInstruction(index).time,
+                onClick = { x ->
+                  createRecipeViewModel.selectInstruction(index = x)
                   navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_INSTRUCTION)
                 })
           }
@@ -207,11 +198,7 @@ fun InstructionValue(
                 Image(
                     painter =
                         painterResource(
-                            if (createRecipeViewModel.getIcon(index) != null) {
-                              createRecipeViewModel.getIcon(index)!!.iconResId
-                            } else {
-                              R.drawable.fire
-                            }),
+                            id = createRecipeViewModel.getRecipeInstruction(index).icon.iconResId),
                     contentDescription = "Icon",
                     modifier = Modifier.size(ICON_SIZE.dp).testTag(RECIPE_LIST_INSTRUCTION_ICON))
 

@@ -4,7 +4,9 @@ import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_AREA
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_CATEGORY
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_DIFFICULTY
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_INGREDIENTS
-import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_INSTRUCTIONS
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_INSTRUCTIONS_TEXT
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_INSTRUCTION_ICON
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_INSTRUCTION_TIME
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_MEASUREMENTS
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_NAME
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_PICTURE_ID
@@ -31,7 +33,7 @@ data class Recipe(
     val name: String,
     val category: String? = null,
     val origin: String? = null,
-    val instructions: String,
+    val instructions: List<Instruction>,
     val strMealThumbUrl: String,
     val ingredientsAndMeasurements: List<Pair<String, String>>,
     val time: String? = null,
@@ -46,20 +48,27 @@ data class Recipe(
     }
   }
 
-  /** Returns the list of ingredients and measurements. */
+  /**
+   * Converts the recipe object to a Firestore map.
+   *
+   * @return A map representing the recipe object.
+   */
   fun toFirestoreMap(): Map<String, Any?> {
     return mapOf(
         FIRESTORE_RECIPE_NAME to name,
         FIRESTORE_RECIPE_CATEGORY to category,
         FIRESTORE_RECIPE_AREA to origin,
         FIRESTORE_RECIPE_PICTURE_ID to strMealThumbUrl,
-        FIRESTORE_RECIPE_INSTRUCTIONS to instructions,
+        FIRESTORE_RECIPE_INSTRUCTIONS_TEXT to instructions.map { it.description },
+        FIRESTORE_RECIPE_INSTRUCTION_TIME to instructions.map { it.time ?: "" },
+        FIRESTORE_RECIPE_INSTRUCTION_ICON to instructions.map { it.iconType ?: "" },
         FIRESTORE_RECIPE_INGREDIENTS to ingredientsAndMeasurements.map { it.first },
         FIRESTORE_RECIPE_MEASUREMENTS to ingredientsAndMeasurements.map { it.second },
         FIRESTORE_RECIPE_TIME to time,
         FIRESTORE_RECIPE_DIFFICULTY to difficulty,
         FIRESTORE_RECIPE_PRICE to price,
-        FIRESTORE_RECIPE_URL to url)
+        FIRESTORE_RECIPE_URL to url,
+    )
   }
 
   /** object to get the list of categories. */
