@@ -146,13 +146,16 @@ fun IngredientListScreen(
                       IngredientPreview(ingredient, ingredientViewModel)
                     }
                   }
-              if (showError) {
-                Text(
-                    text = stringResource(R.string.ingredient_list_error),
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                    modifier = Modifier.align(Alignment.CenterHorizontally))
-              }
+              DisplayErrorMessage(
+                  showError = showError,
+                  errorMessage = {
+                    Text(
+                        text = stringResource(R.string.ingredient_list_error),
+                        color = MaterialTheme.colorScheme.error,
+                        style =
+                            MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                        modifier = Modifier.align(Alignment.CenterHorizontally))
+                  })
 
               // Box for the save button, positioned at the bottom center
               Box(
@@ -160,16 +163,11 @@ fun IngredientListScreen(
                   contentAlignment = Alignment.Center) {
                     Button(
                         onClick = {
-                          if (ingredientList.isEmpty()) {
-                            showError = true
-                          } else {
-                            showError = false
-                            for (ingredient in ingredientList) {
-                              createRecipeViewModel.addIngredientAndMeasurement(
-                                  ingredient.name, ingredient.quantity.toString())
-                            }
-                            navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_INSTRUCTION)
-                          }
+                          handleIngredientList(
+                              ingredientList = ingredientList,
+                              showError = { showError = it },
+                              createRecipeViewModel = createRecipeViewModel,
+                              navigationActions = navigationActions)
                         },
                         modifier =
                             Modifier.width(BUTTON_WIDTH)
@@ -192,6 +190,45 @@ fun IngredientListScreen(
                   }
             }
       })
+}
+
+/**
+ * Helper function to handle ingredient list validation and navigation.
+ *
+ * @param ingredientList The list of ingredients to validate.
+ * @param showError Callback to update the error state.
+ * @param createRecipeViewModel The view model to handle recipe creation.
+ * @param navigationActions The navigation actions to handle navigation.
+ */
+private fun handleIngredientList(
+    ingredientList: List<Ingredient>,
+    showError: (Boolean) -> Unit,
+    createRecipeViewModel: CreateRecipeViewModel,
+    navigationActions: NavigationActions
+) {
+  if (ingredientList.isEmpty()) {
+    showError(true)
+  } else {
+    showError(false)
+    for (ingredient in ingredientList) {
+      createRecipeViewModel.addIngredientAndMeasurement(
+          ingredient.name, ingredient.quantity.toString())
+    }
+    navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_INSTRUCTION)
+  }
+}
+
+/**
+ * Helper function to display the error message.
+ *
+ * @param showError Boolean indicating whether to show the error message.
+ * @param errorMessage A composable function that displays the error message.
+ */
+@Composable
+private fun DisplayErrorMessage(showError: Boolean, errorMessage: @Composable () -> Unit) {
+  if (showError) {
+    errorMessage()
+  }
 }
 
 /**
