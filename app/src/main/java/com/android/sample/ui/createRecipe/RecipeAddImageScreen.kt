@@ -297,7 +297,17 @@ fun AddImageContent(
                     }
                   }
                   Button(
-                      onClick = { navigationActions.navigateTo(Screen.PUBLISH_CREATED_RECIPE) },
+                      onClick = {
+                        if (isPictureTaken) {
+                          navigationActions.navigateTo(Screen.PUBLISH_CREATED_RECIPE)
+                        } else {
+                          Toast.makeText(
+                                  context,
+                                  context.getString(R.string.error_picture_not_taken),
+                                  Toast.LENGTH_SHORT)
+                              .show()
+                        }
+                      },
                       modifier =
                           Modifier.width(RECIPE_NAME_BUTTON_WIDTH)
                               .height(RECIPE_NAME_BUTTON_HEIGHT)
@@ -305,8 +315,7 @@ fun AddImageContent(
                                   color = lightCream,
                                   shape = RoundedCornerShape(size = C.Dimension.PADDING_4.dp))
                               .testTag("NextStepButton"),
-                      shape = RoundedCornerShape(C.Dimension.PADDING_4.dp),
-                      enabled = isPictureTaken) {
+                      shape = RoundedCornerShape(C.Dimension.PADDING_4.dp)) {
                         Text(
                             text = stringResource(R.string.next),
                             style = Typography.bodyMedium,

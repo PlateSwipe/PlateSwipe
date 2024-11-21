@@ -177,4 +177,18 @@ class ListIngredientScreenTest {
     // Verify that the updateQuantity method was called with the correct parameters
     assertEquals(updatedQuantity, ingredientViewModel.ingredientList.value[0].quantity)
   }
+
+  @Test
+  fun testErrorDisplayedWhenNoIngredients() {
+    // Remove all ingredients from the list to simulate an empty state
+    mockedIngredients.forEach { ingredient -> ingredientViewModel.removeIngredient(ingredient) }
+
+    // Click the "Next Step" button
+    composeTestRule.onNodeWithTag(NEXT_STEP_BUTTON).performClick()
+
+    // Verify that the error message is displayed
+    composeTestRule
+        .onNodeWithText("Please add at least one ingredient to proceed.", useUnmergedTree = true)
+        .assertIsDisplayed()
+  }
 }

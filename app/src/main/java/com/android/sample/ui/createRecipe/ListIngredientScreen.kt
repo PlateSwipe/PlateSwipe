@@ -91,6 +91,8 @@ fun IngredientListScreen(
     createRecipeViewModel: CreateRecipeViewModel
 ) {
   val ingredientList by ingredientViewModel.ingredientList.collectAsState()
+  var showError by remember { mutableStateOf(false) }
+
   PlateSwipeScaffold(
       navigationActions = navigationActions,
       selectedItem = navigationActions.currentRoute(),
@@ -144,6 +146,13 @@ fun IngredientListScreen(
                       IngredientPreview(ingredient, ingredientViewModel)
                     }
                   }
+              if (showError) {
+                Text(
+                    text = stringResource(R.string.ingredient_list_error),
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                    modifier = Modifier.align(Alignment.CenterHorizontally))
+              }
 
               // Box for the save button, positioned at the bottom center
               Box(
@@ -151,11 +160,16 @@ fun IngredientListScreen(
                   contentAlignment = Alignment.Center) {
                     Button(
                         onClick = {
-                          for (ingredient in ingredientList) {
-                            createRecipeViewModel.addIngredientAndMeasurement(
-                                ingredient.name, ingredient.quantity.toString())
+                          if (ingredientList.isEmpty()) {
+                            showError = true
+                          } else {
+                            showError = false
+                            for (ingredient in ingredientList) {
+                              createRecipeViewModel.addIngredientAndMeasurement(
+                                  ingredient.name, ingredient.quantity.toString())
+                            }
+                            navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_INSTRUCTION)
                           }
-                          navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_INSTRUCTION)
                         },
                         modifier =
                             Modifier.width(BUTTON_WIDTH)
