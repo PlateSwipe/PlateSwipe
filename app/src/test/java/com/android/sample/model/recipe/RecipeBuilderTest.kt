@@ -1,5 +1,6 @@
 package com.android.sample.model.recipe
 
+import com.android.sample.resources.C.Tag.ERROR_STR_INSTR_EMPTY
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertThrows
@@ -94,12 +95,12 @@ class RecipeBuilderTest {
   }
 
   @Test
-  fun `test build throws exception when strInstructions is blank`() {
+  fun `test build throws exception when strInstructions is empty`() {
     builder.setName("Recipe name")
     builder.addIngredientAndMeasurement("Ingredient", "Measurement")
 
     val exception = assertThrows(IllegalArgumentException::class.java) { builder.build() }
-    assertEquals("Recipe instructions are required and cannot be blank.", exception.message)
+    assertEquals(ERROR_STR_INSTR_EMPTY, exception.message)
   }
 
   @Test
