@@ -23,7 +23,7 @@ class FirestoreIngredientRepository(private val db: FirebaseFirestore) : Ingredi
     val brands = documentSnapshot.getString(C.Tag.FIRESTORE_INGREDIENT_BRANDS)
     val quantity = documentSnapshot.getString(FIRESTORE_INGREDIENT_QUANTITY)
     val categories = documentSnapshot[FIRESTORE_INGREDIENT_CATEGORIES] as List<String>
-    val images = documentSnapshot[FIRESTORE_INGREDIENT_IMAGES] as List<String>
+    val images = documentSnapshot[FIRESTORE_INGREDIENT_IMAGES] as MutableMap<String, String>
 
     if (name.isNullOrEmpty()) {
       throw Exception(C.Tag.INGREDIENT_NAME_NOT_PROVIDED)
@@ -94,7 +94,7 @@ class FirestoreIngredientRepository(private val db: FirebaseFirestore) : Ingredi
       onFailure: (Exception) -> Unit,
       count: Int = 20
   ) {
-    db.collection(C.Tag.FIRESTORE_INGREDIENT_COLLECTION_NAME)
+    db.collection(C.Tag.FIRESTORE_INGREDIENT_COLLECTION_NAME_TEST)
         .where(filter)
         .limit(count.toLong())
         .get()
@@ -129,10 +129,10 @@ class FirestoreIngredientRepository(private val db: FirebaseFirestore) : Ingredi
     if (ingredient.uid.isNullOrEmpty()) {
       addedIngredient =
           ingredient.copy(
-              uid = db.collection(C.Tag.FIRESTORE_INGREDIENT_COLLECTION_NAME).document().id)
+              uid = db.collection(C.Tag.FIRESTORE_INGREDIENT_COLLECTION_NAME_TEST).document().id)
     }
 
-    db.collection(C.Tag.FIRESTORE_INGREDIENT_COLLECTION_NAME)
+    db.collection(C.Tag.FIRESTORE_INGREDIENT_COLLECTION_NAME_TEST)
         .document(addedIngredient.uid!!)
         .set(addedIngredient)
         .addOnCompleteListener { result ->
