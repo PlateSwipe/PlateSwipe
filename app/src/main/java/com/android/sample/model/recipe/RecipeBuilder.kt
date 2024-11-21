@@ -1,7 +1,7 @@
 package com.android.sample.model.recipe
 
 import com.android.sample.resources.C.Tag.ERROR_LIST_INGREDIENT_EMPTY
-import com.android.sample.resources.C.Tag.ERROR_STR_INSTR_BLANK
+import com.android.sample.resources.C.Tag.ERROR_STR_INSTR_EMPTY
 import com.android.sample.resources.C.Tag.ERROR_STR_MEAL_BLANK
 import com.android.sample.resources.C.Tag.ERROR_STR_THUMBNAIL
 import com.android.sample.resources.C.TestTag.RecipeBuilder.OUT_OF_BOUNDS_MESSAGE
@@ -145,7 +145,7 @@ class RecipeBuilder {
   fun build(): Recipe {
     // Validation for essential fields
     require(name.isNotBlank()) { ERROR_STR_MEAL_BLANK }
-    require(instructions.isNotEmpty()) { ERROR_STR_INSTR_BLANK }
+    require(instructions.isNotEmpty()) { ERROR_STR_INSTR_EMPTY }
     require(ingredientsAndMeasurements.isNotEmpty()) { ERROR_LIST_INGREDIENT_EMPTY }
     require(strMealThumbUrl.isNotBlank()) { ERROR_STR_THUMBNAIL }
     return Recipe(

@@ -22,7 +22,7 @@ object C {
     // Error
     const val ERROR_NULL_IMAGE = "Image is null"
     const val ERROR_STR_MEAL_BLANK = "Recipe name is required and cannot be blank."
-    const val ERROR_STR_INSTR_BLANK = "Recipe instructions are required and cannot be blank."
+    const val ERROR_STR_INSTR_EMPTY = "Recipe instructions are required and cannot be empty."
     const val ERROR_LIST_INGREDIENT_EMPTY = "At least one ingredient is required."
     const val ERROR_STR_THUMBNAIL = "Recipe thumbnail is required and cannot be blank."
     // PlateSwipeButton
