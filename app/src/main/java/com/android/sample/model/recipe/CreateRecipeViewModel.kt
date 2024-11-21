@@ -257,6 +257,15 @@ class CreateRecipeViewModel(
   }
 
   /**
+   * Deletes the i th instruction of the recipe.
+   *
+   * @param index The index of the instruction.
+   */
+  fun deleteRecipeInstruction(index: Int) {
+    recipeBuilder.deleteInstruction(index)
+  }
+
+  /**
    * Gets the category of the recipe.
    *
    * @return The category of the recipe.

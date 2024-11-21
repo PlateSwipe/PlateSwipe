@@ -552,4 +552,12 @@ class CreateRecipeViewModelTest {
     createRecipeViewModel.publishRecipe(onSuccess = {}, onFailure = {})
     assertEquals("At least one ingredient is required.", createRecipeViewModel.publishStatus.value)
   }
+
+  @Test
+  fun `deleteInstruction deletes the instruction correctly`() {
+    val instruction = Instruction("Preheat oven to 180°C...")
+    createRecipeViewModel.addRecipeInstruction(instruction)
+    createRecipeViewModel.deleteRecipeInstruction(0)
+    assertTrue(createRecipeViewModel.getRecipeInstructions().isEmpty())
+  }
 }
