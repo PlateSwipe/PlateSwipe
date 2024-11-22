@@ -6,6 +6,7 @@ import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.hasAnySibling
 import androidx.compose.ui.test.hasContentDescription
+import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -22,6 +23,8 @@ import com.android.sample.resources.C.TestTag.RecipeList.CANCEL_BUTTON
 import com.android.sample.resources.C.TestTag.RecipeList.CONFIRMATION_BUTTON
 import com.android.sample.resources.C.TestTag.RecipeList.CONFIRMATION_POP_UP
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_CARD_TEST_TAG
+import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_DELETE_ICON_TEST_TAG
+import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_FAVORITE_ICON_TEST_TAG
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_LIST_TEST_TAG
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_TITLE_TEST_TAG
 import com.android.sample.ui.account.AccountScreen
@@ -134,7 +137,7 @@ class AccountScreenTest {
     composeTestRule
         .onNode(
             hasAnySibling(hasText(dummyRecipes[0].name))
-                .and(hasContentDescription(RECIPE_FAVORITE_ICON_CONTENT_DESCRIPTION)),
+                .and(hasTestTag(RECIPE_FAVORITE_ICON_TEST_TAG)),
             useUnmergedTree = true)
         .assertIsDisplayed()
         .performClick()
@@ -159,7 +162,7 @@ class AccountScreenTest {
     composeTestRule
         .onNode(
             hasAnySibling(hasText(dummyRecipes[1].name))
-                .and(hasContentDescription(RECIPE_FAVORITE_ICON_CONTENT_DESCRIPTION)),
+                .and(hasTestTag(RECIPE_DELETE_ICON_TEST_TAG)),
             useUnmergedTree = true)
         .assertIsDisplayed()
         .performClick()
@@ -179,15 +182,15 @@ class AccountScreenTest {
     composeTestRule
         .onNode(
             hasAnySibling(hasText(dummyRecipes[0].name))
-                .and(hasContentDescription(RECIPE_FAVORITE_ICON_CONTENT_DESCRIPTION)),
+                .and(hasTestTag(RECIPE_FAVORITE_ICON_TEST_TAG)),
             useUnmergedTree = true)
         .assertIsDisplayed()
         .performClick()
     composeTestRule.onNodeWithTag(CONFIRMATION_POP_UP).assertIsDisplayed()
     composeTestRule.onNodeWithTag(CONFIRMATION_BUTTON).assertIsDisplayed()
     composeTestRule.onNodeWithTag(CONFIRMATION_BUTTON).performClick()
+    assert(!userViewModel.likedRecipes.value.contains(dummyRecipes[0]))
     assert(userViewModel.likedRecipes.value.isEmpty())
-    assert(dummyRecipes != userViewModel.likedRecipes.value)
     composeTestRule.onNodeWithText(dummyRecipes[0].name).assertIsNotDisplayed()
   }
 
@@ -209,5 +212,57 @@ class AccountScreenTest {
     assert(userViewModel.likedRecipes.value.isNotEmpty())
     assert(userViewModel.likedRecipes.value.contains(dummyRecipes[0]))
     composeTestRule.onNodeWithText(dummyRecipes[0].name).assertIsDisplayed()
+  }
+
+  @Test
+  fun testDeleteACreatedRecipe() {
+    composeTestRule.setContent {
+      SampleAppTheme { AccountScreen(mockNavigationActions, userViewModel) }
+    }
+
+    composeTestRule.onNodeWithTag(CREATED_RECIPES_BUTTON_TEST_TAG).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CREATED_RECIPES_BUTTON_TEST_TAG).assertHasClickAction()
+    composeTestRule.onNodeWithTag(CREATED_RECIPES_BUTTON_TEST_TAG).performClick()
+
+    composeTestRule
+        .onNode(
+            hasAnySibling(hasText(dummyRecipes[1].name))
+                .and(hasTestTag(RECIPE_DELETE_ICON_TEST_TAG)),
+            useUnmergedTree = true)
+        .assertIsDisplayed()
+        .performClick()
+    composeTestRule.onNodeWithTag(CONFIRMATION_POP_UP).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CONFIRMATION_BUTTON).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CONFIRMATION_BUTTON).performClick()
+
+    assert(!userViewModel.createdRecipes.value.contains(dummyRecipes[1]))
+    assert(userViewModel.createdRecipes.value.isEmpty())
+    composeTestRule.onNodeWithText(dummyRecipes[1].name).assertIsNotDisplayed()
+  }
+
+  @Test
+  fun testNotDeleteACreatedRecipe() {
+    composeTestRule.setContent {
+      SampleAppTheme { AccountScreen(mockNavigationActions, userViewModel) }
+    }
+
+    composeTestRule.onNodeWithTag(CREATED_RECIPES_BUTTON_TEST_TAG).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CREATED_RECIPES_BUTTON_TEST_TAG).assertHasClickAction()
+    composeTestRule.onNodeWithTag(CREATED_RECIPES_BUTTON_TEST_TAG).performClick()
+
+    composeTestRule
+        .onNode(
+            hasAnySibling(hasText(dummyRecipes[1].name))
+                .and(hasTestTag(RECIPE_DELETE_ICON_TEST_TAG)),
+            useUnmergedTree = true)
+        .assertIsDisplayed()
+        .performClick()
+    composeTestRule.onNodeWithTag(CONFIRMATION_POP_UP).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CANCEL_BUTTON).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CANCEL_BUTTON).performClick()
+
+    assert(userViewModel.createdRecipes.value.contains(dummyRecipes[1]))
+    assert(userViewModel.createdRecipes.value.isNotEmpty())
+    composeTestRule.onNodeWithText(dummyRecipes[1].name).assertIsDisplayed()
   }
 }

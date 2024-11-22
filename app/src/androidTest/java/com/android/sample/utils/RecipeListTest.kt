@@ -20,7 +20,7 @@ import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_TITLE_TEST_TAG
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.utils.RecipeList
-import com.android.sample.ui.utils.TopCornerLikeButton
+import com.android.sample.ui.utils.TopCornerUnLikeButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import org.junit.Before
@@ -126,7 +126,7 @@ class RecipeListTest {
           list = recipesList,
           onRecipeSelected = {},
           topCornerButton = { recipe ->
-            TopCornerLikeButton(recipe = recipe, userViewModel = userViewModel, true)
+            TopCornerUnLikeButton(recipe = recipe, userViewModel = userViewModel)
           })
     }
 
