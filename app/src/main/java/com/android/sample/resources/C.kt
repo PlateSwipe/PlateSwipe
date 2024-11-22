@@ -139,6 +139,7 @@ object C {
     const val RECIPE_LIST_CORNER_RADIUS = 12
     const val RECIPE_RATING_CONTENT_DESCRIPTION = "rating"
     const val RECIPE_FAVORITE_ICON_CONTENT_DESCRIPTION = "like"
+    const val RECIPE_DELETE_ICON_CONTENT_DESCRIPTION = "delete"
 
     // SearchBar
     const val SEARCH_BAR_CORNER_RADIUS = 16
@@ -188,7 +189,6 @@ object C {
     const val FIRESTORE_RECIPE_IMAGE_NAME = "Main"
 
     // FirestoreIngredientRepository
-    const val FIRESTORE_INGREDIENT_COLLECTION_NAME = "ingredients"
     const val FIRESTORE_INGREDIENT_COLLECTION_NAME_TEST = "ingredients test"
     // Values for storage
     const val FIRESTORE_INGREDIENT_NAME = "name"
@@ -213,7 +213,6 @@ object C {
 
     // OpenFoodFactsIngredientRepository
     const val OPEN_FOOD_FACTS_URL = "https://world.openfoodfacts.org"
-    const val OPEN_FOOD_FACTS_INGREDIENT_REPOSITORY_TAG = "OpenFoodFactsIngredientRepository"
     const val PRODUCT_NAME = "product_name"
     const val PRODUCT_BRAND = "brands"
     const val PRODUCT_ID = "_id"
@@ -225,19 +224,12 @@ object C {
     const val PRODUCT_FRONT_IMAGE_THUMBNAIL = "display_thumbnail"
     const val PRODUCT_FRONT_IMAGE_SMALL_URL = "image_front_small_url"
     const val PRODUCT_FRONT_IMAGE_SMALL = "display_small"
-    const val INGREDIENT_IMAGE_ADDED_SUCCESSFULLY =
-        "Ingredient image added successfully to the storage"
-    const val INGREDIENT_UPDATE_FAILED_MESSAGE = "Failed to update ingredient"
-    const val IMAGE_UPLOAD_FAILED_MESSAGE = "Image upload failed"
 
     // EXCEPTION MESSAGES
     const val LIMIT_MUST_BE_POSITIVE_MESSAGE = "Limit must be greater than 0"
     const val UNSUPPORTED_MESSAGE = "Operation not supported"
     const val INGREDIENT_NOT_FOUND_MESSAGE = "Ingredient not found"
-    const val IMAGE_UPLOAD_FAILED = "Image upload failed"
-    const val IMAGE_URL_RETRIEVAL_FAILED = "Image url retrieval failed"
     const val INGREDIENT_NAME_NOT_PROVIDED = "Ingredient name is required but has not been provided"
-    const val INGREDIENT_UPLOAD_FAILED = "Ingredient upload failed"
 
     // Camera Actions
     const val LOG_TAG_CAMERA_ACTIONS = "CameraActions"
@@ -314,6 +306,7 @@ object C {
       const val REMOVED_INGREDIENT_NOT_IN_FRIDGE_ERROR =
           "Cannot remove an ingredient that is not in the fridge."
       const val LOG_TAG = "UserViewModel"
+      const val IMAGE_NAME = "Main"
       const val NOT_FOUND_INGREDIENT_IN_DATABASE_ERROR = "Ingredient not found in the database."
       const val FAILED_TO_FETCH_INGREDIENT_FROM_DATABASE_ERROR =
           "Failed to fetch ingredient from the database."
@@ -321,6 +314,11 @@ object C {
           "Failed to fetch liked recipes from the database."
       const val FAILED_TO_FETCH_CREATED_RECIPE_FROM_DATABASE_ERROR =
           "Failed to fetch created recipes from the database."
+      const val RECIPE_DELETED_SUCCESSFULY = "Recipe deleted successfully"
+      const val FAILED_TO_DELETE_RECIPE = "Recipe deletion unsuccessful"
+      const val IMAGE_DELETION_SUCCESSFULY = "Recipe image deleted successfully"
+      const val FAILED_TO_DELETE_IMAGE = "Recipe image deletion unsuccessful"
+      const val RECIPE_NOT_FOUND = "Recipe not found"
     }
 
     // AccountScreen
@@ -646,7 +644,6 @@ object C {
       const val NUMBER_SERVINGS = "numberServings"
       const val ADD_SERVINGS = "addServings"
       const val INSTRUCTIONS_VIEW = "instructionsView"
-      const val INSTRUCTIONS_TEXT = "instructionsText"
       const val INGREDIENT_CHECKBOX = "checkboxIngredient"
       const val INGREDIENT_PREFIX = "ingredient"
       const val SLIDING_BUTTON_INGREDIENTS = "ingredientButton"
@@ -664,6 +661,7 @@ object C {
       const val RECIPE_IMAGE_TEST_TAG = "recipeImage"
       const val RECIPE_TITLE_TEST_TAG = "recipeTitle"
       const val RECIPE_FAVORITE_ICON_TEST_TAG = "recipeFavoriteIcon"
+      const val RECIPE_DELETE_ICON_TEST_TAG = "recipeDeleteIcon"
       const val CONFIRMATION_POP_UP = "confirmationPopUp"
       const val CONFIRMATION_BUTTON = "confirmButton"
       const val CANCEL_BUTTON = "cancelButton"
