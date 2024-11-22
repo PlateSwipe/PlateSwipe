@@ -61,10 +61,6 @@ class UserViewModel(
   override val currentRecipe: StateFlow<Recipe?>
     get() = _currentRecipe
 
-  init {
-    userRepository.init { getCurrentUser() }
-  }
-
   companion object {
     val Factory: ViewModelProvider.Factory =
         object : ViewModelProvider.Factory {

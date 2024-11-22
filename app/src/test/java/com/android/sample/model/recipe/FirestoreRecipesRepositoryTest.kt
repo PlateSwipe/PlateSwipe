@@ -6,7 +6,9 @@ import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_AREA
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_CATEGORY
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_DIFFICULTY
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_INGREDIENTS
-import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_INSTRUCTIONS
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_INSTRUCTIONS_TEXT
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_INSTRUCTION_ICON
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_INSTRUCTION_TIME
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_MEASUREMENTS
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_NAME
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_PICTURE_ID
@@ -152,7 +154,11 @@ class FirestoreRecipesRepositoryTest {
     `when`(document.getString(FIRESTORE_RECIPE_NAME)).thenReturn("Test Recipe")
     `when`(document.getString(FIRESTORE_RECIPE_CATEGORY)).thenReturn("Category")
     `when`(document.getString(FIRESTORE_RECIPE_AREA)).thenReturn("Area")
-    `when`(document.getString(FIRESTORE_RECIPE_INSTRUCTIONS)).thenReturn("Instructions")
+    `when`(document.get(FIRESTORE_RECIPE_INSTRUCTIONS_TEXT))
+        .thenReturn(listOf("Instructions1", "Instructions2", "Instructions3"))
+    `when`(document.get(FIRESTORE_RECIPE_INSTRUCTION_TIME)).thenReturn(listOf("Time1", "", "Time3"))
+    `when`(document.get(FIRESTORE_RECIPE_INSTRUCTION_ICON)).thenReturn(listOf("Cook", "", "Fire"))
+
     `when`(document.getString(FIRESTORE_RECIPE_PICTURE_ID)).thenReturn("ThumbUrl")
     `when`(document.get(FIRESTORE_RECIPE_INGREDIENTS))
         .thenReturn(listOf("Ingredient1", "Ingredient2"))
@@ -169,7 +175,12 @@ class FirestoreRecipesRepositoryTest {
     assertEquals("Test Recipe", recipe?.name)
     assertEquals("Category", recipe?.category)
     assertEquals("Area", recipe?.origin)
-    assertEquals("Instructions", recipe?.instructions)
+    assertEquals(
+        listOf(
+            Instruction("Instructions1", "Time1", "Cook"),
+            Instruction("Instructions2", "", ""),
+            Instruction("Instructions3", "Time3", "Fire")),
+        recipe?.instructions)
     assertEquals("ThumbUrl", recipe?.strMealThumbUrl)
     assertEquals(
         listOf("Ingredient1" to "Measurement1", "Ingredient2" to "Measurement2"),
@@ -193,7 +204,12 @@ class FirestoreRecipesRepositoryTest {
   fun documentToRecipe_missingInstructions() {
     val document = mock(DocumentSnapshot::class.java)
     `when`(document.getString(FIRESTORE_RECIPE_NAME)).thenReturn("Test Recipe")
-    `when`(document.getString(FIRESTORE_RECIPE_INSTRUCTIONS)).thenReturn(null)
+    `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_CATEGORY)).thenReturn("Category")
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INSTRUCTIONS_TEXT)).thenReturn(null)
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INSTRUCTION_TIME))
+        .thenReturn(listOf("Time1", "", "Time3"))
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INSTRUCTION_ICON))
+        .thenReturn(listOf("Cook", "", "Fire"))
 
     val recipe = firestoreFirebaseRepository.documentToRecipe(document)
 
@@ -204,7 +220,10 @@ class FirestoreRecipesRepositoryTest {
   fun documentToRecipe_missingPictureID() {
     val document = mock(DocumentSnapshot::class.java)
     `when`(document.getString(FIRESTORE_RECIPE_NAME)).thenReturn("Test Recipe")
-    `when`(document.getString(FIRESTORE_RECIPE_INSTRUCTIONS)).thenReturn("Instructions")
+    `when`(document.get(FIRESTORE_RECIPE_INSTRUCTIONS_TEXT))
+        .thenReturn(listOf("Instructions1", "Instructions2", "Instructions3"))
+    `when`(document.get(FIRESTORE_RECIPE_INSTRUCTION_TIME)).thenReturn(listOf("Time1", "", "Time3"))
+    `when`(document.get(FIRESTORE_RECIPE_INSTRUCTION_ICON)).thenReturn(listOf("Cook", "", "Fire"))
     `when`(document.getString(FIRESTORE_RECIPE_PICTURE_ID)).thenReturn(null)
 
     val recipe = firestoreFirebaseRepository.documentToRecipe(document)
@@ -216,7 +235,10 @@ class FirestoreRecipesRepositoryTest {
   fun documentToRecipe_missingIngredients() {
     val document = mock(DocumentSnapshot::class.java)
     `when`(document.getString(FIRESTORE_RECIPE_NAME)).thenReturn("Test Recipe")
-    `when`(document.getString(FIRESTORE_RECIPE_INSTRUCTIONS)).thenReturn("Instructions")
+    `when`(document.get(FIRESTORE_RECIPE_INSTRUCTIONS_TEXT))
+        .thenReturn(listOf("Instructions1", "Instructions2", "Instructions3"))
+    `when`(document.get(FIRESTORE_RECIPE_INSTRUCTION_TIME)).thenReturn(listOf("Time1", "", "Time3"))
+    `when`(document.get(FIRESTORE_RECIPE_INSTRUCTION_ICON)).thenReturn(listOf("Cook", "", "Fire"))
     `when`(document.getString(FIRESTORE_RECIPE_PICTURE_ID)).thenReturn("ThumbUrl")
     `when`(document.get(FIRESTORE_RECIPE_INGREDIENTS)).thenReturn(null)
 
@@ -229,7 +251,10 @@ class FirestoreRecipesRepositoryTest {
   fun documentToRecipe_missingMeasurements() {
     val document = mock(DocumentSnapshot::class.java)
     `when`(document.getString(FIRESTORE_RECIPE_NAME)).thenReturn("Test Recipe")
-    `when`(document.getString(FIRESTORE_RECIPE_INSTRUCTIONS)).thenReturn("Instructions")
+    `when`(document.get(FIRESTORE_RECIPE_INSTRUCTIONS_TEXT))
+        .thenReturn(listOf("Instructions1", "Instructions2", "Instructions3"))
+    `when`(document.get(FIRESTORE_RECIPE_INSTRUCTION_TIME)).thenReturn(listOf("Time1", "", "Time3"))
+    `when`(document.get(FIRESTORE_RECIPE_INSTRUCTION_ICON)).thenReturn(listOf("Cook", "", "Fire"))
     `when`(document.getString(FIRESTORE_RECIPE_PICTURE_ID)).thenReturn("ThumbUrl")
     `when`(document.get(FIRESTORE_RECIPE_INGREDIENTS))
         .thenReturn(listOf("Ingredient1", "Ingredient2"))
@@ -262,7 +287,12 @@ class FirestoreRecipesRepositoryTest {
     `when`(mockDocumentSnapshot.id).thenReturn("1")
     `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_NAME)).thenReturn("Test Recipe")
     `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_CATEGORY)).thenReturn("Category")
-    `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_INSTRUCTIONS)).thenReturn("Instructions")
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INSTRUCTIONS_TEXT))
+        .thenReturn(listOf("Instructions1", "Instructions2", "Instructions3"))
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INSTRUCTION_TIME))
+        .thenReturn(listOf("Time1", "", "Time3"))
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INSTRUCTION_ICON))
+        .thenReturn(listOf("Cook", "", "Fire"))
     `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_PICTURE_ID)).thenReturn("ThumbUrl")
     `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INGREDIENTS))
         .thenReturn(listOf("Ingredient1", "Ingredient2"))
@@ -327,7 +357,13 @@ class FirestoreRecipesRepositoryTest {
     `when`(mockDocumentReference.get()).thenReturn(Tasks.forResult(mockDocumentSnapshot))
     `when`(mockDocumentSnapshot.id).thenReturn("1")
     `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_NAME)).thenReturn("Chicken")
-    `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_INSTRUCTIONS)).thenReturn("Instructions")
+    `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_CATEGORY)).thenReturn("Category")
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INSTRUCTIONS_TEXT))
+        .thenReturn(listOf("Instructions1", "Instructions2", "Instructions3"))
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INSTRUCTION_TIME))
+        .thenReturn(listOf("Time1", "", "Time3"))
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INSTRUCTION_ICON))
+        .thenReturn(listOf("Cook", "", "Fire"))
     `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_PICTURE_ID))
         .thenReturn("https://image.url")
     `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INGREDIENTS))
@@ -339,7 +375,12 @@ class FirestoreRecipesRepositoryTest {
         onSuccess = { recipe ->
           assertNotNull(recipe)
           assertEquals("Chicken", recipe.name)
-          assertEquals("Instructions", recipe.instructions)
+          assertEquals(
+              listOf(
+                  Instruction("Instructions1", "Time1", "Cook"),
+                  Instruction("Instructions2", "", ""),
+                  Instruction("Instructions3", "Time3", "Fire")),
+              recipe.instructions)
           assertEquals("https://image.url", recipe.strMealThumbUrl)
           assertEquals(
               listOf("Chicken" to "1", "Salt" to "1 tsp"), recipe.ingredientsAndMeasurements)
@@ -392,7 +433,13 @@ class FirestoreRecipesRepositoryTest {
     // Set up a mock recipe document
     `when`(mockDocumentSnapshot.id).thenReturn("random_id_1")
     `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_NAME)).thenReturn("Test Recipe")
-    `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_INSTRUCTIONS)).thenReturn("Instructions")
+    `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_CATEGORY)).thenReturn("Category")
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INSTRUCTIONS_TEXT))
+        .thenReturn(listOf("Instructions1", "Instructions2", "Instructions3"))
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INSTRUCTION_TIME))
+        .thenReturn(listOf("Time1", "", "Time3"))
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INSTRUCTION_ICON))
+        .thenReturn(listOf("Cook", "", "Fire"))
     `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_PICTURE_ID)).thenReturn("ThumbUrl")
     `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INGREDIENTS)).thenReturn(listOf("Ingredient1"))
     `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_MEASUREMENTS)).thenReturn(listOf("1 tsp"))
@@ -431,7 +478,12 @@ class FirestoreRecipesRepositoryTest {
     // Set up a mock recipe document
     `when`(mockDocumentSnapshot.id).thenReturn("random_id_1")
     `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_NAME)).thenReturn("Test Recipe")
-    `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_INSTRUCTIONS)).thenReturn("Instructions")
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INSTRUCTIONS_TEXT))
+        .thenReturn(listOf("Instructions1", "Instructions2", "Instructions3"))
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INSTRUCTION_TIME))
+        .thenReturn(listOf("Time1", "", "Time3"))
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INSTRUCTION_ICON))
+        .thenReturn(listOf("Cook", "", "Fire"))
     `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_PICTURE_ID)).thenReturn("ThumbUrl")
     `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INGREDIENTS)).thenReturn(listOf("Ingredient1"))
     `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_MEASUREMENTS)).thenReturn(listOf("1 tsp"))

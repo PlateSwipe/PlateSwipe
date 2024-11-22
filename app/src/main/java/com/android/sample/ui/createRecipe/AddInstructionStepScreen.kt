@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.android.sample.R
 import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.model.recipe.IconType
+import com.android.sample.model.recipe.Instruction
 import com.android.sample.resources.C.Tag.CONTAINER_PADDING
 import com.android.sample.resources.C.Tag.HORIZONTAL_PADDING
 import com.android.sample.resources.C.Tag.INSTRUCTION_VERTICAL_PADDING
@@ -67,10 +68,30 @@ fun AddInstructionStepContent(
     navigationActions: NavigationActions,
     modifier: Modifier = Modifier
 ) {
-  var stepDescription by remember { mutableStateOf(createRecipeViewModel.getRecipeInstructions()) }
-  var stepTime by remember { mutableStateOf(createRecipeViewModel.getRecipeTime()) }
+  var stepDescription by remember {
+    mutableStateOf(
+        defaultValues(
+            defaultValue = "",
+            selectedInstruction = createRecipeViewModel.getSelectedInstruction(),
+            onSuccess = { createRecipeViewModel.getInstruction(it).description }))
+  }
+
+  var stepTime by remember {
+    mutableStateOf(
+        defaultValues(
+            defaultValue = "",
+            selectedInstruction = createRecipeViewModel.getSelectedInstruction(),
+            onSuccess = { createRecipeViewModel.getInstruction(it).time }))
+  }
   var selectedIcon by remember {
-    mutableStateOf<IconType?>(createRecipeViewModel.getSelectedIcon())
+    mutableStateOf<IconType?>(
+        if (createRecipeViewModel.getSelectedInstruction() != null) {
+          createRecipeViewModel
+              .getInstruction(createRecipeViewModel.getSelectedInstruction()!!)
+              .icon
+        } else {
+          null
+        })
   }
   var showError by remember { mutableStateOf(false) }
 
@@ -182,10 +203,19 @@ fun AddInstructionStepContent(
                   selectedIcon,
                   createRecipeViewModel,
                   onSuccess = {
+                    createRecipeViewModel.resetSelectedInstruction()
                     navigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INSTRUCTIONS)
                   })
             })
       }
+}
+
+fun <T> defaultValues(defaultValue: T, selectedInstruction: Int?, onSuccess: (Int) -> T): T {
+  return if (selectedInstruction != null) {
+    onSuccess(selectedInstruction)
+  } else {
+    defaultValue
+  }
 }
 
 /**
@@ -215,14 +245,16 @@ fun confirmAndAssignStep(
     createRecipeViewModel: CreateRecipeViewModel,
     onSuccess: () -> Unit
 ) {
-  if (stepDescription.isNotEmpty()) {
-    createRecipeViewModel.updateRecipeInstructions(stepDescription)
-    if (!stepTime.isNullOrEmpty()) {
-      createRecipeViewModel.updateRecipeTime(stepTime.toString())
-    }
-    if (selectedIcon != null) {
-      createRecipeViewModel.selectIcon(selectedIcon)
-    }
+  if (createRecipeViewModel.getSelectedInstruction() != null) {
+    createRecipeViewModel.updateRecipeInstruction(
+        createRecipeViewModel.getSelectedInstruction()!!,
+        Instruction(
+            description = stepDescription, time = stepTime, iconType = selectedIcon?.iconName))
+    onSuccess()
+  } else if (stepDescription.isNotEmpty()) {
+    createRecipeViewModel.addRecipeInstruction(
+        Instruction(
+            description = stepDescription, time = stepTime, iconType = selectedIcon?.iconName))
     onSuccess()
   }
 }

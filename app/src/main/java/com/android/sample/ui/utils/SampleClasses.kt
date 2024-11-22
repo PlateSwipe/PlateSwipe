@@ -1,6 +1,7 @@
 package com.android.sample.ui.utils
 
 import com.android.sample.model.ingredient.Ingredient
+import com.android.sample.model.recipe.Instruction
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.user.User
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_NORMAL_URL
@@ -21,11 +22,33 @@ val recipeOrigins = arrayOf("Italy", "India", "United Kingdom", null)
 
 val recipeInstructions =
     arrayOf(
-        "1. Boil water\n2. Add pasta\n3. Cook for 10 minutes\n4. Drain water\n5. Add sauce",
-        "1. Boil water\n2. Add chicken\n3. Cook for 10 minutes\n4. Drain water\n5. Add sauce",
-        "1. Boil water\n2. Add fish\n3. Cook for 10 minutes\n4. Drain water\n5. Add chips",
-        "take it out of the bag and shove it in your mouth",
-    )
+        listOf(
+            Instruction(description = "1. Boil water", time = "30 min", iconType = "Cook"),
+            Instruction(description = "2. Add pasta", time = "30 min", iconType = "Fire"),
+            Instruction(description = "3. Cook for 10 minutes", time = "30 min", iconType = "Fire"),
+            Instruction(description = "4. Drain water", time = "30 min", iconType = "Fire"),
+            Instruction(description = "5. Add sauce", time = "30 min", iconType = "Fire"),
+        ),
+        listOf(
+            Instruction(description = "1. Boil water", time = "30 min", iconType = "Cook"),
+            Instruction(description = "2. Add chicken", time = "30 min", iconType = "Fire"),
+            Instruction(description = "3. Cook for 10 minutes", time = "30 min", iconType = "Fire"),
+            Instruction(description = "4. Drain water", time = "30 min", iconType = "Fire"),
+            Instruction(description = "5. Add sauce", time = "30 min", iconType = "Fire"),
+        ),
+        listOf(
+            Instruction(description = "1. Boil water", time = "30 min", iconType = "Cook"),
+            Instruction(description = "2. Add fish", time = "30 min", iconType = "Fire"),
+            Instruction(description = "3. Cook for 10 minutes", time = "30 min", iconType = "Fire"),
+            Instruction(description = "4. Drain water", time = "30 min", iconType = "Fire"),
+            Instruction(description = "5. Add chips", time = "30 min", iconType = "Fire"),
+        ),
+        listOf(
+            Instruction(
+                description = "take it out of the bag and shove it in your mouth",
+                time = null,
+                iconType = "Fire"),
+        ))
 
 val recipeStrMealThumbUrls =
     arrayOf(

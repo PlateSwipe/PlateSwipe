@@ -1,5 +1,6 @@
 package com.android.sample.model.recipe
 
+import com.android.sample.resources.C.Tag.ERROR_STR_INSTR_EMPTY
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertThrows
@@ -21,7 +22,7 @@ class RecipeBuilderTest {
         builder
             .apply {
               setName("Cake")
-              setInstructions("Mix all ingredients")
+              addInstruction(Instruction("Mix all ingredients"))
               addIngredientAndMeasurement("Flour", "200g")
               addIngredientAndMeasurement("Sugar", "100g")
               setPictureID("http://example.com/image.jpg")
@@ -38,7 +39,7 @@ class RecipeBuilderTest {
         builder
             .apply {
               setName("Cake")
-              setInstructions("Mix all ingredients")
+              addInstruction(Instruction("Mix all ingredients"))
               addIngredientAndMeasurement("Flour", "200g")
               addIngredientAndMeasurement("Sugar", "100g")
               setPictureID("http://example.com/image.jpg")
@@ -55,7 +56,7 @@ class RecipeBuilderTest {
         builder
             .apply {
               setName("Cake")
-              setInstructions("Mix all ingredients")
+              addInstruction(Instruction("Mix all ingredients"))
               addIngredientAndMeasurement("Flour", "200g")
               addIngredientAndMeasurement("Sugar", "100g")
               setPictureID("http://example.com/image.jpg")
@@ -71,7 +72,7 @@ class RecipeBuilderTest {
         builder
             .apply {
               setName("Pasta")
-              setInstructions("Boil water, cook pasta")
+              addInstruction(Instruction("Boil water, cook pasta"))
               addIngredientAndMeasurement("Pasta", "200g")
               addIngredientAndMeasurement("Salt", "1 tsp")
               setPictureID("http://example.com/image.jpg")
@@ -80,13 +81,13 @@ class RecipeBuilderTest {
             .build()
 
     assertEquals("Pasta", recipe.name)
-    assertEquals("Boil water, cook pasta", recipe.instructions)
+    assertEquals(listOf(Instruction("Boil water, cook pasta")), recipe.instructions)
     assertEquals("200g", recipe.ingredientsAndMeasurements[0].second)
   }
 
   @Test
   fun `test build throws exception when strMeal is blank`() {
-    builder.setInstructions("Instructions for the recipe")
+    builder.addInstruction(Instruction("Instructions for the recipe"))
     builder.addIngredientAndMeasurement("Ingredient", "Measurement")
 
     val exception = assertThrows(IllegalArgumentException::class.java) { builder.build() }
@@ -94,18 +95,18 @@ class RecipeBuilderTest {
   }
 
   @Test
-  fun `test build throws exception when strInstructions is blank`() {
+  fun `test build throws exception when strInstructions is empty`() {
     builder.setName("Recipe name")
     builder.addIngredientAndMeasurement("Ingredient", "Measurement")
 
     val exception = assertThrows(IllegalArgumentException::class.java) { builder.build() }
-    assertEquals("Recipe instructions are required and cannot be blank.", exception.message)
+    assertEquals(ERROR_STR_INSTR_EMPTY, exception.message)
   }
 
   @Test
   fun `test build throws exception when no ingredients are added`() {
     builder.setName("Recipe name")
-    builder.setInstructions("Recipe instructions")
+    builder.addInstruction(Instruction("Recipe instructions"))
 
     val exception = assertThrows(IllegalArgumentException::class.java) { builder.build() }
     assertEquals("At least one ingredient is required.", exception.message)
@@ -117,7 +118,7 @@ class RecipeBuilderTest {
         builder
             .apply {
               setName("Salad")
-              setInstructions("Mix ingredients")
+              addInstruction(Instruction("Mix ingredients"))
               addIngredientAndMeasurement("Lettuce", "100g")
               setCategory("Vegetarian")
               setOrigin("French")
@@ -142,7 +143,7 @@ class RecipeBuilderTest {
     // Set initial values for all fields
     builder.setId("1")
     builder.setName("Salad")
-    builder.setInstructions("Mix ingredients")
+    builder.addInstruction(Instruction("Mix ingredients"))
     builder.addIngredientAndMeasurement("Lettuce", "100g")
     builder.setCategory("Vegetarian")
     builder.setOrigin("French")
@@ -159,7 +160,7 @@ class RecipeBuilderTest {
     // Assertions to verify each field was cleared
     assertEquals("", builder.getId())
     assertEquals("", builder.getName())
-    assertEquals("", builder.getInstructions())
+    assertEquals(emptyList<Instruction>(), builder.getInstructions())
     assertEquals(emptyList<Pair<String, String>>(), builder.getIngredientsAndMeasurements())
     assertNull(builder.getCategory())
     assertNull(builder.getOrigin())
@@ -177,7 +178,7 @@ class RecipeBuilderTest {
   fun `test all getters`() {
     builder.apply {
       setName("Salad")
-      setInstructions("Mix ingredients")
+      addInstruction(Instruction("Mix ingredients"))
       addIngredientAndMeasurement("Lettuce", "100g")
       setCategory("Vegetarian")
       setOrigin("French")
@@ -188,7 +189,7 @@ class RecipeBuilderTest {
       setId("1")
     }
     assertEquals("Salad", builder.getName())
-    assertEquals("Mix ingredients", builder.getInstructions())
+    assertEquals(listOf(Instruction("Mix ingredients")), builder.getInstructions())
     assertEquals("Vegetarian", builder.getCategory())
     assertEquals("French", builder.getOrigin())
     assertEquals("http://example.com/image.jpg", builder.getPictureID())
@@ -215,5 +216,29 @@ class RecipeBuilderTest {
     builder.deleteIngredientAndMeasurement("Flour", "200g")
     val listOfIngredients = builder.getIngredientsAndMeasurements()
     assertEquals(listOf("Sugar" to "100g"), listOfIngredients)
+  }
+
+  @Test
+  fun `test update instruction`() {
+    builder.addInstruction(Instruction("Mix all ingredients"))
+    builder.modifyInstruction(0, Instruction("Mix all ingredients and bake"))
+    val listOfInstructions = builder.getInstructions().toList()
+    assertEquals(listOf(Instruction("Mix all ingredients and bake")), listOfInstructions)
+  }
+
+  @Test
+  fun `test delete instruction`() {
+    builder.addInstruction(Instruction("Mix all ingredients"))
+    builder.addInstruction(Instruction("Bake"))
+    builder.deleteInstruction(0)
+    val listOfInstructions = builder.getInstructions()
+    assertEquals(listOf(Instruction("Bake")), listOfInstructions)
+  }
+
+  @Test
+  fun `test addInstruction`() {
+    builder.addInstruction(Instruction("Mix all ingredients"))
+    val listOfInstructions = builder.getInstructions()
+    assertEquals(listOf(Instruction("Mix all ingredients")), listOfInstructions)
   }
 }

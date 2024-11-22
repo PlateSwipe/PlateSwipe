@@ -1,9 +1,10 @@
 package com.android.sample.model.recipe
 
 import com.android.sample.resources.C.Tag.ERROR_LIST_INGREDIENT_EMPTY
-import com.android.sample.resources.C.Tag.ERROR_STR_INSTR_BLANK
+import com.android.sample.resources.C.Tag.ERROR_STR_INSTR_EMPTY
 import com.android.sample.resources.C.Tag.ERROR_STR_MEAL_BLANK
 import com.android.sample.resources.C.Tag.ERROR_STR_THUMBNAIL
+import com.android.sample.resources.C.TestTag.RecipeBuilder.OUT_OF_BOUNDS_MESSAGE
 
 /** Builder class for creating a Recipe instance. */
 class RecipeBuilder {
@@ -11,7 +12,7 @@ class RecipeBuilder {
   private var name: String = ""
   private var category: String? = null
   private var origin: String? = null
-  private var instructions: String = ""
+  private var instructions: MutableList<Instruction> = mutableListOf()
   private var strMealThumbUrl: String = ""
   private val ingredientsAndMeasurements: MutableList<Pair<String, String>> = mutableListOf()
   private var time: String? = null
@@ -48,12 +49,11 @@ class RecipeBuilder {
   fun setOrigin(origin: String) = apply { this.origin = origin }
 
   /**
-   * Sets the instructions for the recipe. WARNING : This method should be updated in the next
-   * version of the instruction implementation.
+   * Adds an instruction to the recipe.
    *
-   * @param instruction The instructions for the recipe.
+   * @param instruction The instruction to add.
    */
-  fun setInstructions(instruction: String) = apply { this.instructions = instruction }
+  fun addInstruction(instruction: Instruction) = apply { this.instructions.add(instruction) }
 
   /**
    * Sets the UID of the thumbnail image for the recipe.
@@ -145,7 +145,7 @@ class RecipeBuilder {
   fun build(): Recipe {
     // Validation for essential fields
     require(name.isNotBlank()) { ERROR_STR_MEAL_BLANK }
-    require(instructions.isNotBlank()) { ERROR_STR_INSTR_BLANK }
+    require(instructions.isNotEmpty()) { ERROR_STR_INSTR_EMPTY }
     require(ingredientsAndMeasurements.isNotEmpty()) { ERROR_LIST_INGREDIENT_EMPTY }
     require(strMealThumbUrl.isNotBlank()) { ERROR_STR_THUMBNAIL }
     return Recipe(
@@ -168,7 +168,7 @@ class RecipeBuilder {
     this.name = ""
     this.category = null
     this.origin = null
-    this.instructions = ""
+    this.instructions = mutableListOf()
     this.strMealThumbUrl = ""
     this.ingredientsAndMeasurements.clear()
     this.time = null
@@ -210,7 +210,7 @@ class RecipeBuilder {
    *
    * @return The instructions for the recipe.
    */
-  fun getInstructions(): String = instructions
+  fun getInstructions(): List<Instruction> = instructions
 
   /**
    * Returns the URL of the thumbnail image for the recipe.
@@ -257,12 +257,39 @@ class RecipeBuilder {
       ingredientsAndMeasurements.toList()
 
   /**
-   * Gets the i th instruction of the recipe. WARNING : This method should be updated in the next
-   * version of the instruction implementation.
+   * Gets the i th instruction of the recipe.
    *
    * @param i The index of the instruction.
    */
-  fun getInstruction(i: Int): String {
-    return instructions
+  fun getInstruction(i: Int): Instruction {
+    require(i in instructions.indices) {
+      OUT_OF_BOUNDS_MESSAGE + "$i is out of bounds. Valid range: ${instructions.indices}\" }"
+    }
+    return instructions[i]
+  }
+
+  /**
+   * Modifies the i th instruction of the recipe.
+   *
+   * @param i The index of the instruction.
+   * @param instruction The new instruction to replace the existing one.
+   */
+  fun modifyInstruction(i: Int, instruction: Instruction) {
+    require(i in instructions.indices) {
+      OUT_OF_BOUNDS_MESSAGE + "$i is out of bounds. Valid range: ${instructions.indices}\" }"
+    }
+    instructions[i] = instruction
+  }
+
+  /**
+   * Deletes the i th instruction of the recipe.
+   *
+   * @param i The index of the instruction.
+   */
+  fun deleteInstruction(i: Int) {
+    require(i in instructions.indices) {
+      OUT_OF_BOUNDS_MESSAGE + "$i is out of bounds. Valid range: ${instructions.indices}\" }"
+    }
+    instructions.removeAt(i)
   }
 }

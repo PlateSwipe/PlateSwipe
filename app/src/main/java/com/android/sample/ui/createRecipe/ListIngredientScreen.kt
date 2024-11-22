@@ -152,7 +152,7 @@ fun IngredientListScreen(
                     Button(
                         onClick = {
                           for (ingredient in ingredientList) {
-                            createRecipeViewModel.addIngredient(
+                            createRecipeViewModel.addIngredientAndMeasurement(
                                 ingredient.name, ingredient.quantity.toString())
                           }
                           navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_INSTRUCTION)
