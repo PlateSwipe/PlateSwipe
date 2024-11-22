@@ -3,6 +3,7 @@ package com.android.sample.model.user
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.android.sample.model.fridge.FridgeItem
 import com.android.sample.model.ingredient.FirestoreIngredientRepository
 import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.recipe.FirestoreRecipesRepository
@@ -49,6 +50,9 @@ class UserViewModel(
   private val _currentRecipe = MutableStateFlow<Recipe?>(null)
   override val currentRecipe: StateFlow<Recipe?>
     get() = _currentRecipe
+
+  private val _listFridgeItems = MutableStateFlow<List<Pair<FridgeItem, Ingredient>>>(emptyList())
+  val listFridgeItems: StateFlow<List<Pair<FridgeItem, Ingredient>>> = _listFridgeItems
 
   companion object {
     val Factory: ViewModelProvider.Factory =
