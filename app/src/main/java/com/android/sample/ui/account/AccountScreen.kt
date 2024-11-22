@@ -50,7 +50,8 @@ import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.navigation.TopLevelDestinations
 import com.android.sample.ui.utils.PlateSwipeScaffold
 import com.android.sample.ui.utils.RecipeList
-import com.android.sample.ui.utils.TopCornerLikeButton
+import com.android.sample.ui.utils.TopCornerDeleteButton
+import com.android.sample.ui.utils.TopCornerUnLikeButton
 
 @Composable
 fun AccountScreen(navigationActions: NavigationActions, userViewModel: UserViewModel) {
@@ -160,9 +161,9 @@ private fun ListSelection(
         },
         topCornerButton = { recipe ->
           if (selectedListIndex == 0) {
-            TopCornerLikeButton(recipe, userViewModel, true)
+            TopCornerUnLikeButton(recipe, userViewModel)
           } else {
-            TopCornerLikeButton(recipe, userViewModel, false)
+            TopCornerDeleteButton(recipe, userViewModel)
           }
         })
   }

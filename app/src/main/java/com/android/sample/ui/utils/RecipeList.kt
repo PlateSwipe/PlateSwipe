@@ -54,6 +54,7 @@ import com.android.sample.resources.C.Dimension.RecipeList.POP_UP_CLIP
 import com.android.sample.resources.C.Dimension.RecipeList.POP_UP_DESCRIPTION_FONT_SIZE
 import com.android.sample.resources.C.Dimension.RecipeList.POP_UP_ELEVATION
 import com.android.sample.resources.C.Tag.PADDING
+import com.android.sample.resources.C.Tag.RECIPE_DELETE_ICON_CONTENT_DESCRIPTION
 import com.android.sample.resources.C.Tag.RECIPE_FAVORITE_ICON_CONTENT_DESCRIPTION
 import com.android.sample.resources.C.Tag.RECIPE_LIST_CORNER_RADIUS
 import com.android.sample.resources.C.Tag.RECIPE_RATING_CONTENT_DESCRIPTION
@@ -62,6 +63,7 @@ import com.android.sample.resources.C.TestTag.RecipeList.CONFIRMATION_BUTTON
 import com.android.sample.resources.C.TestTag.RecipeList.CONFIRMATION_POP_UP
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_CARD_TEST_TAG
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_CATEGORIES_TEST_TAG
+import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_DELETE_ICON_TEST_TAG
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_FAVORITE_ICON_TEST_TAG
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_IMAGE_TEST_TAG
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_LIST_TEST_TAG
@@ -228,58 +230,65 @@ private fun RecipeTitle(recipe: Recipe, modifier: Modifier) {
 }
 
 /**
- * A like button that toggles the like state of a recipe. For now it doesn't actually change whether
- * the recipe is liked or not. It serves more as an example of a top corner button for the recipe
- * card and a placeholder.
+ * A like button that when pressed, it will remove a liked recipe from the users list of liked
+ * recipes
  *
  * @param recipe the recipe to like.
+ * @param userViewModel the current user view model
  */
 @Composable
-fun TopCornerLikeButton(recipe: Recipe, userViewModel: UserViewModel, removeLikedRecipe: Boolean) {
+fun TopCornerUnLikeButton(recipe: Recipe, userViewModel: UserViewModel) {
   var recipeUnlike: Boolean by remember { mutableStateOf(false) }
-  var recipeDelete: Boolean by remember { mutableStateOf(false) }
   Icon(
-      imageVector =
-          if (removeLikedRecipe)
-              (if (!recipeUnlike) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder)
-          else Icons.Filled.Delete,
+      imageVector = if (!recipeUnlike) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
       contentDescription = RECIPE_FAVORITE_ICON_CONTENT_DESCRIPTION,
       modifier =
-          Modifier.padding(4.dp).testTag(RECIPE_FAVORITE_ICON_TEST_TAG).clickable {
-            if (removeLikedRecipe) {
-              recipeUnlike = true
-            } else {
-              recipeDelete = true
-            }
+          Modifier.padding(4.dp).size(24.dp).testTag(RECIPE_FAVORITE_ICON_TEST_TAG).clickable {
+            recipeUnlike = true
           },
       tint = valencia)
-  if (removeLikedRecipe && recipeUnlike) {
+  if (recipeUnlike) {
     ConfirmationPopUp(
         {
           userViewModel.removeRecipeFromUserLikedRecipes(recipe)
           recipeUnlike = false
         },
         { recipeUnlike = false },
-        true)
-  } else {
-    if (recipeDelete) {
-      ConfirmationPopUp(
-          {
-            userViewModel.removeRecipeFromUserCreatedRecipes(recipe)
-            recipeDelete = false
+        stringResource(R.string.message_pop_up_remove_liked))
+  }
+}
+
+/**
+ * A delete button that when pressed, it will delete the specific created recipe from the users
+ * account but also from the database, thus deleting it also for all the users that liked it
+ *
+ * @param recipe the recipe to delete.
+ * @param userViewModel the current user view model
+ */
+@Composable
+fun TopCornerDeleteButton(recipe: Recipe, userViewModel: UserViewModel) {
+  var recipeDelete: Boolean by remember { mutableStateOf(false) }
+  Icon(
+      imageVector = Icons.Filled.Delete,
+      contentDescription = RECIPE_DELETE_ICON_CONTENT_DESCRIPTION,
+      modifier =
+          Modifier.padding(4.dp).size(24.dp).testTag(RECIPE_DELETE_ICON_TEST_TAG).clickable {
+            recipeDelete = true
           },
-          { recipeDelete = false },
-          false)
-    }
+      tint = valencia)
+  if (recipeDelete) {
+    ConfirmationPopUp(
+        {
+          userViewModel.removeRecipeFromUserCreatedRecipes(recipe)
+          recipeDelete = false
+        },
+        { recipeDelete = false },
+        stringResource(R.string.message_pop_up_delete_created))
   }
 }
 
 @Composable
-private fun ConfirmationPopUp(
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit,
-    removeLikedRecipe: Boolean
-) {
+private fun ConfirmationPopUp(onConfirm: () -> Unit, onDismiss: () -> Unit, popUpMessage: String) {
   AlertDialog(
       onDismissRequest = onDismiss,
       modifier =
@@ -289,10 +298,7 @@ private fun ConfirmationPopUp(
               .testTag(CONFIRMATION_POP_UP),
       title = {
         Text(
-            text =
-                stringResource(
-                    if (removeLikedRecipe) R.string.message_pop_up_remove_liked
-                    else R.string.message_pop_up_delete_created),
+            text = popUpMessage,
             style = MaterialTheme.typography.titleSmall,
             fontSize = POP_UP_DESCRIPTION_FONT_SIZE.sp,
             color = MaterialTheme.colorScheme.onPrimary)
