@@ -20,6 +20,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import java.time.LocalDate
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -62,6 +63,170 @@ class UserViewModel(
             return UserViewModel(userRepository = UserRepositoryFirestore(Firebase.firestore)) as T
           }
         }
+  }
+
+  init {
+    // init the fridge item for testing
+    _listFridgeItems.value +=
+        Pair(
+            FridgeItem(quantity = "5pcs", expirationDate = LocalDate.of(2024, 11, 6)),
+            Ingredient(
+                name = "Ingredient",
+                categories = listOf(),
+                images = mutableMapOf(),
+                quantity = "5pcs"))
+    _listFridgeItems.value +=
+        Pair(
+            FridgeItem(quantity = "10pcs", expirationDate = LocalDate.of(2024, 10, 6)),
+            Ingredient(
+                name = "Ingredient",
+                categories = listOf(),
+                images = mutableMapOf(),
+                quantity = "10pcs"))
+    _listFridgeItems.value +=
+        Pair(
+            FridgeItem(quantity = "600g", expirationDate = LocalDate.of(2024, 9, 6)),
+            Ingredient(
+                name = "Ingredient",
+                categories = listOf(),
+                images = mutableMapOf(),
+                quantity = "600g"))
+    _listFridgeItems.value +=
+        Pair(
+            FridgeItem(quantity = "400g", expirationDate = LocalDate.of(2024, 11, 7)),
+            Ingredient(
+                name = "Ingredient",
+                categories = listOf(),
+                images = mutableMapOf(),
+                quantity = "400g"))
+    _listFridgeItems.value +=
+        Pair(
+            FridgeItem(quantity = "5pcs", expirationDate = LocalDate.of(2024, 11, 8)),
+            Ingredient(
+                name = "Ingredient",
+                categories = listOf(),
+                images = mutableMapOf(),
+                quantity = "5pcs"))
+    _listFridgeItems.value +=
+        Pair(
+            FridgeItem(quantity = "10pcs", expirationDate = LocalDate.of(2024, 11, 9)),
+            Ingredient(
+                name = "Ingredient",
+                categories = listOf(),
+                images = mutableMapOf(),
+                quantity = "10pcs"))
+    _listFridgeItems.value +=
+        Pair(
+            FridgeItem(quantity = "600g", expirationDate = LocalDate.of(2024, 11, 20)),
+            Ingredient(
+                name = "Ingredient",
+                categories = listOf(),
+                images = mutableMapOf(),
+                quantity = "600g"))
+    _listFridgeItems.value +=
+        Pair(
+            FridgeItem(quantity = "400g", expirationDate = LocalDate.of(2024, 11, 21)),
+            Ingredient(
+                name = "Ingredient",
+                categories = listOf(),
+                images = mutableMapOf(),
+                quantity = "400g"))
+    _listFridgeItems.value +=
+        Pair(
+            FridgeItem(quantity = "5pcs", expirationDate = LocalDate.of(2024, 11, 22)),
+            Ingredient(
+                name = "Ingredient",
+                categories = listOf(),
+                images = mutableMapOf(),
+                quantity = "5pcs"))
+    _listFridgeItems.value +=
+        Pair(
+            FridgeItem(quantity = "10pcs", expirationDate = LocalDate.of(2024, 11, 23)),
+            Ingredient(
+                name = "Ingredient",
+                categories = listOf(),
+                images = mutableMapOf(),
+                quantity = "10pcs"))
+    _listFridgeItems.value +=
+        Pair(
+            FridgeItem(quantity = "600g", expirationDate = LocalDate.of(2024, 11, 24)),
+            Ingredient(
+                name = "Ingredient",
+                categories = listOf(),
+                images = mutableMapOf(),
+                quantity = "600g"))
+    _listFridgeItems.value +=
+        Pair(
+            FridgeItem(quantity = "400g", expirationDate = LocalDate.of(2024, 11, 25)),
+            Ingredient(
+                name = "Ingredient",
+                categories = listOf(),
+                images = mutableMapOf(),
+                quantity = "400g"))
+    _listFridgeItems.value +=
+        Pair(
+            FridgeItem(quantity = "600g", expirationDate = LocalDate.of(2024, 11, 26)),
+            Ingredient(
+                name = "Ingredient",
+                categories = listOf(),
+                images = mutableMapOf(),
+                quantity = "600g"))
+    _listFridgeItems.value +=
+        Pair(
+            FridgeItem(quantity = "400g", expirationDate = LocalDate.of(2024, 11, 27)),
+            Ingredient(
+                name = "Ingredient",
+                categories = listOf(),
+                images = mutableMapOf(),
+                quantity = "400g"))
+    _listFridgeItems.value +=
+        Pair(
+            FridgeItem(quantity = "400g", expirationDate = LocalDate.of(2024, 11, 28)),
+            Ingredient(
+                name = "Ingredient",
+                categories = listOf(),
+                images = mutableMapOf(),
+                quantity = "400g"))
+    _listFridgeItems.value +=
+        Pair(
+            FridgeItem(quantity = "400g", expirationDate = LocalDate.of(2024, 11, 29)),
+            Ingredient(
+                name = "Ingredient",
+                categories = listOf(),
+                images = mutableMapOf(),
+                quantity = "400g"))
+    _listFridgeItems.value +=
+        Pair(
+            FridgeItem(quantity = "400g", expirationDate = LocalDate.of(2024, 11, 30)),
+            Ingredient(
+                name = "Ingredient",
+                categories = listOf(),
+                images = mutableMapOf(),
+                quantity = "400g"))
+    _listFridgeItems.value +=
+        Pair(
+            FridgeItem(quantity = "400g", expirationDate = LocalDate.of(2024, 12, 1)),
+            Ingredient(
+                name = "Ingredient",
+                categories = listOf(),
+                images = mutableMapOf(),
+                quantity = "400g"))
+    _listFridgeItems.value +=
+        Pair(
+            FridgeItem(quantity = "400g", expirationDate = LocalDate.of(2024, 12, 2)),
+            Ingredient(
+                name = "Ingredient",
+                categories = listOf(),
+                images = mutableMapOf(),
+                quantity = "400g"))
+    _listFridgeItems.value +=
+        Pair(
+            FridgeItem(quantity = "400g", expirationDate = LocalDate.of(2024, 12, 3)),
+            Ingredient(
+                name = "Ingredient",
+                categories = listOf(),
+                images = mutableMapOf(),
+                quantity = "400g"))
   }
 
   /**

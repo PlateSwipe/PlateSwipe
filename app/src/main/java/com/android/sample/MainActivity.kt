@@ -90,7 +90,7 @@ fun PlateSwipeApp() {
         startDestination = Screen.FRIDGE,
         route = Route.FRIDGE,
     ) {
-      composable(Screen.FRIDGE) { FridgeScreen(navigationActions) }
+      composable(Screen.FRIDGE) { FridgeScreen(navigationActions, userViewModel) }
       composable(Screen.CAMERA_SCAN_CODE_BAR) {
         CameraScanCodeBarScreen(navigationActions, ingredientViewModel)
       }
