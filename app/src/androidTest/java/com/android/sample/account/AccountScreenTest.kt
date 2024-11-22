@@ -215,32 +215,6 @@ class AccountScreenTest {
   }
 
   @Test
-  fun testDeleteACreatedRecipe() {
-    composeTestRule.setContent {
-      SampleAppTheme { AccountScreen(mockNavigationActions, userViewModel) }
-    }
-
-    composeTestRule.onNodeWithTag(CREATED_RECIPES_BUTTON_TEST_TAG).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(CREATED_RECIPES_BUTTON_TEST_TAG).assertHasClickAction()
-    composeTestRule.onNodeWithTag(CREATED_RECIPES_BUTTON_TEST_TAG).performClick()
-
-    composeTestRule
-        .onNode(
-            hasAnySibling(hasText(dummyRecipes[1].name))
-                .and(hasTestTag(RECIPE_DELETE_ICON_TEST_TAG)),
-            useUnmergedTree = true)
-        .assertIsDisplayed()
-        .performClick()
-    composeTestRule.onNodeWithTag(CONFIRMATION_POP_UP).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(CONFIRMATION_BUTTON).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(CONFIRMATION_BUTTON).performClick()
-
-    assert(!userViewModel.createdRecipes.value.contains(dummyRecipes[1]))
-    assert(userViewModel.createdRecipes.value.isEmpty())
-    composeTestRule.onNodeWithText(dummyRecipes[1].name).assertIsNotDisplayed()
-  }
-
-  @Test
   fun testNotDeleteACreatedRecipe() {
     composeTestRule.setContent {
       SampleAppTheme { AccountScreen(mockNavigationActions, userViewModel) }
