@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ModeEdit
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -93,6 +94,7 @@ fun RecipeListInstructionsContent(
     modifier: Modifier,
     navigationActions: NavigationActions,
 ) {
+  val maxChars = 14
 
   Column(
       modifier = modifier.padding(RECIPE_NAME_BASE_PADDING).testTag(SCREEN_COLUMN),
@@ -102,12 +104,29 @@ fun RecipeListInstructionsContent(
         modifier = Modifier.height(BIG_PADDING.dp).testTag(RECIPE_LIST_INSTRUCTIONS_SCREEN_SPACER1))
 
     // This text represents the name of the recipe
-    Text(
-        modifier = Modifier.testTag(RECIPE_NAME_TEXT),
-        text = createRecipeViewModel.getRecipeName(),
-        style = MaterialTheme.typography.titleMedium,
-        color = MaterialTheme.colorScheme.onPrimary,
-    )
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+      Text(
+          modifier = Modifier.testTag(RECIPE_NAME_TEXT),
+          text =
+              if (createRecipeViewModel.getRecipeName().length > maxChars)
+                  createRecipeViewModel.getRecipeName().take(maxChars) + "..."
+              else createRecipeViewModel.getRecipeName(),
+          style = MaterialTheme.typography.titleMedium,
+          color = MaterialTheme.colorScheme.onPrimary,
+      )
+
+      Icon(
+          imageVector = Icons.Default.Add,
+          contentDescription = "Edit",
+          modifier =
+              Modifier.size(ICON_SIZE.dp)
+                  .clickable(
+                      onClick = {
+                        navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_INSTRUCTION)
+                      }),
+          tint = MaterialTheme.colorScheme.onPrimary)
+    }
+
     // This text represents the "Instructions" title"
     Text(
         modifier = Modifier.testTag(INSTRUCTION_TEXT),
