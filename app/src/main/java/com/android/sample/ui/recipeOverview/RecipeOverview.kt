@@ -83,14 +83,9 @@ import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_RECIPE_R
 import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_RECIPE_ROUND_ROW
 import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_RECIPE_STAR_SIZE
 import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_TIME_DISPLAY_RATE
-import com.android.sample.resources.C.Tag.LOADING
 import com.android.sample.resources.C.Tag.PADDING
 import com.android.sample.resources.C.Tag.SMALL_PADDING
 import com.android.sample.resources.C.Tag.SwipePage.RATE_VALUE
-import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.EDIT_INSTRUCTION_ICON
-import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.INSTRUCTION_TEXT_IN_CARD
-import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.INSTRUCTION_TEXT_SPACE
-import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.INSTRUCTION_TIME
 import com.android.sample.resources.C.TestTag.RecipeOverview.ADD_SERVINGS
 import com.android.sample.resources.C.TestTag.RecipeOverview.COOK_TIME_TEXT
 import com.android.sample.resources.C.TestTag.RecipeOverview.DRAGGABLE_ITEM
@@ -130,7 +125,8 @@ fun RecipeOverview(
       content = { paddingValues ->
         Column(
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.Start,
+            horizontalAlignment =
+                if (currentRecipe == null) Alignment.CenterHorizontally else Alignment.Start,
             modifier =
                 Modifier.testTag(DRAGGABLE_ITEM)
                     .fillMaxSize()
@@ -140,7 +136,7 @@ fun RecipeOverview(
                 LoadingCook()
                 Spacer(modifier = Modifier.size(SMALL_PADDING.dp))
                 Text(
-                    text = LOADING,
+                    text = stringResource(R.string.unable_loading),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSecondary)
               } else {
@@ -558,7 +554,8 @@ fun InstructionValue(instruction: Instruction, index: Int) {
               .clickable(onClick = { isExpanded = !isExpanded })
               .shadow(
                   elevation = CARD_SHADOW_ELEVATION.dp,
-                  shape = RoundedCornerShape(CARD_BORDER_ROUND.dp)),
+                  shape = RoundedCornerShape(CARD_BORDER_ROUND.dp))
+              .testTag("InstructionValue"),
       colors =
           CardDefaults.cardColors(
               containerColor = MaterialTheme.colorScheme.background,
@@ -571,12 +568,12 @@ fun InstructionValue(instruction: Instruction, index: Int) {
               Image(
                   painter = painterResource(id = instruction.icon.iconResId),
                   contentDescription = "Icon",
-                  modifier = Modifier.size(ICON_SIZE.dp))
+                  modifier = Modifier.size(ICON_SIZE.dp).testTag("InstructionIcon"))
 
-              Column(modifier = Modifier.testTag(INSTRUCTION_TEXT_SPACE)) {
+              Column(modifier = Modifier.testTag("InstructionInfo")) {
                 Text(
-                    modifier = Modifier.testTag(INSTRUCTION_TEXT_IN_CARD),
-                    color = Color.Black,
+                    modifier = Modifier.testTag("InstructionTitle"),
+                    color = MaterialTheme.colorScheme.onPrimary,
                     text =
                         "${stringResource(R.string.RecipeListInstructionsScreen_Step)} ${officialStep}",
                     style = MaterialTheme.typography.bodyMedium,
@@ -585,26 +582,26 @@ fun InstructionValue(instruction: Instruction, index: Int) {
                 // This text represents the time that it takes to do the step
                 if (!instruction.time.isNullOrBlank()) {
                   Text(
-                      color = Color.Black,
+                      color = MaterialTheme.colorScheme.onPrimary,
                       text =
                           "${instruction.time} ${stringResource(R.string.RecipeListInstructionsScreen_Minutes)}",
                       style = MaterialTheme.typography.bodySmall,
-                      modifier = Modifier.testTag(INSTRUCTION_TIME))
+                      modifier = Modifier.testTag("InstructionTime"))
                 }
               }
               Icon(
                   imageVector =
                       if (isExpanded) Icons.Default.ArrowDownward else Icons.Default.ArrowUpward,
                   contentDescription = "Expand",
-                  modifier = Modifier.size(ICON_SIZE.dp).testTag(EDIT_INSTRUCTION_ICON),
-                  tint = Color.Black)
+                  modifier = Modifier.size(ICON_SIZE.dp).testTag("ArrowIcon"),
+                  tint = MaterialTheme.colorScheme.onPrimary)
             }
       }
   if (isExpanded) {
     Text(
         text = instruction.description,
-        color = Color.Black,
+        color = MaterialTheme.colorScheme.onPrimary,
         style = MaterialTheme.typography.bodyMedium,
-        modifier = Modifier.padding(SMALL_PADDING.dp))
+        modifier = Modifier.padding(SMALL_PADDING.dp).testTag("InstructionText"))
   }
 }

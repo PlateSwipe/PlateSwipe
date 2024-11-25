@@ -122,8 +122,7 @@ class CreateRecipeViewModel(
   }
 
   /**
-   * Updates the instructions for the recipe. WARNING : This method should be updated in the next
-   * version of the instruction implementation.
+   * Updates the instructions for the recipe.
    *
    * @param instructions The new instructions for the recipe.
    */
@@ -151,8 +150,7 @@ class CreateRecipeViewModel(
   }
 
   /**
-   * Updates the time required to prepare the recipe. WARNING : This method should be updated in the
-   * next version of the instruction implementation.
+   * Updates the time required to prepare the recipe.
    *
    * @param time The new time required to prepare the recipe.
    */
@@ -240,12 +238,11 @@ class CreateRecipeViewModel(
   }
 
   /**
-   * Gets the instructions for the recipe. WARNING : This method should be updated in the next
-   * version of the instruction implementation.
+   * Gets the instructions for the recipe.
    *
    * @return The instructions for the recipe.
    */
-  fun getRecipeInstructions(): List<Instruction> {
+  fun getRecipeListOfInstructions(): List<Instruction> {
     return recipeBuilder.getInstructions()
   }
 
@@ -257,6 +254,15 @@ class CreateRecipeViewModel(
    */
   fun getRecipeInstruction(index: Int): Instruction {
     return recipeBuilder.getInstruction(index)
+  }
+
+  /**
+   * Deletes the i th instruction of the recipe.
+   *
+   * @param index The index of the instruction.
+   */
+  fun deleteRecipeInstruction(index: Int) {
+    recipeBuilder.deleteInstruction(index)
   }
 
   /**
@@ -287,8 +293,7 @@ class CreateRecipeViewModel(
   }
 
   /**
-   * Gets the time required to prepare the recipe. WARNING : This method should be updated in the
-   * next version of the instruction implementation.
+   * Gets the time required to prepare the recipe.
    *
    * @return The time required to prepare the recipe.
    */

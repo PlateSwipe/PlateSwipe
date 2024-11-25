@@ -148,7 +148,8 @@ import com.android.sample.ui.theme.starColor
 import com.android.sample.ui.utils.PlateSwipeScaffold
 import com.android.sample.ui.utils.Tag
 import kotlin.math.abs
-import kotlinx.coroutines.delay
+import kotlin.math.max
+import kotlin.math.min
 import kotlinx.coroutines.launch
 
 /**
@@ -190,8 +191,8 @@ fun RecipeDisplay(
 ) {
   var retrieveNextRecipe by remember { mutableStateOf(INITIAL_RETRIEVE_NEXT_RECIPE) }
   var displayCard1 by remember { mutableStateOf(INITIAL_DISPLAY_CARD_1) }
-  var isSwiping by remember { mutableStateOf(false) }
   var isClicking by remember { mutableStateOf(INITIAL_IS_CLICKING) }
+  var isSwiping by remember { mutableStateOf(false) }
   var displayLike by remember { mutableStateOf(INITIAL_DISPLAY_LIKE) }
   var displayDisLike by remember { mutableStateOf(INITIAL_DISPLAY_DISLIKE) }
 
@@ -234,7 +235,7 @@ fun RecipeDisplay(
                                 swipeThreshold,
                                 currentRecipe,
                                 userViewModel) {
-                                  retrieveNextRecipe = false
+                                  retrieveNextRecipe = true
                                 }
                             manageRecipeLiked(
                                 offsetXCard2,
@@ -245,12 +246,22 @@ fun RecipeDisplay(
                                   retrieveNextRecipe = true
                                 }
                           },
-                          onDragCancel = { isClicking = false },
+                          onDragCancel = {
+                            // animate the card if the user release the drag without moving
+                            isClicking = false
+                          },
                           onHorizontalDrag = { _, dragAmount ->
                             coroutineScope.launch {
                               // need to always update both as coroutine scope have small delay
-                              offsetXCard1.snapTo(offsetXCard1.value + dragAmount)
-                              offsetXCard2.snapTo(offsetXCard2.value + dragAmount)
+                              if (displayCard1) {
+                                offsetXCard1.snapTo(
+                                    if (!isSwiping) offsetXCard1.value + dragAmount
+                                    else getTarget(offsetXCard1, dragAmount, swipeThreshold))
+                              } else {
+                                offsetXCard2.snapTo(
+                                    if (!isSwiping) offsetXCard2.value + dragAmount
+                                    else getTarget(offsetXCard2, dragAmount, swipeThreshold))
+                              }
                             }
                           })
                     }) {
@@ -350,9 +361,7 @@ fun RecipeDisplay(
                         Modifier.fillMaxWidth()
                             .padding(SMALL_PADDING.dp)
                             .zIndex(if (displayCard1) DISPLAY_CARD_FRONT else DISPLAY_CARD_BACK)
-                            .graphicsLayer(
-                                translationX =
-                                    if (displayCard1) offsetXCard1.value else INITIAL_OFFSET_X),
+                            .graphicsLayer(translationX = offsetXCard1.value),
                     shape = RoundedCornerShape(CORNER_RADIUS.dp),
                     elevation = CardDefaults.cardElevation(CARD_ELEVATION.dp)) {
                       Column(
@@ -377,9 +386,7 @@ fun RecipeDisplay(
                         Modifier.fillMaxWidth()
                             .padding(SMALL_PADDING.dp)
                             .zIndex(if (!displayCard1) DISPLAY_CARD_FRONT else DISPLAY_CARD_BACK)
-                            .graphicsLayer(
-                                translationX =
-                                    if (!displayCard1) offsetXCard2.value else INITIAL_OFFSET_X),
+                            .graphicsLayer(translationX = offsetXCard2.value),
                     shape = RoundedCornerShape(CORNER_RADIUS.dp),
                     elevation = CardDefaults.cardElevation(CARD_ELEVATION.dp)) {
                       Column(
@@ -406,42 +413,59 @@ fun RecipeDisplay(
                 ShawRecipeButton(navigationActions)
               }
 
-              LaunchedEffect(offsetXCard1.value) {
+              LaunchedEffect(offsetXCard1.value, isClicking) {
                 animateCard(
                     offsetX = offsetXCard1,
                     screenWidth = screenWidth,
                     isClicking = isClicking,
-                    isSwiping = isSwiping,
                     retrieveNextRecipe = retrieveNextRecipe,
                     recipesViewModel = recipesViewModel,
-                    startSwiping = { isSwiping = true },
-                    endSwiping = { isSwiping = false },
                     updateDisplayCard = { displayCard1 = false },
                     displayIcons = { animationTarget ->
                       displayLike = animationTarget == END_ANIMATION
                       displayDisLike = animationTarget == -END_ANIMATION
                     },
-                    blockRetrieveNextRecipe = { retrieveNextRecipe = false })
+                    blockRetrieveNextRecipe = { retrieveNextRecipe = false },
+                    startSwipe = { isSwiping = true },
+                    endSwipe = { isSwiping = false })
               }
-              LaunchedEffect(offsetXCard2.value) {
+              LaunchedEffect(offsetXCard2.value, isClicking) {
                 animateCard(
                     offsetX = offsetXCard2,
                     screenWidth = screenWidth,
                     isClicking = isClicking,
-                    isSwiping = isSwiping,
                     retrieveNextRecipe = retrieveNextRecipe,
                     recipesViewModel = recipesViewModel,
-                    startSwiping = { isSwiping = true },
-                    endSwiping = { isSwiping = false },
                     updateDisplayCard = { displayCard1 = true },
                     displayIcons = { animationTarget ->
                       displayLike = animationTarget == END_ANIMATION
                       displayDisLike = animationTarget == -END_ANIMATION
                     },
-                    blockRetrieveNextRecipe = { retrieveNextRecipe = true })
+                    blockRetrieveNextRecipe = { retrieveNextRecipe = true },
+                    startSwipe = { isSwiping = true },
+                    endSwipe = { isSwiping = false })
               }
             }
       }
+}
+
+/**
+ * limit the swipe gesture if the user is spamming the swipe
+ *
+ * @param offsetX - Offset for the swipe animation
+ * @param dragAmount - Drag amount
+ * @param swipeThreshold - Swipe Threshold
+ */
+private fun getTarget(
+    offsetX: Animatable<Float, AnimationVector1D>,
+    dragAmount: Float,
+    swipeThreshold: Float
+): Float {
+  return if (offsetX.value > 0) {
+    max(offsetX.value + dragAmount, swipeThreshold)
+  } else {
+    min(offsetX.value + dragAmount, -swipeThreshold)
+  }
 }
 
 /**
@@ -476,11 +500,8 @@ private fun manageRecipeLiked(
  * @param offsetX - Offset for the swipe animation
  * @param screenWidth - Screen width
  * @param isClicking - Clicking state
- * @param isSwiping - Swiping state
  * @param retrieveNextRecipe - Retrieve next recipe state
  * @param recipesViewModel - Recipes View Model
- * @param startSwiping - Start Swiping function
- * @param endSwiping - End Swiping function
  * @param updateDisplayCard - Update Display Card function
  * @param displayIcons - Display Icons function
  * @param blockRetrieveNextRecipe - Block Retrieve Next Recipe function
@@ -489,43 +510,44 @@ private suspend fun animateCard(
     offsetX: Animatable<Float, AnimationVector1D>,
     screenWidth: Float,
     isClicking: Boolean,
-    isSwiping: Boolean,
     retrieveNextRecipe: Boolean,
     recipesViewModel: RecipesViewModel,
-    startSwiping: () -> Unit,
-    endSwiping: () -> Unit,
     updateDisplayCard: () -> Unit,
     displayIcons: (Float) -> Unit,
-    blockRetrieveNextRecipe: () -> Unit
+    blockRetrieveNextRecipe: () -> Unit,
+    startSwipe: () -> Unit,
+    endSwipe: () -> Unit
 ) {
   val swipeThreshold = screenWidth * SWIPE_THRESHOLD
 
   // Check if the card has been swiped and animate it back to the initial position
   if (abs(offsetX.value) > screenWidth) {
-    startSwiping()
-    // delay the animation to allow the user to see the swipe animation
-    delay(ANIMATION_SWIPE_TIME.toLong())
+
+    if (retrieveNextRecipe) {
+      recipesViewModel.nextRecipe()
+      // block the retrieve next recipe to avoid multiple calls during the animation
+      blockRetrieveNextRecipe()
+    }
+
     updateDisplayCard()
-    endSwiping()
+    endSwipe()
     offsetX.snapTo(INITIAL_OFFSET_X)
   }
 
   // ensure the card doesn't update anything while the animation is running
-  if (!isClicking && !isSwiping) {
+  if (!isClicking) {
     val animationTarget =
         when {
           offsetX.value > swipeThreshold -> END_ANIMATION
           offsetX.value < -swipeThreshold -> -END_ANIMATION
           else -> INITIAL_OFFSET_X
         }
+    if (animationTarget != INITIAL_OFFSET_X) {
+      startSwipe()
+    }
     displayIcons(animationTarget)
 
     // update the displayed recipe
-    if (retrieveNextRecipe && offsetX.value == INITIAL_OFFSET_X) {
-      recipesViewModel.nextRecipe()
-      // block the retrieve next recipe to avoid multiple calls during the animation
-      blockRetrieveNextRecipe()
-    }
     offsetX.animateTo(animationTarget, animationSpec = tween(ANIMATION_SWIPE_TIME))
   }
 }

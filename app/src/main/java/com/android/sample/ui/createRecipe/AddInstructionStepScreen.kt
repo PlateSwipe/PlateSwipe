@@ -70,24 +70,18 @@ fun AddInstructionStepContent(
 ) {
   var stepDescription by remember {
     mutableStateOf(
-        if (createRecipeViewModel.getSelectedInstruction() != null) {
-          createRecipeViewModel
-              .getInstruction(createRecipeViewModel.getSelectedInstruction()!!)
-              .description
-        } else {
-          ""
-        })
+        defaultValues(
+            defaultValue = "",
+            selectedInstruction = createRecipeViewModel.getSelectedInstruction(),
+            onSuccess = { createRecipeViewModel.getInstruction(it).description }))
   }
 
   var stepTime by remember {
     mutableStateOf(
-        if (createRecipeViewModel.getSelectedInstruction() != null) {
-          createRecipeViewModel
-              .getInstruction(createRecipeViewModel.getSelectedInstruction()!!)
-              .time
-        } else {
-          ""
-        })
+        defaultValues(
+            defaultValue = "",
+            selectedInstruction = createRecipeViewModel.getSelectedInstruction(),
+            onSuccess = { createRecipeViewModel.getInstruction(it).time }))
   }
   var selectedIcon by remember {
     mutableStateOf<IconType?>(
@@ -216,6 +210,14 @@ fun AddInstructionStepContent(
       }
 }
 
+fun <T> defaultValues(defaultValue: T, selectedInstruction: Int?, onSuccess: (Int) -> T): T {
+  return if (selectedInstruction != null) {
+    onSuccess(selectedInstruction)
+  } else {
+    defaultValue
+  }
+}
+
 /**
  * Verifies if the step description is empty and should show an error.
  *
@@ -249,8 +251,7 @@ fun confirmAndAssignStep(
         Instruction(
             description = stepDescription, time = stepTime, iconType = selectedIcon?.iconName))
     onSuccess()
-  }
-  if (stepDescription.isNotEmpty()) {
+  } else if (stepDescription.isNotEmpty()) {
     createRecipeViewModel.addRecipeInstruction(
         Instruction(
             description = stepDescription, time = stepTime, iconType = selectedIcon?.iconName))

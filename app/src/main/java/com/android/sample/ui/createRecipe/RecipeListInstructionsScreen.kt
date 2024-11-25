@@ -135,16 +135,7 @@ fun RecipeListInstructionsContent(
                         0.7f to Color.Red,
                         1f to Color.Transparent))
                 .testTag(INSTRUCTION_LIST)) {
-
-          /**
-           * This Part will be later improved by adding the list of instructions
-           *
-           * items(createRecipeViewModel.getInstructions().length) { index ->
-           * InstructionValue(createRecipeViewModel = createRecipeViewModel, index = index, time =
-           * recipeBuilder.getTime(), onClick =
-           * {navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_INSTRUCTION)}) }
-           */
-          items(createRecipeViewModel.getRecipeInstructions().size) { index ->
+          items(createRecipeViewModel.getRecipeListOfInstructions().size) { index ->
             InstructionValue(
                 createRecipeViewModel = createRecipeViewModel,
                 index = index,

@@ -461,7 +461,7 @@ class CreateRecipeViewModelTest {
     createRecipeViewModel.updateRecipeOrigin("Italian")
 
     assertEquals(recipe.name, createRecipeViewModel.getRecipeName())
-    assertEquals(recipe.instructions, createRecipeViewModel.getRecipeInstructions())
+    assertEquals(recipe.instructions, createRecipeViewModel.getRecipeListOfInstructions())
     assertEquals(recipe.strMealThumbUrl, createRecipeViewModel.getRecipeThumbnail())
     assertEquals(listOf(Pair("Banana", "3")), createRecipeViewModel.getIngredientsAndMeasurements())
     assertEquals("30 minutes", createRecipeViewModel.getRecipeTime())
@@ -551,5 +551,13 @@ class CreateRecipeViewModelTest {
 
     createRecipeViewModel.publishRecipe(onSuccess = {}, onFailure = {})
     assertEquals("At least one ingredient is required.", createRecipeViewModel.publishStatus.value)
+  }
+
+  @Test
+  fun `deleteInstruction deletes the instruction correctly`() {
+    val instruction = Instruction("Preheat oven to 180°C...")
+    createRecipeViewModel.addRecipeInstruction(instruction)
+    createRecipeViewModel.deleteRecipeInstruction(0)
+    assertTrue(createRecipeViewModel.getRecipeListOfInstructions().isEmpty())
   }
 }

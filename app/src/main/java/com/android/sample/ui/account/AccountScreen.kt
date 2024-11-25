@@ -17,6 +17,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -49,11 +50,12 @@ import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.navigation.TopLevelDestinations
 import com.android.sample.ui.utils.PlateSwipeScaffold
 import com.android.sample.ui.utils.RecipeList
-import com.android.sample.ui.utils.TopCornerLikeButton
+import com.android.sample.ui.utils.TopCornerDeleteButton
+import com.android.sample.ui.utils.TopCornerUnLikeButton
 
 @Composable
 fun AccountScreen(navigationActions: NavigationActions, userViewModel: UserViewModel) {
-  userViewModel.getCurrentUser()
+  LaunchedEffect(Unit) { userViewModel.getCurrentUser() }
 
   PlateSwipeScaffold(
       navigationActions = navigationActions,
@@ -158,7 +160,11 @@ private fun ListSelection(
           navigationActions.navigateTo(Screen.OVERVIEW_RECIPE_ACCOUNT)
         },
         topCornerButton = { recipe ->
-          if (selectedListIndex == 0) TopCornerLikeButton(recipe, userViewModel)
+          if (selectedListIndex == 0) {
+            TopCornerUnLikeButton(recipe, userViewModel)
+          } else {
+            TopCornerDeleteButton(recipe, userViewModel)
+          }
         })
   }
 }

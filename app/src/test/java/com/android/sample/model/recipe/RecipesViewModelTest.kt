@@ -1,6 +1,7 @@
 package com.android.sample.model.recipe
 
 import com.android.sample.model.filter.Difficulty
+import com.android.sample.resources.C.Tag.NUMBER_RECIPES_TO_FETCH
 import com.android.sample.ui.utils.testRecipes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -102,6 +103,27 @@ class RecipesViewModelTest {
         recipesViewModel.recipes.value,
         `is`(dummyRecipes)) // Check if the ViewModel's recipes are updated
     assertThat(recipesViewModel.loading.value, `is`(false)) // Check loading is false after fetching
+  }
+
+  @Test
+  fun fetchByCategoriesRecipesHandlesFailure() {
+    // Simulate the failure of the repository
+    `when`(mockRecipeRepository.searchByCategory(any(), any(), any(), any())).thenAnswer {
+        invocation ->
+      val onFailure = invocation.getArgument<(Throwable) -> Unit>(2)
+      onFailure(Exception("Network error")) // Simulate a failure
+      null
+    }
+
+    // Act
+    recipesViewModel.updateCategory("Dessert")
+    recipesViewModel.applyChanges()
+    recipesViewModel.fetchRandomRecipes(2)
+
+    // Assert
+    assertThat(recipesViewModel.loading.value, `is`(false)) // Check loading is false after fetch
+    assertThat(
+        recipesViewModel.recipes.value, `is`(emptyList())) // Ensure no recipes are set on failure
   }
 
   @Test
@@ -333,7 +355,7 @@ class RecipesViewModelTest {
 
     // Assert: Verify that fetchRandomRecipes is called twice (once during init and once during the
     // test)
-    verify(spyViewModel, times(2)).fetchRandomRecipes(eq(2))
+    verify(spyViewModel, times(2)).fetchRandomRecipes(eq(NUMBER_RECIPES_TO_FETCH))
   }
 
   @OptIn(ExperimentalCoroutinesApi::class)

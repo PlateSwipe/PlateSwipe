@@ -3,22 +3,31 @@ package com.android.sample.model.user
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.android.sample.model.image.ImageDirectoryType
+import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.ingredient.FirestoreIngredientRepository
 import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.recipe.FirestoreRecipesRepository
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.recipe.RecipeOverviewViewModel
+import com.android.sample.resources.C.Tag.UserViewModel.FAILED_TO_DELETE_IMAGE
+import com.android.sample.resources.C.Tag.UserViewModel.FAILED_TO_DELETE_RECIPE
 import com.android.sample.resources.C.Tag.UserViewModel.FAILED_TO_FETCH_CREATED_RECIPE_FROM_DATABASE_ERROR
 import com.android.sample.resources.C.Tag.UserViewModel.FAILED_TO_FETCH_INGREDIENT_FROM_DATABASE_ERROR
 import com.android.sample.resources.C.Tag.UserViewModel.FAILED_TO_FETCH_LIKED_RECIPE_FROM_DATABASE_ERROR
+import com.android.sample.resources.C.Tag.UserViewModel.IMAGE_DELETION_SUCCESSFULY
+import com.android.sample.resources.C.Tag.UserViewModel.IMAGE_NAME
 import com.android.sample.resources.C.Tag.UserViewModel.LOG_TAG
 import com.android.sample.resources.C.Tag.UserViewModel.NOT_FOUND_INGREDIENT_IN_DATABASE_ERROR
+import com.android.sample.resources.C.Tag.UserViewModel.RECIPE_DELETED_SUCCESSFULY
+import com.android.sample.resources.C.Tag.UserViewModel.RECIPE_NOT_FOUND
 import com.android.sample.resources.C.Tag.UserViewModel.REMOVED_INGREDIENT_NOT_IN_FRIDGE_ERROR
 import com.android.sample.resources.C.Tag.UserViewModel.REMOVED_TOO_MANY_INGREDIENTS_ERROR
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -28,7 +37,9 @@ class UserViewModel(
     private val recipesRepository: FirestoreRecipesRepository =
         FirestoreRecipesRepository(Firebase.firestore),
     private val ingredientRepository: FirestoreIngredientRepository =
-        FirestoreIngredientRepository(Firebase.firestore)
+        FirestoreIngredientRepository(Firebase.firestore),
+    private val imageRepositoryFirebase: ImageRepositoryFirebase =
+        ImageRepositoryFirebase(Firebase.storage)
 ) : ViewModel(), RecipeOverviewViewModel {
 
   private val _userName: MutableStateFlow<String?> = MutableStateFlow(null)
@@ -49,10 +60,6 @@ class UserViewModel(
   private val _currentRecipe = MutableStateFlow<Recipe?>(null)
   override val currentRecipe: StateFlow<Recipe?>
     get() = _currentRecipe
-
-  init {
-    userRepository.init { getCurrentUser() }
-  }
 
   companion object {
     val Factory: ViewModelProvider.Factory =
@@ -92,20 +99,20 @@ class UserViewModel(
                 })
           }
           user.likedRecipes.forEach { uid ->
-            recipesRepository.search(
+            fetchRecipe(
                 uid,
-                onSuccess = { recipe -> addRecipeToUserLikedRecipes(recipe) },
-                onFailure = { e ->
-                  Log.e(LOG_TAG, FAILED_TO_FETCH_LIKED_RECIPE_FROM_DATABASE_ERROR, e)
-                })
+                _likedRecipes,
+                { recipe -> addRecipeToUserLikedRecipes(recipe) },
+                { recipe -> removeRecipeFromUserLikedRecipes(recipe) },
+                FAILED_TO_FETCH_LIKED_RECIPE_FROM_DATABASE_ERROR)
           }
           user.createdRecipes.forEach { uid ->
-            recipesRepository.search(
+            fetchRecipe(
                 uid,
-                onSuccess = { recipe -> addRecipeToUserCreatedRecipes(recipe) },
-                onFailure = { e ->
-                  Log.e(LOG_TAG, FAILED_TO_FETCH_CREATED_RECIPE_FROM_DATABASE_ERROR, e)
-                })
+                _createdRecipes,
+                { recipe -> addRecipeToUserCreatedRecipes(recipe) },
+                { recipe -> removeRecipeFromUserCreatedRecipes(recipe) },
+                FAILED_TO_FETCH_CREATED_RECIPE_FROM_DATABASE_ERROR)
           }
         },
         onFailure = {
@@ -270,6 +277,16 @@ class UserViewModel(
    */
   fun removeRecipeFromUserCreatedRecipes(recipe: Recipe) {
     updateList(_createdRecipes, recipe, false)
+    recipesRepository.deleteRecipe(
+        recipe.uid,
+        onSuccess = { Log.i(LOG_TAG, RECIPE_DELETED_SUCCESSFULY) },
+        onFailure = { e -> Log.e(LOG_TAG, FAILED_TO_DELETE_RECIPE, e) })
+    imageRepositoryFirebase.deleteImage(
+        recipe.uid,
+        IMAGE_NAME,
+        ImageDirectoryType.RECIPE,
+        { Log.i(LOG_TAG, IMAGE_DELETION_SUCCESSFULY) },
+        { e -> Log.e(LOG_TAG, FAILED_TO_DELETE_IMAGE, e) })
     updateCurrentUser()
   }
 
@@ -280,5 +297,41 @@ class UserViewModel(
    */
   fun selectRecipe(recipe: Recipe) {
     _currentRecipe.value = recipe
+  }
+
+  /**
+   * Function that fetches a recipe based on the uid from the database for a user
+   *
+   * @param uid the uid of the recipe in the database
+   * @param recipes the list of recipes to where we add or from were we delete
+   * @param addRecipe the function that adds the recipe to recipes once found
+   * @param removeRecipe the function that removes the recipe from recipes if it is no longer in the
+   *   database
+   * @param errorMessage error message that will be displayed in the logs
+   */
+  private fun fetchRecipe(
+      uid: String,
+      recipes: MutableStateFlow<List<Recipe>>,
+      addRecipe: (Recipe) -> Unit,
+      removeRecipe: (Recipe) -> Unit,
+      errorMessage: String
+  ) {
+    val recipeFound = recipes.value.find { item -> item.uid == uid }
+    recipesRepository.search(
+        uid,
+        onSuccess = { recipe ->
+          if (recipeFound == null) {
+            addRecipe(recipe)
+          }
+        },
+        onFailure = { e ->
+          if (e.message != RECIPE_NOT_FOUND) {
+            Log.e(LOG_TAG, errorMessage, e)
+          } else {
+            if (recipeFound != null) {
+              removeRecipe(recipeFound)
+            }
+          }
+        })
   }
 }

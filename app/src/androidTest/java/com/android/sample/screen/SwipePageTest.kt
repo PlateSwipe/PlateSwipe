@@ -1,5 +1,6 @@
 package com.android.sample.screen
 
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -18,6 +19,7 @@ import com.android.sample.resources.C.TestTag.SwipePage.CATEGORY_CHIP
 import com.android.sample.resources.C.TestTag.SwipePage.DELETE_SUFFIX
 import com.android.sample.resources.C.TestTag.SwipePage.DIFFICULTY_CHIP
 import com.android.sample.resources.C.TestTag.SwipePage.DRAGGABLE_ITEM
+import com.android.sample.resources.C.TestTag.SwipePage.FILTER
 import com.android.sample.resources.C.TestTag.SwipePage.FILTER_ROW
 import com.android.sample.resources.C.TestTag.SwipePage.PRICE_RANGE_CHIP
 import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_IMAGE_1
@@ -140,6 +142,62 @@ class SwipePageTest : TestCase() {
     assertNotEquals(currentRecipe, recipesViewModel.currentRecipe.value)
   }
 
+  @OptIn(ExperimentalCoroutinesApi::class)
+  @Test
+  fun testDraggingEventLeftSpamming() = runTest {
+    val currentRecipe = recipesViewModel.currentRecipe.value
+
+    // Ensure the draggable item is displayed
+    composeTestRule.onNodeWithTag(DRAGGABLE_ITEM).assertIsDisplayed()
+
+    composeTestRule.onNodeWithTag(DRAGGABLE_ITEM).performTouchInput {
+      down(center) // Start a touch gesture at the center
+      moveBy(Offset(-1000f, 0f))
+      up()
+
+      down(center)
+      moveBy(Offset(-1000f, 0f))
+      up()
+    }
+
+    advanceUntilIdle()
+    composeTestRule.waitForIdle()
+
+    // Wait until the recipe changes or timeout occurs
+    composeTestRule.waitUntil(5000) { recipesViewModel.currentRecipe.value != currentRecipe }
+
+    // Assert that the recipe has changed after the swipes
+    assertNotEquals(currentRecipe, recipesViewModel.currentRecipe.value)
+  }
+
+  @OptIn(ExperimentalCoroutinesApi::class)
+  @Test
+  fun testDraggingEventRightSpamming() = runTest {
+    val currentRecipe = recipesViewModel.currentRecipe.value
+
+    // Ensure the draggable item is displayed
+    composeTestRule.onNodeWithTag(DRAGGABLE_ITEM).assertIsDisplayed()
+
+    composeTestRule.onNodeWithTag(DRAGGABLE_ITEM).performTouchInput {
+      down(center)
+      moveBy(Offset(1000f, 0f))
+      up()
+
+      down(center)
+      moveBy(Offset(1000f, 0f))
+      up()
+    }
+
+    advanceUntilIdle()
+    composeTestRule.waitForIdle()
+
+    // Wait until the recipe changes or timeout occurs
+    composeTestRule.waitUntil(5000) { recipesViewModel.currentRecipe.value != currentRecipe }
+
+    // Assert that the recipe has changed after the swipes
+    assertNotEquals(currentRecipe, recipesViewModel.currentRecipe.value)
+  }
+
   /** This test checks the Dislike swipe of the image. */
   @OptIn(ExperimentalCoroutinesApi::class)
   @Test
@@ -193,6 +251,26 @@ class SwipePageTest : TestCase() {
       swipeLeft(0f, -1f)
     }
 
+    advanceUntilIdle()
+
+    composeTestRule.waitForIdle()
+
+    assertEquals(currentRecipe, recipesViewModel.currentRecipe.value)
+  }
+
+  @OptIn(ExperimentalCoroutinesApi::class)
+  @Test
+  fun testOnlyTouchTheScreen() = runTest {
+    val currentRecipe = recipesViewModel.currentRecipe.value
+    // Make sure the screen is displayed
+    composeTestRule.onNodeWithTag(DRAGGABLE_ITEM).assertIsDisplayed()
+
+    // Simulate a drag event
+    composeTestRule.onNodeWithTag(DRAGGABLE_ITEM).performTouchInput {
+      down(center) // Start a touch gesture at the center
+      moveBy(Offset(50f, 0f)) // Drag horizontally by 50 pixels
+      cancel() // Cancel the drag
+    }
     advanceUntilIdle()
 
     composeTestRule.waitForIdle()
@@ -325,5 +403,11 @@ class SwipePageTest : TestCase() {
 
     // Verify the ViewModel category has been reset
     assertNull(recipesViewModel.filter.value.category)
+  }
+
+  @Test
+  fun filterIconClickNavigatesToFilterPage() {
+    composeTestRule.onNodeWithTag(FILTER).performClick()
+    verify(mockNavigationActions).navigateTo(Screen.FILTER)
   }
 }

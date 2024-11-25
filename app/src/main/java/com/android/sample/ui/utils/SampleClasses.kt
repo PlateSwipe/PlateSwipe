@@ -4,6 +4,9 @@ import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.recipe.Instruction
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.user.User
+import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_NORMAL_URL
+import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_SMALL_URL
+import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_THUMBNAIL_URL
 
 val recipeNames =
     arrayOf(
@@ -112,11 +115,10 @@ val ingredientCategories =
     )
 
 val ingredientImages =
-    arrayOf(
-        listOf("display_normal", "display_small", "display_thumbnail"),
-        listOf("display_normal", "display_small", "display_thumbnail"),
-        emptyList(),
-    )
+    mutableMapOf(
+        PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
+        PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
+        PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small")
 
 val testIngredients =
     ingredientNames.mapIndexed { index, name ->
@@ -127,7 +129,7 @@ val testIngredients =
           brands = ingredientBrands[index],
           quantity = ingredientQuantities[index],
           categories = ingredientCategories[index],
-          images = ingredientImages[index],
+          images = ingredientImages,
       )
     }
 
