@@ -119,4 +119,9 @@
     <string name="pop_up_confirm_removal_liked_recipe">Yes</string>>
     <string name="pop_up_confirm_cancel_removal_liked_recipe">No</string>
 
+    //Fridge
+    <string name="fridge_title">Fridge</string>
+    <string name="date_pattern">dd/MM/yyyy</string>
+    <string name="no_date">No Date</string>
+
 </resources>

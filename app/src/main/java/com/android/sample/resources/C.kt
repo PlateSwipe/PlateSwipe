@@ -588,6 +588,10 @@ object C {
       const val ACCOUNT_SCREEN_SELECTED_LIST_SEPARATOR_FILL_MAX_WIDTH = .8f
       const val ACCOUNT_SCREEN_SELECTED_LIST_SEPARATOR_THICKNESS = 2
     }
+
+    object FridgeScreen {
+      const val TITLE_FONT_SIZE = 20
+    }
   }
 
   object TestTag {
@@ -756,5 +760,7 @@ object C {
     object RecipeBuilder {
       const val OUT_OF_BOUNDS_MESSAGE = "Index out of bounds"
     }
+
+    object FridgeScreen {}
   }
 }

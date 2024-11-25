@@ -445,7 +445,7 @@ class EndToEndTest {
           startDestination = Screen.FRIDGE,
           route = Route.FRIDGE,
       ) {
-        composable(Screen.FRIDGE) { FridgeScreen(navigationActions) }
+        composable(Screen.FRIDGE) { FridgeScreen(navigationActions, userViewModel) }
       }
       navigation(
           startDestination = Screen.SEARCH,

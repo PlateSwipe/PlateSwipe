@@ -41,6 +41,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -50,13 +51,12 @@ import com.android.sample.R
 import com.android.sample.model.fridge.FridgeItem
 import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.ingredient.IngredientViewModel
-import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScreen.CARD_BORDER_ROUND
+import com.android.sample.resources.C.Dimension.FridgeScreen.TITLE_FONT_SIZE
 import com.android.sample.resources.C.Dimension.PADDING_16
 import com.android.sample.resources.C.Dimension.PADDING_32
 import com.android.sample.resources.C.Dimension.PADDING_8
-import com.android.sample.resources.C.TestTag.Utils.TEST_TAG
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.theme.firebrickRed
 import com.android.sample.ui.theme.tagBackground
@@ -105,18 +105,16 @@ fun FridgeContent(paddingValues: PaddingValues, userViewModel: UserViewModel) {
                         bottom = PADDING_8.dp),
             horizontalArrangement = Arrangement.SpaceBetween) {
               Text(
-                  text = "Fridge",
+                  text = stringResource(R.string.fridge_title),
                   style = MaterialTheme.typography.titleMedium,
-                  fontSize = 20.sp,
+                  fontSize = TITLE_FONT_SIZE.sp,
                   color = MaterialTheme.colorScheme.onPrimary)
               Text(
                   text = "${listFridgeItem.size} items",
                   style = MaterialTheme.typography.bodyMedium,
-                  fontSize = 20.sp,
+                  fontSize = TITLE_FONT_SIZE.sp,
                   color = MaterialTheme.colorScheme.onPrimary)
             }
-
-        Row { Recipe.getCategories().forEach {} }
 
         LazyColumn(modifier = Modifier.fillMaxSize()) {
           item {
@@ -158,7 +156,7 @@ private fun ItemCard(
     userViewModel: UserViewModel
 ) {
   var showEditDialog by remember { mutableStateOf(false) }
-  var updatedQuantity by remember { mutableStateOf(card.first.quantity ?: "") }
+  var updatedQuantity by remember { mutableStateOf(card.first.quantity) }
 
   Column(
       modifier = Modifier.padding(8.dp),
@@ -177,35 +175,34 @@ private fun ItemCard(
                 ) {
                   Icon(
                       imageVector = Icons.Default.Edit,
-                      contentDescription = "Edit Quantity",
-                      tint = MaterialTheme.colorScheme.onSecondary)
+                      contentDescription = "Edit ${card.second.name} Quantity",
+                      tint = MaterialTheme.colorScheme.onSecondary,
+                  )
                 }
 
                 Column(
                     modifier = Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally) {
-                      card.first.quantity?.let {
-                        Row(
-                            modifier =
-                                Modifier.padding(8.dp, 8.dp, 8.dp, 8.dp)
-                                    .background(
-                                        color = tagBackground, shape = RoundedCornerShape(16.dp)),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center) {
-                              Text(
-                                  modifier =
-                                      Modifier.testTag(TEST_TAG)
-                                          .padding(horizontal = 12.dp, vertical = 4.dp),
-                                  text = it,
-                                  fontSize = 14.sp,
-                                  color = Color.White // Text color
-                                  )
-                            }
-                      }
+                      Row(
+                          modifier =
+                              Modifier.padding(8.dp, 8.dp, 8.dp, 8.dp)
+                                  .background(
+                                      color = tagBackground, shape = RoundedCornerShape(16.dp)),
+                          verticalAlignment = Alignment.CenterVertically,
+                          horizontalArrangement = Arrangement.Center) {
+                            Text(
+                                modifier =
+                                    Modifier.testTag("${card.second.name} Quantity")
+                                        .padding(horizontal = 12.dp, vertical = 4.dp),
+                                text = card.first.quantity,
+                                fontSize = 14.sp,
+                                color = Color.White // Text color
+                                )
+                          }
 
                       Image(
                           painter = painterResource(id = R.drawable.chef_image_in_egg),
-                          contentDescription = "Chef Illustration",
+                          contentDescription = "${card.second.name}  Image",
                           modifier = Modifier.size(100.dp))
 
                       ExpirationBar(expirationDate = card.first.expirationDate)
@@ -220,8 +217,9 @@ private fun ItemCard(
             color = MaterialTheme.colorScheme.onPrimary)
 
         val formattedDate =
-            card.first.expirationDate?.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
-                ?: "No Date"
+            card.first.expirationDate.format(
+                DateTimeFormatter.ofPattern(stringResource(R.string.date_pattern)))
+
         Text(
             modifier = Modifier.padding(vertical = 2.dp, horizontal = 8.dp),
             text = formattedDate,
