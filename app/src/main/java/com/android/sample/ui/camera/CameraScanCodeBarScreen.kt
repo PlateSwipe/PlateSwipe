@@ -202,7 +202,7 @@ fun IngredientDisplay(
                   Modifier.fillMaxSize()
                       .testTag(RECIPE_IMAGE_1)
                       .clip(RoundedCornerShape(INGREDIENT_DISPLAY_IMAGE_BORDER_RADIUS.dp)),
-              contentScale = ContentScale.Crop,
+              contentScale = ContentScale.Fit,
           )
         }
       }
