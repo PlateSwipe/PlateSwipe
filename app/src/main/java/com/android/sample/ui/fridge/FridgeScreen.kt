@@ -42,6 +42,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -57,9 +58,13 @@ import com.android.sample.resources.C.Dimension.FridgeScreen.TITLE_FONT_SIZE
 import com.android.sample.resources.C.Dimension.PADDING_16
 import com.android.sample.resources.C.Dimension.PADDING_32
 import com.android.sample.resources.C.Dimension.PADDING_8
+import com.android.sample.resources.C.Tag.BASE_PADDING
+import com.android.sample.ui.createRecipe.ChefImage
 import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.firebrickRed
 import com.android.sample.ui.theme.tagBackground
+import com.android.sample.ui.utils.PlateSwipeButton
 import com.android.sample.ui.utils.PlateSwipeScaffold
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -84,13 +89,68 @@ fun FridgeScreen(navigationActions: NavigationActions, userViewModel: UserViewMo
   PlateSwipeScaffold(
       navigationActions = navigationActions,
       selectedItem = navigationActions.currentRoute(),
-      content = { paddingValues -> FridgeContent(paddingValues, userViewModel) },
+      content = { paddingValues ->
+        val listFridgeItem by userViewModel.listFridgeItems.collectAsState()
+        if (listFridgeItem.isEmpty()) {
+          EmptyFridge(paddingValues, navigationActions)
+        } else {
+          FridgeContent(paddingValues, userViewModel, listFridgeItem)
+        }
+      },
       showBackArrow = true)
 }
 
 @Composable
-fun FridgeContent(paddingValues: PaddingValues, userViewModel: UserViewModel) {
-  val listFridgeItem by userViewModel.listFridgeItems.collectAsState()
+fun EmptyFridge(paddingValues: PaddingValues, navigationActions: NavigationActions) {
+  Box(modifier = Modifier.fillMaxSize().padding(paddingValues).padding(BASE_PADDING)) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top,
+        modifier = Modifier.fillMaxSize()) {
+          // Progress bar to show the current step
+
+          // Title text
+          Text(
+              text = "Empty Fridge",
+              style = MaterialTheme.typography.titleMedium.copy(lineHeight = 40.sp),
+              fontSize = 40.sp,
+              color = MaterialTheme.colorScheme.onPrimary,
+              modifier = Modifier.fillMaxWidth().padding(PADDING_32.dp),
+              textAlign = TextAlign.Center)
+          Spacer(modifier = Modifier.size(PADDING_16.dp))
+          // Subtitle text
+          Text(
+              text = "Your fridge is currently empty, click below to add ingredient",
+              style = MaterialTheme.typography.bodyMedium,
+              color = MaterialTheme.colorScheme.onPrimary,
+              modifier = Modifier.padding(horizontal = PADDING_32.dp).zIndex(1f),
+              textAlign = TextAlign.Center)
+
+          Spacer(modifier = Modifier.weight(2f))
+
+          // Row to hold the chef image and change its position horizontally
+          Row(modifier = Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
+            Spacer(modifier = Modifier.weight(1f))
+            ChefImage(modifier = Modifier.weight(18f).zIndex(-1f))
+            Spacer(modifier = Modifier.weight(1f))
+          }
+          Spacer(modifier = Modifier.weight(2f))
+        }
+
+    // Action button
+    PlateSwipeButton(
+        "Add Ingredient",
+        modifier = Modifier.align(Alignment.BottomCenter).testTag("NextStepButton"),
+        onClick = { navigationActions.navigateTo(Screen.CREATE_RECIPE_SEARCH_INGREDIENTS) })
+  }
+}
+
+@Composable
+fun FridgeContent(
+    paddingValues: PaddingValues,
+    userViewModel: UserViewModel,
+    listFridgeItem: List<Pair<FridgeItem, Ingredient>>
+) {
   Column(
       modifier = Modifier.fillMaxSize().padding(paddingValues),
       verticalArrangement = Arrangement.Center,

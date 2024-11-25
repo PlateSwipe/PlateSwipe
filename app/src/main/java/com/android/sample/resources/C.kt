@@ -760,7 +760,5 @@ object C {
     object RecipeBuilder {
       const val OUT_OF_BOUNDS_MESSAGE = "Index out of bounds"
     }
-
-    object FridgeScreen {}
   }
 }
