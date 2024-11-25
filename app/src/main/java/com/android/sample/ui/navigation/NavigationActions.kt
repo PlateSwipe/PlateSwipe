@@ -55,7 +55,6 @@ object Screen {
 
 data class TopLevelDestination(val route: String, val iconId: Int, val textId: String)
 
-// TODO: Find good icons for each Route
 object TopLevelDestinations {
   val SWIPE = TopLevelDestination(Route.SWIPE, R.drawable.mainpageicon, "Swipe")
   val FRIDGE = TopLevelDestination(Route.FRIDGE, R.drawable.fridgeicon, "Fridge")
