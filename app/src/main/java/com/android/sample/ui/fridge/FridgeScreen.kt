@@ -16,13 +16,25 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,6 +44,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.zIndex
 import com.android.sample.R
 import com.android.sample.model.fridge.FridgeItem
@@ -118,10 +131,14 @@ fun FridgeContent(paddingValues: PaddingValues, userViewModel: UserViewModel) {
                         val cardWidth = 150.dp // Define a fixed width for the cards
 
                         // First card in the chunk
-                        chunk.getOrNull(0)?.let { card1 -> ItemCard(cardWidth, card1) }
+                        chunk.getOrNull(0)?.let { card1 ->
+                          ItemCard(cardWidth, card1, userViewModel)
+                        }
 
                         // Second card in the chunk (if present)
-                        chunk.getOrNull(1)?.let { card2 -> ItemCard(cardWidth, card2) }
+                        chunk.getOrNull(1)?.let { card2 ->
+                          ItemCard(cardWidth, card2, userViewModel)
+                        }
 
                         // Add an empty spacer if only one card exists in the chunk
                         if (chunk.size == 1) {
@@ -135,7 +152,14 @@ fun FridgeContent(paddingValues: PaddingValues, userViewModel: UserViewModel) {
 }
 
 @Composable
-private fun ItemCard(cardWidth: Dp, card: Pair<FridgeItem, Ingredient>) {
+private fun ItemCard(
+    cardWidth: Dp,
+    card: Pair<FridgeItem, Ingredient>,
+    userViewModel: UserViewModel
+) {
+  var showEditDialog by remember { mutableStateOf(false) }
+  var updatedQuantity by remember { mutableStateOf(card.first.quantity ?: "") }
+
   Column(
       modifier = Modifier.padding(8.dp),
       horizontalAlignment = Alignment.CenterHorizontally,
@@ -145,35 +169,48 @@ private fun ItemCard(cardWidth: Dp, card: Pair<FridgeItem, Ingredient>) {
             colors = CardDefaults.cardColors(MaterialTheme.colorScheme.secondary),
             shape = RoundedCornerShape(CARD_BORDER_ROUND.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)) {
-              Column(
-                  modifier = Modifier.fillMaxSize(),
-                  horizontalAlignment = Alignment.CenterHorizontally) {
-                    card.first.quantity?.let {
-                      Row(
-                          modifier =
-                              Modifier.padding(8.dp, 8.dp, 8.dp, 8.dp)
-                                  .background(
-                                      color = tagBackground, shape = RoundedCornerShape(16.dp)),
-                          verticalAlignment = Alignment.CenterVertically,
-                          horizontalArrangement = Arrangement.Center) {
-                            Text(
-                                modifier =
-                                    Modifier.testTag(TEST_TAG)
-                                        .padding(horizontal = 12.dp, vertical = 4.dp),
-                                text = it,
-                                fontSize = 14.sp,
-                                color = Color.White // Text color
-                                )
-                          }
+              Box(modifier = Modifier.fillMaxSize()) {
+                // Pencil Icon - Positioned at Top Left
+                IconButton(
+                    onClick = { showEditDialog = true },
+                    modifier = Modifier.align(Alignment.TopEnd).padding(8.dp).size(20.dp),
+                ) {
+                  Icon(
+                      imageVector = Icons.Default.Edit,
+                      contentDescription = "Edit Quantity",
+                      tint = MaterialTheme.colorScheme.onSecondary)
+                }
+
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally) {
+                      card.first.quantity?.let {
+                        Row(
+                            modifier =
+                                Modifier.padding(8.dp, 8.dp, 8.dp, 8.dp)
+                                    .background(
+                                        color = tagBackground, shape = RoundedCornerShape(16.dp)),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center) {
+                              Text(
+                                  modifier =
+                                      Modifier.testTag(TEST_TAG)
+                                          .padding(horizontal = 12.dp, vertical = 4.dp),
+                                  text = it,
+                                  fontSize = 14.sp,
+                                  color = Color.White // Text color
+                                  )
+                            }
+                      }
+
+                      Image(
+                          painter = painterResource(id = R.drawable.chef_image_in_egg),
+                          contentDescription = "Chef Illustration",
+                          modifier = Modifier.size(100.dp))
+
+                      ExpirationBar(expirationDate = card.first.expirationDate)
                     }
-
-                    Image(
-                        painter = painterResource(id = R.drawable.chef_image_in_egg),
-                        contentDescription = "wow",
-                        modifier = Modifier.size(100.dp))
-
-                    ExpirationBar(expirationDate = card.first.expirationDate)
-                  }
+              }
             }
         Text(
             modifier = Modifier.padding(vertical = 2.dp, horizontal = 8.dp),
@@ -190,7 +227,96 @@ private fun ItemCard(cardWidth: Dp, card: Pair<FridgeItem, Ingredient>) {
             text = formattedDate,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f))
+
+        // Edit Quantity Popup Dialog
+        if (showEditDialog) {
+          UpdateQuantityDialog(
+              updatedQuantity,
+              hiddeEditDialog = { showEditDialog = false },
+              setUpdatedQuantity = { updatedQuantity = it },
+              userViewModel = userViewModel)
+        }
       }
+}
+
+@Composable
+private fun UpdateQuantityDialog(
+    updatedQuantity: String,
+    hiddeEditDialog: () -> Unit,
+    setUpdatedQuantity: (String) -> Unit,
+    userViewModel: UserViewModel
+) {
+  Dialog(onDismissRequest = hiddeEditDialog) {
+    Card(
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+        modifier = Modifier.padding(16.dp),
+        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.secondary)) {
+          Column(
+              modifier = Modifier.padding(16.dp),
+              horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    text = "Edit Quantity",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontSize = 22.sp,
+                    color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.6f),
+                    modifier = Modifier.padding(bottom = 16.dp))
+
+                // Input Field for Quantity
+                OutlinedTextField(
+                    value = updatedQuantity,
+                    onValueChange = { setUpdatedQuantity(it) },
+                    label = { Text("Quantity") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    colors =
+                        TextFieldDefaults.colors(
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedContainerColor = Color.Transparent,
+                            focusedIndicatorColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                            unfocusedIndicatorColor =
+                                MaterialTheme.colorScheme.onSecondaryContainer,
+                            cursorColor =
+                                MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.6f),
+                            focusedLabelColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                            unfocusedLabelColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                            focusedTextColor =
+                                MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f),
+                            unfocusedTextColor =
+                                MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f),
+                        ))
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Save Button
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                  TextButton(onClick = hiddeEditDialog) {
+                    Text(
+                        text = "Cancel",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer,
+                    )
+                  }
+                  Spacer(modifier = Modifier.width(8.dp))
+                  Button(
+                      onClick = {
+                        // TODO(): call quantity update
+                        // userViewModel.updateFridgeItemQuantity(updatedQuantity)
+                        hiddeEditDialog()
+                      },
+                      colors =
+                          ButtonDefaults.buttonColors(
+                              MaterialTheme.colorScheme.onSecondaryContainer)) {
+                        Text(
+                            text = "Save",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Color.White,
+                        )
+                      }
+                }
+              }
+        }
+  }
 }
 
 @Composable
@@ -224,14 +350,12 @@ fun ExpirationBar(expirationDate: LocalDate?) {
               ) {
                 Box(
                     modifier =
-                        Modifier.fillMaxWidth(
-                                fraction = widthFraction) // Adjust bar width proportionally
-                            .height(10.dp) // Match height of background
-                            .clip(RoundedCornerShape(4.dp)) // Match rounded corners
+                        Modifier.fillMaxWidth(fraction = widthFraction)
+                            .height(10.dp)
+                            .clip(RoundedCornerShape(4.dp))
                             .background(barColor)
-                            .padding(horizontal = 4.dp) // Add slight spacing within the bar
-                            .zIndex(1f) // Ensure it overlays properly
-                    )
+                            .padding(horizontal = 4.dp)
+                            .zIndex(1f))
               }
         }
 
