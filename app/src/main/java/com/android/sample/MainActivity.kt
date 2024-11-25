@@ -155,7 +155,7 @@ fun PlateSwipeApp() {
       }
       composable(Screen.CAMERA_SCAN_CODE_BAR) {
         CameraScanCodeBarScreen(
-            navigationActions = navigationActions, ingredientViewModel = ingredientViewModel)
+            navigationActions = navigationActions, searchIngredientViewModel = ingredientViewModel)
       }
     }
     navigation(

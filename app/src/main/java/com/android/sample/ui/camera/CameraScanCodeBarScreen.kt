@@ -41,13 +41,14 @@ import com.android.sample.feature.camera.createImageCapture
 import com.android.sample.feature.camera.handleBarcodeDetection
 import com.android.sample.feature.camera.scan.CodeBarAnalyzer
 import com.android.sample.model.ingredient.Ingredient
-import com.android.sample.model.ingredient.IngredientViewModel
+import com.android.sample.model.ingredient.SearchIngredientViewModel
 import com.android.sample.resources.C
 import com.android.sample.resources.C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_IMAGE_BORDER_RADIUS
 import com.android.sample.resources.C.Dimension.PADDING_8
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_THUMBNAIL_URL
 import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_IMAGE_1
 import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
@@ -56,7 +57,7 @@ import com.google.accompanist.permissions.rememberPermissionState
 @Composable
 fun CameraScanCodeBarScreen(
     navigationActions: NavigationActions,
-    ingredientViewModel: IngredientViewModel
+    searchIngredientViewModel: SearchIngredientViewModel
 ) {
   val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
 
@@ -67,15 +68,15 @@ fun CameraScanCodeBarScreen(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center,
         ) {
-          CameraSection(ingredientViewModel)
-          IngredientOverlay(ingredientViewModel, navigationActions)
+          CameraSection(searchIngredientViewModel)
+          IngredientOverlay(searchIngredientViewModel, navigationActions)
         }
       })
 }
 
 /** Display the camera view and the barcode frame */
 @Composable
-fun CameraSection(ingredientViewModel: IngredientViewModel) {
+fun CameraSection(searchIngredientViewModel: SearchIngredientViewModel) {
 
   val imageCapture = createImageCapture()
   var lastScannedBarcode: Long? = null
@@ -89,7 +90,7 @@ fun CameraSection(ingredientViewModel: IngredientViewModel) {
               recentBarcodes,
               lastScannedBarcode,
               onBarcodeDetected = { barcodeValue ->
-                ingredientViewModel.fetchIngredient(barcodeValue)
+                searchIngredientViewModel.fetchIngredient(barcodeValue)
                 lastScannedBarcode = barcodeValue
               },
               scanThreshold = C.Tag.SCAN_THRESHOLD)
@@ -126,10 +127,10 @@ fun BarCodeFrame() {
 /** Display the ingredient overlay */
 @Composable
 fun IngredientOverlay(
-    viewModel: IngredientViewModel,
+    searchIngredientViewModel: SearchIngredientViewModel,
     navigationActions: NavigationActions,
 ) {
-  val ingredient by viewModel.ingredient.collectAsState()
+  val ingredient by searchIngredientViewModel.ingredient.collectAsState()
   if (ingredient != null) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
       Box(
@@ -138,7 +139,8 @@ fun IngredientOverlay(
                   .height((C.Dimension.CameraScanCodeBarScreen.INGREDIENT_OVERLAY_HEIGHT).dp)
                   .wrapContentHeight()) {
             // Display the ingredient details
-            IngredientDisplay(ingredient = ingredient!!, viewModel, navigationActions)
+            IngredientDisplay(
+                ingredient = ingredient!!, searchIngredientViewModel, navigationActions)
           }
     }
   }
@@ -152,7 +154,7 @@ fun IngredientOverlay(
 @Composable
 fun IngredientDisplay(
     ingredient: Ingredient?,
-    viewModel: IngredientViewModel,
+    searchIngredientViewModel: SearchIngredientViewModel,
     navigationActions: NavigationActions
 ) {
   Row(
@@ -239,7 +241,7 @@ fun IngredientDisplay(
                                 .dp))
             Button(
                 onClick = {
-                  viewModel.addIngredient(ingredient)
+                  searchIngredientViewModel.addIngredient(ingredient)
                   navigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
                 },
                 modifier =
@@ -253,7 +255,10 @@ fun IngredientDisplay(
                                 .INGREDIENT_DISPLAY_TEXT_BUTTON_PADDING_H
                                 .dp)) {
                   Text(
-                      text = stringResource(R.string.add_to_fridge),
+                      text =
+                          if (navigationActions.currentRoute() == Route.FRIDGE)
+                              stringResource(R.string.add_to_fridge)
+                          else stringResource(R.string.add_to_recipe),
                       style = MaterialTheme.typography.bodySmall,
                       color = MaterialTheme.colorScheme.onPrimary,
                   )

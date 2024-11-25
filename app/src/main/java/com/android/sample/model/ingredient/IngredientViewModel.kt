@@ -20,18 +20,19 @@ import okhttp3.OkHttpClient
  * @param repository
  * @constructor Create empty Ingredient view model
  */
-class IngredientViewModel(private val repository: IngredientRepository) : ViewModel() {
+class IngredientViewModel(private val repository: IngredientRepository) :
+    ViewModel(), SearchIngredientViewModel {
 
   private val _ingredient = MutableStateFlow<Ingredient?>(null)
-  val ingredient: StateFlow<Ingredient?>
+  override val ingredient: StateFlow<Ingredient?>
     get() = _ingredient
 
   private val _ingredientList = MutableStateFlow<List<Ingredient>>(emptyList())
-  val ingredientList: StateFlow<List<Ingredient>>
+  override val ingredientList: StateFlow<List<Ingredient>>
     get() = _ingredientList
 
   private val _searchingIngredientList = MutableStateFlow<List<Ingredient>>(emptyList())
-  val searchingIngredientList: StateFlow<List<Ingredient>>
+  override val searchingIngredientList: StateFlow<List<Ingredient>>
     get() = _searchingIngredientList
 
   /**
@@ -39,7 +40,7 @@ class IngredientViewModel(private val repository: IngredientRepository) : ViewMo
    *
    * @param barCode
    */
-  fun fetchIngredient(barCode: Long) {
+  override fun fetchIngredient(barCode: Long) {
     if (_ingredient.value?.barCode == barCode) {
       return
     }
@@ -57,7 +58,7 @@ class IngredientViewModel(private val repository: IngredientRepository) : ViewMo
    *
    * @param ingredient
    */
-  fun addIngredient(ingredient: Ingredient) {
+  override fun addIngredient(ingredient: Ingredient) {
     _ingredientList.value += ingredient
   }
 
@@ -83,7 +84,7 @@ class IngredientViewModel(private val repository: IngredientRepository) : ViewMo
    *
    * @param name
    */
-  fun fetchIngredientByName(name: String) {
+  override fun fetchIngredientByName(name: String) {
     repository.search(
         name,
         onSuccess = { ingredientList -> _searchingIngredientList.value = ingredientList },
