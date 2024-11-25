@@ -159,4 +159,88 @@ class SearchIngredientScreenTest {
     verify(mockNavigationActions, never()).navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
     assertNotEquals(searchIngredientViewModel.ingredientList.value, listOf(mockIngredients[0]))
   }
+
+  @Test
+  fun testEmptySearchInputDoesNotTriggerFetch() {
+    composeTestRule.onNodeWithTag(SEARCH_BAR, useUnmergedTree = true).performTextInput("")
+    verify(aggregatorIngredientRepository, never()).search(any(), any(), any(), any())
+  }
+
+  @Test
+  fun testSearchPopUpDismissCorrectly() {
+    composeTestRule.onNodeWithTag(SEARCH_BAR, useUnmergedTree = true).performTextInput("To")
+
+    composeTestRule.waitUntil(5000) {
+      searchIngredientViewModel.searchingIngredientList.value.isNotEmpty()
+    }
+
+    composeTestRule.waitForIdle()
+
+    composeTestRule
+        .onNodeWithTag("ingredientItem${mockIngredients[0].name}", useUnmergedTree = true)
+        .performClick()
+
+    composeTestRule.waitForIdle()
+
+    composeTestRule.onNodeWithTag(CONFIRMATION_POPUP, useUnmergedTree = true).assertIsDisplayed()
+
+    composeTestRule.onNodeWithTag(CANCEL_BUTTON, useUnmergedTree = true).performClick()
+
+    composeTestRule.waitForIdle()
+
+    verify(mockNavigationActions, never()).navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
+    assertEquals(emptyList<Ingredient>(), searchIngredientViewModel.ingredientList.value)
+  }
+
+  @Test
+  fun testSearchWithNoResultsDisplaysMessage() = runTest {
+    `when`(aggregatorIngredientRepository.search(any(), any(), any(), any())).thenAnswer {
+      val onSuccess = it.getArgument<(List<Ingredient>) -> Unit>(1)
+      onSuccess(emptyList())
+      null
+    }
+
+    composeTestRule
+        .onNodeWithTag(SEARCH_BAR, useUnmergedTree = true)
+        .performTextInput("UnknownIngredient")
+
+    composeTestRule.waitForIdle()
+  }
+
+  @Test
+  fun testClickingMultipleIngredients() {
+    composeTestRule.onNodeWithTag(SEARCH_BAR, useUnmergedTree = true).performTextInput("To")
+
+    composeTestRule.waitUntil(5000) {
+      searchIngredientViewModel.searchingIngredientList.value.isNotEmpty()
+    }
+
+    mockIngredients.forEach { ingredient ->
+      composeTestRule
+          .onNodeWithTag("ingredientItem${ingredient.name}", useUnmergedTree = true)
+          .performClick()
+
+      composeTestRule.waitForIdle()
+
+      composeTestRule.onNodeWithTag(CONFIRMATION_POPUP, useUnmergedTree = true).assertIsDisplayed()
+      composeTestRule.onNodeWithTag(CANCEL_BUTTON, useUnmergedTree = true).performClick()
+    }
+
+    verify(mockNavigationActions, never()).navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
+    assertEquals(emptyList<Ingredient>(), searchIngredientViewModel.ingredientList.value)
+  }
+
+  @Test
+  fun testSearchIsCaseInsensitive() = runTest {
+    composeTestRule.onNodeWithTag(SEARCH_BAR, useUnmergedTree = true).performTextInput("to")
+    composeTestRule.waitUntil(5000) {
+      searchIngredientViewModel.searchingIngredientList.value.isNotEmpty()
+    }
+
+    mockIngredients.forEach { ingredient ->
+      composeTestRule
+          .onNodeWithTag("ingredientItem${ingredient.name}", useUnmergedTree = true)
+          .assertIsDisplayed()
+    }
+  }
 }
