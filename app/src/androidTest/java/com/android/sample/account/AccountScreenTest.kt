@@ -6,6 +6,7 @@ import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.hasAnySibling
 import androidx.compose.ui.test.hasContentDescription
+import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -21,12 +22,16 @@ import com.android.sample.resources.C.TestTag.AccountScreen.USERNAME_TEST_TAG
 import com.android.sample.resources.C.TestTag.RecipeList.CANCEL_BUTTON
 import com.android.sample.resources.C.TestTag.RecipeList.CONFIRMATION_BUTTON
 import com.android.sample.resources.C.TestTag.RecipeList.CONFIRMATION_POP_UP
+import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_CARD_TEST_TAG
+import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_DELETE_ICON_TEST_TAG
+import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_FAVORITE_ICON_TEST_TAG
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_LIST_TEST_TAG
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_TITLE_TEST_TAG
 import com.android.sample.ui.account.AccountScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.SampleAppTheme
+import com.android.sample.ui.utils.testRecipes
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -42,39 +47,7 @@ class AccountScreenTest {
   @get:Rule val composeTestRule = createComposeRule()
 
   private val userName: String = "John Doe"
-  private val dummyRecipes: List<Recipe> =
-      listOf(
-          Recipe(
-              uid = "1",
-              name = "Spicy Arrabiata Penne",
-              category = "Vegetarian",
-              origin = "Italian",
-              instructions = "Instructions here...",
-              strMealThumbUrl =
-                  "https://www.recipetineats.com/penne-all-arrabbiata-spicy-tomato-pasta/",
-              ingredientsAndMeasurements =
-                  listOf(Pair("Penne", "1 pound"), Pair("Olive oil", "1/4 cup"))),
-          Recipe(
-              uid = "2",
-              name = "Chicken Curry",
-              category = "Non-Vegetarian",
-              origin = "Indian",
-              instructions = "Instructions here...",
-              strMealThumbUrl =
-                  "https://www.foodfashionparty.com/2023/08/05/everyday-chicken-curry/",
-              ingredientsAndMeasurements =
-                  listOf(Pair("Chicken", "1 pound"), Pair("Curry powder", "2 tbsp"))),
-          Recipe(
-              uid = "3",
-              name = "Burger with Fries",
-              category = "Fast Food",
-              origin = "American",
-              instructions = "Instructions here...",
-              strMealThumbUrl =
-                  "https://www.recipetineats.com/penne-all-arrabbiata-spicy-tomato-pasta/",
-              ingredientsAndMeasurements =
-                  listOf(Pair("Penne", "1 pound"), Pair("Olive oil", "1/4 cup"))),
-      )
+  private val dummyRecipes: List<Recipe> = testRecipes
 
   @Before
   fun setUp() {
@@ -150,7 +123,7 @@ class AccountScreenTest {
     }
 
     composeTestRule
-        .onNodeWithText("Spicy Arrabiata Penne", useUnmergedTree = true)
+        .onNodeWithText(dummyRecipes[0].name, useUnmergedTree = true)
         .assertIsDisplayed()
         .performClick()
     verify(mockNavigationActions).navigateTo(Screen.OVERVIEW_RECIPE_ACCOUNT)
@@ -163,11 +136,37 @@ class AccountScreenTest {
     }
     composeTestRule
         .onNode(
-            hasAnySibling(hasText("Spicy Arrabiata Penne"))
-                .and(hasContentDescription(RECIPE_FAVORITE_ICON_CONTENT_DESCRIPTION)),
+            hasAnySibling(hasText(dummyRecipes[0].name))
+                .and(hasTestTag(RECIPE_FAVORITE_ICON_TEST_TAG)),
             useUnmergedTree = true)
         .assertIsDisplayed()
         .performClick()
+    composeTestRule.onNodeWithTag(CONFIRMATION_POP_UP).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CONFIRMATION_BUTTON).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CONFIRMATION_BUTTON).assertHasClickAction()
+    composeTestRule.onNodeWithTag(CANCEL_BUTTON).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CANCEL_BUTTON).assertHasClickAction()
+  }
+
+  @Test
+  fun testDeleteCreatedRecipePopUpDisplayed() {
+    composeTestRule.setContent {
+      SampleAppTheme { AccountScreen(mockNavigationActions, userViewModel) }
+    }
+
+    composeTestRule.onNodeWithTag(CREATED_RECIPES_BUTTON_TEST_TAG).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CREATED_RECIPES_BUTTON_TEST_TAG).assertHasClickAction()
+    composeTestRule.onNodeWithTag(CREATED_RECIPES_BUTTON_TEST_TAG).performClick()
+
+    composeTestRule.onNodeWithTag(RECIPE_CARD_TEST_TAG).assertIsDisplayed()
+    composeTestRule
+        .onNode(
+            hasAnySibling(hasText(dummyRecipes[1].name))
+                .and(hasTestTag(RECIPE_DELETE_ICON_TEST_TAG)),
+            useUnmergedTree = true)
+        .assertIsDisplayed()
+        .performClick()
+
     composeTestRule.onNodeWithTag(CONFIRMATION_POP_UP).assertIsDisplayed()
     composeTestRule.onNodeWithTag(CONFIRMATION_BUTTON).assertIsDisplayed()
     composeTestRule.onNodeWithTag(CONFIRMATION_BUTTON).assertHasClickAction()
@@ -182,17 +181,17 @@ class AccountScreenTest {
     }
     composeTestRule
         .onNode(
-            hasAnySibling(hasText("Spicy Arrabiata Penne"))
-                .and(hasContentDescription(RECIPE_FAVORITE_ICON_CONTENT_DESCRIPTION)),
+            hasAnySibling(hasText(dummyRecipes[0].name))
+                .and(hasTestTag(RECIPE_FAVORITE_ICON_TEST_TAG)),
             useUnmergedTree = true)
         .assertIsDisplayed()
         .performClick()
     composeTestRule.onNodeWithTag(CONFIRMATION_POP_UP).assertIsDisplayed()
     composeTestRule.onNodeWithTag(CONFIRMATION_BUTTON).assertIsDisplayed()
     composeTestRule.onNodeWithTag(CONFIRMATION_BUTTON).performClick()
+    assert(!userViewModel.likedRecipes.value.contains(dummyRecipes[0]))
     assert(userViewModel.likedRecipes.value.isEmpty())
-    assert(dummyRecipes != userViewModel.likedRecipes.value)
-    composeTestRule.onNodeWithText("Spicy Arrabiata Penne").assertIsNotDisplayed()
+    composeTestRule.onNodeWithText(dummyRecipes[0].name).assertIsNotDisplayed()
   }
 
   @Test
@@ -202,7 +201,7 @@ class AccountScreenTest {
     }
     composeTestRule
         .onNode(
-            hasAnySibling(hasText("Spicy Arrabiata Penne"))
+            hasAnySibling(hasText(dummyRecipes[0].name))
                 .and(hasContentDescription(RECIPE_FAVORITE_ICON_CONTENT_DESCRIPTION)),
             useUnmergedTree = true)
         .assertIsDisplayed()
@@ -212,6 +211,32 @@ class AccountScreenTest {
     composeTestRule.onNodeWithTag(CANCEL_BUTTON).performClick()
     assert(userViewModel.likedRecipes.value.isNotEmpty())
     assert(userViewModel.likedRecipes.value.contains(dummyRecipes[0]))
-    composeTestRule.onNodeWithText("Spicy Arrabiata Penne").assertIsDisplayed()
+    composeTestRule.onNodeWithText(dummyRecipes[0].name).assertIsDisplayed()
+  }
+
+  @Test
+  fun testNotDeleteACreatedRecipe() {
+    composeTestRule.setContent {
+      SampleAppTheme { AccountScreen(mockNavigationActions, userViewModel) }
+    }
+
+    composeTestRule.onNodeWithTag(CREATED_RECIPES_BUTTON_TEST_TAG).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CREATED_RECIPES_BUTTON_TEST_TAG).assertHasClickAction()
+    composeTestRule.onNodeWithTag(CREATED_RECIPES_BUTTON_TEST_TAG).performClick()
+
+    composeTestRule
+        .onNode(
+            hasAnySibling(hasText(dummyRecipes[1].name))
+                .and(hasTestTag(RECIPE_DELETE_ICON_TEST_TAG)),
+            useUnmergedTree = true)
+        .assertIsDisplayed()
+        .performClick()
+    composeTestRule.onNodeWithTag(CONFIRMATION_POP_UP).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CANCEL_BUTTON).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CANCEL_BUTTON).performClick()
+
+    assert(userViewModel.createdRecipes.value.contains(dummyRecipes[1]))
+    assert(userViewModel.createdRecipes.value.isNotEmpty())
+    composeTestRule.onNodeWithText(dummyRecipes[1].name).assertIsDisplayed()
   }
 }

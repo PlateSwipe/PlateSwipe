@@ -2,11 +2,13 @@ package com.android.sample.e2e
 
 import android.graphics.Bitmap
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.test.assertAny
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -31,6 +33,9 @@ import com.android.sample.model.recipe.RecipesRepository
 import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.model.user.UserRepository
 import com.android.sample.model.user.UserViewModel
+import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_NORMAL_URL
+import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_SMALL_URL
+import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_THUMBNAIL_URL
 import com.android.sample.resources.C.Tag.SAVE_BUTTON_TAG
 import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen
 import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.INSTRUCTION_LIST_ITEM
@@ -70,6 +75,7 @@ import com.android.sample.ui.navigation.TopLevelDestinations
 import com.android.sample.ui.recipe.SearchRecipeScreen
 import com.android.sample.ui.recipeOverview.RecipeOverview
 import com.android.sample.ui.swipePage.SwipePage
+import com.android.sample.ui.utils.testRecipes
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import io.mockk.mockk
@@ -86,30 +92,19 @@ import org.mockito.kotlin.any
 
 @RunWith(AndroidJUnit4::class)
 class EndToEndTest {
-  private val recipe1 =
-      Recipe(
-          "Recipe 1",
-          "",
-          "url1",
-          "Instructions 1",
-          "Category 1",
-          "Area 1",
-          listOf(Pair("Ingredient 1", "Ingredient 1")))
-  private val recipe2 =
-      Recipe(
-          "Recipe 2",
-          "",
-          "url2",
-          "Instructions 2",
-          "Category 2",
-          "Area 2",
-          listOf(Pair("Ingredient 2", "Ingredient 2")))
 
   private val ingredient1 =
       Ingredient(
-          name = "ingredient1", quantity = "50mg", categories = emptyList(), images = emptyList())
+          name = "ingredient1",
+          quantity = "50mg",
+          categories = emptyList(),
+          images =
+              mutableMapOf(
+                  PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
+                  PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
+                  PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
 
-  private val mockedRecipesList = listOf(recipe1, recipe2)
+  private val mockedRecipesList = testRecipes
 
   private lateinit var navigationActions: NavigationActions
   private lateinit var mockUserRepository: UserRepository
@@ -119,7 +114,6 @@ class EndToEndTest {
   private lateinit var mockRepository: RecipesRepository
   private lateinit var userViewModel: UserViewModel
   private lateinit var createRecipeViewModel: CreateRecipeViewModel
-  private lateinit var spykCreateRecipeViewModel: CreateRecipeViewModel
   private lateinit var mockImageRepo: ImageRepositoryFirebase
   private lateinit var recipesViewModel: RecipesViewModel
   private lateinit var ingredientViewModel: IngredientViewModel
@@ -259,9 +253,11 @@ class EndToEndTest {
     composeTestRule.onNodeWithTag(DRAGGABLE_ITEM, useUnmergedTree = true).assertIsDisplayed()
 
     // dislike recipe 1
+
     composeTestRule.onNodeWithTag(DRAGGABLE_ITEM).performTouchInput { swipeLeft(0f, -10000f) }
 
     composeTestRule.waitForIdle()
+    composeTestRule.waitUntil(5000) { recipesViewModel.currentRecipe.value != currentRecipe }
 
     // still 0 liked recipe
     assertEquals(0, userViewModel.likedRecipes.value.size)
@@ -275,6 +271,8 @@ class EndToEndTest {
 
     // Like recipe 2
     composeTestRule.onNodeWithTag(DRAGGABLE_ITEM).performTouchInput { swipeRight(0f, 10000f) }
+
+    composeTestRule.waitUntil(5000) { recipesViewModel.currentRecipe.value != currentRecipe }
 
     composeTestRule.waitForIdle()
 
@@ -291,15 +289,16 @@ class EndToEndTest {
         .performClick()
 
     composeTestRule
-        .onNodeWithTag(RECIPE_TITLE_TEST_TAG, useUnmergedTree = true)
-        .assertTextContains(likedRecipe.name)
+        .onAllNodesWithTag(RECIPE_TITLE_TEST_TAG, useUnmergedTree = true)
+        .assertAny(hasText(likedRecipe.name))
 
     composeTestRule.onNodeWithTag(RECIPE_CARD_TEST_TAG, useUnmergedTree = true).performClick()
+    composeTestRule.waitForIdle()
 
     composeTestRule
         .onNodeWithTag(RECIPE_TITLE, useUnmergedTree = true)
-        .assertExists()
-        .assertTextContains(likedRecipe.name)
+        .assertIsDisplayed()
+        .assertTextEquals(likedRecipe.name)
 
     composeTestRule
         .onNodeWithTag(BACK_ARROW_ICON, useUnmergedTree = true)
@@ -536,7 +535,7 @@ class EndToEndTest {
       ) {
         composable(Screen.ACCOUNT) { AccountScreen(navigationActions, userViewModel) }
         composable(Screen.OVERVIEW_RECIPE_ACCOUNT) {
-          RecipeOverview(navigationActions, recipesViewModel)
+          RecipeOverview(navigationActions, userViewModel)
         }
       }
     }

@@ -15,6 +15,7 @@ import com.google.firebase.storage.StorageReference
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.net.URL
 
 class ImageRepositoryFirebase(storage: FirebaseStorage) : ImageRepository {
   private val storageRef = storage.reference
@@ -137,5 +138,21 @@ class ImageRepositoryFirebase(storage: FirebaseStorage) : ImageRepository {
           ImageDirectoryType.TEST -> TEST_IMAGE_DIR
         }
     return storageRef.child(dir + imageDirectoryUID + "/$imageName" + ".jpg")
+  }
+
+  /**
+   * Converts a URL to a Bitmap.
+   *
+   * @param url The URL of the image to be converted to a Bitmap.
+   * @return The Bitmap representation of the image, or null if an error occurs.
+   */
+  fun urlToBitmap(url: String): Bitmap? {
+    return try {
+      val inputStream = URL(url).openStream().readBytes()
+      BitmapFactory.decodeStream(ByteArrayInputStream(inputStream))
+    } catch (e: Exception) {
+      e.printStackTrace()
+      null
+    }
   }
 }

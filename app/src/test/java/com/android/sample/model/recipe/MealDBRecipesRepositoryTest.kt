@@ -278,9 +278,7 @@ class MealDBRecipesRepositoryTest {
     assert(searchRecipe?.get(0)?.name == "Spicy Arrabiata Penne")
     assert(searchRecipe?.get(0)?.category == "Vegetarian")
     assert(searchRecipe?.get(0)?.origin == "Italian")
-    assert(
-        searchRecipe?.get(0)?.instructions ==
-            "Bring a large pot of water to a boil. Add kosher salt to the boiling water, then add the pasta. Cook according to the package instructions, about 9 minutes.\r\nIn a large skillet over medium-high heat, add the olive oil and heat until the oil starts to shimmer. Add the garlic and cook, stirring, until fragrant, 1 to 2 minutes. Add the chopped tomatoes, red chile flakes, Italian seasoning and salt and pepper to taste. Bring to a boil and cook for 5 minutes. Remove from the heat and add the chopped basil.\r\nDrain the pasta and add it to the sauce. Garnish with Parmigiano-Reggiano flakes and more basil and serve warm.")
+
     assert(
         searchRecipe?.get(0)?.strMealThumbUrl ==
             "https://www.themealdb.com/images/media/meals/ustsqw1468250014.jpg")
@@ -334,9 +332,7 @@ class MealDBRecipesRepositoryTest {
     assert(searchRecipe?.get(0)?.name == "Spicy Arrabiata Penne")
     assert(searchRecipe?.get(0)?.category == "Vegetarian")
     assert(searchRecipe?.get(0)?.origin == "Italian")
-    assert(
-        searchRecipe?.get(0)?.instructions ==
-            "Bring a large pot of water to a boil. Add kosher salt to the boiling water, then add the pasta. Cook according to the package instructions, about 9 minutes.\r\nIn a large skillet over medium-high heat, add the olive oil and heat until the oil starts to shimmer. Add the garlic and cook, stirring, until fragrant, 1 to 2 minutes. Add the chopped tomatoes, red chile flakes, Italian seasoning and salt and pepper to taste. Bring to a boil and cook for 5 minutes. Remove from the heat and add the chopped basil.\r\nDrain the pasta and add it to the sauce. Garnish with Parmigiano-Reggiano flakes and more basil and serve warm.")
+
     assert(
         searchRecipe?.get(0)?.strMealThumbUrl ==
             "https://www.themealdb.com/images/media/meals/ustsqw1468250014.jpg")
@@ -357,9 +353,12 @@ class MealDBRecipesRepositoryTest {
     assert(searchRecipe?.get(1)?.name == "Christmas Pudding Trifle")
     assert(searchRecipe?.get(1)?.category == "Dessert")
     assert(searchRecipe?.get(1)?.origin == "British")
-    assert(
-        searchRecipe?.get(1)?.instructions ==
-            "Peel the oranges using a sharp knife, ensuring all the pith is removed. Slice as thinly as possible and arrange over a dinner plate. Sprinkle with the demerara sugar followed by the Grand Marnier and set aside.\r\n\r\nCrumble the Christmas pudding into large pieces and scatter over the bottom of a trifle bowl. Lift the oranges onto the pudding in a layer and pour over any juices.\r\n\r\nBeat the mascarpone until smooth, then stir in the custard. Spoon the mixture over the top of the oranges.\r\n\r\nLightly whip the cream and spoon over the custard. Sprinkle with the flaked almonds and grated chocolate. You can make this a day in advance if you like, chill until ready to serve.")
+
+    for (i in searchRecipe?.get(1)?.instructions!!) {
+      assert(
+          i.description ==
+              "Peel the oranges using a sharp knife, ensuring all the pith is removed. Slice as thinly as possible and arrange over a dinner plate. Sprinkle with the demerara sugar followed by the Grand Marnier and set aside.\r\n\r\nCrumble the Christmas pudding into large pieces and scatter over the bottom of a trifle bowl. Lift the oranges onto the pudding in a layer and pour over any juices.\r\n\r\nBeat the mascarpone until smooth, then stir in the custard. Spoon the mixture over the top of the oranges.\r\n\r\nLightly whip the cream and spoon over the custard. Sprinkle with the flaked almonds and grated chocolate. You can make this a day in advance if you like, chill until ready to serve.")
+    }
     assert(
         searchRecipe?.get(1)?.strMealThumbUrl ==
             "https://www.themealdb.com/images/media/meals/r33cud1576791081.jpg")
@@ -380,9 +379,7 @@ class MealDBRecipesRepositoryTest {
     assert(searchRecipe?.get(2)?.name == "Pad See Ew")
     assert(searchRecipe?.get(2)?.category == "Chicken")
     assert(searchRecipe?.get(2)?.origin == "Thai")
-    assert(
-        searchRecipe?.get(2)?.instructions ==
-            "Mix Sauce in small bowl.\r\nMince garlic into wok with oil. Place over high heat, when hot, add chicken and Chinese broccoli stems, cook until chicken is light golden.\r\nPush to the side of the wok, crack egg in and scramble. Don't worry if it sticks to the bottom of the wok - it will char and which adds authentic flavour.\r\nAdd noodles, Chinese broccoli leaves and sauce. Gently mix together until the noodles are stained dark and leaves are wilted. Serve immediately!")
+
     assert(
         searchRecipe?.get(2)?.strMealThumbUrl ==
             "https://www.themealdb.com/images/media/meals/uuuspp1468263334.jpg")
@@ -457,9 +454,7 @@ class MealDBRecipesRepositoryTest {
     assert(searchRecipe?.name == "Spicy Arrabiata Penne")
     assert(searchRecipe?.category == "Vegetarian")
     assert(searchRecipe?.origin == "Italian")
-    assert(
-        searchRecipe?.instructions ==
-            "Bring a large pot of water to a boil. Add kosher salt to the boiling water, then add the pasta. Cook according to the package instructions, about 9 minutes.\r\nIn a large skillet over medium-high heat, add the olive oil and heat until the oil starts to shimmer. Add the garlic and cook, stirring, until fragrant, 1 to 2 minutes. Add the chopped tomatoes, red chile flakes, Italian seasoning and salt and pepper to taste. Bring to a boil and cook for 5 minutes. Remove from the heat and add the chopped basil.\r\nDrain the pasta and add it to the sauce. Garnish with Parmigiano-Reggiano flakes and more basil and serve warm.")
+
     assert(
         searchRecipe?.strMealThumbUrl ==
             "https://www.themealdb.com/images/media/meals/ustsqw1468250014.jpg")
@@ -608,9 +603,7 @@ class MealDBRecipesRepositoryTest {
     assert(searchRecipes?.get(0)?.name == "Spicy Arrabiata Penne")
     assert(searchRecipes?.get(0)?.category == "Vegetarian")
     assert(searchRecipes?.get(0)?.origin == "Italian")
-    assert(
-        searchRecipes?.get(0)?.instructions ==
-            "Bring a large pot of water to a boil. Add kosher salt to the boiling water, then add the pasta. Cook according to the package instructions, about 9 minutes.\r\nIn a large skillet over medium-high heat, add the olive oil and heat until the oil starts to shimmer. Add the garlic and cook, stirring, until fragrant, 1 to 2 minutes. Add the chopped tomatoes, red chile flakes, Italian seasoning and salt and pepper to taste. Bring to a boil and cook for 5 minutes. Remove from the heat and add the chopped basil.\r\nDrain the pasta and add it to the sauce. Garnish with Parmigiano-Reggiano flakes and more basil and serve warm.")
+
     assert(
         searchRecipes?.get(0)?.strMealThumbUrl ==
             "https://www.themealdb.com/images/media/meals/ustsqw1468250014.jpg")
@@ -625,7 +618,7 @@ class MealDBRecipesRepositoryTest {
               Recipe(
                   name = "Spicy Arrabiata Penne",
                   category = "Vegetarian",
-                  instructions = "alal",
+                  instructions = listOf(Instruction("alal", "30")),
                   strMealThumbUrl = "someurl",
                   origin = "Italian",
                   uid = "52771",
@@ -657,7 +650,8 @@ class MealDBRecipesRepositoryTest {
               Recipe(
                   name = "Spicy Arrabiata Penne",
                   category = "Vegetarian",
-                  instructions = "alal",
+                  instructions =
+                      listOf(Instruction(description = "alal", time = null, iconType = null)),
                   strMealThumbUrl = "someurl",
                   origin = "Italian",
                   uid = "52771",

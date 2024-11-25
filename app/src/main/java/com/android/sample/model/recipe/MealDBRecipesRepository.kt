@@ -83,7 +83,7 @@ class MealDBRecipesRepository(private val client: OkHttpClient) : RecipesReposit
               strMeal,
               strCategory,
               strArea,
-              strInstructions,
+              listOf(Instruction(description = strInstructions, time = null, iconType = null)),
               strMealThumbUrl,
               ingredientsAndMeasurements))
     }

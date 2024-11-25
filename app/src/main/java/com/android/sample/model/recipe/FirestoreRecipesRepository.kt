@@ -2,18 +2,25 @@ package com.android.sample.model.recipe
 
 import android.util.Log
 import com.android.sample.resources.C.Tag.CHARACTERS
-import com.android.sample.resources.C.Tag.FIRESTORE_COLLECTION_NAME
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_AREA
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_CATEGORY
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_DIFFICULTY
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_INGREDIENTS
-import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_INSTRUCTIONS
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_INSTRUCTIONS_TEXT
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_INSTRUCTION_ICON
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_INSTRUCTION_TIME
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_MEASUREMENTS
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_NAME
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_PICTURE_ID
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_PRICE
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_TIME
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_URL
+import com.android.sample.resources.C.Tag.FirestoreRecipesRepository.ERROR_GETTING_DOCUMENT
+import com.android.sample.resources.C.Tag.FirestoreRecipesRepository.FIRESTORE_COLLECTION_NAME
+import com.android.sample.resources.C.Tag.FirestoreRecipesRepository.MAX_FIRESTORE_FETCH
+import com.android.sample.resources.C.Tag.FirestoreRecipesRepository.NOT_ENOUGH_RECIPE_MSG
+import com.android.sample.resources.C.Tag.FirestoreRecipesRepository.NO_RECIPE_FOUND_MSG
+import com.android.sample.resources.C.Tag.FirestoreRecipesRepository.REPOSITORY_TAG_MSG
 import com.android.sample.resources.C.Tag.LIMIT_MUST_BE_POSITIVE_MESSAGE
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.DocumentSnapshot
@@ -64,7 +71,24 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
       val name = document.getString(FIRESTORE_RECIPE_NAME) ?: return null
       val category = document.getString(FIRESTORE_RECIPE_CATEGORY)
       val area = document.getString(FIRESTORE_RECIPE_AREA)
-      val instructions = document.getString(FIRESTORE_RECIPE_INSTRUCTIONS) ?: return null
+      /*
+      get the values for the intstruction and create all the list of instructions
+       */
+      val instructionsText =
+          document.get(FIRESTORE_RECIPE_INSTRUCTIONS_TEXT) as List<*>? ?: return null
+      val instructionsIcon =
+          document.get(FIRESTORE_RECIPE_INSTRUCTION_ICON) as List<*>? ?: return null
+      val instructionsTime =
+          document.get(FIRESTORE_RECIPE_INSTRUCTION_TIME) as List<*>? ?: return null
+
+      val instructions =
+          instructionsText.mapIndexed { index, text ->
+            val time = instructionsTime[index] as? String ?: return null // Ensure time is an Int
+            val icon = instructionsIcon[index] as? String ?: return null // Ensure icon is a String
+            Instruction(
+                description = text as String, time = time, iconType = icon) // Cast text to String
+          }
+
       val pictureID = document.getString(FIRESTORE_RECIPE_PICTURE_ID) ?: return null
       val ingredientsData = document.get(FIRESTORE_RECIPE_INGREDIENTS) as List<*>? ?: return null
       val measurementsData = document.get(FIRESTORE_RECIPE_MEASUREMENTS) as List<*>? ?: return null
@@ -129,41 +153,87 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
     return (1..uidLength).map { characters.random() }.joinToString("")
   }
 
+  /**
+   * Private method to fetch random recipes from Firestore.
+   *
+   * @param nbOfElements The number of random recipes to fetch.
+   * @param onSuccess The callback to call if the operation is successful.
+   * @param onFailure The callback to call if the operation fails.
+   * @param recipes The list of recipes to fill.
+   * @param iterationNumber The number of iterations.
+   */
+  private fun randomFetch(
+      nbOfElements: Int,
+      onSuccess: (List<Recipe>) -> Unit,
+      onFailure: (Exception) -> Unit,
+      recipes: MutableList<Recipe>,
+      iterationNumber: Int
+  ) {
+    // Generate a random UID
+    val randomUID = generateRandomUID()
+
+    Log.d(REPOSITORY_TAG_MSG, "randomFetch: $randomUID")
+    // Query for UIDs greater than or equal to the random UID
+    db.collection(FIRESTORE_COLLECTION_NAME)
+        .whereGreaterThanOrEqualTo(FieldPath.documentId(), randomUID)
+        .limit(nbOfElements.toLong() - recipes.size)
+        .get()
+        .addOnCompleteListener { task ->
+          if (task.isSuccessful) {
+
+            // Add the recipes to the list
+            task.result?.documents?.forEach { document ->
+              val recipe = documentToRecipe(document).takeIf { !recipes.contains(it) }
+              recipe?.let { recipes.add(it) }
+            }
+            when {
+              recipes.size == nbOfElements -> {
+                recipes.shuffle()
+                onSuccess(recipes)
+              }
+              iterationNumber == MAX_FIRESTORE_FETCH -> {
+                if (recipes.isNotEmpty()) {
+                  Log.e(REPOSITORY_TAG_MSG, NOT_ENOUGH_RECIPE_MSG)
+                  recipes.shuffle()
+                  onSuccess(recipes)
+                } else {
+                  Log.e(REPOSITORY_TAG_MSG, NO_RECIPE_FOUND_MSG)
+                  onFailure(Exception(NO_RECIPE_FOUND_MSG))
+                }
+              }
+              recipes.size < nbOfElements -> {
+                // Fetch more recipes if we don't have enough
+                randomFetch(nbOfElements, onSuccess, onFailure, recipes, iterationNumber + 1)
+              }
+              else -> {
+                Log.e(REPOSITORY_TAG_MSG, NO_RECIPE_FOUND_MSG)
+                onFailure(Exception(NO_RECIPE_FOUND_MSG))
+              }
+            }
+          } else {
+            task.exception?.let { e ->
+              Log.e(REPOSITORY_TAG_MSG, ERROR_GETTING_DOCUMENT, e)
+              onFailure(e)
+            }
+          }
+        }
+  }
+
+  /**
+   * Fetches a random list of recipes from Firestore.
+   *
+   * @param nbOfElements The number of random recipes to fetch.
+   * @param onSuccess The callback to call if the operation is successful.
+   * @param onFailure The callback to call if the operation fails.
+   */
   override fun random(
       nbOfElements: Int,
       onSuccess: (List<Recipe>) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
     require(nbOfElements > 0) { LIMIT_MUST_BE_POSITIVE_MESSAGE }
-
-    // Generate a random UID
-    val randomUID = generateRandomUID()
-    Log.d("TestRecipeRepo", "generateRandomUID :$randomUID")
-
-    Log.d("TestRecipeRepo", (nbOfElements / 2).toString())
-    // Query for UIDs greater than or equal to the random UID
-
-    db.collection(FIRESTORE_COLLECTION_NAME)
-        .whereGreaterThanOrEqualTo(FieldPath.documentId(), randomUID)
-        .limit(nbOfElements.toLong())
-        .get()
-        .addOnCompleteListener { task ->
-          if (task.isSuccessful) {
-            val recipes = mutableListOf<Recipe>()
-            task.result?.documents?.forEach { document ->
-              val recipe = documentToRecipe(document)
-              if (recipe != null) {
-                recipes.add(recipe)
-              }
-            }
-            onSuccess(recipes)
-          } else {
-            task.exception?.let { e ->
-              Log.e("FirestoreRecipesRepository", "Error getting documents", e)
-              onFailure(e)
-            }
-          }
-        }
+    val recipes = mutableListOf<Recipe>()
+    randomFetch(nbOfElements, onSuccess, onFailure, recipes, 0)
   }
 
   override fun search(mealID: String, onSuccess: (Recipe) -> Unit, onFailure: (Exception) -> Unit) {

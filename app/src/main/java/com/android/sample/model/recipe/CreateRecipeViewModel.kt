@@ -32,16 +32,42 @@ class CreateRecipeViewModel(
   val recipeBuilder = RecipeBuilder()
 
   // Fields for the selected Instruction when modifying a recipe
-  private val selectedDescription = MutableStateFlow<Int?>(null)
-  private val selectedIcon = MutableStateFlow<IconType?>(null)
+  private val selectedInstruction = MutableStateFlow<Int?>(null)
 
   /**
    * Selects the description at the given index. This is used when modifying a recipe.
    *
    * @param index The index of the description to select.
    */
-  fun selectDescription(index: Int) {
-    selectedDescription.value = index
+  fun selectInstruction(index: Int) {
+    selectedInstruction.value = index
+  }
+
+  /**
+   * Resets the selected instruction. This is used when modifying a recipe.
+   *
+   * This function resets the selected instruction to null.
+   */
+  fun resetSelectedInstruction() {
+    selectedInstruction.value = null
+  }
+
+  /**
+   * Gets the selected instruction. This is used when modifying a recipe.
+   *
+   * @return The selected instruction index.
+   */
+  fun getSelectedInstruction(): Int? {
+    return selectedInstruction.value
+  }
+
+  /**
+   * Gets a single instruction at the given index.
+   *
+   * @param index The index of the instruction to get.
+   */
+  fun getInstruction(index: Int): Instruction {
+    return recipeBuilder.getInstruction(index)
   }
 
   private val _publishStatus = MutableStateFlow<String?>(null)
@@ -89,21 +115,29 @@ class CreateRecipeViewModel(
   /**
    * Updates the area of the recipe.
    *
-   * @param area The new area of the recipe.
+   * @param origin The new area of the recipe.
    */
-  fun updateRecipeArea(area: String) {
-    recipeBuilder.setOrigin(area)
+  fun updateRecipeOrigin(origin: String) {
+    recipeBuilder.setOrigin(origin)
   }
 
   /**
-   * Updates the instructions for the recipe. WARNING : This method should be updated in the next
-   * version of the instruction implementation.
+   * Updates the instructions for the recipe.
    *
    * @param instructions The new instructions for the recipe.
    */
-  fun updateRecipeInstructions(instructions: String) {
-    require(instructions.isNotBlank()) { "Instructions must not be blank." }
-    recipeBuilder.setInstructions(instructions)
+  fun addRecipeInstruction(instructions: Instruction) {
+    recipeBuilder.addInstruction(instructions)
+  }
+
+  /**
+   * Updates an instruction for the recipe.
+   *
+   * @param index The index of the instruction to update.
+   * @param instruction The new instruction to replace the old one.
+   */
+  fun updateRecipeInstruction(index: Int, instruction: Instruction) {
+    recipeBuilder.modifyInstruction(index, instruction)
   }
 
   /**
@@ -116,8 +150,7 @@ class CreateRecipeViewModel(
   }
 
   /**
-   * Updates the time required to prepare the recipe. WARNING : This method should be updated in the
-   * next version of the instruction implementation.
+   * Updates the time required to prepare the recipe.
    *
    * @param time The new time required to prepare the recipe.
    */
@@ -149,7 +182,7 @@ class CreateRecipeViewModel(
    * @param ingredient The ingredient to add.
    * @param measurement The measurement of the ingredient.
    */
-  fun addIngredient(ingredient: String, measurement: String) {
+  fun addIngredientAndMeasurement(ingredient: String, measurement: String) {
     require(ingredient.isNotBlank()) { "Ingredient must not be blank." }
     require(measurement.isNotBlank()) { "Measurement must not be blank." }
     recipeBuilder.addIngredientAndMeasurement(ingredient, measurement)
@@ -205,13 +238,31 @@ class CreateRecipeViewModel(
   }
 
   /**
-   * Gets the instructions for the recipe. WARNING : This method should be updated in the next
-   * version of the instruction implementation.
+   * Gets the instructions for the recipe.
    *
    * @return The instructions for the recipe.
    */
-  fun getRecipeInstructions(): String {
+  fun getRecipeListOfInstructions(): List<Instruction> {
     return recipeBuilder.getInstructions()
+  }
+
+  /**
+   * Gets the i th instruction of the recipe.
+   *
+   * @param index The index of the instruction.
+   * @return The instruction at the given index.
+   */
+  fun getRecipeInstruction(index: Int): Instruction {
+    return recipeBuilder.getInstruction(index)
+  }
+
+  /**
+   * Deletes the i th instruction of the recipe.
+   *
+   * @param index The index of the instruction.
+   */
+  fun deleteRecipeInstruction(index: Int) {
+    recipeBuilder.deleteInstruction(index)
   }
 
   /**
@@ -228,7 +279,7 @@ class CreateRecipeViewModel(
    *
    * @return The area of the recipe.
    */
-  fun getRecipeArea(): String? {
+  fun getRecipeOrigin(): String? {
     return recipeBuilder.getOrigin()
   }
 
@@ -242,8 +293,7 @@ class CreateRecipeViewModel(
   }
 
   /**
-   * Gets the time required to prepare the recipe. WARNING : This method should be updated in the
-   * next version of the instruction implementation.
+   * Gets the time required to prepare the recipe.
    *
    * @return The time required to prepare the recipe.
    */
@@ -309,27 +359,31 @@ class CreateRecipeViewModel(
                   C.Tag.FIRESTORE_RECIPE_IMAGE_NAME,
                   ImageDirectoryType.RECIPE,
                   onSuccess = { uri ->
-
                     // Set the URL to the Builder
                     val url = uri.toString()
                     recipeBuilder.setUrl(url)
 
-                    // Build the Recipe
-                    val recipe = recipeBuilder.build()
+                    try {
+                      // Build the Recipe
+                      val recipe = recipeBuilder.build()
 
-                    // Add the Recipe to the Repository
-                    repository.addRecipe(
-                        recipe,
-                        onSuccess = {
-                          onSuccess(recipe)
-                          _publishStatus.value = RECIPE_PUBLISHED_SUCCESS_MESSAGE
-                          recipeBuilder.clear()
-                        },
-                        onFailure = { exception ->
-                          _publishStatus.value =
-                              RECIPE_PUBLISH_ERROR_MESSAGE.format(exception.message)
-                          onFailure(exception)
-                        })
+                      // Add the Recipe to the Repository
+                      repository.addRecipe(
+                          recipe,
+                          onSuccess = {
+                            onSuccess(recipe)
+                            _publishStatus.value = RECIPE_PUBLISHED_SUCCESS_MESSAGE
+                            recipeBuilder.clear()
+                          },
+                          onFailure = { exception ->
+                            _publishStatus.value =
+                                RECIPE_PUBLISH_ERROR_MESSAGE.format(exception.message)
+                            onFailure(exception)
+                          })
+                    } catch (e: IllegalArgumentException) {
+                      _publishStatus.value = e.message
+                      onFailure(e)
+                    }
                   },
                   onFailure = { exception ->
                     _publishStatus.value = RECIPE_PUBLISH_ERROR_MESSAGE.format(exception.message)
@@ -345,37 +399,6 @@ class CreateRecipeViewModel(
     } catch (e: NullPointerException) {
       _publishStatus.value = e.message
     }
-  }
-
-  /**
-   * Selects the icon for the recipe. WARNING : This method should be updated in the next version of
-   * the instruction implementation.
-   *
-   * @param icon The icon to select.
-   */
-  fun selectIcon(icon: IconType) {
-    selectedIcon.value = icon
-  }
-
-  /**
-   * Gets the selected icon for the recipe. WARNING : This method should be updated in the next
-   * version of the instruction implementation.
-   *
-   * @return The selected icon for the recipe.
-   */
-  fun getSelectedIcon(): IconType? {
-    return selectedIcon.value
-  }
-
-  /**
-   * Gets the icon at the given index. WARNING : This method should be updated in the next version
-   * of the instruction implementation.
-   *
-   * @param index The index of the icon to get.
-   * @return The icon at the given index.
-   */
-  fun getIcon(index: Int): IconType? {
-    return selectedIcon.value
   }
 
   companion object {

@@ -1,6 +1,8 @@
 package com.android.sample.model.recipe
 
 import com.android.sample.model.filter.Difficulty
+import com.android.sample.resources.C.Tag.NUMBER_RECIPES_TO_FETCH
+import com.android.sample.ui.utils.testRecipes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -31,28 +33,7 @@ class RecipesViewModelTest {
   private lateinit var recipesViewModel: RecipesViewModel
 
   // Dummy recipes for testing
-  private val dummyRecipes: List<Recipe> =
-      listOf(
-          Recipe(
-              uid = "1",
-              name = "Spicy Arrabiata Penne",
-              category = "Vegetarian",
-              origin = "Italian",
-              instructions = "Instructions here...",
-              strMealThumbUrl =
-                  "https://www.recipetineats.com/penne-all-arrabbiata-spicy-tomato-pasta/",
-              ingredientsAndMeasurements =
-                  listOf(Pair("Penne", "1 pound"), Pair("Olive oil", "1/4 cup"))),
-          Recipe(
-              uid = "2",
-              name = "Chicken Curry",
-              category = "Non-Vegetarian",
-              origin = "Indian",
-              instructions = "Instructions here...",
-              strMealThumbUrl =
-                  "https://www.foodfashionparty.com/2023/08/05/everyday-chicken-curry/",
-              ingredientsAndMeasurements =
-                  listOf(Pair("Chicken", "1 pound"), Pair("Curry powder", "2 tbsp"))))
+  private val dummyRecipes: List<Recipe> = testRecipes
 
   @OptIn(ExperimentalCoroutinesApi::class)
   @Before
@@ -125,6 +106,27 @@ class RecipesViewModelTest {
   }
 
   @Test
+  fun fetchByCategoriesRecipesHandlesFailure() {
+    // Simulate the failure of the repository
+    `when`(mockRecipeRepository.searchByCategory(any(), any(), any(), any())).thenAnswer {
+        invocation ->
+      val onFailure = invocation.getArgument<(Throwable) -> Unit>(2)
+      onFailure(Exception("Network error")) // Simulate a failure
+      null
+    }
+
+    // Act
+    recipesViewModel.updateCategory("Dessert")
+    recipesViewModel.applyChanges()
+    recipesViewModel.fetchRandomRecipes(2)
+
+    // Assert
+    assertThat(recipesViewModel.loading.value, `is`(false)) // Check loading is false after fetch
+    assertThat(
+        recipesViewModel.recipes.value, `is`(emptyList())) // Ensure no recipes are set on failure
+  }
+
+  @Test
   fun fetchRandomRecipesCallsRepository() {
     // Arrange
     val numberOfRecipes = 2
@@ -173,10 +175,12 @@ class RecipesViewModelTest {
 
   @Test
   fun fetchRandomRecipesAppendsToExistingList() {
+    val randomRecipes = dummyRecipes.take(2)
+
     // Arrange: Mock the repository to return dummy recipes
     `when`(mockRecipeRepository.random(any(), any(), any())).thenAnswer { invocation ->
       val onSuccess = invocation.getArgument<(List<Recipe>) -> Unit>(1)
-      onSuccess(dummyRecipes)
+      onSuccess(randomRecipes)
       null
     }
 
@@ -191,8 +195,8 @@ class RecipesViewModelTest {
     assertThat(
         recipesViewModel.recipes.value,
         `is`(
-            dummyRecipes +
-                dummyRecipes)) // Check if the ViewModel's recipes are the combination of the
+            randomRecipes +
+                randomRecipes)) // Check if the ViewModel's recipes are the combination of the
     // originals
   }
 
@@ -294,7 +298,7 @@ class RecipesViewModelTest {
                 name = "Beef Stroganoff",
                 category = "Non-Vegetarian",
                 origin = "Russian",
-                instructions = "Instructions here...",
+                instructions = listOf(Instruction("Instructions here...")),
                 strMealThumbUrl = "https://www.example.com/beef-stroganoff/",
                 ingredientsAndMeasurements =
                     listOf(Pair("Beef", "1 pound"), Pair("Sour cream", "1 cup")))
@@ -332,7 +336,7 @@ class RecipesViewModelTest {
     // Arrange: Mock the repository to return dummy recipes
     `when`(mockRecipeRepository.random(any(), any(), any())).thenAnswer { invocation ->
       val onSuccess = invocation.getArgument<(List<Recipe>) -> Unit>(1)
-      onSuccess(dummyRecipes)
+      onSuccess(dummyRecipes.take(2))
       null
     }
 
@@ -351,7 +355,7 @@ class RecipesViewModelTest {
 
     // Assert: Verify that fetchRandomRecipes is called twice (once during init and once during the
     // test)
-    verify(spyViewModel, times(2)).fetchRandomRecipes(eq(2))
+    verify(spyViewModel, times(2)).fetchRandomRecipes(eq(NUMBER_RECIPES_TO_FETCH))
   }
 
   @OptIn(ExperimentalCoroutinesApi::class)
@@ -366,7 +370,7 @@ class RecipesViewModelTest {
                     name = "Beef Stroganoff",
                     category = "Non-Vegetarian",
                     origin = "Russian",
-                    instructions = "Instructions here...",
+                    instructions = listOf(Instruction("Instructions here...")),
                     strMealThumbUrl = "https://www.example.com/beef-stroganoff/",
                     ingredientsAndMeasurements =
                         listOf(Pair("Beef", "1 pound"), Pair("Sour cream", "1 cup"))),
@@ -375,7 +379,7 @@ class RecipesViewModelTest {
                     name = "Chicken Curry",
                     category = "Non-Vegetarian",
                     origin = "Indian",
-                    instructions = "Instructions here...",
+                    instructions = listOf(Instruction("Instructions here...")),
                     strMealThumbUrl = "https://www.example.com/chicken-curry/",
                     ingredientsAndMeasurements =
                         listOf(Pair("Chicken", "1 kg"), Pair("Curry powder", "2 tbsp"))))
@@ -445,7 +449,7 @@ class RecipesViewModelTest {
     val newDifficulty = Difficulty.Medium
     recipesViewModel.updateDifficulty(newDifficulty)
 
-    assertEquals(newDifficulty, recipesViewModel.filter.value.difficulty)
+    assertEquals(newDifficulty, recipesViewModel.tmpFilter.value.difficulty)
   }
 
   /** Tests for the filter price range functionality. */
@@ -455,8 +459,8 @@ class RecipesViewModelTest {
     val newMax = 50f
     recipesViewModel.updatePriceRange(newMin, newMax)
 
-    assertEquals(newMin, recipesViewModel.filter.value.priceRange.min, 0.001f)
-    assertEquals(newMax, recipesViewModel.filter.value.priceRange.max, 0.001f)
+    assertEquals(newMin, recipesViewModel.tmpFilter.value.priceRange.min, 0.001f)
+    assertEquals(newMax, recipesViewModel.tmpFilter.value.priceRange.max, 0.001f)
   }
 
   /** Tests for the filter time range functionality. */
@@ -466,8 +470,8 @@ class RecipesViewModelTest {
     val newMax = 5f
     recipesViewModel.updateTimeRange(newMin, newMax)
 
-    assertEquals(newMin, recipesViewModel.filter.value.timeRange.min, 0.001f)
-    assertEquals(newMax, recipesViewModel.filter.value.timeRange.max, 0.001f)
+    assertEquals(newMin, recipesViewModel.tmpFilter.value.timeRange.min, 0.001f)
+    assertEquals(newMax, recipesViewModel.tmpFilter.value.timeRange.max, 0.001f)
   }
 
   /** Tests for the filter category functionality. */
@@ -477,6 +481,30 @@ class RecipesViewModelTest {
     val newCategory = "Dessert"
     recipesViewModel.updateCategory(newCategory)
     advanceUntilIdle()
-    assertEquals(newCategory, recipesViewModel.filter.value.category)
+    assertEquals(newCategory, recipesViewModel.tmpFilter.value.category)
+  }
+
+  @Test
+  fun `test init filter updates filter correctly`() {
+    recipesViewModel.initFilter()
+    assertEquals(
+        recipesViewModel.filter.value.difficulty, recipesViewModel.tmpFilter.value.difficulty)
+    assertEquals(recipesViewModel.filter.value.category, recipesViewModel.tmpFilter.value.category)
+    assertEquals(
+        recipesViewModel.filter.value.priceRange.min,
+        recipesViewModel.tmpFilter.value.priceRange.min,
+        0.001f)
+    assertEquals(
+        recipesViewModel.filter.value.priceRange.max,
+        recipesViewModel.tmpFilter.value.priceRange.max,
+        0.001f)
+    assertEquals(
+        recipesViewModel.filter.value.timeRange.min,
+        recipesViewModel.tmpFilter.value.timeRange.min,
+        0.001f)
+    assertEquals(
+        recipesViewModel.filter.value.timeRange.max,
+        recipesViewModel.tmpFilter.value.timeRange.max,
+        0.001f)
   }
 }

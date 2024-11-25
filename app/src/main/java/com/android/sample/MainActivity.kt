@@ -77,7 +77,7 @@ fun PlateSwipeApp() {
         startDestination = Screen.AUTH,
         route = Route.AUTH,
     ) {
-      composable(Screen.AUTH) { SignInScreen(navigationActions) }
+      composable(Screen.AUTH) { SignInScreen(navigationActions, userViewModel) }
     }
     navigation(
         startDestination = Screen.SWIPE,

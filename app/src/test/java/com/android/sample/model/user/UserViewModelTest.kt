@@ -1,15 +1,23 @@
 package com.android.sample.model.user
 
 import android.util.Log
+import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.ingredient.FirestoreIngredientRepository
 import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.recipe.FirestoreRecipesRepository
 import com.android.sample.model.recipe.Recipe
+import com.android.sample.resources.C.Tag.UserViewModel.FAILED_TO_DELETE_IMAGE
+import com.android.sample.resources.C.Tag.UserViewModel.FAILED_TO_DELETE_RECIPE
 import com.android.sample.resources.C.Tag.UserViewModel.FAILED_TO_FETCH_CREATED_RECIPE_FROM_DATABASE_ERROR
 import com.android.sample.resources.C.Tag.UserViewModel.FAILED_TO_FETCH_INGREDIENT_FROM_DATABASE_ERROR
 import com.android.sample.resources.C.Tag.UserViewModel.FAILED_TO_FETCH_LIKED_RECIPE_FROM_DATABASE_ERROR
+import com.android.sample.resources.C.Tag.UserViewModel.IMAGE_DELETION_SUCCESSFULY
 import com.android.sample.resources.C.Tag.UserViewModel.LOG_TAG
 import com.android.sample.resources.C.Tag.UserViewModel.NOT_FOUND_INGREDIENT_IN_DATABASE_ERROR
+import com.android.sample.resources.C.Tag.UserViewModel.RECIPE_DELETED_SUCCESSFULY
+import com.android.sample.ui.utils.testIngredients
+import com.android.sample.ui.utils.testRecipes
+import com.android.sample.ui.utils.testUsers
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import okhttp3.Call
@@ -48,6 +56,14 @@ class UserViewModelTest {
       Function1::class.java as Class<Function1<Recipe, Unit>>
 
   @Suppress("UNCHECKED_CAST")
+  private val onSuccessRecipeDeletionClass: Class<Function0<Unit>> =
+      Function0::class.java as Class<Function0<Unit>>
+
+  @Suppress("UNCHECKED_CAST")
+  private val onSuccessImageDeletionClass: Class<Function0<Unit>> =
+      Function0::class.java as Class<Function0<Unit>>
+
+  @Suppress("UNCHECKED_CAST")
   private val onFailureClass: Class<Function1<Exception, Unit>> =
       Function1::class.java as Class<Function1<Exception, Unit>>
 
@@ -56,52 +72,19 @@ class UserViewModelTest {
   private lateinit var mockCurrentUser: FirebaseUser
   private lateinit var mockIngredientRepository: FirestoreIngredientRepository
   private lateinit var mockRecipeRepository: FirestoreRecipesRepository
+  private lateinit var mockImageRepositoryFirebase: ImageRepositoryFirebase
 
   private lateinit var userViewModel: UserViewModel
 
   private lateinit var mockCall: Call
 
-  private val userExample: User =
-      User("001", "Gigel Frone", "", emptyList(), emptyList(), emptyList())
+  private val userExample: User = testUsers[0]
 
-  private val userExample2: User =
-      User("001", "Gigelica Frone", "", listOf(Pair("133", 1)), emptyList(), emptyList())
+  private val ingredientExample: Ingredient = testIngredients[0]
 
-  private val userExample3: User =
-      User("001", "Florica Frone", "", emptyList(), listOf("123"), emptyList())
+  private val recipeExample: Recipe = testRecipes[0]
 
-  private val userExample4: User =
-      User("001", "Calcev Frone", "", emptyList(), emptyList(), listOf("456"))
-
-  private val ingredientExample: Ingredient =
-      Ingredient(
-          barCode = 133L,
-          name = "apple",
-          brands = "",
-          quantity = "",
-          categories = listOf(""),
-          images = listOf(""))
-  private val recipeExample: Recipe =
-      Recipe(
-          "123",
-          "recipe1",
-          null,
-          null,
-          "instructions",
-          "thumb",
-          listOf(Pair("2134", "4231")),
-      )
-
-  private val createdRecipeExample: Recipe =
-      Recipe(
-          "456",
-          "recipe2",
-          null,
-          null,
-          "instructions",
-          "thumb",
-          listOf(Pair("2134", "4231")),
-      )
+  private val createdRecipeExample: Recipe = testRecipes[1]
 
   @Before
   fun setUp() {
@@ -113,13 +96,18 @@ class UserViewModelTest {
     mockCurrentUser = mock(FirebaseUser::class.java)
     mockIngredientRepository = mock(FirestoreIngredientRepository::class.java)
     mockRecipeRepository = mock(FirestoreRecipesRepository::class.java)
+    mockImageRepositoryFirebase = mock(ImageRepositoryFirebase::class.java)
 
     `when`(mockFirebaseAuth.currentUser).thenReturn(mockCurrentUser)
-    `when`(mockCurrentUser.uid).thenReturn("001")
+    `when`(mockCurrentUser.uid).thenReturn(userExample.uid)
 
     userViewModel =
         UserViewModel(
-            mockUserRepository, mockFirebaseAuth, mockRecipeRepository, mockIngredientRepository)
+            mockUserRepository,
+            mockFirebaseAuth,
+            mockRecipeRepository,
+            mockIngredientRepository,
+            mockImageRepositoryFirebase)
   }
 
   @Test
@@ -164,9 +152,11 @@ class UserViewModelTest {
 
     assertEquals(userViewModel.userName.value, userExample.userName)
     assertEquals(userViewModel.profilePictureUrl.value, userExample.profilePictureUrl)
-    assertEquals(userViewModel.fridge.value, userExample.fridge)
-    assertEquals(userViewModel.likedRecipes.value, userExample.likedRecipes)
-    assertEquals(userViewModel.createdRecipes.value, userExample.createdRecipes)
+    verify(mockIngredientRepository, times(userExample.fridge.count())).get(any(), any(), any())
+    verify(
+            mockRecipeRepository,
+            times(userExample.likedRecipes.count() + userExample.createdRecipes.count()))
+        .search(any(), any(), any())
   }
 
   @Test
@@ -229,9 +219,11 @@ class UserViewModelTest {
     assertEquals(addedUserCaptor.value.uid, userExample.uid)
     assertEquals(addedUserCaptor.value.userName, userExample.userName)
     assertEquals(addedUserCaptor.value.profilePictureUrl, userExample.profilePictureUrl)
-    assertEquals(addedUserCaptor.value.fridge, userExample.fridge)
-    assertEquals(addedUserCaptor.value.likedRecipes, userExample.likedRecipes)
-    assertEquals(addedUserCaptor.value.createdRecipes, userExample.createdRecipes)
+    verify(mockIngredientRepository, times(userExample.fridge.count())).get(any(), any(), any())
+    verify(
+            mockRecipeRepository,
+            times(userExample.likedRecipes.count() + userExample.createdRecipes.count()))
+        .search(any(), any(), any())
   }
 
   @Test
@@ -240,17 +232,17 @@ class UserViewModelTest {
     userViewModel.changeProfilePictureUrl(userExample.profilePictureUrl)
     userViewModel.addIngredientToUserFridge(ingredientExample)
     userViewModel.addRecipeToUserLikedRecipes(recipeExample)
-    userViewModel.addRecipeToUserCreatedRecipes(recipeExample)
+    userViewModel.addRecipeToUserCreatedRecipes(createdRecipeExample)
 
     assertEquals(userViewModel.userName.value, userExample.userName)
     assertEquals(userViewModel.profilePictureUrl.value, userExample.profilePictureUrl)
-    assertEquals(userViewModel.fridge.value[0].first.name, "apple")
-    assertEquals(userViewModel.likedRecipes.value[0].uid, "123")
-    assertEquals(userViewModel.createdRecipes.value[0].uid, "123")
+    assertEquals(userViewModel.fridge.value[0].first.name, ingredientExample.name)
+    assertEquals(userViewModel.likedRecipes.value[0].uid, recipeExample.uid)
+    assertEquals(userViewModel.createdRecipes.value[0].uid, createdRecipeExample.uid)
 
     userViewModel.removeIngredientFromUserFridge(ingredientExample)
     userViewModel.removeRecipeFromUserLikedRecipes(recipeExample)
-    userViewModel.removeRecipeFromUserCreatedRecipes(recipeExample)
+    userViewModel.removeRecipeFromUserCreatedRecipes(createdRecipeExample)
 
     assertEquals(userViewModel.fridge.value.count(), 0)
     assertEquals(userViewModel.likedRecipes.value.count(), 0)
@@ -261,7 +253,7 @@ class UserViewModelTest {
   fun `test correctly adds and removes existing ingredient to count pairs in fridge`() {
     userViewModel.addIngredientToUserFridge(ingredientExample, 2)
 
-    assertEquals(userViewModel.fridge.value[0].first.name, "apple")
+    assertEquals(userViewModel.fridge.value[0].first.name, ingredientExample.name)
     assertEquals(userViewModel.fridge.value[0].second, 2)
 
     userViewModel.addIngredientToUserFridge(ingredientExample)
@@ -298,14 +290,12 @@ class UserViewModelTest {
 
     userViewModel.getCurrentUser()
 
-    onSuccessCaptor.value.invoke(userExample2)
+    onSuccessCaptor.value.invoke(userExample)
     onSuccessCaptorFridge.value.invoke(ingredientExample)
 
-    assertEquals(userExample2.userName, userViewModel.userName.value)
-    assertEquals(userExample2.profilePictureUrl, userViewModel.profilePictureUrl.value)
+    assertEquals(userExample.userName, userViewModel.userName.value)
+    assertEquals(userExample.profilePictureUrl, userViewModel.profilePictureUrl.value)
     assertEquals(listOf(Pair(ingredientExample, 1)), userViewModel.fridge.value)
-    assertEquals(userExample2.likedRecipes, userViewModel.likedRecipes.value)
-    assertEquals(userExample2.createdRecipes, userViewModel.createdRecipes.value)
   }
 
   @Test
@@ -322,7 +312,7 @@ class UserViewModelTest {
     mockStatic(Log::class.java).use { mockedLog ->
       userViewModel.getCurrentUser()
 
-      onSuccessCaptor.value.invoke(userExample2)
+      onSuccessCaptor.value.invoke(userExample)
       onSuccessCaptorFridge.value.invoke(null)
 
       mockedLog.verify { Log.e(eq(LOG_TAG), eq(NOT_FOUND_INGREDIENT_IN_DATABASE_ERROR)) }
@@ -343,7 +333,7 @@ class UserViewModelTest {
     mockStatic(Log::class.java).use { mockedLog ->
       userViewModel.getCurrentUser()
 
-      onSuccessCaptor.value.invoke(userExample2)
+      onSuccessCaptor.value.invoke(userExample)
       onFailureCaptorFridge.value.invoke(Exception())
 
       mockedLog.verify {
@@ -367,14 +357,14 @@ class UserViewModelTest {
 
     userViewModel.getCurrentUser()
 
-    onSuccessCaptor.value.invoke(userExample3)
+    // we need to make a copy without any created recipes
+    // to avoid crushing the argument captor
+    onSuccessCaptor.value.invoke(userExample.copy(createdRecipes = emptyList()))
     onSuccessCaptorLikedRecipe.value.invoke(recipeExample)
 
-    assertEquals(userExample3.userName, userViewModel.userName.value)
-    assertEquals(userExample3.profilePictureUrl, userViewModel.profilePictureUrl.value)
-    assertEquals(userExample3.fridge, userViewModel.fridge.value)
+    assertEquals(userExample.userName, userViewModel.userName.value)
+    assertEquals(userExample.profilePictureUrl, userViewModel.profilePictureUrl.value)
     assertEquals(listOf(recipeExample), userViewModel.likedRecipes.value)
-    assertEquals(userExample3.createdRecipes, userViewModel.createdRecipes.value)
   }
 
   @Test
@@ -393,7 +383,9 @@ class UserViewModelTest {
     mockStatic(Log::class.java).use { mockedLog ->
       userViewModel.getCurrentUser()
 
-      onSuccessCaptor.value.invoke(userExample3)
+      // we need to make a copy without any created recipes
+      // to avoid crushing the argument captor
+      onSuccessCaptor.value.invoke(userExample.copy(createdRecipes = emptyList()))
       onFailureCaptorLikedRecipe.value.invoke(Exception())
 
       mockedLog.verify {
@@ -417,13 +409,11 @@ class UserViewModelTest {
 
     userViewModel.getCurrentUser()
 
-    onSuccessCaptor.value.invoke(userExample4)
+    onSuccessCaptor.value.invoke(userExample)
     onSuccessCaptorCreatedRecipe.value.invoke(createdRecipeExample)
 
-    assertEquals(userExample4.userName, userViewModel.userName.value)
-    assertEquals(userExample4.profilePictureUrl, userViewModel.profilePictureUrl.value)
-    assertEquals(userExample4.fridge, userViewModel.fridge.value)
-    assertEquals(userExample4.likedRecipes, userViewModel.likedRecipes.value)
+    assertEquals(userExample.userName, userViewModel.userName.value)
+    assertEquals(userExample.profilePictureUrl, userViewModel.profilePictureUrl.value)
     assertEquals(listOf(createdRecipeExample), userViewModel.createdRecipes.value)
   }
 
@@ -443,11 +433,65 @@ class UserViewModelTest {
     mockStatic(Log::class.java).use { mockedLog ->
       userViewModel.getCurrentUser()
 
-      onSuccessCaptor.value.invoke(userExample4)
+      onSuccessCaptor.value.invoke(userExample)
       onFailureCaptorCreatedRecipe.value.invoke(Exception())
 
       mockedLog.verify {
         Log.e(eq(LOG_TAG), eq(FAILED_TO_FETCH_CREATED_RECIPE_FROM_DATABASE_ERROR), any<Exception>())
+      }
+    }
+  }
+
+  @Test
+  fun `test deletion of recipe and of its image from the database is successful`() {
+    val onSuccessRecipeDeletionCaptor: ArgumentCaptor<Function0<Unit>> =
+        ArgumentCaptor.forClass(onSuccessRecipeDeletionClass)
+
+    val onSuccessImageDeletionCaptor: ArgumentCaptor<Function0<Unit>> =
+        ArgumentCaptor.forClass(onSuccessImageDeletionClass)
+
+    doNothing()
+        .`when`(mockRecipeRepository)
+        .deleteRecipe(any(), capture(onSuccessRecipeDeletionCaptor), any())
+    doNothing()
+        .`when`(mockImageRepositoryFirebase)
+        .deleteImage(any(), any(), any(), capture(onSuccessImageDeletionCaptor), any())
+
+    mockStatic(Log::class.java).use { mockedLog ->
+      userViewModel.removeRecipeFromUserCreatedRecipes(recipeExample)
+      onSuccessRecipeDeletionCaptor.value.invoke()
+      onSuccessImageDeletionCaptor.value.invoke()
+
+      mockedLog.verify {
+        Log.i(LOG_TAG, RECIPE_DELETED_SUCCESSFULY)
+        Log.i(LOG_TAG, IMAGE_DELETION_SUCCESSFULY)
+      }
+    }
+  }
+
+  @Test
+  fun `test deletion of recipe and of its image from the database failed`() {
+    val onFailureRecipeDeletionCaptor: ArgumentCaptor<Function1<Exception, Unit>> =
+        ArgumentCaptor.forClass(onFailureClass)
+
+    val onFailureImageDeletionCaptor: ArgumentCaptor<Function1<Exception, Unit>> =
+        ArgumentCaptor.forClass(onFailureClass)
+
+    doNothing()
+        .`when`(mockRecipeRepository)
+        .deleteRecipe(any(), any(), capture(onFailureRecipeDeletionCaptor))
+    doNothing()
+        .`when`(mockImageRepositoryFirebase)
+        .deleteImage(any(), any(), any(), any(), capture(onFailureImageDeletionCaptor))
+
+    mockStatic(Log::class.java).use { mockedLog ->
+      userViewModel.removeRecipeFromUserCreatedRecipes(recipeExample)
+      onFailureRecipeDeletionCaptor.value.invoke(Exception())
+      onFailureImageDeletionCaptor.value.invoke(Exception())
+
+      mockedLog.verify {
+        Log.e(eq(LOG_TAG), eq(FAILED_TO_DELETE_RECIPE), any<Exception>())
+        Log.e(eq(LOG_TAG), eq(FAILED_TO_DELETE_IMAGE), any<Exception>())
       }
     }
   }

@@ -1,6 +1,7 @@
 package com.android.sample.ui.camera
 
 import android.Manifest
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -24,12 +25,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
 import com.android.sample.R
 import com.android.sample.feature.camera.CameraView
 import com.android.sample.feature.camera.RequestCameraPermission
@@ -39,6 +43,10 @@ import com.android.sample.feature.camera.scan.CodeBarAnalyzer
 import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.ingredient.IngredientViewModel
 import com.android.sample.resources.C
+import com.android.sample.resources.C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_IMAGE_BORDER_RADIUS
+import com.android.sample.resources.C.Dimension.PADDING_8
+import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_THUMBNAIL_URL
+import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_IMAGE_1
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -151,7 +159,7 @@ fun IngredientDisplay(
       modifier =
           Modifier.fillMaxSize()
               .background(
-                  color = Color.White,
+                  color = MaterialTheme.colorScheme.background,
                   shape =
                       RoundedCornerShape(
                           topEndPercent =
@@ -165,7 +173,7 @@ fun IngredientDisplay(
           modifier =
               Modifier.weight(C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_IMAGE_WEIGHT)
                   .fillMaxHeight()
-                  .padding(8.dp),
+                  .padding(PADDING_8.dp),
           verticalArrangement = Arrangement.Center,
           horizontalAlignment = Alignment.CenterHorizontally,
       ) {
@@ -180,13 +188,21 @@ fun IngredientDisplay(
                                 .INGREDIENT_DISPLAY_IMAGE_BORDER_WIDTH
                                 .dp,
                         color = Color.Black,
-                        shape =
-                            RoundedCornerShape(
-                                C.Dimension.CameraScanCodeBarScreen
-                                    .INGREDIENT_DISPLAY_IMAGE_BORDER_RADIUS
-                                    .dp))
-                    .background(Color.Gray),
-        ) {}
+                        shape = RoundedCornerShape(INGREDIENT_DISPLAY_IMAGE_BORDER_RADIUS.dp))
+                    .background(MaterialTheme.colorScheme.background),
+        ) {
+          Image(
+              painter =
+                  rememberAsyncImagePainter(
+                      model = ingredient.images[PRODUCT_FRONT_IMAGE_THUMBNAIL_URL]),
+              contentDescription = stringResource(R.string.recipe_image),
+              modifier =
+                  Modifier.fillMaxSize()
+                      .testTag(RECIPE_IMAGE_1)
+                      .clip(RoundedCornerShape(INGREDIENT_DISPLAY_IMAGE_BORDER_RADIUS.dp)),
+              contentScale = ContentScale.Crop,
+          )
+        }
       }
 
       Column(

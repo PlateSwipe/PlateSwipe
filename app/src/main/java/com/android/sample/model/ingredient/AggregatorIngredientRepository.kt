@@ -1,16 +1,34 @@
 package com.android.sample.model.ingredient
 
 import android.util.Log
+import com.android.sample.model.image.ImageRepositoryFirebase
+import com.android.sample.model.image.ImageUploader
 import com.android.sample.resources.C
+import com.android.sample.resources.C.Tag.AGGREGATOR_ERROR_FIRESTORE_ADD_INGR
+import com.android.sample.resources.C.Tag.AGGREGATOR_ERROR_GET_INGR_FIRESTORE
+import com.android.sample.resources.C.Tag.AGGREGATOR_ERROR_OPENFOOD_INGR_NOT_FOUND
+import com.android.sample.resources.C.Tag.AGGREGATOR_ERROR_OPENFOOD_INGR_NULL
+import com.android.sample.resources.C.Tag.AGGREGATOR_ERROR_UPLOAD_FORMAT_IMAGE
+import com.android.sample.resources.C.Tag.AGGREGATOR_ERROR_UPLOAD_IMAGE
+import com.android.sample.resources.C.Tag.AGGREGATOR_LOG_TAG
+import com.android.sample.resources.C.Tag.AGGREGATOR_SUCCESS_FIRESTORE_ADD_INGR
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.launch
 
 open class AggregatorIngredientRepository(
     private val firestoreIngredientRepository: FirestoreIngredientRepository,
-    private val openFoodFactsIngredientRepository: OpenFoodFactsIngredientRepository
+    private val openFoodFactsIngredientRepository: OpenFoodFactsIngredientRepository,
+    private val imageStorage: ImageRepositoryFirebase,
+    private val imageUploader: ImageUploader
 ) : IngredientRepository {
 
   /**
    * Get an ingredient by barcode. If it isn't found in Firestore, it will be searched in
-   * OpenFoodFacts.
+   * OpenFoodFacts.Upload the image to Firebase Storage and update the ingredient in Firestore.
    *
    * @param barCode barcode of the ingredient
    * @param onSuccess callback with the ingredient
@@ -31,23 +49,25 @@ open class AggregatorIngredientRepository(
                 barCode,
                 onSuccess = { ingredientOpenFoodFacts ->
                   if (ingredientOpenFoodFacts != null) {
+                    // Immediately return the ingredient from OpenFoodFacts
                     onSuccess(ingredientOpenFoodFacts)
-                    firestoreIngredientRepository.add(
-                        ingredientOpenFoodFacts,
-                        onSuccess = {
-                          Log.i(
-                              C.Tag.AGGREGATOR_TAG_ON_INGREDIENT_ADDED,
-                              ingredientOpenFoodFacts.name)
-                        },
-                        onFailure = onFailure)
+                    // Start the background upload and update process
+                    uploadAndSaveIngredientImages(ingredientOpenFoodFacts, Dispatchers.IO)
                   } else {
+                    Log.e(AGGREGATOR_LOG_TAG, AGGREGATOR_ERROR_OPENFOOD_INGR_NOT_FOUND)
                     onFailure(Exception(C.Tag.INGREDIENT_NOT_FOUND_MESSAGE))
                   }
                 },
-                onFailure)
+                onFailure = { exception ->
+                  Log.e(AGGREGATOR_LOG_TAG, AGGREGATOR_ERROR_OPENFOOD_INGR_NULL + exception.message)
+                  onFailure(exception)
+                })
           }
         },
-        onFailure = onFailure)
+        onFailure = { exception ->
+          Log.e(AGGREGATOR_LOG_TAG, AGGREGATOR_ERROR_GET_INGR_FIRESTORE + exception.message)
+          onFailure(exception)
+        })
   }
 
   /**
@@ -113,6 +133,56 @@ open class AggregatorIngredientRepository(
               }
             },
             onFailure = onFailure)
+      }
+    }
+  }
+  /**
+   * Uploads and saves ingredient images to Firebase Storage and updates the ingredient in
+   * Firestore.
+   *
+   * @param ingredient The ingredient whose images are to be uploaded and saved.
+   * @param dispatcher The CoroutineDispatcher to be used for the coroutine scope.
+   */
+  private fun uploadAndSaveIngredientImages(
+      ingredient: Ingredient,
+      dispatcher: CoroutineDispatcher
+  ) {
+    CoroutineScope(dispatcher).launch {
+      try {
+        val imageFormats = ingredient.images.keys
+        val deferredUrls =
+            imageFormats.map { format ->
+              async {
+                try {
+                  imageUploader.uploadAndRetrieveUrlAsync(
+                      ingredient, format, imageStorage, dispatcher)
+                } catch (e: Exception) {
+                  Log.d(
+                      AGGREGATOR_LOG_TAG, AGGREGATOR_ERROR_UPLOAD_FORMAT_IMAGE + format + e.message)
+                  null
+                }
+              }
+            }
+
+        // Await all URLs in the background
+        val urls = deferredUrls.awaitAll().filterNotNull()
+
+        if (urls.size == imageFormats.size) {
+          // Update the ingredient with the new URLs
+          ingredient.images.putAll(urls.associate { it.first to it.second })
+
+          // Save the updated ingredient to Firestore
+          firestoreIngredientRepository.add(
+              ingredient,
+              onSuccess = { Log.e(AGGREGATOR_LOG_TAG, AGGREGATOR_SUCCESS_FIRESTORE_ADD_INGR) },
+              onFailure = { exception ->
+                Log.e(AGGREGATOR_LOG_TAG, AGGREGATOR_ERROR_FIRESTORE_ADD_INGR + exception.message)
+              })
+        } else {
+          Log.e(AGGREGATOR_LOG_TAG, AGGREGATOR_ERROR_UPLOAD_IMAGE)
+        }
+      } catch (e: Exception) {
+        Log.e(AGGREGATOR_LOG_TAG, AGGREGATOR_ERROR_UPLOAD_IMAGE + e.message)
       }
     }
   }

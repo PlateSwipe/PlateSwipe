@@ -9,6 +9,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.test.espresso.intent.Intents
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C.TestTag.SignInScreen.AVOCADO
 import com.android.sample.resources.C.TestTag.SignInScreen.BROCCOLI
 import com.android.sample.resources.C.TestTag.SignInScreen.COOK_IMAGE
@@ -44,14 +45,16 @@ import org.mockito.kotlin.verify
 class SignInTest : TestCase() {
   @get:Rule val composeTestRule = createComposeRule()
   private lateinit var mockNavigationActions: NavigationActions
+  private lateinit var mockUserViewModel: UserViewModel
 
   @Before
   fun setUp() {
     mockNavigationActions = mock(NavigationActions::class.java)
+    mockUserViewModel = UserViewModel.Factory.create(UserViewModel::class.java)
     `when`(mockNavigationActions.navigateTo(Screen.SWIPE)).then {}
     Intents.init()
     composeTestRule.setContent {
-      SignInScreen(mockNavigationActions) // Set up the SignInScreen directly
+      SignInScreen(mockNavigationActions, mockUserViewModel) // Set up the SignInScreen directly
     }
   }
 

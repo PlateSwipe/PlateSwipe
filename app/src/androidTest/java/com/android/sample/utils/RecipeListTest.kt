@@ -9,6 +9,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import com.android.sample.model.ingredient.FirestoreIngredientRepository
 import com.android.sample.model.recipe.FirestoreRecipesRepository
+import com.android.sample.model.recipe.Instruction
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.user.UserRepository
 import com.android.sample.model.user.UserViewModel
@@ -19,7 +20,7 @@ import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_TITLE_TEST_TAG
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.utils.RecipeList
-import com.android.sample.ui.utils.TopCornerLikeButton
+import com.android.sample.ui.utils.TopCornerUnLikeButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import org.junit.Before
@@ -45,7 +46,7 @@ class RecipeListTest {
               "Meal1",
               "Meal1cat",
               "Meal1Area",
-              "Meals 1 instructions",
+              listOf(Instruction("Meals 1 instructions")),
               "https://img.jakpost.net/c/2016/09/29/2016_09_29_12990_1475116504._large.jpg",
               listOf(Pair("1", "peu"), Pair("2", "beaucoup"), Pair("3", "peu")),
           ),
@@ -54,7 +55,9 @@ class RecipeListTest {
               "Meal2",
               "Meal2cat",
               "Meal2Area",
-              "Meals 2 instructions",
+              listOf(
+                  Instruction("Meals 2 instructions"),
+              ),
               "https://img.jakpost.net/c/2016/09/29/2016_09_29_12990_1475116504._large.jpg",
               listOf(Pair("1", "peu"), Pair("2", "beaucoup"), Pair("3", "peu")),
           ),
@@ -63,7 +66,7 @@ class RecipeListTest {
               "Meal3",
               "Meal3cat",
               "Meal3Area",
-              "Meals 3 instructions",
+              listOf(Instruction("Meals 3 instructions")),
               "https://img.jakpost.net/c/2016/09/29/2016_09_29_12990_1475116504._large.jpg",
               listOf(Pair("1", "peu"), Pair("2", "beaucoup"), Pair("3", "peu")),
           ),
@@ -72,7 +75,7 @@ class RecipeListTest {
               "Meal4",
               "Meal4cat",
               "Meal4Area",
-              "Meals 4 instructions",
+              listOf(Instruction("Meals 4 instructions")),
               "https://img.jakpost.net/c/2016/09/29/2016_09_29_12990_1475116504._large.jpg",
               listOf(Pair("1", "peu"), Pair("2", "beaucoup"), Pair("3", "peu")),
           ),
@@ -81,7 +84,7 @@ class RecipeListTest {
               "Meal5",
               "Meal5cat",
               "Meal5Area",
-              "Meals 5 instructions",
+              listOf(Instruction("Meals 5 instructions")),
               "https://img.jakpost.net/c/2016/09/29/2016_09_29_12990_1475116504._large.jpg",
               listOf(Pair("1", "peu"), Pair("2", "beaucoup"), Pair("3", "peu")),
           ))
@@ -92,7 +95,7 @@ class RecipeListTest {
           name = "Test Recipe",
           category = "Test Category",
           origin = "Test Area",
-          instructions = "Test Instructions",
+          instructions = listOf(Instruction("Test Instructions")),
           strMealThumbUrl = "https://example.com/image.jpg",
           ingredientsAndMeasurements = listOf(Pair("1", "Test Ingredient")),
       )
@@ -123,7 +126,7 @@ class RecipeListTest {
           list = recipesList,
           onRecipeSelected = {},
           topCornerButton = { recipe ->
-            TopCornerLikeButton(recipe = recipe, userViewModel = userViewModel)
+            TopCornerUnLikeButton(recipe = recipe, userViewModel = userViewModel)
           })
     }
 

@@ -7,12 +7,17 @@ import androidx.lifecycle.viewModelScope
 import com.android.sample.model.filter.Difficulty
 import com.android.sample.model.filter.Filter
 import com.android.sample.model.filter.FilterPageViewModel
+import com.android.sample.model.filter.FloatRange
+import com.android.sample.resources.C.Tag.Filter.UNINITIALIZED_BORN_VALUE
 import com.android.sample.resources.C.Tag.MINIMUM_RECIPES_BEFORE_FETCH
 import com.android.sample.resources.C.Tag.NUMBER_RECIPES_TO_FETCH
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 /**
@@ -46,9 +51,39 @@ class RecipesViewModel(private val repository: RecipesRepository) :
   override val filter: StateFlow<Filter>
     get() = _filter
 
+  private val _tmpFilter = MutableStateFlow(Filter())
+  override val tmpFilter: StateFlow<Filter>
+    get() = _tmpFilter
+
   private val _categories = MutableStateFlow<List<String>>(emptyList())
   override val categories: StateFlow<List<String>>
     get() = _categories
+
+  override val timeRangeState: StateFlow<FloatRange> =
+      _tmpFilter
+          .map { it.timeRange }
+          .stateIn(
+              viewModelScope,
+              SharingStarted.WhileSubscribed(),
+              initialValue =
+                  FloatRange(
+                      UNINITIALIZED_BORN_VALUE,
+                      UNINITIALIZED_BORN_VALUE,
+                      UNINITIALIZED_BORN_VALUE,
+                      UNINITIALIZED_BORN_VALUE))
+
+  override val priceRangeState: StateFlow<FloatRange> =
+      _tmpFilter
+          .map { it.priceRange }
+          .stateIn(
+              viewModelScope,
+              SharingStarted.WhileSubscribed(),
+              initialValue =
+                  FloatRange(
+                      UNINITIALIZED_BORN_VALUE,
+                      UNINITIALIZED_BORN_VALUE,
+                      UNINITIALIZED_BORN_VALUE,
+                      UNINITIALIZED_BORN_VALUE))
 
   init {
     viewModelScope.launch {
@@ -57,7 +92,7 @@ class RecipesViewModel(private val repository: RecipesRepository) :
 
       _loading.collect { isLoading ->
         if (!isLoading) {
-          updateCurrentRecipe(_recipes.value.first())
+          if (_recipes.value.isNotEmpty()) updateCurrentRecipe(_recipes.value.first())
           return@collect
         }
       }
@@ -75,7 +110,7 @@ class RecipesViewModel(private val repository: RecipesRepository) :
    * @param difficulty The difficulty to filter by.
    */
   override fun updateDifficulty(difficulty: Difficulty) {
-    filter.value.difficulty = difficulty
+    _tmpFilter.value.difficulty = difficulty
   }
 
   /**
@@ -85,7 +120,7 @@ class RecipesViewModel(private val repository: RecipesRepository) :
    * @param max The maximum price.
    */
   override fun updatePriceRange(min: Float, max: Float) {
-    filter.value.priceRange.update(min, max)
+    _tmpFilter.value.priceRange.update(min, max)
   }
 
   /**
@@ -95,7 +130,44 @@ class RecipesViewModel(private val repository: RecipesRepository) :
    * @param max The maximum time.
    */
   override fun updateTimeRange(min: Float, max: Float) {
-    filter.value.timeRange.update(min, max)
+    _tmpFilter.value.timeRange.update(min, max)
+  }
+
+  /** Applies the changes made to the filters. */
+  override fun applyChanges() {
+    _filter.value = _tmpFilter.value
+    viewModelScope.launch {
+      _recipes.value = emptyList()
+      _currentRecipe.value = null
+      _nextRecipe.value = null
+      fetchRandomRecipes(NUMBER_RECIPES_TO_FETCH)
+      _loading.collect { isLoading ->
+        if (!isLoading) {
+          if (_recipes.value.isNotEmpty()) updateCurrentRecipe(_recipes.value.first())
+          return@collect
+        }
+      }
+    }
+  }
+
+  /** Resets all filters to their default values. */
+  override fun resetFilters() {
+    _tmpFilter.value = Filter()
+  }
+
+  /** Initializes the filter. */
+  override fun initFilter() {
+
+    if (_filter.value.priceRange.min != UNINITIALIZED_BORN_VALUE &&
+        _filter.value.priceRange.max != UNINITIALIZED_BORN_VALUE) {
+      _tmpFilter.value.priceRange.update(_filter.value.priceRange.min, _filter.value.priceRange.max)
+    }
+    if (_filter.value.timeRange.min != UNINITIALIZED_BORN_VALUE &&
+        _filter.value.timeRange.max != UNINITIALIZED_BORN_VALUE) {
+      _tmpFilter.value.timeRange.update(_filter.value.timeRange.min, _filter.value.timeRange.max)
+    }
+    _tmpFilter.value.difficulty = _filter.value.difficulty
+    _tmpFilter.value.category = _filter.value.category
   }
 
   /**
@@ -104,19 +176,7 @@ class RecipesViewModel(private val repository: RecipesRepository) :
    * @param category The category to filter by.
    */
   override fun updateCategory(category: String?) {
-    viewModelScope.launch {
-      _recipes.value = emptyList()
-      _currentRecipe.value = null
-      _nextRecipe.value = null
-      _filter.value.category = category
-      fetchRandomRecipes(NUMBER_RECIPES_TO_FETCH)
-      _loading.collect { isLoading ->
-        if (!isLoading) {
-          updateCurrentRecipe(_recipes.value.first())
-          return@collect
-        }
-      }
-    }
+    _tmpFilter.value.category = category
   }
 
   /**

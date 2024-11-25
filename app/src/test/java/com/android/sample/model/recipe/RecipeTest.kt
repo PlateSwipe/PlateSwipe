@@ -4,7 +4,9 @@ import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_AREA
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_CATEGORY
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_DIFFICULTY
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_INGREDIENTS
-import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_INSTRUCTIONS
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_INSTRUCTIONS_TEXT
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_INSTRUCTION_ICON
+import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_INSTRUCTION_TIME
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_MEASUREMENTS
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_NAME
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_PICTURE_ID
@@ -26,7 +28,7 @@ class RecipeTest {
     val strMeal = "Spicy Arrabiata Penne"
     val strCategory = "Vegetarian"
     val strArea = "Italian"
-    val strInstructions = "Instructions here..."
+    val strInstructions = listOf(Instruction("1. Boil water", "30 min", "Cook"))
     val strMealThumbUrl = "https://www.recipetineats.com/penne-all-arrabbiata-spicy-tomato-pasta/"
     val ingredientsAndMeasurements = listOf(Pair("Penne", "1 pound"), Pair("Olive oil", "1/4 cup"))
     val url = "https://www.recipetineats.com/penne"
@@ -59,7 +61,7 @@ class RecipeTest {
     // Arrange
     val idMeal = "2"
     val strMeal = "Chicken Curry"
-    val strInstructions = "Instructions here..."
+    val strInstructions = listOf(Instruction("Instructions here..."))
     val strMealThumbUrl = "https://www.foodfashionparty.com/2023/08/05/everyday-chicken-curry/"
     val ingredientsAndMeasurements =
         listOf(Pair("Chicken", "1 pound"), Pair("Curry powder", "2 tbsp"))
@@ -92,7 +94,7 @@ class RecipeTest {
     // Arrange
     val idMeal = "3"
     val strMeal = "Empty Ingredients Test"
-    val strInstructions = "Instructions here..."
+    val strInstructions = listOf(Instruction("Instructions here..."))
     val strMealThumbUrl = "https://example.com/empty-ingredients-test"
 
     // Act & Assert
@@ -117,7 +119,7 @@ class RecipeTest {
     val strMeal = "Spicy Arrabiata Penne"
     val strCategory = "Vegetarian"
     val strArea = "Italian"
-    val strInstructions = "Instructions here..."
+    val strInstructions = listOf(Instruction("Instructions here..."))
     val strMealThumbUrl = "https://www.recipetineats.com/penne-all-arrabbiata-spicy-tomato-pasta/"
     val ingredientsAndMeasurements = listOf(Pair("Penne", "1 pound"), Pair("Olive oil", "1/4 cup"))
     val time = "30 minutes"
@@ -145,13 +147,19 @@ class RecipeTest {
     assertThat(firestoreMap[FIRESTORE_RECIPE_CATEGORY], `is`(strCategory))
     assertThat(firestoreMap[FIRESTORE_RECIPE_AREA], `is`(strArea))
     assertThat(firestoreMap[FIRESTORE_RECIPE_PICTURE_ID], `is`(strMealThumbUrl))
-    assertThat(firestoreMap[FIRESTORE_RECIPE_INSTRUCTIONS], `is`(strInstructions))
     assertThat(
         firestoreMap[FIRESTORE_RECIPE_INGREDIENTS],
         `is`(ingredientsAndMeasurements.map { it.first }))
     assertThat(
         firestoreMap[FIRESTORE_RECIPE_MEASUREMENTS],
         `is`(ingredientsAndMeasurements.map { it.second }))
+    assertThat(
+        firestoreMap[FIRESTORE_RECIPE_INSTRUCTIONS_TEXT],
+        `is`(strInstructions.map { it.description }))
+    assertThat(
+        firestoreMap[FIRESTORE_RECIPE_INSTRUCTION_TIME], `is`(strInstructions.map { it.time }))
+    assertThat(
+        firestoreMap[FIRESTORE_RECIPE_INSTRUCTION_ICON], `is`(strInstructions.map { it.iconType }))
     assertThat(firestoreMap[FIRESTORE_RECIPE_TIME], `is`(time))
     assertThat(firestoreMap[FIRESTORE_RECIPE_DIFFICULTY], `is`(difficulty))
     assertThat(firestoreMap[FIRESTORE_RECIPE_PRICE], `is`(price))

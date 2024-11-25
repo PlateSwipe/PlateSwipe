@@ -4,6 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.android.sample.R
 import com.android.sample.resources.C.Tag.ICON_AXE
+import com.android.sample.resources.C.Tag.ICON_CHEF_HAT
 import com.android.sample.resources.C.Tag.ICON_FIRE
 import com.android.sample.resources.C.Tag.ICON_MORTAR
 import com.android.sample.resources.C.Tag.ICON_SALT
@@ -33,7 +34,8 @@ data class IconType(val iconName: String) {
           ICON_SALT -> R.drawable.salt
           ICON_MORTAR -> R.drawable.mortar
           ICON_AXE -> R.drawable.axe
-          else -> R.drawable.fire // Default to fire icon if unknown
+          ICON_CHEF_HAT -> R.drawable.chef_s_hat
+          else -> R.drawable.chef_s_hat // Default to fire icon if unknown
         }
 
   /**
@@ -52,6 +54,7 @@ data class IconType(val iconName: String) {
           ICON_SALT -> R.string.salt_icon_description
           ICON_MORTAR -> R.string.mortar_icon_description
           ICON_AXE -> R.string.axe_icon_description
-          else -> R.string.fire_icon_description // Default to fire description if unknown
+          ICON_CHEF_HAT -> R.string.chef_s_hat_icon_description
+          else -> R.string.chef_s_hat_icon_description // Default to fire description if unknown
         }
 }

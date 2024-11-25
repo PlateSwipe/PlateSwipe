@@ -3,6 +3,7 @@ package com.android.sample.resources
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.sample.R
+import com.android.sample.resources.C.Tag.ICON_CHEF_HAT
 import com.android.sample.resources.C.Tag.PADDING
 
 // Like R, but C
@@ -21,7 +22,7 @@ object C {
     // Error
     const val ERROR_NULL_IMAGE = "Image is null"
     const val ERROR_STR_MEAL_BLANK = "Recipe name is required and cannot be blank."
-    const val ERROR_STR_INSTR_BLANK = "Recipe instructions are required and cannot be blank."
+    const val ERROR_STR_INSTR_EMPTY = "Recipe instructions are required and cannot be empty."
     const val ERROR_LIST_INGREDIENT_EMPTY = "At least one ingredient is required."
     const val ERROR_STR_THUMBNAIL = "Recipe thumbnail is required and cannot be blank."
     // PlateSwipeButton
@@ -35,7 +36,6 @@ object C {
       const val END_ANIMATION = 1500f
       const val INITIAL_RETRIEVE_NEXT_RECIPE = false
       const val INITIAL_DISPLAY_CARD_1 = true
-      const val INITIAL_DISPLAY_CARD_2 = false
       const val INITIAL_IS_CLICKING = false
       const val INITIAL_DISPLAY_LIKE = false
       const val INITIAL_DISPLAY_DISLIKE = false
@@ -72,63 +72,62 @@ object C {
       const val INITIAL_LOADING_STATE = false
     }
 
-    // Filter
-    const val MIN_SHOULD_NOT_BE_GREATER_THAN_MAX = "min should not be greater than max"
-    const val NEW_MIN_SHOULD_NOT_EXCEED_MAX = "newMin should not exceed max"
-    const val NEW_MAX_SHOULD_NOT_BE_NEGATIVE = "newMax should not be negative"
-    const val NEW_MIN_SHOULD_NOT_BE_NEGATIVE = "newMin should not be negative"
-    const val MIN_SHOULD_NOT_BE_NEGATIVE = "Min should not be negative or different from -1"
-    const val MAX_SHOULD_NOT_BE_NEGATIVE = "Max should not be negative or different from -1"
-    const val MIN_BORN_SHOULD_NOT_BE_NEGATIVE =
-        "Born min should not be negative or different from -1"
-    const val MAX_BORN_SHOULD_NOT_BE_NEGATIVE =
-        "Born max should not be negative or different from -1"
-    const val NEW_MIN_AND_NEW_MAX_SHOULD_BE_WITHIN_RANGE =
-        "newMin and newMax should be within range"
-    const val UNINITIALIZED_BORN_VALUE = -1f
+    object Filter {
+      const val MIN_SHOULD_NOT_BE_GREATER_THAN_MAX = "min should not be greater than max"
+      const val NEW_MIN_SHOULD_NOT_EXCEED_MAX = "newMin should not exceed max"
+      const val NEW_MAX_SHOULD_NOT_BE_NEGATIVE = "newMax should not be negative"
+      const val NEW_MIN_SHOULD_NOT_BE_NEGATIVE = "newMin should not be negative"
+      const val MIN_SHOULD_NOT_BE_NEGATIVE = "Min should not be negative or different from -1"
+      const val MAX_SHOULD_NOT_BE_NEGATIVE = "Max should not be negative or different from -1"
+      const val MIN_BORN_SHOULD_NOT_BE_NEGATIVE =
+          "Born min should not be negative or different from -1"
+      const val MAX_BORN_SHOULD_NOT_BE_NEGATIVE =
+          "Born max should not be negative or different from -1"
+      const val NEW_MIN_AND_NEW_MAX_SHOULD_BE_WITHIN_RANGE =
+          "newMin and newMax should be within range"
+      const val UNINITIALIZED_BORN_VALUE = -1f
+    }
 
-    // Filter Page
-    const val TIME_RANGE_NAME = "Time"
-    const val TIME_RANGE_MIN = 0f
-    const val TIME_RANGE_MAX = 200f
-    const val TIME_RANGE_UNIT = "min"
-    const val PRICE_RANGE_NAME = "Price"
-    const val PRICE_RANGE_MIN = 0f
-    const val PRICE_RANGE_MAX = 100f
-    const val PRICE_RANGE_UNIT = "$"
-    const val DIFFICULTY_NAME = "Difficulty"
-    const val CATEGORY_NAME = "Category"
-    const val MAX_ITEM_IN_ROW = 3 // Choose to optimize with medium and small phone
+    object FilterPage {
+      const val TIME_RANGE_MIN = 0f
+      const val TIME_RANGE_MAX = 200f
+      const val PRICE_RANGE_MIN = 0f
+      const val PRICE_RANGE_MAX = 100f
+      const val MAX_ITEM_IN_ROW = 3 // Choose to optimize with medium and small phone
+      const val SLIDER_COLOR_ACTIVE = 0.4f
+      const val SLIDER_COLOR_INACTIVE = 0.2f
+    }
 
-    // LoadingAnimation
-    const val GRAVITY = 9.8f
-    const val INITIAL_SPEED = 100
-    val fruitImages =
-        listOf(
-            R.drawable.taco,
-            R.drawable.sushi,
-            R.drawable.avocado,
-            R.drawable.tomato,
-            R.drawable.pancakes,
-            R.drawable.broccoli,
-            R.drawable.pasta,
-            R.drawable.salad,
-            R.drawable.pepper)
+    object LoadingAnimation {
+      const val GRAVITY = 9.8f
+      const val INITIAL_SPEED = 100
+      val fruitImages =
+          listOf(
+              R.drawable.taco,
+              R.drawable.sushi,
+              R.drawable.avocado,
+              R.drawable.tomato,
+              R.drawable.pancakes,
+              R.drawable.broccoli,
+              R.drawable.pasta,
+              R.drawable.salad,
+              R.drawable.pepper)
 
-    const val MAX_ROTATION_START = 90
-    const val UNIT = 1
-    const val TIME_INIT = 0f
-    const val TIME_DELTA = 0.016f
-    const val TIME_DELAY = 16L
-    const val ROTATION_DELTA = 0.03f
-    const val DELAY_RESPAWN = 150L
-    const val DELAY_SPAWN = 300L
-    const val NUMBER_FRUIT_MAX = 8
-    const val FRUIT_SIZE = 120
+      const val MAX_ROTATION_START = 90
+      const val UNIT = 1
+      const val TIME_INIT = 0f
+      const val TIME_DELTA = 0.016f
+      const val TIME_DELAY = 16L
+      const val ROTATION_DELTA = 0.03f
+      const val DELAY_RESPAWN = 150L
+      const val DELAY_SPAWN = 300L
+      const val NUMBER_FRUIT_MAX = 8
+      const val FRUIT_SIZE = 120
+    }
 
     // RecipesViewModel
-    const val MINIMUM_RECIPES_BEFORE_FETCH = 3
-    const val NUMBER_RECIPES_TO_FETCH = 2
+    const val MINIMUM_RECIPES_BEFORE_FETCH = 5
+    const val NUMBER_RECIPES_TO_FETCH = 15
 
     // ImageRepositoryFirebase
     const val USER_IMAGE_DIR = "images/user/"
@@ -140,6 +139,7 @@ object C {
     const val RECIPE_LIST_CORNER_RADIUS = 12
     const val RECIPE_RATING_CONTENT_DESCRIPTION = "rating"
     const val RECIPE_FAVORITE_ICON_CONTENT_DESCRIPTION = "like"
+    const val RECIPE_DELETE_ICON_CONTENT_DESCRIPTION = "delete"
 
     // SearchBar
     const val SEARCH_BAR_CORNER_RADIUS = 16
@@ -162,14 +162,23 @@ object C {
     const val MEAL_DB_CATEGORY_ARRAY = "categories"
 
     // FirestoreRecipeRepository
-    const val FIRESTORE_COLLECTION_NAME = "recipes with images"
+    object FirestoreRecipesRepository {
+      const val FIRESTORE_COLLECTION_NAME = "Recipes with new Instructions"
+      const val MAX_FIRESTORE_FETCH = 5
+      const val NO_RECIPE_FOUND_MSG = "No recipes found"
+      const val NOT_ENOUGH_RECIPE_MSG = "Not enough recipes found"
+      const val REPOSITORY_TAG_MSG = "FirestoreRecipesRepository"
+      const val ERROR_GETTING_DOCUMENT = "Error getting documents"
+    }
 
     // Values for storage
     const val FIRESTORE_RECIPE_NAME = "name"
     const val FIRESTORE_RECIPE_CATEGORY = "category"
     const val FIRESTORE_RECIPE_AREA = "area"
     const val FIRESTORE_RECIPE_PICTURE_ID = "pictureID"
-    const val FIRESTORE_RECIPE_INSTRUCTIONS = "instructions"
+    const val FIRESTORE_RECIPE_INSTRUCTIONS_TEXT = "instructions_text"
+    const val FIRESTORE_RECIPE_INSTRUCTION_TIME = "instruction_time"
+    const val FIRESTORE_RECIPE_INSTRUCTION_ICON = "instruction_icon"
     const val FIRESTORE_RECIPE_INGREDIENTS = "ingredients"
     const val FIRESTORE_RECIPE_MEASUREMENTS = "measurements"
     const val FIRESTORE_RECIPE_TIME = "time"
@@ -180,7 +189,7 @@ object C {
     const val FIRESTORE_RECIPE_IMAGE_NAME = "Main"
 
     // FirestoreIngredientRepository
-    const val FIRESTORE_INGREDIENT_COLLECTION_NAME = "ingredients"
+    const val FIRESTORE_INGREDIENT_COLLECTION_NAME_TEST = "ingredients test"
     // Values for storage
     const val FIRESTORE_INGREDIENT_NAME = "name"
     const val FIRESTORE_INGREDIENT_BARCODE = "barCode"
@@ -190,24 +199,31 @@ object C {
     const val FIRESTORE_INGREDIENT_IMAGES = "images"
 
     // AggregatorIngredientRepository
+    const val AGGREGATOR_LOG_TAG = "AggregatorIngredientRepository"
+    const val AGGREGATOR_ERROR_FIRESTORE_ADD_INGR = "Error adding ingredient to Firestore:"
+    const val AGGREGATOR_SUCCESS_FIRESTORE_ADD_INGR = "Ingredient successfully updated in Firestore"
     const val AGGREGATOR_TAG_ON_INGREDIENT_ADDED = "Ingredient added successfully"
+    const val AGGREGATOR_ERROR_UPLOAD_IMAGE = "Failed to upload all images"
+    const val AGGREGATOR_ERROR_UPLOAD_FORMAT_IMAGE = "Error uploading format"
+    const val AGGREGATOR_ERROR_OPENFOOD_INGR_NOT_FOUND = "Ingredient not found in OpenFoodFacts: "
+    const val AGGREGATOR_ERROR_OPENFOOD_INGR_NULL = "Ingredient from OpenFoodFacts is null: "
+    const val AGGREGATOR_ERROR_GET_INGR_FIRESTORE = "Error getting ingredient from Firestore:"
+    const val OPENFOODFACT_REPO_IMAGE_ULR_INVALID = "Image URLs are not provided"
+    const val INGREDIENT_VIEWMODEL_LOG_TAG = "IngredientViewModel"
 
     // OpenFoodFactsIngredientRepository
     const val OPEN_FOOD_FACTS_URL = "https://world.openfoodfacts.org"
-    const val OPEN_FOOD_FACTS_INGREDIENT_REPOSITORY_TAG = "OpenFoodFactsIngredientRepository"
     const val PRODUCT_NAME = "product_name"
     const val PRODUCT_BRAND = "brands"
     const val PRODUCT_ID = "_id"
     const val PRODUCT_QUANTITY = "quantity"
     const val PRODUCT_CATEGORIES = "categories"
-    const val PRODUCT_FRONT_IMAGE_URL = "image_front_url"
-    const val PRODUCT_FRONT_IMAGE = "display_normal"
+    const val PRODUCT_FRONT_IMAGE_NORMAL_URL = "image_front_url"
+    const val PRODUCT_FRONT_IMAGE_NORMAL = "display_normal"
     const val PRODUCT_FRONT_IMAGE_THUMBNAIL_URL = "image_front_thumb_url"
     const val PRODUCT_FRONT_IMAGE_THUMBNAIL = "display_thumbnail"
     const val PRODUCT_FRONT_IMAGE_SMALL_URL = "image_front_small_url"
     const val PRODUCT_FRONT_IMAGE_SMALL = "display_small"
-    const val INGREDIENT_IMAGE_ADDED_SUCCESSFULLY =
-        "Ingredient image added successfully to the storage"
 
     // EXCEPTION MESSAGES
     const val LIMIT_MUST_BE_POSITIVE_MESSAGE = "Limit must be greater than 0"
@@ -281,6 +297,7 @@ object C {
     const val ICON_SALT = "salt"
     const val ICON_MORTAR = "mortar"
     const val ICON_AXE = "axe"
+    const val ICON_CHEF_HAT = "chef hat"
 
     // UserViewModel
     object UserViewModel {
@@ -289,6 +306,7 @@ object C {
       const val REMOVED_INGREDIENT_NOT_IN_FRIDGE_ERROR =
           "Cannot remove an ingredient that is not in the fridge."
       const val LOG_TAG = "UserViewModel"
+      const val IMAGE_NAME = "Main"
       const val NOT_FOUND_INGREDIENT_IN_DATABASE_ERROR = "Ingredient not found in the database."
       const val FAILED_TO_FETCH_INGREDIENT_FROM_DATABASE_ERROR =
           "Failed to fetch ingredient from the database."
@@ -296,6 +314,11 @@ object C {
           "Failed to fetch liked recipes from the database."
       const val FAILED_TO_FETCH_CREATED_RECIPE_FROM_DATABASE_ERROR =
           "Failed to fetch created recipes from the database."
+      const val RECIPE_DELETED_SUCCESSFULY = "Recipe deleted successfully"
+      const val FAILED_TO_DELETE_RECIPE = "Recipe deletion unsuccessful"
+      const val IMAGE_DELETION_SUCCESSFULY = "Recipe image deleted successfully"
+      const val FAILED_TO_DELETE_IMAGE = "Recipe image deletion unsuccessful"
+      const val RECIPE_NOT_FOUND = "Recipe not found"
     }
 
     // AccountScreen
@@ -337,9 +360,8 @@ object C {
       const val BUTTON_ELEVATION = 4
       const val BUTTON_RADIUS = 12
       const val BUTTON_PADDING = 12
-      const val ANIMATION_PADDING_SWIPE = 200
       const val ANIMATION_PADDING_TOP = 64
-      const val ANIMATION_SWIPE_TIME = 50
+      const val ANIMATION_SWIPE_TIME = 60
       const val ANIMATION_OPACITY_TIME = 300
       const val ANIMATION_OPACITY_MIN = 0f
       const val ANIMATION_OPACITY_MAX = 1f
@@ -456,9 +478,6 @@ object C {
       const val GOOGLE_LOGO_SIZE = 30
     }
 
-    const val PAD_4 = 4
-    const val PAD_8 = 8
-    const val PAD_16 = 16
     // CameraScanCodeBarScreen
     object CameraScanCodeBarScreen {
 
@@ -625,7 +644,6 @@ object C {
       const val NUMBER_SERVINGS = "numberServings"
       const val ADD_SERVINGS = "addServings"
       const val INSTRUCTIONS_VIEW = "instructionsView"
-      const val INSTRUCTIONS_TEXT = "instructionsText"
       const val INGREDIENT_CHECKBOX = "checkboxIngredient"
       const val INGREDIENT_PREFIX = "ingredient"
       const val SLIDING_BUTTON_INGREDIENTS = "ingredientButton"
@@ -643,6 +661,7 @@ object C {
       const val RECIPE_IMAGE_TEST_TAG = "recipeImage"
       const val RECIPE_TITLE_TEST_TAG = "recipeTitle"
       const val RECIPE_FAVORITE_ICON_TEST_TAG = "recipeFavoriteIcon"
+      const val RECIPE_DELETE_ICON_TEST_TAG = "recipeDeleteIcon"
       const val CONFIRMATION_POP_UP = "confirmationPopUp"
       const val CONFIRMATION_BUTTON = "confirmButton"
       const val CANCEL_BUTTON = "cancelButton"
@@ -719,6 +738,21 @@ object C {
       const val RECIPE_NAME = "recipeName"
       const val ADD_INGREDIENT_ICON = "addIngredientIcon"
       const val NEXT_STEP_BUTTON = "nextStepButton"
+    }
+
+    object FilterPage {
+      const val TEST_TAG_TIME_RANGE_SLIDER = "timeRangeSlider"
+      const val TEST_TAG_PRICE_RANGE_SLIDER = "priceRangeSlider"
+      const val TEST_TAG_DIFFICULTY = "difficulty"
+      const val TEST_TAG_CATEGORY = "category"
+    }
+
+    object Instruction {
+      const val DEFAULT_ICON = ICON_CHEF_HAT
+    }
+
+    object RecipeBuilder {
+      const val OUT_OF_BOUNDS_MESSAGE = "Index out of bounds"
     }
   }
 }
