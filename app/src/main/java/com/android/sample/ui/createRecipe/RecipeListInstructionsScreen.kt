@@ -1,5 +1,6 @@
 package com.android.sample.ui.createRecipe
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -32,6 +33,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -165,12 +167,22 @@ fun RecipeListInstructionsContent(
                 })
           }
         }
-
+    val context = LocalContext.current
     // Fixed button at the bottom
     PlateSwipeButton(
         text = stringResource(R.string.next_step),
         modifier = Modifier.align(Alignment.CenterHorizontally).testTag(NEXT_STEP_BUTTON),
-        onClick = { navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_IMAGE) },
+        onClick = {
+          if (createRecipeViewModel.getRecipeListOfInstructions().isNotEmpty()) {
+            navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_IMAGE)
+          } else {
+            Toast.makeText(
+                    context,
+                    context.getString(R.string.RecipeListInstruction_add_instruction_please),
+                    Toast.LENGTH_SHORT)
+                .show()
+          }
+        },
     )
   }
 }

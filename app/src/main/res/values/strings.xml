@@ -101,6 +101,7 @@
     <string name="RecipeListInstructionsScreen_Minutes">min</string>
     <string name="RecipeListInstructionsScreen_Delete">Delete</string>
     <string name="image_failed_to_load">Image failed to load</string>
+    <string name="RecipeListInstruction_add_instruction_please">Please add at least one instruction</string>
 
     //RecipeListIngredientsScreen
     <string name="scanner_instruction">Scanner Icon</string>
