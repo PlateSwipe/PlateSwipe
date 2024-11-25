@@ -32,6 +32,7 @@ import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.Typography
 import com.android.sample.ui.theme.lightCream
+import com.android.sample.ui.utils.PlateSwipeAlertBox
 import com.android.sample.ui.utils.PlateSwipeButton
 import com.android.sample.ui.utils.PlateSwipeScaffold
 
@@ -94,6 +95,9 @@ fun AddInstructionStepContent(
         })
   }
   var showError by remember { mutableStateOf(false) }
+
+  // see if an instruction is being deleted
+  var isDeleting by remember { mutableStateOf(false) }
 
   Column(
       modifier =
@@ -210,6 +214,35 @@ fun AddInstructionStepContent(
                         inclusive = false)
                   })
             })
+
+        Spacer(modifier = Modifier.height(SPACE_BETWEEN_ELEMENTS.dp))
+
+        if (createRecipeViewModel.getSelectedInstruction() != null) {
+          // suppress button if editing an existing instruction
+          PlateSwipeButton(
+              stringResource(R.string.RecipeListInstructionsScreen_Delete),
+              modifier = Modifier.fillMaxWidth(),
+              onClick = { isDeleting = true },
+              backgroundColor = MaterialTheme.colorScheme.error,
+              contentColor = MaterialTheme.colorScheme.onError)
+        }
+        if (isDeleting) {
+          PlateSwipeAlertBox(
+              popUpMessage = "Are you sure you want to delete this step?",
+              confirmMessage = "Delete",
+              onConfirm = {
+                createRecipeViewModel.deleteRecipeInstruction(
+                    createRecipeViewModel.getSelectedInstruction()!!)
+                createRecipeViewModel.resetSelectedInstruction()
+                navigationActions.navigateToPop(
+                    Screen.CREATE_RECIPE_LIST_INSTRUCTIONS,
+                    popUpTo = Screen.CREATE_RECIPE_LIST_INGREDIENTS,
+                    inclusive = false)
+              },
+              dismissMessage = "Cancel",
+              onDismiss = { isDeleting = false },
+          )
+        }
       }
 }
 

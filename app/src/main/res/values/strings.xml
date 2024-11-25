@@ -99,6 +99,7 @@
     <string name="RecipeListInstructionsScreen_Instructions">Instructions</string>
     <string name="RecipeListInstructionsScreen_Step">Step</string>
     <string name="RecipeListInstructionsScreen_Minutes">min</string>
+    <string name="RecipeListInstructionsScreen_Delete">Delete</string>
     <string name="image_failed_to_load">Image failed to load</string>
 
     //RecipeListIngredientsScreen
