@@ -23,6 +23,7 @@ import com.android.sample.resources.C.TestTag.RecipeOverview.COOK_TIME_TEXT
 import com.android.sample.resources.C.TestTag.RecipeOverview.DRAGGABLE_ITEM
 import com.android.sample.resources.C.TestTag.RecipeOverview.INGREDIENTS_VIEW
 import com.android.sample.resources.C.TestTag.RecipeOverview.INGREDIENT_CHECKBOX
+import com.android.sample.resources.C.TestTag.RecipeOverview.INSTRUCTIONS_VIEW
 import com.android.sample.resources.C.TestTag.RecipeOverview.NUMBER_SERVINGS
 import com.android.sample.resources.C.TestTag.RecipeOverview.PREP_TIME_TEXT
 import com.android.sample.resources.C.TestTag.RecipeOverview.RECIPE_IMAGE
