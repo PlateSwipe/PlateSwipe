@@ -123,4 +123,20 @@ open class NavigationActions(
   open fun currentRoute(): String {
     return navController.currentDestination?.route ?: ""
   }
+
+  /**
+   * Navigate to the specified screen and clear the back stack up to the specified destination. This
+   * is useful when navigating to a new screen from the bottom navigation bar as we don't want to
+   * keep the previous screen in the back stack.
+   *
+   * @param screen The screen to navigate to
+   * @param popUpTo The destination to clear the back stack up to
+   * @param inclusive Whether to include the destination in the back stack
+   */
+  open fun navigateToPop(screen: String, popUpTo: String?, inclusive: Boolean = false) {
+    navController.navigate(screen) {
+      popUpTo?.let { popUpTo(it) { this.inclusive = inclusive } }
+      launchSingleTop = true
+    }
+  }
 }

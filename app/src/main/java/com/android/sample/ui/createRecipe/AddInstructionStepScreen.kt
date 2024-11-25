@@ -204,7 +204,10 @@ fun AddInstructionStepContent(
                   createRecipeViewModel,
                   onSuccess = {
                     createRecipeViewModel.resetSelectedInstruction()
-                    navigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INSTRUCTIONS)
+                    navigationActions.navigateToPop(
+                        Screen.CREATE_RECIPE_LIST_INSTRUCTIONS,
+                        popUpTo = Screen.CREATE_RECIPE_LIST_INGREDIENTS,
+                        inclusive = false)
                   })
             })
       }
