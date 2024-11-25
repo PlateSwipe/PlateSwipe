@@ -754,5 +754,14 @@ object C {
     object RecipeBuilder {
       const val OUT_OF_BOUNDS_MESSAGE = "Index out of bounds"
     }
+
+    object AddInstructionStepScreen {
+      const val INPUT_CONTAINER = "InputContainer"
+      const val TIME_INPUT = "TimeInput"
+      const val ICON_DROPDOWN = "IconDropdown"
+      const val INSTRUCTION_INPUT = "InstructionInput"
+      const val INSTRUCTION_ERROR = "InstructionError"
+      const val DELETE_BUTTON = "DeleteButton"
+    }
   }
 }

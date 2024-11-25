@@ -122,4 +122,9 @@
     <string name="pop_up_confirm_removal_liked_recipe">Yes</string>>
     <string name="pop_up_confirm_cancel_removal_liked_recipe">No</string>
 
+    //AddInstructionStepScreen
+    <string name = "u_sure_u_want_to_delete">Are you sure you want to delete this step?</string>
+    <string name = "delete">Delete</string>
+    <string name="cancel">Cancel</string>
+
 </resources>

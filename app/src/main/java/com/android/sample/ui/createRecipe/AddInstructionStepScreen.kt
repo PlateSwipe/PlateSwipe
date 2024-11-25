@@ -27,6 +27,12 @@ import com.android.sample.resources.C.Tag.MINLINES_VISIBLE_FOR_INSTRUCTION
 import com.android.sample.resources.C.Tag.SAVE_BUTTON_TAG
 import com.android.sample.resources.C.Tag.SPACE_BETWEEN_ELEMENTS
 import com.android.sample.resources.C.Tag.TIME_CHARACTER_LIMIT
+import com.android.sample.resources.C.TestTag.AddInstructionStepScreen.DELETE_BUTTON
+import com.android.sample.resources.C.TestTag.AddInstructionStepScreen.ICON_DROPDOWN
+import com.android.sample.resources.C.TestTag.AddInstructionStepScreen.INPUT_CONTAINER
+import com.android.sample.resources.C.TestTag.AddInstructionStepScreen.INSTRUCTION_ERROR
+import com.android.sample.resources.C.TestTag.AddInstructionStepScreen.INSTRUCTION_INPUT
+import com.android.sample.resources.C.TestTag.AddInstructionStepScreen.TIME_INPUT
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
@@ -117,7 +123,7 @@ fun AddInstructionStepContent(
                 Modifier.fillMaxWidth()
                     .background(color = lightCream, shape = RoundedCornerShape(8.dp))
                     .padding(CONTAINER_PADDING.dp)
-                    .testTag("InputContainer")) {
+                    .testTag(INPUT_CONTAINER)) {
               Column {
                 // Row for input fields for time, and icon
                 Row(
@@ -145,14 +151,14 @@ fun AddInstructionStepContent(
                                   unfocusedLabelColor = MaterialTheme.colorScheme.onSecondary,
                                   focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
                                   unfocusedBorderColor = MaterialTheme.colorScheme.onSecondary),
-                          modifier = Modifier.weight(1f).testTag("TimeInput"),
+                          modifier = Modifier.weight(1f).testTag(TIME_INPUT),
                           maxLines = MAXLINES_TIME_FIELD)
 
                       // Icon dropdown menu
                       IconDropdownMenu(
                           selectedIcon = selectedIcon,
                           onIconSelected = { selectedIcon = it },
-                          modifier = Modifier.weight(1f).testTag("IconDropdown"))
+                          modifier = Modifier.weight(1f).testTag(ICON_DROPDOWN))
                     }
 
                 Spacer(modifier = Modifier.height(SPACE_BETWEEN_ELEMENTS.dp))
@@ -176,7 +182,7 @@ fun AddInstructionStepContent(
                         Modifier.fillMaxWidth()
                             .padding(vertical = INSTRUCTION_VERTICAL_PADDING.dp)
                             .verticalScroll(rememberScrollState())
-                            .testTag("InstructionInput"),
+                            .testTag(INSTRUCTION_INPUT),
                     isError = verifyStepDescription(showError, stepDescription),
                     textStyle = Typography.bodySmall,
                     minLines = MINLINES_VISIBLE_FOR_INSTRUCTION,
@@ -188,7 +194,7 @@ fun AddInstructionStepContent(
                       text = stringResource(R.string.error_message_empty_instruction),
                       style = Typography.bodySmall,
                       color = MaterialTheme.colorScheme.error,
-                      modifier = Modifier.padding(top = 4.dp).testTag("InstructionError"))
+                      modifier = Modifier.padding(top = 4.dp).testTag(INSTRUCTION_ERROR))
                 }
               }
             }
@@ -221,15 +227,15 @@ fun AddInstructionStepContent(
           // suppress button if editing an existing instruction
           PlateSwipeButton(
               stringResource(R.string.RecipeListInstructionsScreen_Delete),
-              modifier = Modifier.fillMaxWidth(),
+              modifier = Modifier.fillMaxWidth().testTag(DELETE_BUTTON),
               onClick = { isDeleting = true },
               backgroundColor = MaterialTheme.colorScheme.error,
               contentColor = MaterialTheme.colorScheme.onError)
         }
         if (isDeleting) {
           PlateSwipeAlertBox(
-              popUpMessage = "Are you sure you want to delete this step?",
-              confirmMessage = "Delete",
+              popUpMessage = stringResource(R.string.u_sure_u_want_to_delete),
+              confirmMessage = stringResource(R.string.delete),
               onConfirm = {
                 createRecipeViewModel.deleteRecipeInstruction(
                     createRecipeViewModel.getSelectedInstruction()!!)
@@ -239,7 +245,7 @@ fun AddInstructionStepContent(
                     popUpTo = Screen.CREATE_RECIPE_LIST_INGREDIENTS,
                     inclusive = false)
               },
-              dismissMessage = "Cancel",
+              dismissMessage = stringResource(R.string.cancel),
               onDismiss = { isDeleting = false },
           )
         }
