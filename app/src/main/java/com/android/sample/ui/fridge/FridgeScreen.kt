@@ -37,8 +37,12 @@ import com.android.sample.R
 import com.android.sample.model.fridge.FridgeItem
 import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.ingredient.IngredientViewModel
+import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScreen.CARD_BORDER_ROUND
+import com.android.sample.resources.C.Dimension.PADDING_16
+import com.android.sample.resources.C.Dimension.PADDING_32
+import com.android.sample.resources.C.Dimension.PADDING_8
 import com.android.sample.resources.C.TestTag.Utils.TEST_TAG
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.theme.firebrickRed
@@ -78,27 +82,53 @@ fun FridgeContent(paddingValues: PaddingValues, userViewModel: UserViewModel) {
       modifier = Modifier.fillMaxSize().padding(paddingValues),
       verticalArrangement = Arrangement.Center,
       horizontalAlignment = Alignment.CenterHorizontally) {
+        Row(
+            modifier =
+                Modifier.fillMaxWidth()
+                    .padding(
+                        start = PADDING_32.dp,
+                        end = PADDING_32.dp,
+                        top = PADDING_16.dp,
+                        bottom = PADDING_8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween) {
+              Text(
+                  text = "Fridge",
+                  style = MaterialTheme.typography.titleMedium,
+                  fontSize = 20.sp,
+                  color = MaterialTheme.colorScheme.onPrimary)
+              Text(
+                  text = "${listFridgeItem.size} items",
+                  style = MaterialTheme.typography.bodyMedium,
+                  fontSize = 20.sp,
+                  color = MaterialTheme.colorScheme.onPrimary)
+            }
+
+        Row { Recipe.getCategories().forEach {} }
+
         LazyColumn(modifier = Modifier.fillMaxSize()) {
           item {
-            listFridgeItem.chunked(2).forEach { chunk ->
-              Row(
-                  modifier = Modifier.fillMaxWidth(),
-                  horizontalArrangement = Arrangement.Center // Distribute cards evenly
-                  ) {
-                    val cardWidth = 150.dp // Define a fixed width for the cards
+            listFridgeItem
+                .sortedBy { it.first.expirationDate }
+                .chunked(2)
+                .forEach { chunk ->
+                  Row(
+                      modifier = Modifier.fillMaxWidth(),
+                      horizontalArrangement = Arrangement.Center // Distribute cards evenly
+                      ) {
+                        val cardWidth = 150.dp // Define a fixed width for the cards
 
-                    // First card in the chunk
-                    chunk.getOrNull(0)?.let { card1 -> ItemCard(cardWidth, card1) }
+                        // First card in the chunk
+                        chunk.getOrNull(0)?.let { card1 -> ItemCard(cardWidth, card1) }
 
-                    // Second card in the chunk (if present)
-                    chunk.getOrNull(1)?.let { card2 -> ItemCard(cardWidth, card2) }
+                        // Second card in the chunk (if present)
+                        chunk.getOrNull(1)?.let { card2 -> ItemCard(cardWidth, card2) }
 
-                    // Add an empty spacer if only one card exists in the chunk
-                    if (chunk.size == 1) {
-                      Spacer(modifier = Modifier.width(cardWidth).padding(4.dp))
-                    }
-                  }
-            }
+                        // Add an empty spacer if only one card exists in the chunk
+                        if (chunk.size == 1) {
+                          Spacer(modifier = Modifier.width(cardWidth).padding(4.dp))
+                        }
+                      }
+                }
           }
         }
       }
@@ -106,55 +136,61 @@ fun FridgeContent(paddingValues: PaddingValues, userViewModel: UserViewModel) {
 
 @Composable
 private fun ItemCard(cardWidth: Dp, card: Pair<FridgeItem, Ingredient>) {
-  Column(modifier = Modifier.padding(8.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-    Card(
-        modifier = Modifier.width(cardWidth).padding(8.dp),
-        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.secondary),
-        shape = RoundedCornerShape(CARD_BORDER_ROUND.dp)) {
-          Column(
-              modifier = Modifier.fillMaxSize(),
-              horizontalAlignment = Alignment.CenterHorizontally) {
-                card.first.quantity?.let {
-                  Row(
-                      modifier =
-                          Modifier.padding(8.dp, 8.dp, 8.dp, 8.dp)
-                              .background(color = tagBackground, shape = RoundedCornerShape(16.dp)),
-                      verticalAlignment = Alignment.CenterVertically,
-                      horizontalArrangement = Arrangement.Center) {
-                        Text(
-                            modifier =
-                                Modifier.testTag(TEST_TAG)
-                                    .padding(horizontal = 12.dp, vertical = 4.dp),
-                            text = it,
-                            fontSize = 14.sp,
-                            color = Color.White // Text color
-                            )
-                      }
-                }
+  Column(
+      modifier = Modifier.padding(8.dp),
+      horizontalAlignment = Alignment.CenterHorizontally,
+      verticalArrangement = Arrangement.Center) {
+        Card(
+            modifier = Modifier.width(cardWidth).padding(8.dp),
+            colors = CardDefaults.cardColors(MaterialTheme.colorScheme.secondary),
+            shape = RoundedCornerShape(CARD_BORDER_ROUND.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)) {
+              Column(
+                  modifier = Modifier.fillMaxSize(),
+                  horizontalAlignment = Alignment.CenterHorizontally) {
+                    card.first.quantity?.let {
+                      Row(
+                          modifier =
+                              Modifier.padding(8.dp, 8.dp, 8.dp, 8.dp)
+                                  .background(
+                                      color = tagBackground, shape = RoundedCornerShape(16.dp)),
+                          verticalAlignment = Alignment.CenterVertically,
+                          horizontalArrangement = Arrangement.Center) {
+                            Text(
+                                modifier =
+                                    Modifier.testTag(TEST_TAG)
+                                        .padding(horizontal = 12.dp, vertical = 4.dp),
+                                text = it,
+                                fontSize = 14.sp,
+                                color = Color.White // Text color
+                                )
+                          }
+                    }
 
-                Image(
-                    painter = painterResource(id = R.drawable.chef_image_in_egg),
-                    contentDescription = "wow",
-                    modifier = Modifier.size(100.dp))
+                    Image(
+                        painter = painterResource(id = R.drawable.chef_image_in_egg),
+                        contentDescription = "wow",
+                        modifier = Modifier.size(100.dp))
 
-                ExpirationBar(expirationDate = card.first.expirationDate)
-              }
-        }
-    Text(
-        modifier = Modifier.padding(vertical = 2.dp, horizontal = 8.dp),
-        text = card.second.name,
-        style = MaterialTheme.typography.titleMedium,
-        fontSize = 18.sp,
-        color = MaterialTheme.colorScheme.onPrimary)
+                    ExpirationBar(expirationDate = card.first.expirationDate)
+                  }
+            }
+        Text(
+            modifier = Modifier.padding(vertical = 2.dp, horizontal = 8.dp),
+            text = card.second.name,
+            style = MaterialTheme.typography.titleMedium,
+            fontSize = 16.sp,
+            color = MaterialTheme.colorScheme.onPrimary)
 
-    val formattedDate =
-        card.first.expirationDate?.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) ?: "No Date"
-    Text(
-        modifier = Modifier.padding(vertical = 2.dp, horizontal = 8.dp),
-        text = formattedDate,
-        style = MaterialTheme.typography.bodyMedium,
-        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f))
-  }
+        val formattedDate =
+            card.first.expirationDate?.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                ?: "No Date"
+        Text(
+            modifier = Modifier.padding(vertical = 2.dp, horizontal = 8.dp),
+            text = formattedDate,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f))
+      }
 }
 
 @Composable
