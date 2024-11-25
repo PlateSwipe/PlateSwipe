@@ -1,9 +1,7 @@
 package com.android.sample.ui.createRecipe
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -38,10 +36,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -52,13 +48,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import coil.compose.rememberAsyncImagePainter
 import com.android.sample.R
 import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.ingredient.IngredientViewModel
 import com.android.sample.model.recipe.CreateRecipeViewModel
-import com.android.sample.resources.C
-import com.android.sample.resources.C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_IMAGE_BORDER_RADIUS
 import com.android.sample.resources.C.Dimension.IngredientListScreen.BUTTON_ROUND
 import com.android.sample.resources.C.Dimension.IngredientListScreen.BUTTON_Z
 import com.android.sample.resources.C.Dimension.IngredientListScreen.INGREDIENT_LIST_SIZE
@@ -70,18 +63,17 @@ import com.android.sample.resources.C.Dimension.IngredientListScreen.NAME_SIZE
 import com.android.sample.resources.C.Tag.BUTTON_HEIGHT
 import com.android.sample.resources.C.Tag.BUTTON_WIDTH
 import com.android.sample.resources.C.Tag.PADDING
-import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_THUMBNAIL_URL
 import com.android.sample.resources.C.Tag.SMALL_PADDING
 import com.android.sample.resources.C.TestTag.IngredientListScreen.ADD_INGREDIENT_ICON
 import com.android.sample.resources.C.TestTag.IngredientListScreen.NEXT_STEP_BUTTON
 import com.android.sample.resources.C.TestTag.IngredientListScreen.RECIPE_NAME
 import com.android.sample.resources.C.TestTag.IngredientSearchScreen.DRAGGABLE_ITEM
-import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_IMAGE_1
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.Typography
 import com.android.sample.ui.theme.lightCream
 import com.android.sample.ui.theme.lightGrayInput
+import com.android.sample.ui.utils.IngredientImageBox
 import com.android.sample.ui.utils.PlateSwipeScaffold
 
 /**
@@ -215,34 +207,7 @@ private fun IngredientPreview(ingredient: Ingredient, ingredientViewModel: Ingre
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center) {
               // Add Image to display the ingredient
-              Box(
-                  modifier =
-                      Modifier.width(
-                              C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_IMAGE_WIDTH.dp)
-                          .height(
-                              C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_IMAGE_HEIGHT
-                                  .dp)
-                          .border(
-                              width =
-                                  C.Dimension.CameraScanCodeBarScreen
-                                      .INGREDIENT_DISPLAY_IMAGE_BORDER_WIDTH
-                                      .dp,
-                              color = Color.Black,
-                              shape = RoundedCornerShape(INGREDIENT_DISPLAY_IMAGE_BORDER_RADIUS.dp))
-                          .background(MaterialTheme.colorScheme.background),
-              ) {
-                Image(
-                    painter =
-                        rememberAsyncImagePainter(
-                            model = ingredient.images[PRODUCT_FRONT_IMAGE_THUMBNAIL_URL]),
-                    contentDescription = stringResource(R.string.recipe_image),
-                    modifier =
-                        Modifier.fillMaxSize()
-                            .testTag(RECIPE_IMAGE_1)
-                            .clip(RoundedCornerShape(INGREDIENT_DISPLAY_IMAGE_BORDER_RADIUS.dp)),
-                    contentScale = ContentScale.Fit,
-                )
-              }
+              IngredientImageBox(ingredient)
 
               Column(
                   verticalArrangement = Arrangement.SpaceBetween,
