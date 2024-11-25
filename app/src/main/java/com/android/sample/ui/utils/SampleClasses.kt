@@ -1,5 +1,6 @@
 package com.android.sample.ui.utils
 
+import com.android.sample.model.fridge.FridgeItem
 import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.recipe.Instruction
 import com.android.sample.model.recipe.Recipe
@@ -7,6 +8,7 @@ import com.android.sample.model.user.User
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_NORMAL_URL
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_SMALL_URL
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_THUMBNAIL_URL
+import java.time.LocalDate
 
 val recipeNames =
     arrayOf(
@@ -139,7 +141,9 @@ val testUsers: List<User> =
             "001",
             "Gigel Frone",
             "",
-            listOf(Pair(testIngredients[0].barCode.toString(), 1)),
+            listOf(
+                FridgeItem(
+                    testIngredients[0].uid!!, testIngredients[0].quantity!!, LocalDate.now())),
             listOf(testRecipes[0].uid),
             listOf(testRecipes[1].uid)),
         User("002", "Ion Popescu", "", emptyList(), emptyList(), emptyList()),
