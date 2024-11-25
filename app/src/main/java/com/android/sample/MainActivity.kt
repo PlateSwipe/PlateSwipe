@@ -114,7 +114,9 @@ fun PlateSwipeApp() {
       }
       composable(Screen.CREATE_RECIPE_INGREDIENTS) {
         RecipeIngredientsScreen(
-            navigationActions = navigationActions, currentStep = SECOND_STEP_OF_THE_CREATION)
+            navigationActions = navigationActions,
+            currentStep = SECOND_STEP_OF_THE_CREATION,
+            ingredientViewModel = ingredientViewModel)
       }
       composable(Screen.CREATE_RECIPE_INSTRUCTIONS) {
         RecipeInstructionsScreen(
