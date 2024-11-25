@@ -27,8 +27,13 @@ import androidx.compose.ui.unit.dp
 import com.android.sample.R
 import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.model.recipe.Recipe
+import com.android.sample.resources.C.Dimension.PADDING_16
+import com.android.sample.resources.C.Dimension.PADDING_32
+import com.android.sample.resources.C.Dimension.PADDING_8
 import com.android.sample.resources.C.Tag.INITIAL_RECIPE_STEP
-import com.android.sample.resources.C.Tag.RECIPE_NAME_BASE_PADDING
+import com.android.sample.resources.C.TestTag.Category.BUTTON_TEST_TAG
+import com.android.sample.resources.C.TestTag.Category.DROPDOWN_CORNER_RADIUS
+import com.android.sample.resources.C.TestTag.Category.DROPDOWN_TEST_TAG
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
@@ -73,92 +78,85 @@ fun CategoryContent(
   val selectedCategory = remember { mutableStateOf(createRecipeViewModel.getRecipeCategory()) }
   val expanded = remember { mutableStateOf(false) }
 
-  Box(
-      modifier = modifier.padding(RECIPE_NAME_BASE_PADDING / 2),
-      contentAlignment = Alignment.TopCenter) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top) {
-              // Display the progress bar for the current step
-              RecipeProgressBar(currentStep = currentStep)
+  Box(modifier = modifier.padding(PADDING_8.dp), contentAlignment = Alignment.TopCenter) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top) {
+          // Display the progress bar for the current step
+          RecipeProgressBar(currentStep = currentStep)
 
-              Spacer(modifier = Modifier.weight(0.05f))
+          Spacer(modifier = Modifier.weight(1f))
 
-              // Title
-              Text(
-                  text = stringResource(R.string.select_category),
-                  style = Typography.displayLarge,
-                  color = MaterialTheme.colorScheme.onPrimary,
-                  modifier =
-                      Modifier.fillMaxWidth()
-                          .padding(horizontal = RECIPE_NAME_BASE_PADDING)
-                          .testTag("CategoryTitle"),
-                  textAlign = TextAlign.Center)
+          // Title
+          Text(
+              text = stringResource(R.string.select_category),
+              style = Typography.displayLarge,
+              color = MaterialTheme.colorScheme.onPrimary,
+              modifier =
+                  Modifier.fillMaxWidth()
+                      .padding(horizontal = PADDING_16.dp)
+                      .testTag("CategoryTitle"),
+              textAlign = TextAlign.Center)
 
-              Spacer(modifier = Modifier.weight(0.05f))
+          Spacer(modifier = Modifier.weight(1f))
 
-              // Subtitle
-              Text(
-                  text = stringResource(R.string.select_category_description_optional),
-                  style = MaterialTheme.typography.bodyMedium,
-                  color = MaterialTheme.colorScheme.onPrimary,
-                  modifier =
-                      Modifier.padding(horizontal = RECIPE_NAME_BASE_PADDING * 2)
-                          .testTag("CategorySubtitle"),
-                  textAlign = TextAlign.Center)
+          // Subtitle
+          Text(
+              text = stringResource(R.string.select_category_description_optional),
+              style = MaterialTheme.typography.bodyMedium,
+              color = MaterialTheme.colorScheme.onPrimary,
+              modifier = Modifier.padding(horizontal = PADDING_32.dp).testTag("CategorySubtitle"),
+              textAlign = TextAlign.Center)
 
-              Spacer(modifier = Modifier.weight(0.1f))
+          Spacer(modifier = Modifier.weight(2f))
 
-              // Dropdown menu for selecting category
-              Box(
-                  modifier =
-                      Modifier.fillMaxWidth().padding(horizontal = RECIPE_NAME_BASE_PADDING)) {
-                    OutlinedButton(
-                        onClick = { expanded.value = !expanded.value },
-                        modifier = Modifier.fillMaxWidth().testTag("DropdownMenuButton"),
-                        shape = RoundedCornerShape(8.dp),
-                        colors =
-                            ButtonDefaults.outlinedButtonColors(
-                                containerColor = MaterialTheme.colorScheme.surface,
-                                contentColor = MaterialTheme.colorScheme.onSurface)) {
-                          Text(
-                              text =
-                                  selectedCategory.value
-                                      ?: stringResource(R.string.select_category_placeholder),
-                              style = MaterialTheme.typography.bodyMedium,
-                              modifier = Modifier.padding(vertical = 8.dp))
-                        }
+          // Dropdown menu for selecting category
+          Box(modifier = Modifier.fillMaxWidth().padding(horizontal = PADDING_16.dp)) {
+            OutlinedButton(
+                onClick = { expanded.value = !expanded.value },
+                modifier = Modifier.fillMaxWidth().testTag(DROPDOWN_TEST_TAG),
+                shape = RoundedCornerShape(DROPDOWN_CORNER_RADIUS.dp),
+                colors =
+                    ButtonDefaults.outlinedButtonColors(
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        contentColor = MaterialTheme.colorScheme.onSurface)) {
+                  Text(
+                      text =
+                          selectedCategory.value
+                              ?: stringResource(R.string.select_category_placeholder),
+                      style = MaterialTheme.typography.bodyMedium,
+                      modifier = Modifier.padding(vertical = PADDING_8.dp))
+                }
 
-                    DropdownMenu(
-                        expanded = expanded.value,
-                        onDismissRequest = { expanded.value = false },
-                        modifier =
-                            Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surface)) {
-                          categories.forEach { category ->
-                            DropdownMenuItem(
-                                text = {
-                                  Text(text = category, style = MaterialTheme.typography.bodyMedium)
-                                },
-                                onClick = {
-                                  selectedCategory.value = category
-                                  expanded.value = false
-                                },
-                                modifier = Modifier.testTag("DropdownMenuItem_$category"))
-                          }
-                        }
+            DropdownMenu(
+                expanded = expanded.value,
+                onDismissRequest = { expanded.value = false },
+                modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surface)) {
+                  categories.forEach { category ->
+                    DropdownMenuItem(
+                        text = {
+                          Text(text = category, style = MaterialTheme.typography.bodyMedium)
+                        },
+                        onClick = {
+                          selectedCategory.value = category
+                          expanded.value = false
+                        },
+                        modifier = Modifier.testTag("DropdownMenuItem_$category"))
                   }
+                }
+          }
 
-              Spacer(modifier = Modifier.weight(0.4f))
-            }
+          Spacer(modifier = Modifier.weight(8f))
+        }
 
-        // Next Step Button
-        PlateSwipeButton(
-            text = stringResource(R.string.next_step),
-            modifier = Modifier.align(Alignment.BottomCenter).testTag("NextStepButton"),
-            onClick = {
-              selectedCategory.value?.let { createRecipeViewModel.updateRecipeCategory(it) }
-              navigationActions.navigateTo(Screen.CREATE_RECIPE_INGREDIENTS)
-            })
-      }
+    // Next Step Button
+    PlateSwipeButton(
+        text = stringResource(R.string.next_step),
+        modifier = Modifier.align(Alignment.BottomCenter).testTag(BUTTON_TEST_TAG),
+        onClick = {
+          selectedCategory.value?.let { createRecipeViewModel.updateRecipeCategory(it) }
+          navigationActions.navigateTo(Screen.CREATE_RECIPE_INGREDIENTS)
+        })
+  }
 }

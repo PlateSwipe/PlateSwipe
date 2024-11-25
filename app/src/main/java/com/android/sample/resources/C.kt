@@ -754,5 +754,11 @@ object C {
     object RecipeBuilder {
       const val OUT_OF_BOUNDS_MESSAGE = "Index out of bounds"
     }
+
+    object Category {
+      const val DROPDOWN_CORNER_RADIUS = 8
+      const val BUTTON_TEST_TAG = "NextStepButton"
+      const val DROPDOWN_TEST_TAG = "DropdownMenuButton"
+    }
   }
 }
