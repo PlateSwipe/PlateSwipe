@@ -1,6 +1,7 @@
 package com.android.sample.model.user
 
 import android.util.Log
+import com.android.sample.model.fridge.FridgeItem
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
@@ -61,7 +62,7 @@ class UserRepositoryFirestore(private val db: FirebaseFirestore) : UserRepositor
     return try {
       val userName = snapshot["userName"] as String
       val profilePictureUrl = snapshot["profilePictureUrl"] as String
-      val fridge = snapshot["fridge"] as List<Pair<String, Int>>
+      val fridge = snapshot["fridge"] as List<FridgeItem>
       val likedRecipes = snapshot["likedRecipes"] as List<String>
       val createdRecipes = snapshot["createdRecipes"] as List<String>
 
