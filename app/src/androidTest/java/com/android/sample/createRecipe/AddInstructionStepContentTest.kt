@@ -90,7 +90,7 @@ class AddInstructionStepScreenTest {
     composeTestRule.onNodeWithTag("InstructionInput").performTextInput("Preheat oven to 180°C...")
     composeTestRule.onNodeWithTag(SAVE_BUTTON_TAG).performClick()
     advanceUntilIdle()
-    verify { navigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INSTRUCTIONS) }
+    verify { navigationActions.navigateToPop(Screen.CREATE_RECIPE_LIST_INSTRUCTIONS,Screen.CREATE_RECIPE_LIST_INGREDIENTS) }
   }
 
   /** Verifies that an error message is displayed when attempting to save without instructions. */
