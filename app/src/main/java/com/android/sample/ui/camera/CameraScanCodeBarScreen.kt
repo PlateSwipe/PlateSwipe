@@ -211,6 +211,7 @@ fun IngredientDisplay(
             Button(
                 onClick = {
                   searchIngredientViewModel.addIngredient(ingredient)
+                  searchIngredientViewModel.clearIngredient()
                   navigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
                 },
                 modifier =

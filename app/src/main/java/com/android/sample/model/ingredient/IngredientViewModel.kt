@@ -58,6 +58,10 @@ class IngredientViewModel(private val repository: IngredientRepository) :
           _ingredient.value = Pair(null, null)
         })
   }
+  /** Clear ingredient after use */
+  override fun clearIngredient() {
+    _ingredient.value = Pair(null, null)
+  }
 
   /**
    * Add the first integer in the two strings

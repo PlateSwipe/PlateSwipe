@@ -106,6 +106,9 @@ class ListIngredientScreenTest {
 
   @Test
   fun testNextStepButtonAddsIngredientsToRecipeNotPossible() {
+    composeTestRule
+        .onNodeWithTag("recipeNameTextField${mockedIngredients[0].name}", useUnmergedTree = true)
+        .performTextClearance()
     // Click the Next Step button
     composeTestRule.onNodeWithTag(NEXT_STEP_BUTTON, useUnmergedTree = true).assertIsDisplayed()
     composeTestRule.onNodeWithTag(NEXT_STEP_BUTTON, useUnmergedTree = true).performClick()
@@ -123,7 +126,7 @@ class ListIngredientScreenTest {
 
     // Verify that the ingredient was removed from the view model
     assertEquals(
-        mockedIngredients.drop(1).map { ingredient -> Pair(ingredient, null) },
+        mockedIngredients.drop(1).map { ingredient -> Pair(ingredient, ingredient.quantity) },
         ingredientViewModel.ingredientList.value)
   }
 
