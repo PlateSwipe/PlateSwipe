@@ -135,15 +135,31 @@ val testIngredients =
       )
     }
 
+val ingredientExpirationDateExample: LocalDate = LocalDate.of(2024, 11, 25)
+
+const val ingredientQuantityExample: String = "500 g"
+
+val testFridgeItem =
+    testIngredients.map { ingredient ->
+      FridgeItem(
+          ingredient.barCode.toString(),
+          ingredient.quantity.toString(),
+          ingredientExpirationDateExample)
+    }
+
+val testFridgeItemModified =
+    testIngredients.map { ingredient ->
+      FridgeItem(
+          ingredient.barCode.toString(), ingredientQuantityExample, ingredientExpirationDateExample)
+    }
+
 val testUsers: List<User> =
     listOf(
         User(
             "001",
             "Gigel Frone",
             "",
-            listOf(
-                FridgeItem(
-                    testIngredients[0].uid!!, testIngredients[0].quantity!!, LocalDate.now())),
+            listOf(testFridgeItem[0]),
             listOf(testRecipes[0].uid),
             listOf(testRecipes[1].uid)),
         User("002", "Ion Popescu", "", emptyList(), emptyList(), emptyList()),

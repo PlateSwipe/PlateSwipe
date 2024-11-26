@@ -16,12 +16,15 @@ import com.android.sample.resources.C.Tag.UserViewModel.IMAGE_DELETION_SUCCESSFU
 import com.android.sample.resources.C.Tag.UserViewModel.LOG_TAG
 import com.android.sample.resources.C.Tag.UserViewModel.NOT_FOUND_INGREDIENT_IN_DATABASE_ERROR
 import com.android.sample.resources.C.Tag.UserViewModel.RECIPE_DELETED_SUCCESSFULY
+import com.android.sample.ui.utils.ingredientExpirationDateExample
+import com.android.sample.ui.utils.ingredientQuantityExample
+import com.android.sample.ui.utils.testFridgeItem
+import com.android.sample.ui.utils.testFridgeItemModified
 import com.android.sample.ui.utils.testIngredients
 import com.android.sample.ui.utils.testRecipes
 import com.android.sample.ui.utils.testUsers
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import java.time.LocalDate
 import okhttp3.Call
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
@@ -84,17 +87,9 @@ class UserViewModelTest {
 
   private val ingredientExample: Ingredient = testIngredients[0]
 
-  private val ingredientExpirationDateExample: LocalDate = LocalDate.of(2024, 11, 25)
+  private val fridgeItemExample: FridgeItem = testFridgeItem[0]
 
-  private val ingredientQuantityExample: String = "500 g"
-
-  private val fridgeItemExample: FridgeItem =
-      FridgeItem(
-          ingredientExample.uid!!, ingredientExample.quantity!!, ingredientExpirationDateExample)
-
-  private val fridgeItemExample2: FridgeItem =
-      FridgeItem(
-          ingredientExample.uid!!, ingredientQuantityExample, ingredientExpirationDateExample)
+  private val fridgeItemModifiedExample: FridgeItem = testFridgeItemModified[0]
 
   private val recipeExample: Recipe = testRecipes[0]
 
@@ -251,7 +246,7 @@ class UserViewModelTest {
 
     assertEquals(userViewModel.userName.value, userExample.userName)
     assertEquals(userViewModel.profilePictureUrl.value, userExample.profilePictureUrl)
-    assertEquals(userViewModel.listFridgeItems.value[0].first, fridgeItemExample)
+    assertEquals(userViewModel.fridgeItems.value[0].first, fridgeItemExample)
     assertEquals(userViewModel.likedRecipes.value[0].uid, recipeExample.uid)
     assertEquals(userViewModel.createdRecipes.value[0].uid, createdRecipeExample.uid)
 
@@ -259,7 +254,7 @@ class UserViewModelTest {
     userViewModel.removeRecipeFromUserLikedRecipes(recipeExample)
     userViewModel.removeRecipeFromUserCreatedRecipes(createdRecipeExample)
 
-    assert(userViewModel.listFridgeItems.value.isEmpty())
+    assert(userViewModel.fridgeItems.value.isEmpty())
     assertEquals(userViewModel.likedRecipes.value.count(), 0)
     assertEquals(userViewModel.createdRecipes.value.count(), 0)
   }
@@ -269,29 +264,21 @@ class UserViewModelTest {
     userViewModel.updateIngredientFromFridge(
         ingredientExample, ingredientExample.quantity!!, ingredientExpirationDateExample)
 
-    assertEquals(userViewModel.listFridgeItems.value[0].first, fridgeItemExample)
-    assertEquals(userViewModel.listFridgeItems.value[0].second, ingredientExample)
+    assertEquals(userViewModel.fridgeItems.value[0].first, fridgeItemExample)
+    assertEquals(userViewModel.fridgeItems.value[0].second, ingredientExample)
 
     userViewModel.updateIngredientFromFridge(
         ingredientExample, ingredientQuantityExample, ingredientExpirationDateExample)
 
-    assertEquals(userViewModel.listFridgeItems.value[0].first, fridgeItemExample2)
+    assertEquals(userViewModel.fridgeItems.value[0].first, fridgeItemModifiedExample)
 
     userViewModel.removeIngredientFromUserFridge(ingredientExample)
 
-    assert(userViewModel.listFridgeItems.value.isEmpty())
+    assert(userViewModel.fridgeItems.value.isEmpty())
 
     assertThrows(IllegalArgumentException::class.java) {
       userViewModel.removeIngredientFromUserFridge(ingredientExample)
     }
-
-    /*userViewModel.removeIngredientFromUserFridge(ingredientExample)
-
-    assertEquals(userViewModel.fridge.value.count(), 0)
-
-    assertThrows(IllegalArgumentException::class.java) {
-      userViewModel.removeIngredientFromUserFridge(ingredientExample)
-    }*/
   }
 
   @Test
@@ -313,7 +300,7 @@ class UserViewModelTest {
     assertEquals(userExample.userName, userViewModel.userName.value)
     assertEquals(userExample.profilePictureUrl, userViewModel.profilePictureUrl.value)
     assertEquals(
-        listOf(Pair(fridgeItemExample, ingredientExample)), userViewModel.listFridgeItems.value)
+        listOf(Pair(fridgeItemExample, ingredientExample)), userViewModel.fridgeItems.value)
   }
 
   @Test
