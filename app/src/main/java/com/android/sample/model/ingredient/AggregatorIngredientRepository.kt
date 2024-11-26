@@ -26,6 +26,8 @@ open class AggregatorIngredientRepository(
     private val imageUploader: ImageUploader
 ) : IngredientRepository {
 
+  val currentlyBeingAdded: MutableSet<Long> = mutableSetOf()
+
   /**
    * Get an ingredient by barcode. If it isn't found in Firestore, it will be searched in
    * OpenFoodFacts.Upload the image to Firebase Storage and update the ingredient in Firestore.
@@ -86,56 +88,17 @@ open class AggregatorIngredientRepository(
       onFailure: (Exception) -> Unit,
       count: Int
   ) {
+    Log.i(AGGREGATOR_LOG_TAG, "Searching for $name in Firestore and OpenFoodFacts")
     openFoodFactsIngredientRepository.search(
         name,
         onSuccess = { ingredientsOpenFoodFacts ->
-          checkFirestoreIngredients(
-              ingredientsOpenFoodFacts,
-              onSuccess = { ingredientsFirestore -> onSuccess(ingredientsFirestore) },
-              onFailure = onFailure)
+          Log.i(AGGREGATOR_LOG_TAG, "Ingredients found in OpenFoodFacts")
           onSuccess(ingredientsOpenFoodFacts)
         },
         onFailure = onFailure,
         count = count)
   }
 
-  private fun checkFirestoreIngredients(
-      ingredientsOpenFoodFacts: List<Ingredient>,
-      onSuccess: (List<Ingredient>) -> Unit,
-      onFailure: (Exception) -> Unit
-  ) {
-    var confirmedCount = 0
-    val foundIngredients = mutableListOf<Ingredient>()
-
-    for (ingredient in ingredientsOpenFoodFacts) {
-      if (ingredient.barCode != null) {
-        firestoreIngredientRepository.get(
-            ingredient.barCode,
-            onSuccess = { ingredientFirestore ->
-              if (ingredientFirestore != null) {
-                foundIngredients.add(ingredientFirestore)
-              } else {
-                foundIngredients.add(ingredient)
-
-                firestoreIngredientRepository.add(
-                    ingredientsOpenFoodFacts,
-                    onSuccess = {
-                      Log.i(
-                          C.Tag.AGGREGATOR_TAG_ON_INGREDIENT_ADDED,
-                          ingredientsOpenFoodFacts.toString())
-                    },
-                    onFailure = onFailure)
-              }
-
-              confirmedCount++
-              if (confirmedCount == ingredientsOpenFoodFacts.size) {
-                onSuccess(foundIngredients)
-              }
-            },
-            onFailure = onFailure)
-      }
-    }
-  }
   /**
    * Uploads and saves ingredient images to Firebase Storage and updates the ingredient in
    * Firestore.
