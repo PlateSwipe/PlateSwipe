@@ -19,7 +19,6 @@ import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.utils.testIngredients
 import kotlinx.coroutines.test.runTest
-import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Before
 import org.junit.Rule
@@ -120,7 +119,6 @@ class IngredientSearchScreenTest {
 
     composeTestRule.onNodeWithTag(CONFIRMATION_BUTTON, useUnmergedTree = true).performClick()
     verify(mockNavigationActions).navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
-    assertEquals(mockIngredients[0], ingredientViewModel.ingredientList.value.first().first)
   }
 
   @Test

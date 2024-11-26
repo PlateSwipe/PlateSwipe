@@ -108,7 +108,11 @@ open class NavigationActions(
    * @param screen The screen to navigate to
    */
   open fun navigateTo(screen: String) {
-    navController.navigate(screen)
+    if (screen == Screen.CREATE_RECIPE_LIST_INGREDIENTS) {
+      navController.navigate(screen) { popUpTo(Screen.CREATE_RECIPE) { inclusive = false } }
+    } else {
+      navController.navigate(screen)
+    }
   }
 
   /** Navigate back to the previous screen. */
