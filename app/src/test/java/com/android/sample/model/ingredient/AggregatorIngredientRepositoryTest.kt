@@ -54,9 +54,6 @@ class AggregatorIngredientRepositoryTest {
     MockitoAnnotations.openMocks(this)
 
     whenever(mockImageRepository.urlToBitmap(any())).thenReturn(bitmap)
-    doNothing()
-        .`when`(mockFirestoreIngredientRepository)
-        .add(any(), capture(onSuccessVoidCapture), capture(onFailureCapture), any())
 
     doNothing()
         .`when`(mockFirestoreIngredientRepository)
@@ -64,7 +61,7 @@ class AggregatorIngredientRepositoryTest {
 
     doNothing()
         .`when`(mockFirestoreIngredientRepository)
-        .search(any(), capture(onSuccessCollectionCapture), capture(onFailureCapture), any())
+        .search(any(), capture(onSuccessCollectionCapture), capture(onFailureCapture))
 
     doNothing()
         .`when`(mockOpenFoodFactsIngredientRepository)
@@ -72,7 +69,7 @@ class AggregatorIngredientRepositoryTest {
 
     doNothing()
         .`when`(mockOpenFoodFactsIngredientRepository)
-        .search(any(), capture(onSuccessCollectionCapture), capture(onFailureCapture), any())
+        .search(any(), capture(onSuccessCollectionCapture), capture(onFailureCapture))
 
     aggregatorIngredientRepository =
         AggregatorIngredientRepository(
@@ -202,7 +199,7 @@ class AggregatorIngredientRepositoryTest {
           .thenReturn(format to url)
     }
 
-    `when`(mockFirestoreIngredientRepository.add(eq(ingredient), any(), any(), any())).thenAnswer {
+    `when`(mockFirestoreIngredientRepository.add(eq(ingredient), any(), any())).thenAnswer {
         invocation ->
       val onFailure = invocation.arguments[2] as (Exception) -> Unit
       onFailure(Exception("Error"))
@@ -247,7 +244,7 @@ class AggregatorIngredientRepositoryTest {
           .thenThrow((RuntimeException("upload failed")))
     }
 
-    `when`(mockFirestoreIngredientRepository.add(eq(ingredient), any(), any(), any())).thenAnswer {
+    `when`(mockFirestoreIngredientRepository.add(eq(ingredient), any(), any())).thenAnswer {
         invocation ->
       val onFailure = invocation.arguments[2] as (Exception) -> Unit
       onFailure(Exception("Error"))
