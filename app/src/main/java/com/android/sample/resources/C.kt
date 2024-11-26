@@ -202,7 +202,6 @@ object C {
     const val AGGREGATOR_LOG_TAG = "AggregatorIngredientRepository"
     const val AGGREGATOR_ERROR_FIRESTORE_ADD_INGR = "Error adding ingredient to Firestore:"
     const val AGGREGATOR_SUCCESS_FIRESTORE_ADD_INGR = "Ingredient successfully updated in Firestore"
-    const val AGGREGATOR_INGREDIENT_ADDED = "Ingredient added successfully"
     const val AGGREGATOR_ERROR_UPLOAD_IMAGE = "Failed to upload all images"
     const val AGGREGATOR_ERROR_UPLOAD_FORMAT_IMAGE = "Error uploading format"
     const val AGGREGATOR_ERROR_OPENFOOD_INGR_NOT_FOUND = "Ingredient not found in OpenFoodFacts: "

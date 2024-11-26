@@ -88,11 +88,9 @@ open class AggregatorIngredientRepository(
       onFailure: (Exception) -> Unit,
       count: Int
   ) {
-    Log.i(AGGREGATOR_LOG_TAG, "Searching for $name in Firestore and OpenFoodFacts")
     openFoodFactsIngredientRepository.search(
         name,
         onSuccess = { ingredientsOpenFoodFacts ->
-          Log.i(AGGREGATOR_LOG_TAG, "Ingredients found in OpenFoodFacts")
           onSuccess(ingredientsOpenFoodFacts)
         },
         onFailure = onFailure,
