@@ -38,7 +38,6 @@ class AggregatorIngredientRepositoryTest {
 
   @Mock private lateinit var mockImageUploader: ImageUploader
 
-  @Captor private lateinit var onSuccessVoidCapture: ArgumentCaptor<Function0<Unit>>
   @Captor private lateinit var onSuccessSingleCapture: ArgumentCaptor<Function1<Ingredient?, Unit>>
   @Captor
   private lateinit var onSuccessCollectionCapture: ArgumentCaptor<Function1<List<Ingredient>, Unit>>
@@ -61,7 +60,7 @@ class AggregatorIngredientRepositoryTest {
 
     doNothing()
         .`when`(mockFirestoreIngredientRepository)
-        .search(any(), capture(onSuccessCollectionCapture), capture(onFailureCapture))
+        .search(any(), capture(onSuccessCollectionCapture), capture(onFailureCapture), any())
 
     doNothing()
         .`when`(mockOpenFoodFactsIngredientRepository)
@@ -69,7 +68,7 @@ class AggregatorIngredientRepositoryTest {
 
     doNothing()
         .`when`(mockOpenFoodFactsIngredientRepository)
-        .search(any(), capture(onSuccessCollectionCapture), capture(onFailureCapture))
+        .search(any(), capture(onSuccessCollectionCapture), capture(onFailureCapture), any())
 
     aggregatorIngredientRepository =
         AggregatorIngredientRepository(
