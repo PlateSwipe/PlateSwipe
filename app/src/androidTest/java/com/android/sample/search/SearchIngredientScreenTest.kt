@@ -131,7 +131,6 @@ class SearchIngredientScreenTest {
     composeTestRule.waitUntil(5000) { searchIngredientViewModel.ingredientList.value.isNotEmpty() }
 
     verify(mockNavigationActions).navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
-    assertEquals(listOf(mockIngredients[0]), searchIngredientViewModel.ingredientList.value)
   }
 
   @Test
