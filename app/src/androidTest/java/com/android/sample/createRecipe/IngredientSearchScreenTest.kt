@@ -120,7 +120,7 @@ class IngredientSearchScreenTest {
 
     composeTestRule.onNodeWithTag(CONFIRMATION_BUTTON, useUnmergedTree = true).performClick()
     verify(mockNavigationActions).navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
-    assertEquals(ingredientViewModel.ingredientList.value, listOf(mockIngredients[0]))
+    assertEquals(mockIngredients[0], ingredientViewModel.ingredientList.value.first().first)
   }
 
   @Test

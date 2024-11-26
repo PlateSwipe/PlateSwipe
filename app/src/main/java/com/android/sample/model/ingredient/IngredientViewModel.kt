@@ -12,6 +12,7 @@ import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.storage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import okhttp3.OkHttpClient
 
 /**
@@ -23,16 +24,17 @@ import okhttp3.OkHttpClient
 class IngredientViewModel(private val repository: IngredientRepository) :
     ViewModel(), SearchIngredientViewModel {
 
-  private val _ingredient = MutableStateFlow<Ingredient?>(null)
-  override val ingredient: StateFlow<Ingredient?>
+  private val _ingredient = MutableStateFlow<Pair<Ingredient?, String?>>(Pair(null, null))
+  override val ingredient: StateFlow<Pair<Ingredient?, String?>>
     get() = _ingredient
 
-  private val _ingredientList = MutableStateFlow<List<Ingredient>>(emptyList())
-  override val ingredientList: StateFlow<List<Ingredient>>
+  private val _ingredientList = MutableStateFlow<List<Pair<Ingredient, String?>>>(emptyList())
+  override val ingredientList: StateFlow<List<Pair<Ingredient, String?>>>
     get() = _ingredientList
 
-  private val _searchingIngredientList = MutableStateFlow<List<Ingredient>>(emptyList())
-  override val searchingIngredientList: StateFlow<List<Ingredient>>
+  private val _searchingIngredientList =
+      MutableStateFlow<List<Pair<Ingredient, String?>>>(emptyList())
+  override val searchingIngredientList: StateFlow<List<Pair<Ingredient, String?>>>
     get() = _searchingIngredientList
 
   /**
@@ -41,16 +43,37 @@ class IngredientViewModel(private val repository: IngredientRepository) :
    * @param barCode
    */
   override fun fetchIngredient(barCode: Long) {
-    if (_ingredient.value?.barCode == barCode) {
+    if (_ingredient.value.first?.barCode == barCode) {
       return
     }
     repository.get(
         barCode,
-        onSuccess = { ingredient -> _ingredient.value = ingredient },
+        onSuccess = { ingredient ->
+          if (ingredient != null) {
+            _ingredient.value = Pair(ingredient, ingredient.quantity)
+          }
+        },
         onFailure = {
           Log.e(INGREDIENT_VIEWMODEL_LOG_TAG, INGREDIENT_NOT_FOUND_MESSAGE)
-          _ingredient.value = null
+          _ingredient.value = Pair(null, null)
         })
+  }
+
+  private fun addFirstInt(quantity1: String?, quantity2: String?): String {
+    if (quantity1 == null || quantity2 == null) {
+      return quantity1 ?: quantity2 ?: ""
+    }
+
+    val regex = Regex("""\d+""")
+    val match1 = regex.find(quantity1)
+    val match2 = regex.find(quantity2)
+
+    return if (match1 != null && match2 != null) {
+      val addition = match1.value.toInt() + match2.value.toInt()
+      quantity1.replaceFirst(match1.value, addition.toString())
+    } else {
+      quantity1
+    }
   }
 
   /**
@@ -59,7 +82,21 @@ class IngredientViewModel(private val repository: IngredientRepository) :
    * @param ingredient
    */
   override fun addIngredient(ingredient: Ingredient) {
-    _ingredientList.value += ingredient
+    _ingredientList.update { currentList ->
+      val existingItemIndex = currentList.indexOfFirst { it.first == ingredient }
+
+      if (existingItemIndex != -1) {
+        // Ingredient already exists; update its associated String value
+        currentList.toMutableList().apply {
+          this[existingItemIndex] =
+              this[existingItemIndex].copy(
+                  second = addFirstInt(this[existingItemIndex].second, ingredient.quantity))
+        }
+      } else {
+        // Ingredient doesn't exist; add it to the list
+        currentList + (ingredient to null)
+      }
+    }
   }
 
   /**
@@ -71,8 +108,8 @@ class IngredientViewModel(private val repository: IngredientRepository) :
   fun updateQuantity(ingredient: Ingredient, quantity: String) {
     _ingredientList.value =
         _ingredientList.value.map {
-          if (it == ingredient) {
-            it.copy(quantity = quantity)
+          if (it.first == ingredient) {
+            Pair(it.first, quantity)
           } else {
             it
           }
@@ -87,7 +124,9 @@ class IngredientViewModel(private val repository: IngredientRepository) :
   override fun fetchIngredientByName(name: String) {
     repository.search(
         name,
-        onSuccess = { ingredientList -> _searchingIngredientList.value = ingredientList },
+        onSuccess = { ingredientList ->
+          _searchingIngredientList.value = ingredientList.map { Pair(it, it.quantity) }
+        },
         onFailure = { _searchingIngredientList.value = emptyList() })
   }
 
@@ -97,7 +136,7 @@ class IngredientViewModel(private val repository: IngredientRepository) :
    * @param ingredient
    */
   fun removeIngredient(ingredient: Ingredient) {
-    _ingredientList.value = _ingredientList.value.filter { it != ingredient }
+    _ingredientList.value = _ingredientList.value.filter { it.first != ingredient }
   }
 
   /** Clear search */

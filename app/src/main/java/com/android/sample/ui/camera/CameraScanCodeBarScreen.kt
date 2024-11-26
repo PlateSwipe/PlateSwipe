@@ -125,7 +125,7 @@ fun IngredientOverlay(
     navigationActions: NavigationActions,
 ) {
   val ingredient by searchIngredientViewModel.ingredient.collectAsState()
-  if (ingredient != null) {
+  if (ingredient.first != null) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
       Box(
           modifier =
@@ -134,7 +134,7 @@ fun IngredientOverlay(
                   .wrapContentHeight()) {
             // Display the ingredient details
             IngredientDisplay(
-                ingredient = ingredient!!, searchIngredientViewModel, navigationActions)
+                ingredient = ingredient.first!!, searchIngredientViewModel, navigationActions)
           }
     }
   }

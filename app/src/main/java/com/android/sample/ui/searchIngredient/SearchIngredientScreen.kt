@@ -52,9 +52,9 @@ import com.android.sample.resources.C.Dimension.IngredientSearchScreen.POP_UP_CL
 import com.android.sample.resources.C.Dimension.IngredientSearchScreen.POP_UP_ELEVATION
 import com.android.sample.resources.C.Dimension.IngredientSearchScreen.RESULT_FONT_SIZE
 import com.android.sample.resources.C.Dimension.IngredientSearchScreen.SPACER_WEIGHT
+import com.android.sample.resources.C.Dimension.PADDING_16
 import com.android.sample.resources.C.Tag.IngredientSearchScreen.DO_NOT_SHOW_CONFIRMATION
 import com.android.sample.resources.C.Tag.IngredientSearchScreen.INITIAL_LOADING_STATE
-import com.android.sample.resources.C.Tag.PADDING
 import com.android.sample.resources.C.TestTag.IngredientSearchScreen.CANCEL_BUTTON
 import com.android.sample.resources.C.TestTag.IngredientSearchScreen.CONFIRMATION_BUTTON
 import com.android.sample.resources.C.TestTag.IngredientSearchScreen.CONFIRMATION_POPUP
@@ -116,9 +116,9 @@ fun SearchIngredientScreen(
                     } else {
                       for (ingredient in listIngredient.value) {
                         IngredientItem(
-                            ingredient = ingredient,
+                            ingredient = ingredient.first,
                             onClick = {
-                              selectedIngredient = ingredient
+                              selectedIngredient = ingredient.first
                               showConfirmation = true
                             })
                       }
@@ -158,13 +158,13 @@ private fun SearchDisplay(
     onValueChange: (String) -> Unit
 ) {
   Row(
-      modifier = Modifier.fillMaxWidth().padding(PADDING.dp),
+      modifier = Modifier.fillMaxWidth().padding(PADDING_16.dp),
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.Center) {
         // Display the search bar and scanner icon
-        Spacer(modifier = Modifier.width(PADDING.dp).weight(SPACER_WEIGHT))
+        Spacer(modifier = Modifier.width(PADDING_16.dp).weight(SPACER_WEIGHT))
         SearchBar(
-            modifier = Modifier.padding(PADDING.dp).weight(IMAGE_WEIGHT),
+            modifier = Modifier.padding(PADDING_16.dp).weight(IMAGE_WEIGHT),
             onValueChange = onValueChange,
             onDebounce = { query ->
               if (query.isNotEmpty()) {
@@ -187,7 +187,7 @@ private fun SearchDisplay(
 @Composable
 private fun ResultDisplay() {
   Row(
-      modifier = Modifier.fillMaxWidth().padding(PADDING.dp),
+      modifier = Modifier.fillMaxWidth().padding(PADDING_16.dp),
       horizontalArrangement = Arrangement.Start,
   ) {
     Text(
@@ -215,7 +215,7 @@ private fun ConfirmationPopUp(
       onDismissRequest = onDismiss,
       modifier =
           Modifier.fillMaxWidth()
-              .padding(PADDING.dp)
+              .padding(PADDING_16.dp)
               .shadow(
                   elevation = POP_UP_ELEVATION.dp, // Adjust elevation as desired
                   clip = POP_UP_CLIP // Ensures background respects the shadow's rounded corners
@@ -263,7 +263,7 @@ private fun IngredientItem(ingredient: Ingredient, onClick: () -> Unit) {
   Row(
       modifier =
           Modifier.fillMaxWidth()
-              .padding(PADDING.dp)
+              .padding(PADDING_16.dp)
               .shadow(
                   elevation = INGREDIENT_ITEM_ELEVATION.dp, // Adjust elevation as desired
                   shape = RoundedCornerShape(INGREDIENT_ITEM_CORNER.dp),
@@ -277,7 +277,7 @@ private fun IngredientItem(ingredient: Ingredient, onClick: () -> Unit) {
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.Start,
-            modifier = Modifier.padding(PADDING.dp)) {
+            modifier = Modifier.padding(PADDING_16.dp)) {
               Text(
                   text = ingredient.name,
                   style = MaterialTheme.typography.titleSmall,
