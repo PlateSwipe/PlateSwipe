@@ -11,6 +11,9 @@ import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -48,7 +51,7 @@ class IngredientViewModelTest {
 
     ingredientViewModel.fetchIngredient(barCode)
     verify(ingredientRepository).get(eq(barCode), any(), any())
-    assertEquals(ingredient, ingredientViewModel.ingredient.value)
+    assertEquals(ingredient, ingredientViewModel.ingredient.value.first)
   }
 
   @Test
@@ -62,7 +65,7 @@ class IngredientViewModelTest {
 
     ingredientViewModel.fetchIngredient(barCode)
     verify(ingredientRepository).get(eq(barCode), any(), any())
-    assertNull(ingredientViewModel.ingredient.value)
+    assertNull(ingredientViewModel.ingredient.value.first)
   }
 
   @Test
@@ -95,8 +98,9 @@ class IngredientViewModelTest {
     verify(ingredientRepository, times(1)).get(eq(barCode), any(), any())
   }
 
+  @OptIn(ExperimentalCoroutinesApi::class)
   @Test
-  fun addIngredient_updatesIngredientList() {
+  fun addIngredient_updatesIngredientList() = runTest {
     val ingredient =
         Ingredient(
             barCode = 123456L,
@@ -111,9 +115,34 @@ class IngredientViewModelTest {
                     PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
 
     ingredientViewModel.addIngredient(ingredient)
+    advanceUntilIdle()
 
-    // Verify that the ingredient list now contains the added ingredient
-    assertTrue(ingredientViewModel.ingredientList.value.contains(ingredient))
+    assertTrue(
+        ingredientViewModel.ingredientList.value.contains(Pair(ingredient, ingredient.quantity)))
+  }
+
+  @OptIn(ExperimentalCoroutinesApi::class)
+  @Test
+  fun addIngredient_updatesIngredientListTwoTimes() = runTest {
+    val ingredient =
+        Ingredient(
+            barCode = 123456L,
+            name = "New Ingredient",
+            brands = "Brand",
+            quantity = "100g",
+            categories = listOf("Category1"),
+            images =
+                mutableMapOf(
+                    PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
+                    PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
+                    PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
+
+    ingredientViewModel.addIngredient(ingredient)
+    ingredientViewModel.addIngredient(ingredient)
+
+    advanceUntilIdle()
+
+    assertTrue(ingredientViewModel.ingredientList.value.contains(Pair(ingredient, "200g")))
   }
 
   @Test
@@ -145,7 +174,7 @@ class IngredientViewModelTest {
     verify(ingredientRepository).search(any(), any(), any(), any())
 
     // Verify that the searchingIngredientList contains the expected ingredients
-    assertEquals(ingredientList, ingredientViewModel.searchingIngredientList.value)
+    assertEquals(ingredientList, ingredientViewModel.searchingIngredientList.value.map { it.first })
   }
 
   @Test
@@ -189,8 +218,10 @@ class IngredientViewModelTest {
 
     // Remove one ingredient and verify it is no longer in the list
     ingredientViewModel.removeIngredient(ingredient1)
-    assertTrue(ingredientViewModel.ingredientList.value.contains(ingredient2))
-    assertTrue(!ingredientViewModel.ingredientList.value.contains(ingredient1))
+    assertTrue(
+        ingredientViewModel.ingredientList.value.contains(Pair(ingredient2, ingredient2.quantity)))
+    assertTrue(
+        !ingredientViewModel.ingredientList.value.contains(Pair(ingredient1, ingredient1.quantity)))
   }
 
   @Test
@@ -218,7 +249,7 @@ class IngredientViewModelTest {
       onSuccess(ingredientList)
     }
     ingredientViewModel.fetchIngredientByName("Ingredient")
-    assertEquals(ingredientList, ingredientViewModel.searchingIngredientList.value)
+    assertEquals(ingredientList, ingredientViewModel.searchingIngredientList.value.map { it.first })
 
     // Clear search and verify that the searchingIngredientList is empty
     ingredientViewModel.clearSearch()
@@ -250,9 +281,9 @@ class IngredientViewModelTest {
 
     // Verify that the ingredient list contains the ingredient with the updated quantity
     val updatedIngredient =
-        ingredientViewModel.ingredientList.value.find { it.barCode == ingredient.barCode }
+        ingredientViewModel.ingredientList.value.find { it.first.barCode == ingredient.barCode }
     assertNotNull(updatedIngredient)
-    assertEquals(newQuantity, updatedIngredient?.quantity)
+    assertEquals(newQuantity, updatedIngredient?.second)
   }
 
   @Test
@@ -260,6 +291,5 @@ class IngredientViewModelTest {
     val factory = IngredientViewModel.Factory
     val ingredientViewModel = factory.create(IngredientViewModel::class.java)
     assertNotNull(ingredientViewModel)
-    assertTrue(ingredientViewModel is IngredientViewModel)
   }
 }

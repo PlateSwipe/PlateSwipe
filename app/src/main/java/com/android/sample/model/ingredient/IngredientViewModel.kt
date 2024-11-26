@@ -59,6 +59,12 @@ class IngredientViewModel(private val repository: IngredientRepository) :
         })
   }
 
+  /**
+   * Add the first integer in the two strings
+   *
+   * @param quantity1
+   * @param quantity2
+   */
   private fun addFirstInt(quantity1: String?, quantity2: String?): String {
     if (quantity1 == null || quantity2 == null) {
       return quantity1 ?: quantity2 ?: ""
@@ -94,7 +100,7 @@ class IngredientViewModel(private val repository: IngredientRepository) :
         }
       } else {
         // Ingredient doesn't exist; add it to the list
-        currentList + (ingredient to null)
+        currentList + (ingredient to ingredient.quantity)
       }
     }
   }
