@@ -49,8 +49,8 @@ class UserViewModel(
   private val _profilePictureUrl: MutableStateFlow<String?> = MutableStateFlow(null)
   val profilePictureUrl: StateFlow<String?> = _profilePictureUrl
 
-  private val _fridge: MutableStateFlow<List<Pair<Ingredient, Int>>> = MutableStateFlow(emptyList())
-  val fridge: StateFlow<List<Pair<Ingredient, Int>>> = _fridge
+  private val _fridgeItems = MutableStateFlow<List<Pair<FridgeItem, Ingredient>>>(emptyList())
+  val fridgeItems: StateFlow<List<Pair<FridgeItem, Ingredient>>> = _fridgeItems
 
   private val _likedRecipes: MutableStateFlow<List<Recipe>> = MutableStateFlow(emptyList())
   val likedRecipes: StateFlow<List<Recipe>> = _likedRecipes
@@ -61,9 +61,6 @@ class UserViewModel(
   private val _currentRecipe = MutableStateFlow<Recipe?>(null)
   override val currentRecipe: StateFlow<Recipe?>
     get() = _currentRecipe
-
-  private val _listFridgeItems = MutableStateFlow<List<Pair<FridgeItem, Ingredient>>>(emptyList())
-  val listFridgeItems: StateFlow<List<Pair<FridgeItem, Ingredient>>> = _listFridgeItems
 
   companion object {
     val Factory: ViewModelProvider.Factory =
@@ -127,7 +124,7 @@ class UserViewModel(
                       uid = userId,
                       userName = userName.value ?: userId,
                       profilePictureUrl = "",
-                      fridge = _listFridgeItems.value.map { it.first },
+                      fridge = _fridgeItems.value.map { it.first },
                       likedRecipes = _likedRecipes.value.map { it.uid },
                       createdRecipes = _createdRecipes.value.map { it.uid }),
               onSuccess = { getCurrentUser() },
@@ -145,7 +142,7 @@ class UserViewModel(
             uid = firebaseAuth.currentUser?.uid ?: return,
             userName = _userName.value ?: "",
             profilePictureUrl = _profilePictureUrl.value ?: "",
-            fridge = _listFridgeItems.value.map { it.first },
+            fridge = _fridgeItems.value.map { it.first },
             likedRecipes = _likedRecipes.value.map { it.uid },
             createdRecipes = _createdRecipes.value.map { it.uid })
 
@@ -197,24 +194,24 @@ class UserViewModel(
   }
 
   /**
-   * Adds an ingredient to the user fridge. More precisely, it increases the count of said
-   * ingredient in the fridge.
+   * Method that add an [Ingredient] to the fridge of the user
    *
    * @param ingredient the ingredient to be added
    * @param quantity the quantity of the ingredient
+   * @param expirationDate the expiration date of the ingredient
    */
   private fun addIngredientToUserFridge(
       ingredient: Ingredient,
       quantity: String,
       expirationDate: LocalDate
   ) {
-    val newFridgeItem = FridgeItem(ingredient.uid!!, quantity, expirationDate)
-    updateList(_listFridgeItems, Pair(newFridgeItem, ingredient), add = true)
+    val newFridgeItem = FridgeItem(ingredient.barCode.toString(), quantity, expirationDate)
+    updateList(_fridgeItems, Pair(newFridgeItem, ingredient), add = true)
   }
 
   /**
-   * Removes an ingredient from the user fridge. More precisely, it will decrease the count of said
-   * ingredient in the fridge.
+   * Method that removes an [Ingredient] from the fridge of the user and updates the user in the
+   * database
    *
    * @param ingredient the ingredient to be removed
    * @throws IllegalArgumentException if the count is greater than the number of ingredients in the
@@ -223,14 +220,22 @@ class UserViewModel(
   fun removeIngredientFromUserFridge(ingredient: Ingredient) {
     try {
       val deletedIngredient: Pair<FridgeItem, Ingredient> =
-          _listFridgeItems.value.first { it.first.id == ingredient.uid }
-      updateList(_listFridgeItems, deletedIngredient, add = false)
+          _fridgeItems.value.first { it.first.id == ingredient.barCode.toString() }
+      updateList(_fridgeItems, deletedIngredient, add = false)
     } catch (e: NoSuchElementException) {
       throw IllegalArgumentException(REMOVED_INGREDIENT_NOT_IN_FRIDGE_ERROR)
     }
     updateCurrentUser()
   }
 
+  /**
+   * Method that either add an ingredient to the user's fridge if it does not exist, and updates it
+   * with the new quantity if it is already in the fridge
+   *
+   * @param ingredient the ingredient to be updated/added
+   * @param quantity the quantity of the ingredient
+   * @param expirationDate the expiration date of the ingredient
+   */
   fun updateIngredientFromFridge(
       ingredient: Ingredient,
       quantity: String,
@@ -238,11 +243,12 @@ class UserViewModel(
   ) {
     try {
       val changedIngredient: Pair<FridgeItem, Ingredient> =
-          _listFridgeItems.value.first { it.first.id == ingredient.uid }
+          _fridgeItems.value.first { it.first.id == ingredient.barCode.toString() }
+
       val newFridgeItem =
           FridgeItem(changedIngredient.first.id, quantity, changedIngredient.first.expirationDate)
-      updateList(_listFridgeItems, changedIngredient, add = false)
-      updateList(_listFridgeItems, Pair(newFridgeItem, changedIngredient.second), add = true)
+      updateList(_fridgeItems, changedIngredient, add = false)
+      updateList(_fridgeItems, Pair(newFridgeItem, changedIngredient.second), add = true)
     } catch (e: NoSuchElementException) {
       addIngredientToUserFridge(ingredient, quantity, expirationDate)
     }

@@ -7,6 +7,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import java.time.LocalDate
 
 class UserRepositoryFirestore(private val db: FirebaseFirestore) : UserRepository {
   private val collectionPath = "users"
@@ -62,7 +63,10 @@ class UserRepositoryFirestore(private val db: FirebaseFirestore) : UserRepositor
     return try {
       val userName = snapshot["userName"] as String
       val profilePictureUrl = snapshot["profilePictureUrl"] as String
-      val fridge = snapshot["fridge"] as List<FridgeItem>
+      val fridge =
+          (snapshot["fridge"] as List<Map<String, Any>>).map { mapping ->
+            fridgeItemExtraction(mapping)
+          }
       val likedRecipes = snapshot["likedRecipes"] as List<String>
       val createdRecipes = snapshot["createdRecipes"] as List<String>
 
@@ -71,6 +75,25 @@ class UserRepositoryFirestore(private val db: FirebaseFirestore) : UserRepositor
       Log.e("UserRepositoryFirestore", "Error converting snapshot to user", e)
       null
     }
+  }
+
+  /**
+   * Method that transform the mapping of an FridgeItem from the database to the object [FridgeItem]
+   *
+   * @param mapping the mapping extracted from the database for a FridgeItem
+   * @return an object FridgeItem
+   */
+  @Suppress("UNCHECKED_CAST")
+  private fun fridgeItemExtraction(mapping: Map<String, Any>): FridgeItem {
+    val id = mapping["id"] as String
+    val quantity = mapping["quantity"] as String
+    val dateMap = mapping["expirationDate"] as Map<String, Any>
+    val date =
+        LocalDate.of(
+            (dateMap["year"] as Long).toInt(),
+            (dateMap["monthValue"] as Long).toInt(),
+            (dateMap["dayOfMonth"] as Long).toInt())
+    return FridgeItem(id, quantity, date)
   }
 
   /**
