@@ -117,20 +117,13 @@ class FirestoreIngredientRepository(private val db: FirebaseFirestore) : Ingredi
   }
 
   /**
-   * Add an ingredient. If the ingredient is already in the database, can be updated or not. If the
-   * ingredient is not in the database, it will be added.
+   * Add an ingredient. If the ingredient has a uid, it will be updated.
    *
    * @param ingredient ingredient to add
    * @param onSuccess callback when the ingredient is added
    * @param onFailure callback with an exception
-   * @param updateIfPresent if the ingredient is already in the database, update it
    */
-  fun add(
-      ingredient: Ingredient,
-      onSuccess: () -> Unit,
-      onFailure: (Exception) -> Unit,
-      updateIfPresent: Boolean = false
-  ) {
+  fun add(ingredient: Ingredient, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     var addedIngredient = ingredient
 
     if (ingredient.uid.isNullOrEmpty()) {
@@ -139,43 +132,16 @@ class FirestoreIngredientRepository(private val db: FirebaseFirestore) : Ingredi
               uid = db.collection(C.Tag.FIRESTORE_INGREDIENT_COLLECTION_NAME_TEST).document().id)
     }
 
-    fun addToUidOperation(uid: String) {
-      db.collection(C.Tag.FIRESTORE_INGREDIENT_COLLECTION_NAME_TEST)
-          .document(uid)
-          .set(addedIngredient)
-          .addOnCompleteListener { result ->
-            if (result.isSuccessful) {
-              onSuccess()
-            } else {
-              onFailure(result.exception!!)
-            }
+    db.collection(C.Tag.FIRESTORE_INGREDIENT_COLLECTION_NAME_TEST)
+        .document(addedIngredient.uid!!)
+        .set(addedIngredient)
+        .addOnCompleteListener { result ->
+          if (result.isSuccessful) {
+            onSuccess()
+          } else {
+            onFailure(result.exception!!)
           }
-    }
-
-    // we need to check it has a barcode other wise it will be impossible to get
-    // we end up considering ingredients without barcode as invalid
-    if (ingredient.barCode == null) {
-      onFailure(Exception(C.Tag.INGREDIENT_BARCODE_NOT_PROVIDED))
-    } else if (ingredient.name.isEmpty()) {
-      onFailure(Exception(C.Tag.INGREDIENT_NAME_NOT_PROVIDED))
-    } else {
-      // we need to check if there is already an ingredient with the same barcode
-      // because we don't use the uids as identifiers
-      get(
-          ingredient.barCode,
-          onSuccess = { existingIngredient ->
-            if (existingIngredient == null) {
-              addToUidOperation(addedIngredient.uid!!)
-            } else {
-              if (updateIfPresent) {
-                addToUidOperation(existingIngredient.uid!!)
-              } else {
-                onSuccess()
-              }
-            }
-          },
-          onFailure = onFailure)
-    }
+        }
   }
 
   /**

@@ -177,12 +177,7 @@ class FirestoreIngredientRepositoryTest {
   fun testAddGivesIdWhenAddingIngredientThatDoesntHaveOne() {
     val nullUidIngredient = ingredient.copy(uid = null)
 
-    // we need an empty list to simulate an unfound ingredient
-    `when`(mockQuerySnapshot.documents).thenReturn(listOf())
-
     firestoreIngredientRepository.add(nullUidIngredient, onSuccess = {}, onFailure = {})
-
-    onCompleteListenerQueryCaptor.value.onComplete(mockTaskQuerySnapshot)
 
     verify(mockDocumentReference).set(capture(objectCapture))
 
@@ -194,10 +189,7 @@ class FirestoreIngredientRepositoryTest {
 
   @Test
   fun testAddCorrectlyAddsIngredient() {
-    firestoreIngredientRepository.add(
-        ingredient, onSuccess = {}, onFailure = {}, updateIfPresent = true)
-
-    onCompleteListenerQueryCaptor.value.onComplete(mockTaskQuerySnapshot)
+    firestoreIngredientRepository.add(ingredient, onSuccess = {}, onFailure = {})
 
     verify(mockDocumentReference).set(capture(objectCapture))
 
@@ -207,39 +199,14 @@ class FirestoreIngredientRepositoryTest {
   }
 
   @Test
-  fun testAddThrowsExceptionWhenUnsuccessfulAdd() {
+  fun testAddThrowsExceptionWhenUnsuccessful() {
     `when`(mockTaskVoid.isSuccessful).thenReturn(false)
     `when`(mockTaskVoid.exception).thenReturn(Exception("Error"))
-
-    // we need an empty list to simulate an unfound ingredient
-    `when`(mockQuerySnapshot.documents).thenReturn(listOf())
 
     var resultingException: Exception? = null
 
     firestoreIngredientRepository.add(
         ingredient, onSuccess = {}, onFailure = { e -> resultingException = e })
-
-    onCompleteListenerQueryCaptor.value.onComplete(mockTaskQuerySnapshot)
-
-    onCompleteListenerVoidCaptor.value.onComplete(mockTaskVoid)
-
-    assertNotNull(resultingException)
-  }
-
-  @Test
-  fun testAddThrowsExceptionWhenUnsuccessfulUpdate() {
-    `when`(mockTaskVoid.isSuccessful).thenReturn(false)
-    `when`(mockTaskVoid.exception).thenReturn(Exception("Error"))
-
-    var resultingException: Exception? = null
-
-    firestoreIngredientRepository.add(
-        ingredient,
-        onSuccess = {},
-        onFailure = { e -> resultingException = e },
-        updateIfPresent = true)
-
-    onCompleteListenerQueryCaptor.value.onComplete(mockTaskQuerySnapshot)
 
     onCompleteListenerVoidCaptor.value.onComplete(mockTaskVoid)
 
