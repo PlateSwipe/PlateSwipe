@@ -90,9 +90,7 @@ open class AggregatorIngredientRepository(
   ) {
     openFoodFactsIngredientRepository.search(
         name,
-        onSuccess = { ingredientsOpenFoodFacts ->
-          onSuccess(ingredientsOpenFoodFacts)
-        },
+        onSuccess = { ingredientsOpenFoodFacts -> onSuccess(ingredientsOpenFoodFacts) },
         onFailure = onFailure,
         count = count)
   }
