@@ -201,43 +201,38 @@ fun AddInstructionStepContent(
 
         Spacer(modifier = Modifier.height(SPACE_BETWEEN_ELEMENTS.dp))
 
-      Row{
-
+        Row {
           if (createRecipeViewModel.getSelectedInstruction() != null) {
-              // suppress button if editing an existing instruction
-              PlateSwipeButton(
-                  stringResource(R.string.RecipeListInstructionsScreen_Delete),
-                  modifier = Modifier.testTag(DELETE_BUTTON).weight(1f),
-                  onClick = { isDeleting = true },
-                  backgroundColor = MaterialTheme.colorScheme.error,
-                  contentColor = MaterialTheme.colorScheme.onError)
+            // suppress button if editing an existing instruction
+            PlateSwipeButton(
+                stringResource(R.string.RecipeListInstructionsScreen_Delete),
+                modifier = Modifier.testTag(DELETE_BUTTON).weight(1f),
+                onClick = { isDeleting = true },
+                backgroundColor = MaterialTheme.colorScheme.error,
+                contentColor = MaterialTheme.colorScheme.onError)
           }
           // Save Button
           PlateSwipeButton(
               stringResource(R.string.save_label),
               modifier = Modifier.testTag(SAVE_BUTTON_TAG).weight(1f),
               onClick = {
-                  showError = stepDescription.isEmpty() // Set error if instructions are empty
-                  confirmAndAssignStep(
-                      stepDescription,
-                      stepTime,
-                      selectedIcon,
-                      createRecipeViewModel,
-                      onSuccess = {
-                          createRecipeViewModel.resetSelectedInstruction()
-                          navigationActions.navigateToPop(
-                              Screen.CREATE_RECIPE_LIST_INSTRUCTIONS,
-                              popUpTo = Screen.CREATE_RECIPE_LIST_INGREDIENTS,
-                              inclusive = false)
-                      })
+                showError = stepDescription.isEmpty() // Set error if instructions are empty
+                confirmAndAssignStep(
+                    stepDescription,
+                    stepTime,
+                    selectedIcon,
+                    createRecipeViewModel,
+                    onSuccess = {
+                      createRecipeViewModel.resetSelectedInstruction()
+                      navigationActions.navigateToPop(
+                          Screen.CREATE_RECIPE_LIST_INSTRUCTIONS,
+                          popUpTo = Screen.CREATE_RECIPE_LIST_INGREDIENTS,
+                          inclusive = false)
+                    })
               })
-
-      }
-
-
+        }
 
         Spacer(modifier = Modifier.height(SPACE_BETWEEN_ELEMENTS.dp))
-
 
         if (isDeleting) {
           PlateSwipeAlertBox(
