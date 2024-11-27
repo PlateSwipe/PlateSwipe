@@ -168,4 +168,23 @@ class AddInstructionStepScreenTest {
     composeTestRule.onNodeWithText("Are you sure you want to delete this step?").assertIsDisplayed()
     composeTestRule.onNodeWithText("Cancel").assertIsDisplayed()
   }
+
+  /**
+   * Verifies that an error message is displayed when attempting to save with a blank instruction.
+   */
+  @Test
+  fun addInstructionStepScreen_saveButtonShowsErrorIfInstructionBlank() {
+    composeTestRule.setContent {
+      AddInstructionStepScreen(
+          navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
+    }
+
+    // Input a blank instruction
+    composeTestRule.onNodeWithTag("InstructionInput").performTextInput("   ")
+    composeTestRule.onNodeWithTag(SAVE_BUTTON_TAG).performClick()
+    composeTestRule.waitForIdle()
+
+    // Verify that the error message is displayed
+    composeTestRule.onNodeWithTag("InstructionError").assertIsDisplayed()
+  }
 }
