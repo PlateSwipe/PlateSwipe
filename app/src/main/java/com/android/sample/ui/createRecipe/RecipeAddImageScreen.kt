@@ -1,5 +1,6 @@
 package com.android.sample.ui.createRecipe
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -297,7 +298,12 @@ fun AddImageContent(
                     }
                   }
                   Button(
-                      onClick = { navigationActions.navigateTo(Screen.PUBLISH_CREATED_RECIPE) },
+                      onClick = {
+                        handleNavigationAndToast(
+                            isPictureTaken = isPictureTaken,
+                            context = context,
+                            navigationActions = navigationActions)
+                      },
                       modifier =
                           Modifier.width(RECIPE_NAME_BUTTON_WIDTH)
                               .height(RECIPE_NAME_BUTTON_HEIGHT)
@@ -305,8 +311,7 @@ fun AddImageContent(
                                   color = lightCream,
                                   shape = RoundedCornerShape(size = C.Dimension.PADDING_4.dp))
                               .testTag("NextStepButton"),
-                      shape = RoundedCornerShape(C.Dimension.PADDING_4.dp),
-                      enabled = isPictureTaken) {
+                      shape = RoundedCornerShape(C.Dimension.PADDING_4.dp)) {
                         Text(
                             text = stringResource(R.string.next),
                             style = Typography.bodyMedium,
@@ -316,4 +321,24 @@ fun AddImageContent(
               }
         }
       }
+}
+
+/**
+ * Helper function to handle navigation and display a Toast message if the picture is not taken.
+ *
+ * @param isPictureTaken Boolean indicating whether the picture is taken.
+ * @param context The context to use for displaying the Toast message.
+ * @param navigationActions The navigation actions to handle navigation events.
+ */
+private fun handleNavigationAndToast(
+    isPictureTaken: Boolean,
+    context: Context,
+    navigationActions: NavigationActions
+) {
+  if (isPictureTaken) {
+    navigationActions.navigateTo(Screen.PUBLISH_CREATED_RECIPE)
+  } else {
+    Toast.makeText(context, context.getString(R.string.error_picture_not_taken), Toast.LENGTH_SHORT)
+        .show()
+  }
 }
