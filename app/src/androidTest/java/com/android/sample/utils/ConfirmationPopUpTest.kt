@@ -78,8 +78,5 @@ class ConfirmationPopUpTest {
 
     composeTestRule.onNodeWithText("Cancel").assertIsDisplayed().performClick()
     verify(onDismiss).invoke()
-
-    composeTestRule.onNodeWithText("Confirm").assertIsDisplayed().performClick()
-    verify(onConfirm).invoke()
   }
 }

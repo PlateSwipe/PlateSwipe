@@ -21,7 +21,6 @@ import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.searchIngredient.SearchIngredientScreen
 import com.android.sample.ui.utils.testIngredients
-import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -56,12 +55,12 @@ class SearchIngredientScreenTest {
     `when`(mockNavigationActions.currentRoute()).thenReturn(Route.CREATE_RECIPE)
     aggregatorIngredientRepository = mock(AggregatorIngredientRepository::class.java)
 
-    /*`when`(aggregatorIngredientRepository.search(any(), any(), any(), any())).thenAnswer {
+    `when`(aggregatorIngredientRepository.search(any(), any(), any(), any())).thenAnswer {
         invocation ->
       val onSuccess = invocation.getArgument<(List<Ingredient>) -> Unit>(1)
       onSuccess(mockIngredients)
       null
-    }*/
+    }
     searchIngredientViewModel = IngredientViewModel(aggregatorIngredientRepository)
 
     composeTestRule.setContent {
@@ -96,7 +95,7 @@ class SearchIngredientScreenTest {
   }
 
   @Test
-  fun testSearchBarDisplaysIngredients() = runTest {
+  fun testSearchBarDisplaysIngredients() {
     composeTestRule.onNodeWithTag(SEARCH_BAR, useUnmergedTree = true).performTextInput("To")
 
     composeTestRule.waitUntil(5000) {
@@ -172,7 +171,7 @@ class SearchIngredientScreenTest {
   }
 
   @Test
-  fun testSearchWithNoResultsDisplaysMessage() = runTest {
+  fun testSearchWithNoResultsDisplaysMessage() {
     `when`(aggregatorIngredientRepository.search(any(), any(), any(), any())).thenAnswer {
       val onSuccess = it.getArgument<(List<Ingredient>) -> Unit>(1)
       onSuccess(emptyList())
@@ -211,7 +210,7 @@ class SearchIngredientScreenTest {
   }
 
   @Test
-  fun testSearchIsCaseInsensitive() = runTest {
+  fun testSearchIsCaseInsensitive() {
     composeTestRule.onNodeWithTag(SEARCH_BAR, useUnmergedTree = true).performTextInput("to")
     composeTestRule.waitUntil(5000) {
       searchIngredientViewModel.searchingIngredientList.value.isNotEmpty()
