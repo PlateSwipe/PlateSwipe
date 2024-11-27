@@ -207,11 +207,9 @@ private fun handleIngredientList(
           ingredient.name, ingredient.quantity.toString())
     }
     navigationActions.navigateTo(
-
         if (createRecipeViewModel.getRecipeListOfInstructions().isEmpty())
             Screen.CREATE_RECIPE_ADD_INSTRUCTION
-        else Screen.CREATE_RECIPE_LIST_INSTRUCTIONS
-    )
+        else Screen.CREATE_RECIPE_LIST_INSTRUCTIONS)
   }
 }
 
