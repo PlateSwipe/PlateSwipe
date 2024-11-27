@@ -187,20 +187,20 @@ private fun SaveButton(
             onClick = {
               if (ingredientList.isEmpty()) {
                 displayErrorIngredientMessage.value = true
-              } else {
-                for ((ingredient, quantity) in ingredientList) {
-                  // Check if the ingredient has a quantity
-                  if (!quantity.isNullOrEmpty()) {
-                    createRecipeViewModel.addIngredientAndMeasurement(
-                        ingredient.name, quantity.toString())
-                  } else {
-                    // Display an error message if an ingredient has no quantity
-                    displayErrorIngredientMessage.value = true
-                  }
+                return@Button
+              }
+              ingredientList.forEach { (ingredient, quantity) ->
+                if (!quantity.isNullOrEmpty()) {
+                  createRecipeViewModel.addIngredientAndMeasurement(
+                      ingredient.name, quantity.toString())
+                } else {
+                  // Display an error message if an ingredient has no quantity
+                  displayErrorIngredientMessage.value = true
+                  return@Button
                 }
-                if (!displayErrorIngredientMessage.value) {
-                  navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_INSTRUCTION)
-                }
+              }
+              if (!displayErrorIngredientMessage.value) {
+                navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_INSTRUCTION)
               }
             },
             modifier =
