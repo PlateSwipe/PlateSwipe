@@ -240,7 +240,7 @@ class UserViewModelTest {
     userViewModel.changeUserName(userExample.userName)
     userViewModel.changeProfilePictureUrl(userExample.profilePictureUrl)
     userViewModel.updateIngredientFromFridge(
-        ingredientExample, ingredientExample.quantity!!, ingredientExpirationDateExample)
+        ingredientExample, ingredientExample.quantity!!, ingredientExpirationDateExample, false)
     userViewModel.addRecipeToUserLikedRecipes(recipeExample)
     userViewModel.addRecipeToUserCreatedRecipes(createdRecipeExample)
 
@@ -262,13 +262,13 @@ class UserViewModelTest {
   @Test
   fun `test correctly adds, updates and removes existing ingredient in fridge`() {
     userViewModel.updateIngredientFromFridge(
-        ingredientExample, ingredientExample.quantity!!, ingredientExpirationDateExample)
+        ingredientExample, ingredientExample.quantity!!, ingredientExpirationDateExample, false)
 
     assertEquals(userViewModel.fridgeItems.value[0].first, fridgeItemExample)
     assertEquals(userViewModel.fridgeItems.value[0].second, ingredientExample)
 
     userViewModel.updateIngredientFromFridge(
-        ingredientExample, ingredientQuantityExample, ingredientExpirationDateExample)
+        ingredientExample, ingredientQuantityExample, ingredientExpirationDateExample, false)
 
     assertEquals(userViewModel.fridgeItems.value[0].first, fridgeItemModifiedExample)
 
@@ -279,6 +279,52 @@ class UserViewModelTest {
     assertThrows(IllegalArgumentException::class.java) {
       userViewModel.removeIngredientFromUserFridge(ingredientExample)
     }
+  }
+
+  @Test
+  fun `test update ingredient quantity with a null quantity deletes item`() {
+    userViewModel.updateIngredientFromFridge(
+        ingredientExample, ingredientExample.quantity!!, ingredientExpirationDateExample, false)
+
+    userViewModel.updateIngredientFromFridge(
+        ingredientExample, "g", ingredientExpirationDateExample, false)
+
+    assertEquals(emptyList<Pair<FridgeItem, Ingredient>>(), userViewModel.fridgeItems.value)
+
+    userViewModel.updateIngredientFromFridge(
+        ingredientExample, ingredientExample.quantity!!, ingredientExpirationDateExample, false)
+
+    userViewModel.updateIngredientFromFridge(
+        ingredientExample, "", ingredientExpirationDateExample, false)
+
+    assertEquals(emptyList<Pair<FridgeItem, Ingredient>>(), userViewModel.fridgeItems.value)
+  }
+
+  @Test
+  fun `test update ingredient quantity with a zero quantity deletes item`() {
+    userViewModel.updateIngredientFromFridge(
+        ingredientExample, ingredientExample.quantity!!, ingredientExpirationDateExample, false)
+
+    userViewModel.updateIngredientFromFridge(
+        ingredientExample, "0g", ingredientExpirationDateExample, false)
+    assertEquals(emptyList<Pair<FridgeItem, Ingredient>>(), userViewModel.fridgeItems.value)
+
+    userViewModel.updateIngredientFromFridge(
+        ingredientExample, ingredientExample.quantity!!, ingredientExpirationDateExample, false)
+
+    userViewModel.updateIngredientFromFridge(
+        ingredientExample, "0 g", ingredientExpirationDateExample, false)
+    assertEquals(emptyList<Pair<FridgeItem, Ingredient>>(), userViewModel.fridgeItems.value)
+  }
+
+  @Test
+  fun `test add multiple times a scanned item`() {
+    userViewModel.updateIngredientFromFridge(
+        ingredientExample, ingredientExample.quantity!!, ingredientExpirationDateExample, true)
+    userViewModel.updateIngredientFromFridge(
+        ingredientExample, ingredientExample.quantity!!, ingredientExpirationDateExample, true)
+
+    assertEquals("2 apple", userViewModel.fridgeItems.value[0].first.quantity)
   }
 
   @Test

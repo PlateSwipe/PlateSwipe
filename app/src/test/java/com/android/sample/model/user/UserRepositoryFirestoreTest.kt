@@ -1,6 +1,12 @@
 package com.android.sample.model.user
 
 import android.util.Log
+import com.android.sample.resources.C.Tag.UserRepositoryFirestore.FRIDGE_FIELD_EXPIRATION_DATE
+import com.android.sample.resources.C.Tag.UserRepositoryFirestore.FRIDGE_FIELD_EXPIRATION_DATE_DAY
+import com.android.sample.resources.C.Tag.UserRepositoryFirestore.FRIDGE_FIELD_EXPIRATION_DATE_MONTH
+import com.android.sample.resources.C.Tag.UserRepositoryFirestore.FRIDGE_FIELD_EXPIRATION_DATE_YEAR
+import com.android.sample.resources.C.Tag.UserRepositoryFirestore.FRIDGE_FIELD_ID
+import com.android.sample.resources.C.Tag.UserRepositoryFirestore.FRIDGE_FIELD_QUANTITY
 import com.android.sample.ui.utils.testFridgeItem
 import com.android.sample.ui.utils.testUsers
 import com.google.android.gms.tasks.OnCompleteListener
@@ -141,18 +147,25 @@ class UserRepositoryFirestoreTest {
   fun fridgeItemExtractionTest() {
     val mapping =
         mapOf(
-            "id" to fridgeItemExample.id,
-            "quantity" to fridgeItemExample.quantity,
-            "expirationDate" to
+            FRIDGE_FIELD_ID to fridgeItemExample.id,
+            FRIDGE_FIELD_QUANTITY to fridgeItemExample.quantity,
+            FRIDGE_FIELD_EXPIRATION_DATE to
                 mapOf(
-                    "year" to fridgeItemExample.expirationDate.year.toLong(),
-                    "monthValue" to fridgeItemExample.expirationDate.monthValue.toLong(),
-                    "dayOfMonth" to fridgeItemExample.expirationDate.dayOfMonth.toLong()))
+                    FRIDGE_FIELD_EXPIRATION_DATE_YEAR to
+                        fridgeItemExample.expirationDate.year.toLong(),
+                    FRIDGE_FIELD_EXPIRATION_DATE_MONTH to
+                        fridgeItemExample.expirationDate.monthValue.toLong(),
+                    FRIDGE_FIELD_EXPIRATION_DATE_DAY to
+                        fridgeItemExample.expirationDate.dayOfMonth.toLong()))
 
-    fridgeItemExtractionMethod.isAccessible = true
-    val fridgeItem = fridgeItemExtractionMethod.invoke(userRepositoryFirestore, mapping)
+    try {
+      fridgeItemExtractionMethod.isAccessible = true
+      val fridgeItem = fridgeItemExtractionMethod.invoke(userRepositoryFirestore, mapping)
 
-    assertEquals(fridgeItem, fridgeItemExample)
+      assertEquals(fridgeItem, fridgeItemExample)
+    } finally {
+      fridgeItemExtractionMethod.isAccessible = false
+    }
   }
 
   @Test
@@ -163,35 +176,47 @@ class UserRepositoryFirestoreTest {
         .thenReturn(
             listOf(
                 mapOf(
-                    "id" to fridgeItemExample.id,
-                    "quantity" to fridgeItemExample.quantity,
-                    "expirationDate" to
+                    FRIDGE_FIELD_ID to fridgeItemExample.id,
+                    FRIDGE_FIELD_QUANTITY to fridgeItemExample.quantity,
+                    FRIDGE_FIELD_EXPIRATION_DATE to
                         mapOf(
-                            "year" to fridgeItemExample.expirationDate.year.toLong(),
-                            "monthValue" to fridgeItemExample.expirationDate.monthValue.toLong(),
-                            "dayOfMonth" to fridgeItemExample.expirationDate.dayOfMonth.toLong()))))
+                            FRIDGE_FIELD_EXPIRATION_DATE_YEAR to
+                                fridgeItemExample.expirationDate.year.toLong(),
+                            FRIDGE_FIELD_EXPIRATION_DATE_MONTH to
+                                fridgeItemExample.expirationDate.monthValue.toLong(),
+                            FRIDGE_FIELD_EXPIRATION_DATE_DAY to
+                                fridgeItemExample.expirationDate.dayOfMonth.toLong()))))
     `when`(mockSnapshot.get("createdRecipes")).thenReturn(user.createdRecipes)
     `when`(mockSnapshot.get("likedRecipes")).thenReturn(user.likedRecipes)
 
-    convertSnapshotMethod.isAccessible = true
-    val obtainedUser = convertSnapshotMethod.invoke(userRepositoryFirestore, user.uid, mockSnapshot)
+    try {
+      convertSnapshotMethod.isAccessible = true
+      val obtainedUser =
+          convertSnapshotMethod.invoke(userRepositoryFirestore, user.uid, mockSnapshot)
 
-    assertEquals(user, obtainedUser)
+      assertEquals(user, obtainedUser)
+    } finally {
+      convertSnapshotMethod.isAccessible = false
+    }
   }
 
   @Test
   fun snapshotConversionFailsTest() {
-    convertSnapshotMethod.isAccessible = true
-    mockStatic(Log::class.java).use { mockedLog ->
-      val obtainesUser = convertSnapshotMethod.invoke(userRepositoryFirestore, user.uid, null)
+    try {
+      convertSnapshotMethod.isAccessible = true
+      mockStatic(Log::class.java).use { mockedLog ->
+        val obtainesUser = convertSnapshotMethod.invoke(userRepositoryFirestore, user.uid, null)
 
-      mockedLog.verify {
-        Log.e(
-            eq("UserRepositoryFirestore"),
-            eq("Error converting snapshot to user"),
-            any<Exception>())
+        mockedLog.verify {
+          Log.e(
+              eq("UserRepositoryFirestore"),
+              eq("Error converting snapshot to user"),
+              any<Exception>())
+        }
+        assertNull(obtainesUser)
       }
-      assertNull(obtainesUser)
+    } finally {
+      convertSnapshotMethod.isAccessible = false
     }
   }
 
@@ -207,13 +232,16 @@ class UserRepositoryFirestoreTest {
         .thenReturn(
             listOf(
                 mapOf(
-                    "id" to fridgeItemExample.id,
-                    "quantity" to fridgeItemExample.quantity,
-                    "expirationDate" to
+                    FRIDGE_FIELD_ID to fridgeItemExample.id,
+                    FRIDGE_FIELD_QUANTITY to fridgeItemExample.quantity,
+                    FRIDGE_FIELD_EXPIRATION_DATE to
                         mapOf(
-                            "year" to fridgeItemExample.expirationDate.year.toLong(),
-                            "monthValue" to fridgeItemExample.expirationDate.monthValue.toLong(),
-                            "dayOfMonth" to fridgeItemExample.expirationDate.dayOfMonth.toLong()))))
+                            FRIDGE_FIELD_EXPIRATION_DATE_YEAR to
+                                fridgeItemExample.expirationDate.year.toLong(),
+                            FRIDGE_FIELD_EXPIRATION_DATE_MONTH to
+                                fridgeItemExample.expirationDate.monthValue.toLong(),
+                            FRIDGE_FIELD_EXPIRATION_DATE_DAY to
+                                fridgeItemExample.expirationDate.dayOfMonth.toLong()))))
     `when`(mockSnapshot.get("createdRecipes")).thenReturn(user.createdRecipes)
     `when`(mockSnapshot.get("likedRecipes")).thenReturn(user.likedRecipes)
 
