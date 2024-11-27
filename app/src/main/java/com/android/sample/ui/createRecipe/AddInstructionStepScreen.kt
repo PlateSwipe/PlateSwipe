@@ -196,18 +196,49 @@ fun AddInstructionStepContent(
             stringResource(R.string.save_label),
             modifier = Modifier.fillMaxWidth().testTag(SAVE_BUTTON_TAG),
             onClick = {
-              showError = stepDescription.isEmpty() // Set error if instructions are empty
-              confirmAndAssignStep(
-                  stepDescription,
-                  stepTime,
-                  selectedIcon,
-                  createRecipeViewModel,
-                  onSuccess = {
-                    createRecipeViewModel.resetSelectedInstruction()
-                    navigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INSTRUCTIONS)
-                  })
+              processValidInstruction(
+                  stepDescription = stepDescription,
+                  stepTime = stepTime,
+                  selectedIcon = selectedIcon,
+                  createRecipeViewModel = createRecipeViewModel,
+                  navigationActions = navigationActions,
+                  setShowError = { showError = it })
             })
       }
+}
+
+/**
+ * Processes a recipe step by validating the instruction and, if valid, assigning the provided
+ * details to the recipe. Navigates to the instruction list screen upon success.
+ *
+ * @param stepDescription The description of the recipe step.
+ * @param stepTime The time required for the step (optional).
+ * @param selectedIcon The selected icon for the step (optional).
+ * @param createRecipeViewModel The ViewModel managing the recipe creation process.
+ * @param navigationActions The navigation actions for moving between screens.
+ * @param setShowError A lambda to update the error state in the UI.
+ */
+private fun processValidInstruction(
+    stepDescription: String,
+    stepTime: String?,
+    selectedIcon: IconType?,
+    createRecipeViewModel: CreateRecipeViewModel,
+    navigationActions: NavigationActions,
+    setShowError: (Boolean) -> Unit
+) {
+  if (stepDescription.isBlank()) {
+    setShowError(true) // Trigger the error state if the instruction is blank
+  } else {
+    confirmAndAssignStep(
+        stepDescription,
+        stepTime,
+        selectedIcon,
+        createRecipeViewModel,
+        onSuccess = {
+          createRecipeViewModel.resetSelectedInstruction()
+          navigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INSTRUCTIONS)
+        })
+  }
 }
 
 fun <T> defaultValues(defaultValue: T, selectedInstruction: Int?, onSuccess: (Int) -> T): T {
@@ -226,7 +257,7 @@ fun <T> defaultValues(defaultValue: T, selectedInstruction: Int?, onSuccess: (In
  * @return True if the error should be shown, false otherwise.
  */
 fun verifyStepDescription(showError: Boolean, stepDescription: String): Boolean {
-  return showError && stepDescription.isEmpty()
+  return showError && stepDescription.isBlank()
 }
 
 /**

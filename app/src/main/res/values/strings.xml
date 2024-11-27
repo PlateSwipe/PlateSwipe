@@ -100,6 +100,7 @@
     <string name="RecipeListInstructionsScreen_Step">Step</string>
     <string name="RecipeListInstructionsScreen_Minutes">min</string>
     <string name="image_failed_to_load">Image failed to load</string>
+    <string name="error_picture_not_taken">Please take or select a picture</string>
 
     //RecipeListIngredientsScreen
     <string name="scanner_instruction">Scanner Icon</string>
@@ -108,6 +109,7 @@
     <string name="pop_up_description">Do you want to add this ingredient to your recipe?</string>
     <string name="pop_up_confirmation">Add to Recipe</string>
     <string name="pop_up_cancel">Cancel</string>
+    <string name="ingredient_list_error">Please add at least one ingredient</string>
 
     //RecipeListScreen
     <string name="ingredient_list">Ingredients list</string>
