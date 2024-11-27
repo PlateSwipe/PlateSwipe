@@ -81,7 +81,9 @@ fun SearchIngredientScreen(
     popUpConfirmationButtonText: String,
     onConfirmation: (Ingredient) -> Unit,
 ) {
+  //val listIngredient = searchIngredientViewModel.searchingIngredientList.collectAsState()
   val listIngredient = searchIngredientViewModel.searchingIngredientList.collectAsState()
+  val isSearching = searchIngredientViewModel.isSearching.collectAsState()
   var showConfirmation by remember { mutableStateOf(DO_NOT_SHOW_CONFIRMATION) }
   var selectedIngredient by remember { mutableStateOf<Ingredient?>(null) }
   var isLoading by remember { mutableStateOf(INITIAL_LOADING_STATE) }
@@ -91,8 +93,6 @@ fun SearchIngredientScreen(
       selectedItem = navigationActions.currentRoute(),
       showBackArrow = true,
       content = { paddingValues ->
-        LaunchedEffect(listIngredient.value) { isLoading = false }
-
         Column(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -109,11 +109,11 @@ fun SearchIngredientScreen(
                   modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
                   verticalArrangement = Arrangement.Top,
                   horizontalAlignment = Alignment.CenterHorizontally) {
-                    if (isLoading) {
+                    if (isSearching.value) {
                       LoadingCook(
                           modifier = Modifier.weight(LOADING_COOK_WEIGHT), size = LOADING_COOK_SIZE)
                       Spacer(modifier = Modifier.weight(SPACER_WEIGHT))
-                    } else {
+                    } else if (listIngredient.value.isNotEmpty()) {
                       for (ingredient in listIngredient.value) {
                         IngredientItem(
                             ingredient = ingredient.first,
@@ -122,6 +122,11 @@ fun SearchIngredientScreen(
                               showConfirmation = true
                             })
                       }
+                    } else {
+                      Text(
+                          text = stringResource(R.string.no_ingredients),
+                          style = MaterialTheme.typography.bodyMedium,
+                          color = MaterialTheme.colorScheme.onPrimary)
                     }
                   }
               // Display the confirmation pop-up if the user selects an ingredient

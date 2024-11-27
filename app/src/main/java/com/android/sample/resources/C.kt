@@ -201,7 +201,6 @@ object C {
     const val AGGREGATOR_LOG_TAG = "AggregatorIngredientRepository"
     const val AGGREGATOR_ERROR_FIRESTORE_ADD_INGR = "Error adding ingredient to Firestore:"
     const val AGGREGATOR_SUCCESS_FIRESTORE_ADD_INGR = "Ingredient successfully updated in Firestore"
-    const val AGGREGATOR_TAG_ON_INGREDIENT_ADDED = "Ingredient added successfully"
     const val AGGREGATOR_ERROR_UPLOAD_IMAGE = "Failed to upload all images"
     const val AGGREGATOR_ERROR_UPLOAD_FORMAT_IMAGE = "Error uploading format"
     const val AGGREGATOR_ERROR_OPENFOOD_INGR_NOT_FOUND = "Ingredient not found in OpenFoodFacts: "
@@ -229,6 +228,8 @@ object C {
     const val UNSUPPORTED_MESSAGE = "Operation not supported"
     const val INGREDIENT_NOT_FOUND_MESSAGE = "Ingredient not found"
     const val INGREDIENT_NAME_NOT_PROVIDED = "Ingredient name is required but has not been provided"
+    const val INGREDIENT_BARCODE_NOT_PROVIDED =
+        "Ingredient barcode is required but has not been provided"
 
     // Camera Actions
     const val LOG_TAG_CAMERA_ACTIONS = "CameraActions"
@@ -588,6 +589,11 @@ object C {
       const val ACCOUNT_SCREEN_SELECTED_LIST_SEPARATOR_FILL_MAX_WIDTH = .8f
       const val ACCOUNT_SCREEN_SELECTED_LIST_SEPARATOR_THICKNESS = 2
     }
+
+    object CategoryScreen {
+      const val DROPDOWN_HEIGHT_FRACTION = 0.3f
+      const val DIVIDER_ALPHA = 0.12f
+    }
   }
 
   object TestTag {
@@ -755,6 +761,15 @@ object C {
 
     object RecipeBuilder {
       const val OUT_OF_BOUNDS_MESSAGE = "Index out of bounds"
+    }
+
+    object Category {
+      const val DROPDOWN_CORNER_RADIUS = 8
+      const val BUTTON_TEST_TAG = "NextStepButton"
+      const val DROPDOWN_TEST_TAG = "DropdownMenuButton"
+      const val CATEGORY_TITLE = "CategoryTitle"
+      // CategorySubtitle
+      const val CATEGORY_SUBTITLE = "CategorySubtitle"
     }
   }
 }

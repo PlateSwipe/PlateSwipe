@@ -241,4 +241,15 @@ class RecipeBuilderTest {
     val listOfInstructions = builder.getInstructions()
     assertEquals(listOf(Instruction("Mix all ingredients")), listOfInstructions)
   }
+
+  @Test
+  fun `test setCategory accepts nullable value`() {
+    // Set a non-null category
+    builder.setCategory("Dessert")
+    assertEquals("Dessert", builder.getCategory())
+
+    // Set a null category
+    builder.setCategory(null)
+    assertNull(builder.getCategory())
+  }
 }

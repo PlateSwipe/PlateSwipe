@@ -37,6 +37,10 @@ class IngredientViewModel(private val repository: IngredientRepository) :
   override val searchingIngredientList: StateFlow<List<Pair<Ingredient, String?>>>
     get() = _searchingIngredientList
 
+  private val _isSearching = MutableStateFlow(false)
+  val isSearching: StateFlow<Boolean>
+    get() = _isSearching
+
   /**
    * Fetch ingredient
    *
@@ -132,12 +136,17 @@ class IngredientViewModel(private val repository: IngredientRepository) :
    * @param name
    */
   override fun fetchIngredientByName(name: String) {
+      _isSearching.value = true
     repository.search(
         name,
         onSuccess = { ingredientList ->
+            _isSearching.value = false
           _searchingIngredientList.value = ingredientList.map { Pair(it, it.quantity) }
         },
-        onFailure = { _searchingIngredientList.value = emptyList() })
+        onFailure = {
+            _isSearching.value = false
+            _searchingIngredientList.value = emptyList()
+        })
   }
 
   /**

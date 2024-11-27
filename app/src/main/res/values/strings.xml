@@ -101,6 +101,7 @@
     <string name="RecipeListInstructionsScreen_Step">Step</string>
     <string name="RecipeListInstructionsScreen_Minutes">min</string>
     <string name="image_failed_to_load">Image failed to load</string>
+    <string name="error_picture_not_taken">Please take or select a picture</string>
 
     //RecipeListIngredientsScreen
     <string name="scanner_instruction">Scanner Icon</string>
@@ -111,6 +112,7 @@
     <string name="pop_up_cancel">Cancel</string>
     <string name="pop_up_message_no_quantity">All ingredients must have a quantity</string>
     <string name="pop_up_message_no_ingredient">You must have at least one Ingredient in your recipe</string>
+    <string name="ingredient_list_error">Please add at least one ingredient</string>
 
     //RecipeListScreen
     <string name="ingredient_list">Ingredients list</string>
@@ -122,5 +124,13 @@
     <string name="message_pop_up_remove_liked">Are you sure that you want to remove this recipe from your liked recipes?</string>
     <string name="pop_up_confirm_removal_liked_recipe">Yes</string>>
     <string name="pop_up_confirm_cancel_removal_liked_recipe">No</string>
+
+    //CategoryScreen
+    <string name="select_category">Select A Category</string>
+    <string name="select_category_description_optional">Selecting a category is optional, but it can help others find your recipe more easily.</string>
+    <string name="no_category_selected">No category selected</string>
+    <string name="no_category">No category</string>
+
+
 
 </resources>
