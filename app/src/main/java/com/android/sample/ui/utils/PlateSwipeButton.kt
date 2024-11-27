@@ -34,7 +34,6 @@ fun PlateSwipeButton(
     height: Dp = C.Tag.PlateSwipeButton.BUTTON_HEIGHT,
     backgroundColor: Color = MaterialTheme.colorScheme.primary,
     contentColor: Color = MaterialTheme.colorScheme.onPrimary,
-    roundedCornerShape: RoundedCornerShape = RoundedCornerShape(ROUNDED_CORNER_SHAPE.dp)
 ) {
   Button(
       onClick = { onClick() },
@@ -42,11 +41,12 @@ fun PlateSwipeButton(
           modifier
               .width(width)
               .height(height)
-              .background(color = backgroundColor, shape = roundedCornerShape),
+              .background(
+                  color = backgroundColor, shape = RoundedCornerShape(ROUNDED_CORNER_SHAPE.dp)),
       colors =
           ButtonDefaults.buttonColors(
               containerColor = backgroundColor, contentColor = contentColor),
-      shape = roundedCornerShape) {
+      shape = RoundedCornerShape(ROUNDED_CORNER_SHAPE.dp)) {
         Text(text = text, textAlign = TextAlign.Center)
       }
 }
