@@ -11,7 +11,7 @@ import com.google.gson.Gson
  */
 fun Ingredient.toEntity(): IngredientEntity {
   return IngredientEntity(
-      uid = this.uid ?: "", // Handle null UID appropriately
+      uid = this.uid ?: "",
       barCode = this.barCode,
       name = this.name,
       brands = this.brands,

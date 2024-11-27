@@ -5,6 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.android.sample.resources.C.Tag.INGREDIENT_DATABASE_NAME
 
 /**
  * The Room database for storing ingredients.
@@ -39,7 +40,7 @@ abstract class IngredientDatabase : RoomDatabase() {
                 Room.databaseBuilder(
                         context.applicationContext,
                         IngredientDatabase::class.java,
-                        "ingredients_database")
+                        INGREDIENT_DATABASE_NAME)
                     .build()
             INSTANCE = instance
             instance

@@ -6,6 +6,7 @@ import android.graphics.drawable.BitmapDrawable
 import androidx.core.net.toUri
 import coil.ImageLoader
 import coil.request.ImageRequest
+import com.android.sample.resources.C.Tag.IMG_COMPRESS_SIZE
 import java.io.File
 import java.io.FileOutputStream
 import kotlinx.coroutines.Dispatchers
@@ -35,7 +36,7 @@ class ImageDownload {
         val file = File(context.filesDir, "$fileName.jpg")
         val outputStream = FileOutputStream(file)
         // Compress the bitmap and write it to the output stream
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+        bitmap.compress(Bitmap.CompressFormat.JPEG, IMG_COMPRESS_SIZE, outputStream)
         outputStream.close()
 
         // Return the file URI as a String
