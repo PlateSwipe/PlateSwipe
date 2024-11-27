@@ -12,6 +12,7 @@ import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeLeft
@@ -348,9 +349,13 @@ class EndToEndTest {
     composeTestRule.onNodeWithTag("DropdownMenuButton").performClick()
     composeTestRule.waitForIdle()
 
+    // Scroll to the desired category if necessary
+    composeTestRule
+        .onNodeWithTag("DropdownMenuItem_Vegan", useUnmergedTree = true)
+        .performScrollTo()
+
     // Select a category from the dropdown menu
     composeTestRule.onNodeWithTag("DropdownMenuItem_Vegan").performClick()
-    composeTestRule.waitForIdle()
 
     // Verify the selected category is displayed in the dropdown button
     composeTestRule.onNodeWithTag("DropdownMenuButton").assertTextEquals("Vegan")
