@@ -90,16 +90,7 @@ fun AddInstructionStepContent(
             selectedInstruction = createRecipeViewModel.getSelectedInstruction(),
             onSuccess = { createRecipeViewModel.getInstruction(it).time }))
   }
-  var selectedIcon by remember {
-    mutableStateOf<IconType?>(
-        if (createRecipeViewModel.getSelectedInstruction() != null) {
-          createRecipeViewModel
-              .getInstruction(createRecipeViewModel.getSelectedInstruction()!!)
-              .icon
-        } else {
-          null
-        })
-  }
+  var selectedIcon by remember { mutableStateOf<IconType?>(defaultIcon(createRecipeViewModel)) }
   var showError by remember { mutableStateOf(false) }
 
   // see if an instruction is being deleted
@@ -254,11 +245,36 @@ fun AddInstructionStepContent(
       }
 }
 
+/**
+ * Selects the default value based on the selected instruction. If an instruction is selected, the
+ * value of the instruction is returned. Otherwise, the default value is returned.
+ *
+ * @param defaultValue The default value to be returned if no instruction is selected.
+ * @param selectedInstruction The index of the selected instruction.
+ * @param onSuccess Callback to be executed if an instruction is selected.
+ * @param T The type of the default value.
+ * @return The selected instruction if it exists, otherwise the default value.
+ */
 fun <T> defaultValues(defaultValue: T, selectedInstruction: Int?, onSuccess: (Int) -> T): T {
   return if (selectedInstruction != null) {
     onSuccess(selectedInstruction)
   } else {
     defaultValue
+  }
+}
+
+/**
+ * Selects the default icon based on the selected instruction. If an instruction is selected, the
+ * icon of the instruction is returned. Otherwise, the default icon is returned.
+ *
+ * @param createRecipeViewModel ViewModel for managing the recipe creation process.
+ * @return The selected icon if it exists, otherwise null.
+ */
+fun defaultIcon(createRecipeViewModel: CreateRecipeViewModel): IconType? {
+  return if (createRecipeViewModel.getSelectedInstruction() != null) {
+    createRecipeViewModel.getInstruction(createRecipeViewModel.getSelectedInstruction()!!).icon
+  } else {
+    null
   }
 }
 
