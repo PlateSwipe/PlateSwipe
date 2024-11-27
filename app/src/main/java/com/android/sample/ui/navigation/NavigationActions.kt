@@ -26,7 +26,7 @@ object Screen {
 
   const val CREATE_RECIPE = "AddRecipe Screen"
 
-  const val CATEGORY_SCREEN = "Category Screen"
+  const val CREATE_CATEGORY_SCREEN = "Add Category Screen"
 
   const val CREATE_RECIPE_INGREDIENTS = "Add Recipe Ingredients"
 
@@ -111,7 +111,9 @@ open class NavigationActions(
    */
   open fun navigateTo(screen: String) {
     if (screen == Screen.CREATE_RECIPE_LIST_INGREDIENTS) {
-      navController.navigate(screen) { popUpTo(Screen.CREATE_RECIPE) { inclusive = false } }
+      navController.navigate(screen) {
+        popUpTo(Screen.CREATE_CATEGORY_SCREEN) { inclusive = false }
+      }
     } else {
       navController.navigate(screen)
     }

@@ -115,7 +115,7 @@ fun PlateSwipeApp() {
             navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
       }
 
-      composable(Screen.CATEGORY_SCREEN) {
+      composable(Screen.CREATE_CATEGORY_SCREEN) {
         CategoryScreen(navigationActions, createRecipeViewModel)
       }
       composable(Screen.CREATE_RECIPE_INGREDIENTS) {

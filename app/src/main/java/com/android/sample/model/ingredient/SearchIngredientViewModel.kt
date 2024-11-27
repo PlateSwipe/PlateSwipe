@@ -12,6 +12,8 @@ interface SearchIngredientViewModel {
   // The list of ingredient whe select
   val ingredientList: StateFlow<List<Pair<Ingredient, String?>>>
 
+  val isSearching: StateFlow<Boolean>
+
   /**
    * Fetch ingredient
    *
