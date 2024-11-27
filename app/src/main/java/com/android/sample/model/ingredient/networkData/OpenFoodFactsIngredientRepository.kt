@@ -119,7 +119,6 @@ class OpenFoodFactsIngredientRepository(private val client: OkHttpClient) :
     val request =
         Request.Builder()
             .url(url)
-            // TODO: Add a proper User-Agent
             .header("User-Agent", "PlateSwipe/1.0 (plateswipe@gmail.com)")
             .build()
 

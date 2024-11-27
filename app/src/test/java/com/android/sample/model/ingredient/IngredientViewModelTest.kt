@@ -269,7 +269,7 @@ class IngredientViewModelTest {
     val context: Context = ApplicationProvider.getApplicationContext()
     `when`(imageDownload.downloadAndSaveImage(any(), any(), any())).thenReturn("path")
 
-    ingredientViewModel.downloadIngredient(testIngredients[0], context, Dispatchers.IO)
+    ingredientViewModel.downloadIngredient(testIngredients[0].copy(), context, Dispatchers.IO)
     advanceUntilIdle()
     verify(ingredientRepository).addDownload(any())
   }
