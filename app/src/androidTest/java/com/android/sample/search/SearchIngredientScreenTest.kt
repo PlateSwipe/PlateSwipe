@@ -56,12 +56,12 @@ class SearchIngredientScreenTest {
     `when`(mockNavigationActions.currentRoute()).thenReturn(Route.CREATE_RECIPE)
     aggregatorIngredientRepository = mock(AggregatorIngredientRepository::class.java)
 
-    `when`(aggregatorIngredientRepository.search(any(), any(), any(), any())).thenAnswer {
+    /*`when`(aggregatorIngredientRepository.search(any(), any(), any(), any())).thenAnswer {
         invocation ->
       val onSuccess = invocation.getArgument<(List<Ingredient>) -> Unit>(1)
       onSuccess(mockIngredients)
       null
-    }
+    }*/
     searchIngredientViewModel = IngredientViewModel(aggregatorIngredientRepository)
 
     composeTestRule.setContent {

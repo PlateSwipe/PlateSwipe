@@ -88,8 +88,10 @@ class IngredientViewModel(private val repository: IngredientRepository) :
     return if (match1 != null && match2 != null) {
       val addition = match1.value.toInt() + match2.value.toInt()
       quantity1.replaceFirst(match1.value, addition.toString())
-    } else {
+    } else if (match1 != null) {
       quantity1
+    } else {
+      quantity2
     }
   }
 
@@ -100,7 +102,7 @@ class IngredientViewModel(private val repository: IngredientRepository) :
    */
   override fun addIngredient(ingredient: Ingredient) {
     _ingredientList.update { currentList ->
-      val existingItemIndex = currentList.indexOfFirst { it.first == ingredient }
+      val existingItemIndex = currentList.indexOfFirst { it.first.barCode == ingredient.barCode }
 
       if (existingItemIndex != -1) {
         // Ingredient already exists; update its associated String value
