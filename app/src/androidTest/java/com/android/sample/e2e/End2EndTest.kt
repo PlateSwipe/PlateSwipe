@@ -22,8 +22,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.android.sample.model.image.ImageDownload
 import com.android.sample.model.image.ImageRepositoryFirebase
-import com.android.sample.model.ingredient.AggregatorIngredientRepository
+import com.android.sample.model.ingredient.DefaultIngredientRepository
 import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.ingredient.IngredientViewModel
 import com.android.sample.model.recipe.CreateRecipeViewModel
@@ -108,7 +109,7 @@ class EndToEndTest {
   private lateinit var navigationActions: NavigationActions
   private lateinit var mockUserRepository: UserRepository
   private lateinit var mockFirebaseAuth: FirebaseAuth
-  private lateinit var aggregatorIngredientRepository: AggregatorIngredientRepository
+  private lateinit var aggregatorIngredientRepository: DefaultIngredientRepository
 
   private lateinit var mockRepository: RecipesRepository
   private lateinit var userViewModel: UserViewModel
@@ -126,7 +127,7 @@ class EndToEndTest {
     mockFirebaseAuth = mock(FirebaseAuth::class.java)
     mockImageRepo = mockk<ImageRepositoryFirebase>(relaxed = true)
     mockRepository = mock(RecipesRepository::class.java)
-    aggregatorIngredientRepository = mock(AggregatorIngredientRepository::class.java)
+    aggregatorIngredientRepository = mock(DefaultIngredientRepository::class.java)
 
     `when`(aggregatorIngredientRepository.search(any(), any(), any(), any())).thenAnswer {
         invocation ->
@@ -154,7 +155,8 @@ class EndToEndTest {
     val repository = FirestoreRecipesRepository(firestore)
     createRecipeViewModel = CreateRecipeViewModel(repository, mockImageRepo)
     recipesViewModel = RecipesViewModel(mockRepository)
-    ingredientViewModel = IngredientViewModel(aggregatorIngredientRepository)
+
+    ingredientViewModel = IngredientViewModel(aggregatorIngredientRepository, ImageDownload())
 
     /*`when`(mockRepository..thenAnswer { invocation ->
         val onSuccess = invocation.getArgument<(List<Recipe>) -> Unit>(1)

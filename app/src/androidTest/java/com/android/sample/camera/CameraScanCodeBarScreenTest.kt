@@ -7,6 +7,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
+import com.android.sample.model.image.ImageDownload
 import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.ingredient.IngredientRepository
 import com.android.sample.model.ingredient.IngredientViewModel
@@ -42,7 +43,7 @@ class CameraScanCodeBarScreenTest {
   fun setUp() {
     mockNavigationActions = mock(NavigationActions::class.java)
     mockRepo = mock(IngredientRepository::class.java)
-    mockIngredientViewModel = IngredientViewModel(mockRepo)
+    mockIngredientViewModel = IngredientViewModel(mockRepo, ImageDownload())
 
     `when`(mockNavigationActions.currentRoute()).thenReturn(Screen.CAMERA_SCAN_CODE_BAR)
   }

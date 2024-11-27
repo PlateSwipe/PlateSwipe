@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -62,10 +63,12 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun PlateSwipeApp() {
+  val context = LocalContext.current
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
   val recipesViewModel: RecipesViewModel = viewModel(factory = RecipesViewModel.Factory)
-  val ingredientViewModel: IngredientViewModel = viewModel(factory = IngredientViewModel.Factory)
+  val ingredientViewModel: IngredientViewModel =
+      viewModel(factory = IngredientViewModel.provideFactory(context = context))
 
   val userViewModel: UserViewModel = viewModel(factory = UserViewModel.Factory)
   val createRecipeViewModel: CreateRecipeViewModel =
