@@ -11,6 +11,7 @@
     <string name="search_bar_place_holder">Search</string>
     <string name="fridge_screen">Fridge Screen</string>
     <string name="fridge_screen_description">Work in progress…stay tuned!</string>
+    <string name="add_to_recipe">Add to Recipe</string>
     <string name="add_to_fridge">Add to Fridge</string>
 
     <string name="account_screen_default_user_name">User Name</string>
@@ -109,7 +110,8 @@
     <string name="pop_up_description">Do you want to add this ingredient to your recipe?</string>
     <string name="pop_up_confirmation">Add to Recipe</string>
     <string name="pop_up_cancel">Cancel</string>
-    <string name="ingredient_list_error">Please add at least one ingredient</string>
+    <string name="pop_up_message_no_quantity">All ingredients must have a quantity</string>
+    <string name="pop_up_message_no_ingredient">Please add at least one ingredient</string>
 
     //RecipeListScreen
     <string name="ingredient_list">Ingredients list</string>
