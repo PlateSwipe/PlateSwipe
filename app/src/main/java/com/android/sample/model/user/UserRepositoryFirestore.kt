@@ -2,6 +2,12 @@ package com.android.sample.model.user
 
 import android.util.Log
 import com.android.sample.model.fridge.FridgeItem
+import com.android.sample.resources.C.Tag.UserRepositoryFirestore.FRIDGE_FIELD_EXPIRATION_DATE
+import com.android.sample.resources.C.Tag.UserRepositoryFirestore.FRIDGE_FIELD_EXPIRATION_DATE_DAY
+import com.android.sample.resources.C.Tag.UserRepositoryFirestore.FRIDGE_FIELD_EXPIRATION_DATE_MONTH
+import com.android.sample.resources.C.Tag.UserRepositoryFirestore.FRIDGE_FIELD_EXPIRATION_DATE_YEAR
+import com.android.sample.resources.C.Tag.UserRepositoryFirestore.FRIDGE_FIELD_ID
+import com.android.sample.resources.C.Tag.UserRepositoryFirestore.FRIDGE_FIELD_QUANTITY
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
@@ -85,14 +91,14 @@ class UserRepositoryFirestore(private val db: FirebaseFirestore) : UserRepositor
    */
   @Suppress("UNCHECKED_CAST")
   private fun fridgeItemExtraction(mapping: Map<String, Any>): FridgeItem {
-    val id = mapping["id"] as String
-    val quantity = mapping["quantity"] as String
-    val dateMap = mapping["expirationDate"] as Map<String, Any>
+    val id = mapping[FRIDGE_FIELD_ID] as String
+    val quantity = mapping[FRIDGE_FIELD_QUANTITY] as String
+    val dateMap = mapping[FRIDGE_FIELD_EXPIRATION_DATE] as Map<String, Any>
     val date =
         LocalDate.of(
-            (dateMap["year"] as Long).toInt(),
-            (dateMap["monthValue"] as Long).toInt(),
-            (dateMap["dayOfMonth"] as Long).toInt())
+            (dateMap[FRIDGE_FIELD_EXPIRATION_DATE_YEAR] as Long).toInt(),
+            (dateMap[FRIDGE_FIELD_EXPIRATION_DATE_MONTH] as Long).toInt(),
+            (dateMap[FRIDGE_FIELD_EXPIRATION_DATE_DAY] as Long).toInt())
     return FridgeItem(id, quantity, date)
   }
 
