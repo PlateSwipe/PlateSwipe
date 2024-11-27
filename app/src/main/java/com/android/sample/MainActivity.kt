@@ -28,6 +28,7 @@ import com.android.sample.ui.authentication.SignInScreen
 import com.android.sample.ui.camera.CameraScanCodeBarScreen
 import com.android.sample.ui.camera.CameraTakePhotoScreen
 import com.android.sample.ui.createRecipe.AddInstructionStepScreen
+import com.android.sample.ui.createRecipe.CategoryScreen
 import com.android.sample.ui.createRecipe.CreateRecipeScreen
 import com.android.sample.ui.createRecipe.IngredientListScreen
 import com.android.sample.ui.createRecipe.IngredientSearchScreen
@@ -114,6 +115,10 @@ fun PlateSwipeApp() {
       composable(Screen.CREATE_RECIPE) {
         CreateRecipeScreen(
             navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
+      }
+
+      composable(Screen.CATEGORY_SCREEN) {
+        CategoryScreen(navigationActions, createRecipeViewModel)
       }
       composable(Screen.CREATE_RECIPE_INGREDIENTS) {
         RecipeIngredientsScreen(

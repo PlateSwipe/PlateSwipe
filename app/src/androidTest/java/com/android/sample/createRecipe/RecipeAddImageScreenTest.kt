@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
-import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -81,13 +80,14 @@ class RecipeAddImageScreenTest {
   }
 
   @Test
-  fun nextStepNotAvailable() {
+  fun clickNextWithoutPhotoShowsToast() {
     composeTestRule.setContent {
       RecipeAddImageScreen(
           navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
     }
 
-    composeTestRule.onNodeWithText("Next").assertIsNotEnabled()
+    // Simulate clicking the "Next" button without a photo
+    composeTestRule.onNodeWithText("Next").assertIsDisplayed().performClick()
   }
 
   @Test

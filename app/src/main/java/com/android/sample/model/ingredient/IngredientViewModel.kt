@@ -50,6 +50,10 @@ class IngredientViewModel(
   val searchingIngredientList: StateFlow<List<Ingredient>>
     get() = _searchingIngredientList
 
+  private val _isSearching = MutableStateFlow(false)
+  val isSearching: StateFlow<Boolean>
+    get() = _isSearching
+
   private val _ingredientDownloadList = MutableStateFlow<List<Ingredient>>(emptyList())
   val ingredientDownloadList: StateFlow<List<Ingredient>>
     get() = _ingredientDownloadList
@@ -104,10 +108,17 @@ class IngredientViewModel(
    * @param name
    */
   fun fetchIngredientByName(name: String) {
+    _isSearching.value = true
     repository.search(
         name,
-        onSuccess = { ingredientList -> _searchingIngredientList.value = ingredientList },
-        onFailure = { _searchingIngredientList.value = emptyList() })
+        onSuccess = { ingredientList ->
+          _isSearching.value = false
+          _searchingIngredientList.value = ingredientList
+        },
+        onFailure = {
+          _isSearching.value = false
+          _searchingIngredientList.value = emptyList()
+        })
   }
 
   /**

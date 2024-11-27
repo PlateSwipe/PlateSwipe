@@ -39,7 +39,7 @@ class RecipeBuilder {
    *
    * @param category The category of the recipe.
    */
-  fun setCategory(category: String) = apply { this.category = category }
+  fun setCategory(category: String?) = apply { this.category = category }
 
   /**
    * Sets the area of the recipe.
