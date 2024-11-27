@@ -1,6 +1,8 @@
 package com.android.sample.ui.createRecipe
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -38,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -91,6 +94,8 @@ fun IngredientListScreen(
     createRecipeViewModel: CreateRecipeViewModel
 ) {
   val ingredientList by ingredientViewModel.ingredientList.collectAsState()
+  val context = LocalContext.current
+
   PlateSwipeScaffold(
       navigationActions = navigationActions,
       selectedItem = navigationActions.currentRoute(),
@@ -151,11 +156,11 @@ fun IngredientListScreen(
                   contentAlignment = Alignment.Center) {
                     Button(
                         onClick = {
-                          for (ingredient in ingredientList) {
-                            createRecipeViewModel.addIngredientAndMeasurement(
-                                ingredient.name, ingredient.quantity.toString())
-                          }
-                          navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_INSTRUCTION)
+                          handleIngredientList(
+                              ingredientList = ingredientList,
+                              createRecipeViewModel = createRecipeViewModel,
+                              navigationActions = navigationActions,
+                              context = context)
                         },
                         modifier =
                             Modifier.width(BUTTON_WIDTH)
@@ -178,6 +183,31 @@ fun IngredientListScreen(
                   }
             }
       })
+}
+
+/**
+ * Helper function to handle ingredient list validation and navigation.
+ *
+ * @param ingredientList The list of ingredients to validate.
+ * @param createRecipeViewModel The view model to handle recipe creation.
+ * @param navigationActions The navigation actions to handle navigation.
+ */
+private fun handleIngredientList(
+    ingredientList: List<Ingredient>,
+    createRecipeViewModel: CreateRecipeViewModel,
+    navigationActions: NavigationActions,
+    context: Context
+) {
+  if (ingredientList.isEmpty()) {
+    // Show toast for missing ingredients
+    Toast.makeText(context, R.string.ingredient_list_error, Toast.LENGTH_SHORT).show()
+  } else {
+    ingredientList.forEach { ingredient ->
+      createRecipeViewModel.addIngredientAndMeasurement(
+          ingredient.name, ingredient.quantity.toString())
+    }
+    navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_INSTRUCTION)
+  }
 }
 
 /**

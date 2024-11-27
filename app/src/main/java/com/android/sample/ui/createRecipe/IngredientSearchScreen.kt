@@ -21,7 +21,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -53,7 +52,6 @@ import com.android.sample.resources.C.Dimension.IngredientSearchScreen.POP_UP_EL
 import com.android.sample.resources.C.Dimension.IngredientSearchScreen.RESULT_FONT_SIZE
 import com.android.sample.resources.C.Dimension.IngredientSearchScreen.SPACER_WEIGHT
 import com.android.sample.resources.C.Tag.IngredientSearchScreen.DO_NOT_SHOW_CONFIRMATION
-import com.android.sample.resources.C.Tag.IngredientSearchScreen.INITIAL_LOADING_STATE
 import com.android.sample.resources.C.Tag.PADDING
 import com.android.sample.resources.C.TestTag.IngredientSearchScreen.CANCEL_BUTTON
 import com.android.sample.resources.C.TestTag.IngredientSearchScreen.CONFIRMATION_BUTTON
@@ -78,25 +76,21 @@ fun IngredientSearchScreen(
     ingredientViewModel: IngredientViewModel,
 ) {
   val listIngredient = ingredientViewModel.searchingIngredientList.collectAsState()
+  val isSearching = ingredientViewModel.isSearching.collectAsState()
   var showConfirmation by remember { mutableStateOf(DO_NOT_SHOW_CONFIRMATION) }
   var selectedIngredient by remember { mutableStateOf<Ingredient?>(null) }
-  var isLoading by remember { mutableStateOf(INITIAL_LOADING_STATE) }
 
   PlateSwipeScaffold(
       navigationActions = navigationActions,
       selectedItem = navigationActions.currentRoute(),
       showBackArrow = true,
       content = { paddingValues ->
-        LaunchedEffect(listIngredient.value) { isLoading = false }
-
         Column(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.testTag(DRAGGABLE_ITEM).fillMaxSize().padding(paddingValues)) {
               SearchDisplay(
-                  ingredientViewModel = ingredientViewModel,
-                  navigationActions = navigationActions,
-                  onValueChange = { query -> isLoading = query.isNotEmpty() })
+                  ingredientViewModel = ingredientViewModel, navigationActions = navigationActions)
 
               ResultDisplay()
 
@@ -105,11 +99,11 @@ fun IngredientSearchScreen(
                   modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
                   verticalArrangement = Arrangement.Top,
                   horizontalAlignment = Alignment.CenterHorizontally) {
-                    if (isLoading) {
+                    if (isSearching.value) {
                       LoadingCook(
                           modifier = Modifier.weight(LOADING_COOK_WEIGHT), size = LOADING_COOK_SIZE)
                       Spacer(modifier = Modifier.weight(SPACER_WEIGHT))
-                    } else {
+                    } else if (listIngredient.value.isNotEmpty()) {
                       for (ingredient in listIngredient.value) {
                         IngredientItem(
                             ingredient = ingredient,
@@ -118,6 +112,11 @@ fun IngredientSearchScreen(
                               showConfirmation = true
                             })
                       }
+                    } else {
+                      Text(
+                          text = stringResource(R.string.no_ingredients),
+                          style = MaterialTheme.typography.bodyMedium,
+                          color = MaterialTheme.colorScheme.onPrimary)
                     }
                   }
               // Display the confirmation pop-up if the user selects an ingredient
@@ -143,13 +142,11 @@ fun IngredientSearchScreen(
  *
  * @param ingredientViewModel the view model for the ingredient.
  * @param navigationActions the navigation actions.
- * @param onValueChange the callback to invoke when the value changes.
  */
 @Composable
 private fun SearchDisplay(
     ingredientViewModel: IngredientViewModel,
-    navigationActions: NavigationActions,
-    onValueChange: (String) -> Unit
+    navigationActions: NavigationActions
 ) {
   Row(
       modifier = Modifier.fillMaxWidth().padding(PADDING.dp),
@@ -159,7 +156,6 @@ private fun SearchDisplay(
         Spacer(modifier = Modifier.width(PADDING.dp).weight(SPACER_WEIGHT))
         SearchBar(
             modifier = Modifier.padding(PADDING.dp).weight(IMAGE_WEIGHT),
-            onValueChange = onValueChange,
             onDebounce = { query ->
               if (query.isNotEmpty()) {
                 ingredientViewModel.fetchIngredientByName(query)
