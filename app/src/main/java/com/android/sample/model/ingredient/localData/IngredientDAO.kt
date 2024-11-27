@@ -1,4 +1,4 @@
-package com.android.sample.model.ingredient
+package com.android.sample.model.ingredient.localData
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -44,4 +44,13 @@ interface IngredientDAO {
 
   /** Delete all ingredients from the database. */
   @Query("DELETE FROM ingredient") suspend fun deleteAll()
+
+  /**
+   * Retrieves an ingredient by its barcode.
+   *
+   * @param barcode The barcode of the ingredient.
+   * @return The `IngredientEntity` object with the given barcode.
+   */
+  @Query("SELECT * FROM ingredient WHERE barcode = :barcode")
+  suspend fun get(barcode: Long): IngredientEntity
 }
