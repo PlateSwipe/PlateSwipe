@@ -146,61 +146,99 @@ fun IngredientListScreen(
               }
 
               // Column for ingredients with scroll and weight for flexible space distribution
-              Column(
-                  modifier =
-                      Modifier.fillMaxWidth() // Changed to fill available width instead of size
-                          .weight(INGREDIENT_LIST_WEIGHT)
-                          .verticalScroll(rememberScrollState())) {
-                    for (ingredient in ingredientList) {
-                      // Display the ingredient
-                      IngredientPreview(ingredient, ingredientViewModel)
-                    }
-                  }
+              ColumnIngredient(
+                  ingredientList, ingredientViewModel, Modifier.weight(INGREDIENT_LIST_WEIGHT))
 
               // Box for the save button, positioned at the bottom center
-              Box(
-                  modifier = Modifier.fillMaxWidth().padding(PADDING_16.dp),
-                  contentAlignment = Alignment.Center) {
-                    Button(
-                        onClick = {
-                          for ((ingredient, quantity) in ingredientList) {
-                            // Check if the ingredient has a quantity
-                            if (!quantity.isNullOrEmpty()) {
-                              createRecipeViewModel.addIngredientAndMeasurement(
-                                  ingredient.name, quantity.toString())
-                            } else {
-                              // Display an error message if an ingredient has no quantity
-                              displayErrorIngredientMessage.value = true
-                            }
-                          }
-                          if (!displayErrorIngredientMessage.value) {
-                            navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_INSTRUCTION)
-                          }
-                        },
-                        modifier =
-                            Modifier.width(BUTTON_WIDTH)
-                                .height(BUTTON_HEIGHT)
-                                .background(
-                                    color = lightCream,
-                                    shape = RoundedCornerShape(size = BUTTON_ROUND.dp))
-                                .align(Alignment.BottomCenter)
-                                .zIndex(BUTTON_Z)
-                                .testTag(NEXT_STEP_BUTTON),
-                        shape = RoundedCornerShape(BUTTON_ROUND.dp),
-                        colors =
-                            ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.primary),
-                    ) {
-                      Text(
-                          text = stringResource(R.string.next_step),
-                          style = Typography.bodyMedium.copy(fontWeight = FontWeight.Bold))
-                    }
-                  }
+              SaveButton(
+                  ingredientList,
+                  createRecipeViewModel,
+                  displayErrorIngredientMessage,
+                  navigationActions)
             }
         if (displayErrorIngredientMessage.value) {
-          ErrorPopUp(displayErrorIngredientMessage)
+          ErrorPopUp(
+              displayErrorIngredientMessage,
+              if (ingredientList.isEmpty()) stringResource(R.string.pop_up_message_no_ingredient)
+              else stringResource(R.string.pop_up_message_no_quantity))
         }
       })
+}
+
+/**
+ * Composable that displays the save button to navigate to the next step.
+ *
+ * @param ingredientList the list of ingredients to save.
+ * @param createRecipeViewModel the view model to handle recipe creation.
+ * @param displayErrorIngredientMessage the state to display the error message.
+ * @param navigationActions the navigation actions to handle navigation.
+ */
+@Composable
+private fun SaveButton(
+    ingredientList: List<Pair<Ingredient, String?>>,
+    createRecipeViewModel: CreateRecipeViewModel,
+    displayErrorIngredientMessage: MutableState<Boolean>,
+    navigationActions: NavigationActions
+) {
+  Box(
+      modifier = Modifier.fillMaxWidth().padding(PADDING_16.dp),
+      contentAlignment = Alignment.Center) {
+        Button(
+            onClick = {
+              if (ingredientList.isEmpty()) {
+                displayErrorIngredientMessage.value = true
+              } else {
+                for ((ingredient, quantity) in ingredientList) {
+                  // Check if the ingredient has a quantity
+                  if (!quantity.isNullOrEmpty()) {
+                    createRecipeViewModel.addIngredientAndMeasurement(
+                        ingredient.name, quantity.toString())
+                  } else {
+                    // Display an error message if an ingredient has no quantity
+                    displayErrorIngredientMessage.value = true
+                  }
+                }
+                if (!displayErrorIngredientMessage.value) {
+                  navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_INSTRUCTION)
+                }
+              }
+            },
+            modifier =
+                Modifier.width(BUTTON_WIDTH)
+                    .height(BUTTON_HEIGHT)
+                    .background(
+                        color = lightCream, shape = RoundedCornerShape(size = BUTTON_ROUND.dp))
+                    .align(Alignment.BottomCenter)
+                    .zIndex(BUTTON_Z)
+                    .testTag(NEXT_STEP_BUTTON),
+            shape = RoundedCornerShape(BUTTON_ROUND.dp),
+            colors =
+                ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+        ) {
+          Text(
+              text = stringResource(R.string.next_step),
+              style = Typography.bodyMedium.copy(fontWeight = FontWeight.Bold))
+        }
+      }
+}
+
+/** Composable that displays the list of ingredients. */
+@Composable
+private fun ColumnIngredient(
+    ingredientList: List<Pair<Ingredient, String?>>,
+    ingredientViewModel: IngredientViewModel,
+    modifier: Modifier = Modifier
+) {
+  Column(
+      modifier =
+          modifier
+              .fillMaxWidth() // Changed to fill available width instead of size
+              .verticalScroll(rememberScrollState())) {
+        for (ingredient in ingredientList) {
+          // Display the ingredient
+          IngredientPreview(ingredient, ingredientViewModel)
+        }
+      }
 }
 
 /**
@@ -209,33 +247,35 @@ fun IngredientListScreen(
  * @param displayErrorIngredientMessage the state to display the error message.
  */
 @Composable
-private fun ErrorPopUp(displayErrorIngredientMessage: MutableState<Boolean>) {
+private fun ErrorPopUp(displayErrorIngredientMessage: MutableState<Boolean>, message: String) {
   LaunchedEffect(Unit) {
     delay(POP_UP_DELAY)
     displayErrorIngredientMessage.value = false
   }
 
   // Popup implementation
-  Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-    Box(
-        modifier =
-            Modifier.wrapContentSize()
-                .background(
-                    color = MaterialTheme.colorScheme.surface,
-                    shape = RoundedCornerShape(ROUND_CORNER.dp))
-                .border(
-                    width = POP_UP_WIDTH.dp,
-                    color = MaterialTheme.colorScheme.error,
-                    shape = RoundedCornerShape(ROUND_CORNER.dp))
-                .padding(PADDING_16.dp),
-        contentAlignment = Alignment.Center) {
-          Text(
-              text = stringResource(R.string.pop_up_message),
-              color = MaterialTheme.colorScheme.error,
-              style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-              modifier = Modifier.zIndex(1f))
-        }
-  }
+  Box(
+      modifier = Modifier.fillMaxSize().padding(PADDING_32.dp),
+      contentAlignment = Alignment.Center) {
+        Box(
+            modifier =
+                Modifier.wrapContentSize()
+                    .background(
+                        color = MaterialTheme.colorScheme.surface,
+                        shape = RoundedCornerShape(ROUND_CORNER.dp))
+                    .border(
+                        width = POP_UP_WIDTH.dp,
+                        color = MaterialTheme.colorScheme.error,
+                        shape = RoundedCornerShape(ROUND_CORNER.dp))
+                    .padding(PADDING_16.dp),
+            contentAlignment = Alignment.Center) {
+              Text(
+                  text = message,
+                  color = MaterialTheme.colorScheme.error,
+                  style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                  modifier = Modifier.zIndex(1f))
+            }
+      }
 }
 
 /**

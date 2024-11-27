@@ -109,7 +109,8 @@
     <string name="pop_up_description">Do you want to add this ingredient to your recipe?</string>
     <string name="pop_up_confirmation">Add to Recipe</string>
     <string name="pop_up_cancel">Cancel</string>
-    <string name="pop_up_message">All ingredients must have a quantity</string>
+    <string name="pop_up_message_no_quantity">All ingredients must have a quantity</string>
+    <string name="pop_up_message_no_ingredient">You must have at least one Ingredient in your recipe</string>
 
     //RecipeListScreen
     <string name="ingredient_list">Ingredients list</string>
