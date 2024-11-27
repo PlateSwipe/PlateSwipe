@@ -126,8 +126,7 @@ fun AddInstructionStepContent(
                       OutlinedTextField(
                           value = stepTime ?: "",
                           onValueChange = { newValue ->
-                            if (newValue.all { char -> char.isDigit() } &&
-                                newValue.length <= TIME_CHARACTER_LIMIT) {
+                            if (checkTimeFormat(newValue)) {
                               stepTime = newValue
                             }
                           },
@@ -287,6 +286,15 @@ fun defaultIcon(createRecipeViewModel: CreateRecipeViewModel): IconType? {
  */
 fun verifyStepDescription(showError: Boolean, stepDescription: String): Boolean {
   return showError && stepDescription.isEmpty()
+}
+
+/**
+ * Checks if the time format is valid.
+ *
+ * @param time The time to be checked.
+ */
+fun checkTimeFormat(time: String): Boolean {
+  return time.all { char -> char.isDigit() } && time.length <= TIME_CHARACTER_LIMIT
 }
 
 /**
