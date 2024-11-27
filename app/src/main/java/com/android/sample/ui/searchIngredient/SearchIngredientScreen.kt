@@ -49,6 +49,7 @@ import com.android.sample.resources.C.Dimension.IngredientSearchScreen.LOADING_C
 import com.android.sample.resources.C.Dimension.IngredientSearchScreen.RESULT_FONT_SIZE
 import com.android.sample.resources.C.Dimension.IngredientSearchScreen.SPACER_WEIGHT
 import com.android.sample.resources.C.Dimension.PADDING_16
+import com.android.sample.resources.C.Dimension.PADDING_32
 import com.android.sample.resources.C.Tag.IngredientSearchScreen.DO_NOT_SHOW_CONFIRMATION
 import com.android.sample.resources.C.TestTag.IngredientSearchScreen.DRAGGABLE_ITEM
 import com.android.sample.resources.C.TestTag.IngredientSearchScreen.SCANNER_ICON
@@ -140,13 +141,19 @@ private fun DisplayListIngredients(
             IngredientItem(ingredient = ingredient.first, onClick = { onClick(ingredient) })
           }
         } else {
-          Column {
-            Text(
-                text = stringResource(R.string.no_ingredients),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onPrimary)
-            ChefImage()
-          }
+          // Display the no ingredients message
+          Spacer(modifier = Modifier.size(PADDING_32.dp))
+          Column(
+              verticalArrangement = Arrangement.Center,
+              horizontalAlignment = Alignment.CenterHorizontally,
+              modifier = Modifier.fillMaxSize()) {
+                Text(
+                    text = stringResource(R.string.no_ingredients),
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontSize = RESULT_FONT_SIZE.sp,
+                    color = MaterialTheme.colorScheme.onPrimary)
+                ChefImage()
+              }
         }
       }
 }

@@ -12,6 +12,7 @@ interface SearchIngredientViewModel {
   // The list of ingredient whe select
   val ingredientList: StateFlow<List<Pair<Ingredient, String?>>>
 
+  // The state of searching
   val isSearching: StateFlow<Boolean>
 
   /**

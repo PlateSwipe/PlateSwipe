@@ -50,6 +50,7 @@ class IngredientViewModel(private val repository: IngredientRepository) :
     if (_ingredient.value.first?.barCode == barCode) {
       return
     }
+    // Fetch ingredient from repository
     repository.get(
         barCode,
         onSuccess = { ingredient ->
@@ -78,10 +79,12 @@ class IngredientViewModel(private val repository: IngredientRepository) :
       return quantity1 ?: quantity2 ?: ""
     }
 
+    // Regular expression to find the first integer in the string
     val regex = Regex("""\d+""")
     val match1 = regex.find(quantity1)
     val match2 = regex.find(quantity2)
 
+    // If both strings contain an integer, add them together
     return if (match1 != null && match2 != null) {
       val addition = match1.value.toInt() + match2.value.toInt()
       quantity1.replaceFirst(match1.value, addition.toString())
