@@ -6,6 +6,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.model.recipe.FirestoreRecipesRepository
@@ -70,14 +71,22 @@ class CategoryScreenTest {
         .onNodeWithTag("DropdownMenuButton")
         .assertExists()
         .assertIsDisplayed()
-        .assertTextEquals("Choose a category")
+        .assertTextEquals("No category selected")
 
     // Click dropdown button to open menu
     composeTestRule.onNodeWithTag("DropdownMenuButton").performClick()
 
-    // Verify each category is displayed in the dropdown menu
+    // Verify that at least one category is displayed
+    composeTestRule
+        .onNodeWithTag("DropdownMenuItem_${Recipe.getCategories().first()}")
+        .assertExists()
+        .assertIsDisplayed()
+
+    // Scroll through the list and verify all categories exist
     Recipe.getCategories().forEach { category ->
-      composeTestRule.onNodeWithTag("DropdownMenuItem_$category").assertExists().assertIsDisplayed()
+      composeTestRule
+          .onNodeWithTag("DropdownMenuItem_$category", useUnmergedTree = true)
+          .assertExists()
     }
   }
 
@@ -88,8 +97,15 @@ class CategoryScreenTest {
           navigationActions = mockNavigationActions, createRecipeViewModel = createRecipeViewModel)
     }
 
-    // Open dropdown menu and select a category
+    // Open dropdown menu
     composeTestRule.onNodeWithTag("DropdownMenuButton").performClick()
+
+    // Scroll to the desired category if necessary
+    composeTestRule
+        .onNodeWithTag("DropdownMenuItem_Vegan", useUnmergedTree = true)
+        .performScrollTo()
+
+    // Select the category
     composeTestRule.onNodeWithTag("DropdownMenuItem_Vegan").performClick()
 
     // Verify dropdown button text updates to the selected category

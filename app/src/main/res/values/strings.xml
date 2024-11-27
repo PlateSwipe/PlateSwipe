@@ -123,7 +123,9 @@
     //CategoryScreen
     <string name="select_category">Select A Category</string>
     <string name="select_category_description_optional">Selecting a category is optional, but it can help others find your recipe more easily.</string>
-    <string name="select_category_placeholder">Choose a category</string>
+    <string name="no_category_selected">No category selected</string>
+    <string name="no_category">No category</string>
+
 
 
 </resources>

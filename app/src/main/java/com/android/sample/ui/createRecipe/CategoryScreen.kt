@@ -5,11 +5,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
@@ -74,7 +76,8 @@ fun CategoryContent(
     navigationActions: NavigationActions,
     createRecipeViewModel: CreateRecipeViewModel
 ) {
-  val categories = Recipe.getCategories()
+  val noCategoryString = stringResource(R.string.no_category)
+  val categories = listOf(noCategoryString) + Recipe.getCategories()
   val selectedCategory = remember { mutableStateOf(createRecipeViewModel.getRecipeCategory()) }
   val expanded = remember { mutableStateOf(false) }
 
@@ -123,8 +126,7 @@ fun CategoryContent(
                         contentColor = MaterialTheme.colorScheme.onSurface)) {
                   Text(
                       text =
-                          selectedCategory.value
-                              ?: stringResource(R.string.select_category_placeholder),
+                          selectedCategory.value ?: stringResource(R.string.no_category_selected),
                       style = MaterialTheme.typography.bodyMedium,
                       modifier = Modifier.padding(vertical = PADDING_8.dp))
                 }
@@ -132,17 +134,24 @@ fun CategoryContent(
             DropdownMenu(
                 expanded = expanded.value,
                 onDismissRequest = { expanded.value = false },
-                modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surface)) {
-                  categories.forEach { category ->
+                modifier =
+                    Modifier.fillMaxWidth(0.9f)
+                        .fillMaxHeight(0.3f)
+                        .background(MaterialTheme.colorScheme.surface)) {
+                  categories.forEachIndexed { index, category ->
                     DropdownMenuItem(
                         text = {
                           Text(text = category, style = MaterialTheme.typography.bodyMedium)
                         },
                         onClick = {
-                          selectedCategory.value = category
+                          selectedCategory.value =
+                              if (category == noCategoryString) null else category
                           expanded.value = false
                         },
                         modifier = Modifier.testTag("DropdownMenuItem_$category"))
+                    if (index < categories.size - 1) {
+                      Divider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f))
+                    }
                   }
                 }
           }
@@ -155,7 +164,7 @@ fun CategoryContent(
         text = stringResource(R.string.next_step),
         modifier = Modifier.align(Alignment.BottomCenter).testTag(BUTTON_TEST_TAG),
         onClick = {
-          selectedCategory.value?.let { createRecipeViewModel.updateRecipeCategory(it) }
+          createRecipeViewModel.updateRecipeCategory(selectedCategory.value)
           navigationActions.navigateTo(Screen.CREATE_RECIPE_INGREDIENTS)
         })
   }

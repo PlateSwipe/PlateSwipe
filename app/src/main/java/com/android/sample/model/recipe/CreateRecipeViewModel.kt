@@ -108,7 +108,7 @@ class CreateRecipeViewModel(
    *
    * @param category The new category of the recipe.
    */
-  fun updateRecipeCategory(category: String) {
+  fun updateRecipeCategory(category: String?) {
     recipeBuilder.setCategory(category)
   }
 
