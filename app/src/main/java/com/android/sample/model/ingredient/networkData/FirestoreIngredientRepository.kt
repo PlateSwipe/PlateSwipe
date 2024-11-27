@@ -1,5 +1,7 @@
-package com.android.sample.model.ingredient
+package com.android.sample.model.ingredient.networkData
 
+import com.android.sample.model.ingredient.Ingredient
+import com.android.sample.model.ingredient.IngredientRepository
 import com.android.sample.resources.C
 import com.android.sample.resources.C.Tag.FIRESTORE_INGREDIENT_CATEGORIES
 import com.android.sample.resources.C.Tag.FIRESTORE_INGREDIENT_IMAGES
@@ -13,7 +15,8 @@ import com.google.firebase.firestore.FirebaseFirestore
  *
  * @param db instance of [FirebaseFirestore]
  */
-class FirestoreIngredientRepository(private val db: FirebaseFirestore) : IngredientRepository {
+class FirestoreIngredientRepository(private val db: FirebaseFirestore) :
+    IngredientNetworkRepository {
 
   @Suppress("UNCHECKED_CAST")
   private fun documentSnapshotToIngredient(documentSnapshot: DocumentSnapshot): Ingredient {
@@ -78,22 +81,6 @@ class FirestoreIngredientRepository(private val db: FirebaseFirestore) : Ingredi
       count: Int
   ) {
     searchFiltered(Filter.equalTo("name", name), onSuccess, onFailure, count)
-  }
-
-  override fun add(ingredient: Ingredient) {
-    TODO("Not yet implemented")
-  }
-
-  override fun update(ingredient: Ingredient) {
-    TODO("Not yet implemented")
-  }
-
-  override fun delete(ingredient: Ingredient) {
-    TODO("Not yet implemented")
-  }
-
-  override fun getAll(onSuccess: (List<Ingredient>) -> Unit, onFailure: (Exception) -> Unit) {
-    TODO("Not yet implemented")
   }
 
   /**

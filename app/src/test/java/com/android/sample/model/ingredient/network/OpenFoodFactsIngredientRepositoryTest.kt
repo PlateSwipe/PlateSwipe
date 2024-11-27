@@ -1,6 +1,7 @@
-package com.android.sample.model.ingredient
+package com.android.sample.model.ingredient.network
 
 import com.android.sample.model.image.ImageRepositoryFirebase
+import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.ingredient.networkData.OpenFoodFactsIngredientRepository
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.storage.FirebaseStorage

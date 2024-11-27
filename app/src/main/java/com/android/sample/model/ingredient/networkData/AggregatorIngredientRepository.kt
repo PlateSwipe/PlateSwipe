@@ -1,8 +1,9 @@
-package com.android.sample.model.ingredient
+package com.android.sample.model.ingredient.networkData
 
 import android.util.Log
 import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.image.ImageUploader
+import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.resources.C
 import com.android.sample.resources.C.Tag.AGGREGATOR_ERROR_FIRESTORE_ADD_INGR
 import com.android.sample.resources.C.Tag.AGGREGATOR_ERROR_GET_INGR_FIRESTORE
@@ -24,7 +25,7 @@ open class AggregatorIngredientRepository(
     private val openFoodFactsIngredientRepository: OpenFoodFactsIngredientRepository,
     private val imageStorage: ImageRepositoryFirebase,
     private val imageUploader: ImageUploader
-) : IngredientRepository {
+) : IngredientNetworkRepository {
 
   /**
    * Get an ingredient by barcode. If it isn't found in Firestore, it will be searched in
@@ -97,22 +98,6 @@ open class AggregatorIngredientRepository(
         },
         onFailure = onFailure,
         count = count)
-  }
-
-  override fun add(ingredient: Ingredient) {
-    TODO("Not yet implemented")
-  }
-
-  override fun update(ingredient: Ingredient) {
-    TODO("Not yet implemented")
-  }
-
-  override fun delete(ingredient: Ingredient) {
-    TODO("Not yet implemented")
-  }
-
-  override fun getAll(onSuccess: (List<Ingredient>) -> Unit, onFailure: (Exception) -> Unit) {
-    TODO("Not yet implemented")
   }
 
   private fun checkFirestoreIngredients(
