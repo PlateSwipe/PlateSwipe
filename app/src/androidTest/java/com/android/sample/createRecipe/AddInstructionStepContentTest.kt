@@ -1,10 +1,8 @@
 package com.android.sample.createRecipe
 
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.android.sample.R
 import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.model.recipe.FirestoreRecipesRepository
@@ -146,7 +144,7 @@ class AddInstructionStepScreenTest {
   }
 
   @Test
-  fun AddInstructionDisplaysAlertBoxWhenTryingToDeleteTest() {
+  fun addInstructionDisplaysAlertBoxWhenTryingToDeleteTest() {
     createRecipeViewModel.addRecipeInstruction(
         Instruction("10", "Preheat oven to 180°C...", "Cook"))
     createRecipeViewModel.selectInstruction(0)
@@ -167,10 +165,7 @@ class AddInstructionStepScreenTest {
     composeTestRule.onNodeWithTag(CONFIRMATION_BUTTON).assertIsDisplayed()
     composeTestRule.onNodeWithTag(CANCEL_BUTTON).assertIsDisplayed()
 
-    composeTestRule.onNodeWithText(stringResource(R.string.delete)).assertIsDisplayed()
-    composeTestRule
-        .onNodeWithText(stringResource(R.string.u_sure_u_want_to_delete))
-        .assertIsDisplayed()
-    composeTestRule.onNodeWithText(stringResource(R.string.cancel)).assertIsDisplayed()
+    composeTestRule.onNodeWithText("Are you sure you want to delete this step?").assertIsDisplayed()
+    composeTestRule.onNodeWithText("Cancel").assertIsDisplayed()
   }
 }
