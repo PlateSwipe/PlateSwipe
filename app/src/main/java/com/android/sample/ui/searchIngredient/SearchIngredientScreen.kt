@@ -19,6 +19,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -51,6 +52,7 @@ import com.android.sample.resources.C.Dimension.PADDING_16
 import com.android.sample.resources.C.Tag.IngredientSearchScreen.DO_NOT_SHOW_CONFIRMATION
 import com.android.sample.resources.C.TestTag.IngredientSearchScreen.DRAGGABLE_ITEM
 import com.android.sample.resources.C.TestTag.IngredientSearchScreen.SCANNER_ICON
+import com.android.sample.ui.createRecipe.ChefImage
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.utils.ConfirmationPopUp
@@ -73,7 +75,6 @@ fun SearchIngredientScreen(
     popUpConfirmationButtonText: String,
     onConfirmation: (Ingredient) -> Unit,
 ) {
-  // val listIngredient = searchIngredientViewModel.searchingIngredientList.collectAsState()
   val listIngredient = searchIngredientViewModel.searchingIngredientList.collectAsState()
   val isSearching = searchIngredientViewModel.isSearching.collectAsState()
   var showConfirmation by remember { mutableStateOf(DO_NOT_SHOW_CONFIRMATION) }
@@ -92,33 +93,15 @@ fun SearchIngredientScreen(
                   searchIngredientViewModel = searchIngredientViewModel,
                   navigationActions = navigationActions)
 
+              // Display the result text
               ResultDisplay()
 
               // Display the list of ingredients
-              Column(
-                  modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
-                  verticalArrangement = Arrangement.Top,
-                  horizontalAlignment = Alignment.CenterHorizontally) {
-                    if (isSearching.value) {
-                      LoadingCook(
-                          modifier = Modifier.weight(LOADING_COOK_WEIGHT), size = LOADING_COOK_SIZE)
-                      Spacer(modifier = Modifier.weight(SPACER_WEIGHT))
-                    } else if (listIngredient.value.isNotEmpty()) {
-                      for (ingredient in listIngredient.value) {
-                        IngredientItem(
-                            ingredient = ingredient.first,
-                            onClick = {
-                              selectedIngredient = ingredient.first
-                              showConfirmation = true
-                            })
-                      }
-                    } else {
-                      Text(
-                          text = stringResource(R.string.no_ingredients),
-                          style = MaterialTheme.typography.bodyMedium,
-                          color = MaterialTheme.colorScheme.onPrimary)
-                    }
-                  }
+              DisplayListIngredients(isSearching, listIngredient) { (ingredient, _) ->
+                selectedIngredient = ingredient
+                showConfirmation = true
+              }
+
               // Display the confirmation pop-up if the user selects an ingredient
               if (showConfirmation && selectedIngredient != null) {
                 ConfirmationPopUp(
@@ -137,6 +120,35 @@ fun SearchIngredientScreen(
               }
             }
       })
+}
+
+@Composable
+private fun DisplayListIngredients(
+    isSearching: State<Boolean>,
+    listIngredient: State<List<Pair<Ingredient, String?>>>,
+    onClick: (Pair<Ingredient, String?>) -> Unit
+) {
+  Column(
+      modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+      verticalArrangement = Arrangement.Top,
+      horizontalAlignment = Alignment.CenterHorizontally) {
+        if (isSearching.value) {
+          LoadingCook(modifier = Modifier.weight(LOADING_COOK_WEIGHT), size = LOADING_COOK_SIZE)
+          Spacer(modifier = Modifier.weight(SPACER_WEIGHT))
+        } else if (listIngredient.value.isNotEmpty()) {
+          for (ingredient in listIngredient.value) {
+            IngredientItem(ingredient = ingredient.first, onClick = { onClick(ingredient) })
+          }
+        } else {
+          Column {
+            Text(
+                text = stringResource(R.string.no_ingredients),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onPrimary)
+            ChefImage()
+          }
+        }
+      }
 }
 
 /**

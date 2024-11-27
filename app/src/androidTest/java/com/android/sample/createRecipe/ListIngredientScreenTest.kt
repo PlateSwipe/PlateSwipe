@@ -131,6 +131,21 @@ class ListIngredientScreenTest {
   }
 
   @Test
+  fun testnextStepWithoutAnyIngredient() {
+    // Simulate clicking the remove icon for the first ingredient
+    ingredientViewModel.ingredientList.value.forEach {
+      ingredientViewModel.removeIngredient(it.first)
+    }
+    composeTestRule
+        .onNodeWithText("Next Step", useUnmergedTree = true)
+        .assertIsDisplayed()
+        .performClick()
+
+    // Verify that the ingredient was removed from the view model
+    composeTestRule.onNodeWithText("Please add at least one ingredient").assertIsDisplayed()
+  }
+
+  @Test
   fun testIngredientQuantityUpdateInTextField() {
     // Given the initial ingredient with a quantity
     val ingredient = mockedIngredients[0]
