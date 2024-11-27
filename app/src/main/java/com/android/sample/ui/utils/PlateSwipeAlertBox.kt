@@ -30,17 +30,14 @@ fun PlateSwipeAlertBox(
     onDismiss: () -> Unit,
     containerColor: Color = MaterialTheme.colorScheme.onPrimaryContainer,
     textColor: Color = MaterialTheme.colorScheme.onPrimary,
-    modifierAlertBox: Modifier =
-        Modifier.fillMaxWidth()
-            .padding(PADDING.dp)
-            .shadow(elevation = POP_UP_ELEVATION.dp, clip = POP_UP_CLIP)
-            .testTag(CONFIRMATION_POP_UP),
-    modifierConfirmationButton: Modifier = Modifier.testTag(CONFIRMATION_BUTTON),
-    modifierDismissButton: Modifier = Modifier.testTag(CANCEL_BUTTON)
 ) {
   AlertDialog(
       onDismissRequest = onDismiss,
-      modifier = modifierAlertBox,
+      modifier =
+          Modifier.fillMaxWidth()
+              .padding(PADDING.dp)
+              .shadow(elevation = POP_UP_ELEVATION.dp, clip = POP_UP_CLIP)
+              .testTag(CONFIRMATION_POP_UP),
       title = {
         Text(
             text = popUpMessage,
@@ -49,13 +46,13 @@ fun PlateSwipeAlertBox(
             color = textColor)
       },
       confirmButton = {
-        TextButton(onClick = onConfirm, modifier = modifierConfirmationButton) {
+        TextButton(onClick = onConfirm, modifier = Modifier.testTag(CONFIRMATION_BUTTON)) {
           Text(
               text = confirmMessage, style = MaterialTheme.typography.titleSmall, color = textColor)
         }
       },
       dismissButton = {
-        TextButton(onClick = onDismiss, modifier = modifierDismissButton) {
+        TextButton(onClick = onDismiss, modifier = Modifier.testTag(CANCEL_BUTTON)) {
           Text(
               text = dismissMessage, style = MaterialTheme.typography.titleSmall, color = textColor)
         }
