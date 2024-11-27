@@ -53,7 +53,9 @@ import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScre
 import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScreen.ROW_SIZE
 import com.android.sample.resources.C.Tag.RECIPE_NAME_BASE_PADDING
 import com.android.sample.resources.C.Tag.SMALL_PADDING
+import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.ADD_ICON_DESCRIPTION
 import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.ADD_INSTRUCTION_BUTTON
+import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.EDIT_ICON_DESCRIPTION
 import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.EDIT_INSTRUCTION_ICON
 import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.INSTRUCTION_LIST
 import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.INSTRUCTION_LIST_ITEM
@@ -67,6 +69,7 @@ import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen
 import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.RECIPE_LIST_ITEM_THUMBNAIL
 import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.RECIPE_NAME_TEXT
 import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.SCREEN_COLUMN
+import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.STEP_ICON_DESCRIPTION
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
@@ -120,7 +123,7 @@ fun RecipeListInstructionsContent(
 
       Icon(
           imageVector = Icons.Default.Add,
-          contentDescription = "Add",
+          contentDescription = ADD_ICON_DESCRIPTION,
           modifier =
               Modifier.size(ICON_SIZE.dp)
                   .clickable(
@@ -232,7 +235,7 @@ fun InstructionValue(
                     painter =
                         painterResource(
                             id = createRecipeViewModel.getRecipeInstruction(index).icon.iconResId),
-                    contentDescription = "Icon",
+                    contentDescription = STEP_ICON_DESCRIPTION,
                     modifier = Modifier.size(ICON_SIZE.dp).testTag(RECIPE_LIST_INSTRUCTION_ICON))
 
                 Column(modifier = Modifier.testTag(INSTRUCTION_TEXT_SPACE)) {
@@ -255,7 +258,7 @@ fun InstructionValue(
                 }
                 Icon(
                     imageVector = Icons.Default.ModeEdit,
-                    contentDescription = "Edit",
+                    contentDescription = EDIT_ICON_DESCRIPTION,
                     modifier = Modifier.size(ICON_SIZE.dp).testTag(EDIT_INSTRUCTION_ICON))
               }
         }

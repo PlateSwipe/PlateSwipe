@@ -713,6 +713,9 @@ object C {
       const val RECIPE_LIST_ITEM_THUMBNAIL = "InstructionThumbnail"
       const val RECIPE_LIST_INSTRUCTION_ICON = "InstructionIcon"
       const val ADD_INSTRUCTION_BUTTON = "AddInstructionButton"
+      const val ADD_ICON_DESCRIPTION = "Add"
+      const val EDIT_ICON_DESCRIPTION = "Edit"
+      const val STEP_ICON_DESCRIPTION = "Step"
     }
 
     object RecipeAddImageScreen {
