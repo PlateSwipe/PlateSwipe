@@ -1,8 +1,10 @@
 package com.android.sample.createRecipe
 
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.android.sample.R
 import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.model.recipe.FirestoreRecipesRepository
@@ -15,6 +17,7 @@ import com.android.sample.resources.C.TestTag.AddInstructionStepScreen.INSTRUCTI
 import com.android.sample.resources.C.TestTag.AddInstructionStepScreen.TIME_INPUT
 import com.android.sample.resources.C.TestTag.RecipeList.CANCEL_BUTTON
 import com.android.sample.resources.C.TestTag.RecipeList.CONFIRMATION_BUTTON
+import com.android.sample.resources.C.TestTag.RecipeList.CONFIRMATION_POP_UP
 import com.android.sample.ui.createRecipe.AddInstructionStepScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
@@ -159,7 +162,15 @@ class AddInstructionStepScreenTest {
     composeTestRule.onNodeWithTag(DELETE_BUTTON).assertIsDisplayed()
     composeTestRule.onNodeWithTag(DELETE_BUTTON).performClick()
 
+    composeTestRule.onNodeWithTag(CONFIRMATION_POP_UP).assertIsDisplayed()
+
     composeTestRule.onNodeWithTag(CONFIRMATION_BUTTON).assertIsDisplayed()
     composeTestRule.onNodeWithTag(CANCEL_BUTTON).assertIsDisplayed()
+
+    composeTestRule.onNodeWithText(stringResource(R.string.delete)).assertIsDisplayed()
+    composeTestRule
+        .onNodeWithText(stringResource(R.string.u_sure_u_want_to_delete))
+        .assertIsDisplayed()
+    composeTestRule.onNodeWithText(stringResource(R.string.cancel)).assertIsDisplayed()
   }
 }
