@@ -560,4 +560,25 @@ class CreateRecipeViewModelTest {
     createRecipeViewModel.deleteRecipeInstruction(0)
     assertTrue(createRecipeViewModel.getRecipeListOfInstructions().isEmpty())
   }
+
+  @Test
+  fun `test updateRecipeCategory accepts null value`() {
+    // Update the category with a non-null value first
+    val initialCategory = "Dessert"
+    createRecipeViewModel.updateRecipeCategory(initialCategory)
+    assertEquals(
+        initialCategory,
+        createRecipeViewModel.recipeBuilder.javaClass
+            .getDeclaredField("category")
+            .apply { isAccessible = true }
+            .get(createRecipeViewModel.recipeBuilder))
+
+    // Update the category with a null value
+    createRecipeViewModel.updateRecipeCategory(null)
+    assertNull(
+        createRecipeViewModel.recipeBuilder.javaClass
+            .getDeclaredField("category")
+            .apply { isAccessible = true }
+            .get(createRecipeViewModel.recipeBuilder))
+  }
 }

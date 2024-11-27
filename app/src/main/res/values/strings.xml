@@ -122,4 +122,12 @@
     <string name="pop_up_confirm_removal_liked_recipe">Yes</string>>
     <string name="pop_up_confirm_cancel_removal_liked_recipe">No</string>
 
+    //CategoryScreen
+    <string name="select_category">Select A Category</string>
+    <string name="select_category_description_optional">Selecting a category is optional, but it can help others find your recipe more easily.</string>
+    <string name="no_category_selected">No category selected</string>
+    <string name="no_category">No category</string>
+
+
+
 </resources>
