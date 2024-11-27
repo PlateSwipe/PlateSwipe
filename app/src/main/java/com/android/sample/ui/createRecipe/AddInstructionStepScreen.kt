@@ -196,16 +196,18 @@ fun AddInstructionStepContent(
             stringResource(R.string.save_label),
             modifier = Modifier.fillMaxWidth().testTag(SAVE_BUTTON_TAG),
             onClick = {
-              showError = stepDescription.isEmpty() // Set error if instructions are empty
-              confirmAndAssignStep(
-                  stepDescription,
-                  stepTime,
-                  selectedIcon,
-                  createRecipeViewModel,
-                  onSuccess = {
-                    createRecipeViewModel.resetSelectedInstruction()
-                    navigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INSTRUCTIONS)
-                  })
+              showError = stepDescription.isBlank() // Set error if instructions are blank
+              if (!showError) {
+                confirmAndAssignStep(
+                    stepDescription,
+                    stepTime,
+                    selectedIcon,
+                    createRecipeViewModel,
+                    onSuccess = {
+                      createRecipeViewModel.resetSelectedInstruction()
+                      navigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INSTRUCTIONS)
+                    })
+              }
             })
       }
 }
@@ -226,7 +228,7 @@ fun <T> defaultValues(defaultValue: T, selectedInstruction: Int?, onSuccess: (In
  * @return True if the error should be shown, false otherwise.
  */
 fun verifyStepDescription(showError: Boolean, stepDescription: String): Boolean {
-  return showError && stepDescription.isEmpty()
+  return showError && stepDescription.isBlank()
 }
 
 /**
