@@ -11,9 +11,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -29,11 +29,15 @@ import androidx.compose.ui.unit.dp
 import com.android.sample.R
 import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.model.recipe.Recipe
+import com.android.sample.resources.C.Dimension.CategoryScreen.DIVIDER_ALPHA
+import com.android.sample.resources.C.Dimension.CategoryScreen.DROPDOWN_HEIGHT_FRACTION
 import com.android.sample.resources.C.Dimension.PADDING_16
 import com.android.sample.resources.C.Dimension.PADDING_32
 import com.android.sample.resources.C.Dimension.PADDING_8
 import com.android.sample.resources.C.Tag.INITIAL_RECIPE_STEP
 import com.android.sample.resources.C.TestTag.Category.BUTTON_TEST_TAG
+import com.android.sample.resources.C.TestTag.Category.CATEGORY_SUBTITLE
+import com.android.sample.resources.C.TestTag.Category.CATEGORY_TITLE
 import com.android.sample.resources.C.TestTag.Category.DROPDOWN_CORNER_RADIUS
 import com.android.sample.resources.C.TestTag.Category.DROPDOWN_TEST_TAG
 import com.android.sample.ui.navigation.NavigationActions
@@ -99,7 +103,7 @@ fun CategoryContent(
               modifier =
                   Modifier.fillMaxWidth()
                       .padding(horizontal = PADDING_16.dp)
-                      .testTag("CategoryTitle"),
+                      .testTag(CATEGORY_TITLE),
               textAlign = TextAlign.Center)
 
           Spacer(modifier = Modifier.weight(1f))
@@ -109,7 +113,7 @@ fun CategoryContent(
               text = stringResource(R.string.select_category_description_optional),
               style = MaterialTheme.typography.bodyMedium,
               color = MaterialTheme.colorScheme.onPrimary,
-              modifier = Modifier.padding(horizontal = PADDING_32.dp).testTag("CategorySubtitle"),
+              modifier = Modifier.padding(horizontal = PADDING_32.dp).testTag(CATEGORY_SUBTITLE),
               textAlign = TextAlign.Center)
 
           Spacer(modifier = Modifier.weight(2f))
@@ -135,8 +139,9 @@ fun CategoryContent(
                 expanded = expanded.value,
                 onDismissRequest = { expanded.value = false },
                 modifier =
-                    Modifier.fillMaxWidth(0.9f)
-                        .fillMaxHeight(0.3f)
+                    Modifier.padding(horizontal = PADDING_16.dp)
+                        .fillMaxWidth()
+                        .fillMaxHeight(DROPDOWN_HEIGHT_FRACTION)
                         .background(MaterialTheme.colorScheme.surface)) {
                   categories.forEachIndexed { index, category ->
                     DropdownMenuItem(
@@ -150,7 +155,8 @@ fun CategoryContent(
                         },
                         modifier = Modifier.testTag("DropdownMenuItem_$category"))
                     if (index < categories.size - 1) {
-                      Divider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f))
+                      HorizontalDivider(
+                          color = MaterialTheme.colorScheme.onSurface.copy(alpha = DIVIDER_ALPHA))
                     }
                   }
                 }
