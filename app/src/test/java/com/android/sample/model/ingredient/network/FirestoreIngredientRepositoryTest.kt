@@ -1,5 +1,6 @@
 package com.android.sample.model.ingredient
 
+import com.android.sample.model.ingredient.networkData.FirestoreIngredientRepository
 import com.android.sample.ui.utils.testIngredients
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task

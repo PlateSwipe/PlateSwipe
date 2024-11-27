@@ -152,4 +152,20 @@ class OpenFoodFactsIngredientRepository(private val client: OkHttpClient) : Ingr
               }
             })
   }
+
+  override fun add(ingredient: Ingredient) {
+    TODO("Not yet implemented")
+  }
+
+  override fun update(ingredient: Ingredient) {
+    TODO("Not yet implemented")
+  }
+
+  override fun delete(ingredient: Ingredient) {
+    TODO("Not yet implemented")
+  }
+
+  override fun getAll(onSuccess: (List<Ingredient>) -> Unit, onFailure: (Exception) -> Unit) {
+    TODO("Not yet implemented")
+  }
 }

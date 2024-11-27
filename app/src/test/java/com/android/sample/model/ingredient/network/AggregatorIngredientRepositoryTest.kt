@@ -4,6 +4,9 @@ import android.graphics.Bitmap
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.image.ImageUploader
+import com.android.sample.model.ingredient.networkData.AggregatorIngredientRepository
+import com.android.sample.model.ingredient.networkData.FirestoreIngredientRepository
+import com.android.sample.model.ingredient.networkData.OpenFoodFactsIngredientRepository
 import com.android.sample.ui.utils.testIngredients
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

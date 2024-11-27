@@ -271,7 +271,7 @@ dependencies {
     ksp(libs.room.compiler)
     implementation(libs.kotlin.coroutines.core) // Coroutines (if not already added)
     testImplementation(libs.room.testing) // For Room database testing utilities
-
+    implementation(libs.gson)
 }
 
 tasks.withType<Test> {

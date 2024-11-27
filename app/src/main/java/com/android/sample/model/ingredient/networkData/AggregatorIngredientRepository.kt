@@ -99,6 +99,22 @@ open class AggregatorIngredientRepository(
         count = count)
   }
 
+  override fun add(ingredient: Ingredient) {
+    TODO("Not yet implemented")
+  }
+
+  override fun update(ingredient: Ingredient) {
+    TODO("Not yet implemented")
+  }
+
+  override fun delete(ingredient: Ingredient) {
+    TODO("Not yet implemented")
+  }
+
+  override fun getAll(onSuccess: (List<Ingredient>) -> Unit, onFailure: (Exception) -> Unit) {
+    TODO("Not yet implemented")
+  }
+
   private fun checkFirestoreIngredients(
       ingredientsOpenFoodFacts: List<Ingredient>,
       onSuccess: (List<Ingredient>) -> Unit,

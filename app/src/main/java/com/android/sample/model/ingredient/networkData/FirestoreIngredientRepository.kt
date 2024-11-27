@@ -80,6 +80,22 @@ class FirestoreIngredientRepository(private val db: FirebaseFirestore) : Ingredi
     searchFiltered(Filter.equalTo("name", name), onSuccess, onFailure, count)
   }
 
+  override fun add(ingredient: Ingredient) {
+    TODO("Not yet implemented")
+  }
+
+  override fun update(ingredient: Ingredient) {
+    TODO("Not yet implemented")
+  }
+
+  override fun delete(ingredient: Ingredient) {
+    TODO("Not yet implemented")
+  }
+
+  override fun getAll(onSuccess: (List<Ingredient>) -> Unit, onFailure: (Exception) -> Unit) {
+    TODO("Not yet implemented")
+  }
+
   /**
    * Search for ingredients by filter.
    *
