@@ -304,4 +304,32 @@ class IngredientViewModelTest {
     assertNotNull(ingredientViewModel)
     assertTrue(ingredientViewModel is IngredientViewModel)
   }
+
+  @Test
+  fun getAllDownloadedIngredientsSucces() {
+    val downloadedIngredients = testIngredients
+    `when`(ingredientRepository.getAllDownload(any(), any())).thenAnswer { invocation ->
+      val onSuccess: (List<Ingredient>) -> Unit = invocation.getArgument(0)
+      onSuccess(downloadedIngredients)
+    }
+    ingredientViewModel.getAllDownloadedIngredients()
+    assertEquals(downloadedIngredients, ingredientViewModel.ingredientDownloadList.value)
+  }
+
+  @Test
+  fun getAllDownloadedIngredientsFail() {
+    `when`(ingredientRepository.getAllDownload(any(), any())).thenAnswer { invocation ->
+      val onFailure: (Exception) -> Unit = invocation.getArgument(1)
+      onFailure(Exception("Error"))
+    }
+    ingredientViewModel.getAllDownloadedIngredients()
+    assertTrue(ingredientViewModel.ingredientDownloadList.value.isEmpty())
+  }
+
+  @Test
+  fun deleteDownloadedIngredient() {
+    val ingredient = testIngredients[0]
+    ingredientViewModel.deleteDownloadedIngredient(ingredient)
+    verify(ingredientRepository).deleteDownload(ingredient)
+  }
 }

@@ -14,6 +14,9 @@ import com.android.sample.model.ingredient.networkData.FirestoreIngredientReposi
 import com.android.sample.model.ingredient.networkData.OpenFoodFactsIngredientRepository
 import com.android.sample.resources.C.Tag.INGREDIENT_NOT_FOUND_MESSAGE
 import com.android.sample.resources.C.Tag.INGREDIENT_VIEWMODEL_LOG_TAG
+import com.android.sample.resources.C.Tag.INGR_DOWNLOAD_ERROR_DOWNLOAD_IMAGE
+import com.android.sample.resources.C.Tag.INGR_DOWNLOAD_ERROR_GET_ING
+import com.android.sample.resources.C.Tag.INGR_DOWNLOAD_ERROR_NULL_POINTER
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.storage
@@ -145,20 +148,39 @@ class IngredientViewModel(
         context,
         dispatcher,
         onSuccess = { repository.addDownload(ingredient) },
-        onFailure = { Log.e("IngredientViewModel", "Error downloading images", it) })
+        onFailure = { Log.e(INGREDIENT_VIEWMODEL_LOG_TAG, INGR_DOWNLOAD_ERROR_DOWNLOAD_IMAGE, it) })
   }
-
+  /** Retrieves all downloaded ingredients from the repository. */
   fun getAllDownloadedIngredients() {
     repository.getAllDownload(
         onSuccess = { ingredientDownloadList ->
           _ingredientDownloadList.value = ingredientDownloadList
         },
         onFailure = { e ->
-          Log.e("IngredientViewModel", "Error getting ingredients", e)
+          Log.e(INGREDIENT_VIEWMODEL_LOG_TAG, INGR_DOWNLOAD_ERROR_GET_ING, e)
           _ingredientList.value = emptyList()
         })
   }
+  /**
+   * Delete an existing downloaded ingredient in the repository.
+   *
+   * @param ingredient The ingredient to delete.
+   */
+  fun deleteDownloadedIngredient(ingredient: Ingredient) {
+    repository.deleteDownload(ingredient)
+  }
 
+  /**
+   * Downloads and saves the images of an ingredient.
+   *
+   * @param ingredient The ingredient whose images are to be downloaded.
+   * @param context The context used to access resources.
+   * @param dispatcher The coroutine dispatcher to use for the download operations.
+   * @param onSuccess Callback function to be invoked when the images are successfully downloaded
+   *   and saved.
+   * @param onFailure Callback function to be invoked if an error occurs during the download
+   *   process.
+   */
   private fun downloadIngredientImage(
       ingredient: Ingredient,
       context: Context,
@@ -168,34 +190,38 @@ class IngredientViewModel(
   ) {
     CoroutineScope(dispatcher).launch {
       try {
+        // Download and save the images of the ingredient for each format.
         val imageFormats = ingredient.images.keys
         val deferredUri =
             imageFormats.map { format ->
               val fileName = ingredient.name + format
+              val url = ingredient.images[format]
               async {
                 try {
-                  val uri =
-                      imgDownload.downloadAndSaveImage(
-                          context, fileName, ingredient.images[format]!!)
-                  println("URI: $uri")
-                  format to uri!!
+                  if (url != null) {
+                    val uri = imgDownload.downloadAndSaveImage(context, fileName, url)
+                    format to uri!!
+                  } else {
+                    null
+                  }
                 } catch (e: NullPointerException) {
                   e.printStackTrace()
                   null
                 }
               }
             }
+        // Wait for all the images to be downloaded and saved.
         val uris = deferredUri.awaitAll().filterNotNull()
+        // If all the images were successfully downloaded and saved, add them to the ingredient.
         if (uris.size == imageFormats.size) {
           ingredient.images.putAll(uris.associate { it.first to it.second })
           onSuccess()
         } else {
-          Log.e("IngredientViewModel", "Not all images were downloaded")
-          throw Exception("Not all images were downloaded")
+          Log.e(INGREDIENT_VIEWMODEL_LOG_TAG, INGR_DOWNLOAD_ERROR_NULL_POINTER)
+          throw Exception(INGR_DOWNLOAD_ERROR_NULL_POINTER)
         }
       } catch (e: Exception) {
         e.printStackTrace()
-        Log.e("IngredientViewModel", "Error downloading images", e)
         onFailure(e)
       }
     }
