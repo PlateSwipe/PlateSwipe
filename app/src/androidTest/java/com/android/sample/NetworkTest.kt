@@ -3,11 +3,13 @@ package com.android.sample
 import android.content.Context
 import android.net.ConnectivityManager
 import androidx.test.platform.app.InstrumentationRegistry
+import com.android.sample.model.image.ImageDownload
 import com.android.sample.model.image.ImageRepositoryFirebase
 import com.google.firebase.Firebase
 import com.google.firebase.storage.storage
 import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertNull
+import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.BlockJUnit4ClassRunner
@@ -17,6 +19,7 @@ import org.junit.runners.model.FrameworkMethod
 class NetworkTest {
 
   private var imageRepository: ImageRepositoryFirebase = ImageRepositoryFirebase(Firebase.storage)
+  private var imageDownload: ImageDownload = ImageDownload()
 
   @Network
   @Test
@@ -34,6 +37,29 @@ class NetworkTest {
     val bitmap = imageRepository.urlToBitmap(url)
     assertNull(bitmap)
   }
+
+  @Network
+  @Test
+  fun testDownloadAndSaveImage() =
+      runTest() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val imageUrl =
+            "https://firebasestorage.googleapis.com/v0/b/plateswipe.appspot.com/o/images%2Ftest%2F4104420057326%2Fdisplay_small.jpg?alt=media&token=7fd91ca3-dbef-4c6e-a004-1e4ee5d0879d"
+        val fileName = "test"
+        val uri = imageDownload.downloadAndSaveImage(context, imageUrl, fileName)
+        assertNotNull(uri)
+      }
+
+  @Network
+  @Test
+  fun testDownloadAndSaveImageFailure() =
+      runTest() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val imageUrl = "https://wrong"
+        val fileName = "test"
+        val uri = imageDownload.downloadAndSaveImage(context, imageUrl, fileName)
+        assertNull(uri)
+      }
 }
 
 @Retention(AnnotationRetention.RUNTIME) @Target(AnnotationTarget.FUNCTION) annotation class Network
