@@ -206,13 +206,13 @@ fun AddInstructionStepContent(
               stringResource(R.string.save_label),
               modifier = Modifier.testTag(SAVE_BUTTON_TAG).weight(1f),
               onClick = {
-                  processValidInstruction(
-                      stepDescription = stepDescription,
-                      stepTime = stepTime,
-                      selectedIcon = selectedIcon,
-                      createRecipeViewModel = createRecipeViewModel,
-                      navigationActions = navigationActions,
-                      setShowError = { showError = it })
+                processValidInstruction(
+                    stepDescription = stepDescription,
+                    stepTime = stepTime,
+                    selectedIcon = selectedIcon,
+                    createRecipeViewModel = createRecipeViewModel,
+                    navigationActions = navigationActions,
+                    setShowError = { showError = it })
               })
         }
 
@@ -256,24 +256,22 @@ private fun processValidInstruction(
     navigationActions: NavigationActions,
     setShowError: (Boolean) -> Unit
 ) {
-    if (stepDescription.isBlank()) {
-        setShowError(true) // Trigger the error state if the instruction is blank
-    } else {
-        confirmAndAssignStep(
-            stepDescription,
-            stepTime,
-            selectedIcon,
-            createRecipeViewModel,
-            onSuccess = {
-
-                    createRecipeViewModel.resetSelectedInstruction()
-                    navigationActions.navigateToPop(
-                        Screen.CREATE_RECIPE_LIST_INSTRUCTIONS,
-                        popUpTo = Screen.CREATE_RECIPE_LIST_INGREDIENTS,
-                        inclusive = false)
-
-            })
-    }
+  if (stepDescription.isBlank()) {
+    setShowError(true) // Trigger the error state if the instruction is blank
+  } else {
+    confirmAndAssignStep(
+        stepDescription,
+        stepTime,
+        selectedIcon,
+        createRecipeViewModel,
+        onSuccess = {
+          createRecipeViewModel.resetSelectedInstruction()
+          navigationActions.navigateToPop(
+              Screen.CREATE_RECIPE_LIST_INSTRUCTIONS,
+              popUpTo = Screen.CREATE_RECIPE_LIST_INGREDIENTS,
+              inclusive = false)
+        })
+  }
 }
 
 /**
