@@ -105,6 +105,9 @@ class CategoryScreenTest {
         .onNodeWithTag("DropdownMenuItem_Vegan", useUnmergedTree = true)
         .performScrollTo()
 
+    // Wait for the UI to update
+    composeTestRule.waitForIdle()
+
     // Select the category
     composeTestRule.onNodeWithTag("DropdownMenuItem_Vegan").performClick()
 
