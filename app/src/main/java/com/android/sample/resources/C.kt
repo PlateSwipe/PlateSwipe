@@ -706,6 +706,7 @@ object C {
       const val RECIPE_LIST_INSTRUCTIONS_SCREEN_SPACER1 = "RecipeListInstructionsScreenSpacer1"
       const val RECIPE_LIST_ITEM_THUMBNAIL = "InstructionThumbnail"
       const val RECIPE_LIST_INSTRUCTION_ICON = "InstructionIcon"
+      const val ADD_INSTRUCTION_BUTTON = "AddInstructionButton"
     }
 
     object RecipeAddImageScreen {

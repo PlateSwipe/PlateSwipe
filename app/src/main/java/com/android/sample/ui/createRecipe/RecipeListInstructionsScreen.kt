@@ -53,6 +53,7 @@ import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScre
 import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScreen.ROW_SIZE
 import com.android.sample.resources.C.Tag.RECIPE_NAME_BASE_PADDING
 import com.android.sample.resources.C.Tag.SMALL_PADDING
+import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.ADD_INSTRUCTION_BUTTON
 import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.EDIT_INSTRUCTION_ICON
 import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.INSTRUCTION_LIST
 import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.INSTRUCTION_LIST_ITEM
@@ -119,13 +120,14 @@ fun RecipeListInstructionsContent(
 
       Icon(
           imageVector = Icons.Default.Add,
-          contentDescription = "Edit",
+          contentDescription = "Add",
           modifier =
               Modifier.size(ICON_SIZE.dp)
                   .clickable(
                       onClick = {
                         navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_INSTRUCTION)
-                      }),
+                      })
+                  .testTag(ADD_INSTRUCTION_BUTTON),
           tint = MaterialTheme.colorScheme.onPrimary)
     }
 
