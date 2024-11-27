@@ -49,6 +49,7 @@ import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScre
 import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScreen.ICON_SIZE
 import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScreen.MEDIUM_PADDING
 import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScreen.REALLY_SMALL_PADDING
+import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScreen.RECIPE_NAME_MAX_CHAR
 import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScreen.ROW_SIZE
 import com.android.sample.resources.C.Tag.RECIPE_NAME_BASE_PADDING
 import com.android.sample.resources.C.Tag.SMALL_PADDING
@@ -96,7 +97,6 @@ fun RecipeListInstructionsContent(
     modifier: Modifier,
     navigationActions: NavigationActions,
 ) {
-  val maxChars = 14
 
   Column(
       modifier = modifier.padding(RECIPE_NAME_BASE_PADDING).testTag(SCREEN_COLUMN),
@@ -110,8 +110,8 @@ fun RecipeListInstructionsContent(
       Text(
           modifier = Modifier.testTag(RECIPE_NAME_TEXT),
           text =
-              if (createRecipeViewModel.getRecipeName().length > maxChars)
-                  createRecipeViewModel.getRecipeName().take(maxChars) + "..."
+              if (createRecipeViewModel.getRecipeName().length > RECIPE_NAME_MAX_CHAR)
+                  createRecipeViewModel.getRecipeName().take(RECIPE_NAME_MAX_CHAR) + "..."
               else createRecipeViewModel.getRecipeName(),
           style = MaterialTheme.typography.titleMedium,
           color = MaterialTheme.colorScheme.onPrimary,

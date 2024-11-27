@@ -541,6 +541,7 @@ object C {
       const val CARD_SHADOW_ELEVATION = 8
       const val ICON_SIZE = 24
       const val ROW_SIZE = 1f
+      const val RECIPE_NAME_MAX_CHAR = 14
 
       // progress bar value
       const val CURRENT_STEP = 2
