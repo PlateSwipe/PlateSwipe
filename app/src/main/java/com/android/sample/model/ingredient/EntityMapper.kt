@@ -10,14 +10,15 @@ import com.google.gson.Gson
  * @return The IngredientEntity object created from the Ingredient object.
  */
 fun Ingredient.toEntity(): IngredientEntity {
+  val gson = Gson()
   return IngredientEntity(
       uid = this.uid ?: "",
       barCode = this.barCode,
       name = this.name,
       brands = this.brands,
       quantity = this.quantity,
-      categories = Gson().toJson(this.categories),
-      images = Gson().toJson(this.images))
+      categories = gson.toJson(this.categories),
+      images = gson.toJson(this.images))
 }
 
 /**
@@ -26,13 +27,13 @@ fun Ingredient.toEntity(): IngredientEntity {
  * @return The Ingredient object created from the IngredientEntity object.
  */
 fun IngredientEntity.toIngredient(): Ingredient {
+  val gson = Gson()
   return Ingredient(
       uid = this.uid,
       barCode = this.barCode,
       name = this.name,
       brands = this.brands,
       quantity = this.quantity,
-      categories = Gson().fromJson(this.categories, object : TypeToken<List<String>>() {}.type),
-      images =
-          Gson().fromJson(this.images, object : TypeToken<MutableMap<String, String>>() {}.type))
+      categories = gson.fromJson(this.categories, object : TypeToken<List<String>>() {}.type),
+      images = gson.fromJson(this.images, object : TypeToken<MutableMap<String, String>>() {}.type))
 }
