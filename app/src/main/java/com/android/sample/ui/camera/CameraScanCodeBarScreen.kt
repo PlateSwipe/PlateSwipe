@@ -1,6 +1,7 @@
 package com.android.sample.ui.camera
 
 import android.Manifest
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -22,7 +23,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,6 +38,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.android.sample.R
+import com.android.sample.animation.LoadingCook
 import com.android.sample.feature.camera.CameraView
 import com.android.sample.feature.camera.RequestCameraPermission
 import com.android.sample.feature.camera.createImageCapture
@@ -45,7 +49,7 @@ import com.android.sample.model.ingredient.IngredientViewModel
 import com.android.sample.resources.C
 import com.android.sample.resources.C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_IMAGE_BORDER_RADIUS
 import com.android.sample.resources.C.Dimension.PADDING_8
-import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_THUMBNAIL_URL
+import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_SMALL_URL
 import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_IMAGE_1
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
@@ -130,15 +134,44 @@ fun IngredientOverlay(
     navigationActions: NavigationActions,
 ) {
   val ingredient by viewModel.ingredient.collectAsState()
-  if (ingredient != null) {
+
+  val isFetchingByBarcode by viewModel.isFetchingByBarcode.collectAsState()
+
+  // We need to know if the person has attempted to scan a barcode once
+  // we do this to avoid showing the ingredientDisplay before any scan has even been done
+  var hasFetchedBarcode by remember { mutableStateOf(false) }
+
+  Log.i(
+      "IngredientDisplay",
+      "isFetchingByBarcode: $isFetchingByBarcode + hasFetchedBarcode: $hasFetchedBarcode")
+  if (isFetchingByBarcode) {
+    hasFetchedBarcode = true
+  }
+
+  if (hasFetchedBarcode) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
       Box(
           modifier =
               Modifier.fillMaxWidth()
+                  .background(
+                      color = MaterialTheme.colorScheme.background,
+                      shape =
+                          RoundedCornerShape(
+                              topEndPercent =
+                                  C.Dimension.CameraScanCodeBarScreen
+                                      .INGREDIENT_DISPLAY_BORDER_RADIUS,
+                              topStartPercent =
+                                  C.Dimension.CameraScanCodeBarScreen
+                                      .INGREDIENT_DISPLAY_BORDER_RADIUS))
                   .height((C.Dimension.CameraScanCodeBarScreen.INGREDIENT_OVERLAY_HEIGHT).dp)
                   .wrapContentHeight()) {
-            // Display the ingredient details
-            IngredientDisplay(ingredient = ingredient!!, viewModel, navigationActions)
+            if (isFetchingByBarcode) {
+              IngredientBeingFetchedDisplay()
+            } else if (ingredient == null) {
+              IngredientNotFoundDisplay()
+            } else {
+              ingredient?.let { IngredientDisplay(ingredient = it, viewModel, navigationActions) }
+            }
           }
     }
   }
@@ -151,114 +184,142 @@ fun IngredientOverlay(
  */
 @Composable
 fun IngredientDisplay(
-    ingredient: Ingredient?,
+    ingredient: Ingredient,
     viewModel: IngredientViewModel,
     navigationActions: NavigationActions
 ) {
   Row(
       modifier =
           Modifier.fillMaxSize()
-              .background(
-                  color = MaterialTheme.colorScheme.background,
-                  shape =
-                      RoundedCornerShape(
-                          topEndPercent =
-                              C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_BORDER_RADIUS,
-                          topStartPercent =
-                              C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_BORDER_RADIUS))
               .padding(C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_PADDING.dp),
   ) {
-    if (ingredient != null) {
-      Column(
-          modifier =
-              Modifier.weight(C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_IMAGE_WEIGHT)
-                  .fillMaxHeight()
-                  .padding(PADDING_8.dp),
-          verticalArrangement = Arrangement.Center,
-          horizontalAlignment = Alignment.CenterHorizontally,
-      ) {
-        Box(
-            modifier =
-                Modifier.width(
-                        C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_IMAGE_WIDTH.dp)
-                    .height(C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_IMAGE_HEIGHT.dp)
-                    .border(
-                        width =
-                            C.Dimension.CameraScanCodeBarScreen
-                                .INGREDIENT_DISPLAY_IMAGE_BORDER_WIDTH
-                                .dp,
-                        color = Color.Black,
-                        shape = RoundedCornerShape(INGREDIENT_DISPLAY_IMAGE_BORDER_RADIUS.dp))
-                    .background(MaterialTheme.colorScheme.background),
-        ) {
-          Image(
-              painter =
-                  rememberAsyncImagePainter(
-                      model = ingredient.images[PRODUCT_FRONT_IMAGE_THUMBNAIL_URL]),
-              contentDescription = stringResource(R.string.recipe_image),
-              modifier =
-                  Modifier.fillMaxSize()
-                      .testTag(RECIPE_IMAGE_1)
-                      .clip(RoundedCornerShape(INGREDIENT_DISPLAY_IMAGE_BORDER_RADIUS.dp)),
-              contentScale = ContentScale.Crop,
-          )
-        }
-      }
-
-      Column(
-          modifier =
-              Modifier.weight(C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_TEXT_WEIGHT)
-                  .fillMaxSize()
-                  .padding(C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_TEXT_PADDING.dp),
-          verticalArrangement = Arrangement.Center) {
-            Text(
-                text = ingredient.name,
-                style = MaterialTheme.typography.titleSmall,
-                modifier =
-                    Modifier.padding(
-                        vertical =
-                            C.Dimension.CameraScanCodeBarScreen
-                                .INGREDIENT_DISPLAY_TEXT_NAME_PADDING_V
-                                .dp,
-                        horizontal =
-                            C.Dimension.CameraScanCodeBarScreen
-                                .INGREDIENT_DISPLAY_TEXT_NAME_PADDING_H
-                                .dp))
-            Text(
-                text = ingredient.brands ?: "",
-                style = MaterialTheme.typography.bodySmall,
-                modifier =
-                    Modifier.padding(
-                        vertical =
-                            C.Dimension.CameraScanCodeBarScreen
-                                .INGREDIENT_DISPLAY_TEXT_BRAND_PADDING_V
-                                .dp,
-                        horizontal =
-                            C.Dimension.CameraScanCodeBarScreen
-                                .INGREDIENT_DISPLAY_TEXT_BRAND_PADDING_H
-                                .dp))
-            Button(
-                onClick = {
-                  viewModel.addIngredient(ingredient)
-                  navigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
-                },
-                modifier =
-                    Modifier.padding(
-                        vertical =
-                            C.Dimension.CameraScanCodeBarScreen
-                                .INGREDIENT_DISPLAY_TEXT_BUTTON_PADDING_V
-                                .dp,
-                        horizontal =
-                            C.Dimension.CameraScanCodeBarScreen
-                                .INGREDIENT_DISPLAY_TEXT_BUTTON_PADDING_H
-                                .dp)) {
-                  Text(
-                      text = stringResource(R.string.add_to_fridge),
-                      style = MaterialTheme.typography.bodySmall,
-                      color = MaterialTheme.colorScheme.onPrimary,
-                  )
-                }
-          }
+    Column(
+        modifier =
+            Modifier.weight(C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_IMAGE_WEIGHT)
+                .fillMaxHeight()
+                .padding(PADDING_8.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+      IngredientImage(ingredient)
     }
+
+    Column(
+        modifier =
+            Modifier.weight(C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_TEXT_WEIGHT)
+                .fillMaxSize()
+                .padding(C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_TEXT_PADDING.dp),
+        verticalArrangement = Arrangement.Center) {
+          IngredientNameAndBrand(ingredient)
+          IngredientSelectButton(ingredient, viewModel, navigationActions)
+        }
   }
+}
+
+@Composable
+private fun IngredientImage(ingredient: Ingredient) {
+  Box(
+      modifier =
+          Modifier.width(C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_IMAGE_WIDTH.dp)
+              .height(C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_IMAGE_HEIGHT.dp)
+              .border(
+                  width =
+                      C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_IMAGE_BORDER_WIDTH.dp,
+                  color = Color.Black,
+                  shape = RoundedCornerShape(INGREDIENT_DISPLAY_IMAGE_BORDER_RADIUS.dp))
+              .background(MaterialTheme.colorScheme.background),
+  ) {
+    Image(
+        painter =
+            rememberAsyncImagePainter(model = ingredient.images[PRODUCT_FRONT_IMAGE_SMALL_URL]),
+        contentDescription = stringResource(R.string.recipe_image),
+        modifier =
+            Modifier.fillMaxSize()
+                .testTag(RECIPE_IMAGE_1)
+                .clip(RoundedCornerShape(INGREDIENT_DISPLAY_IMAGE_BORDER_RADIUS.dp)),
+        contentScale = ContentScale.Crop,
+    )
+  }
+}
+
+@Composable
+private fun IngredientNameAndBrand(ingredient: Ingredient) {
+  Text(
+      text = ingredient.name,
+      style = MaterialTheme.typography.titleSmall,
+      modifier =
+          Modifier.padding(
+              vertical =
+                  C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_TEXT_NAME_PADDING_V.dp,
+              horizontal =
+                  C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_TEXT_NAME_PADDING_H.dp))
+  Text(
+      text = ingredient.brands ?: "",
+      style = MaterialTheme.typography.bodySmall,
+      modifier =
+          Modifier.padding(
+              vertical =
+                  C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_TEXT_BRAND_PADDING_V.dp,
+              horizontal =
+                  C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_TEXT_BRAND_PADDING_H.dp))
+}
+
+@Composable
+private fun IngredientSelectButton(
+    ingredient: Ingredient,
+    viewModel: IngredientViewModel,
+    navigationActions: NavigationActions
+) {
+  Button(
+      onClick = {
+        viewModel.addIngredient(ingredient)
+        navigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
+      },
+      modifier =
+          Modifier.padding(
+              vertical =
+                  C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_TEXT_BUTTON_PADDING_V.dp,
+              horizontal =
+                  C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_TEXT_BUTTON_PADDING_H
+                      .dp)) {
+        Text(
+            text = stringResource(R.string.add_to_fridge),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onPrimary,
+        )
+      }
+}
+
+@Composable
+private fun IngredientNotFoundDisplay() {
+  Log.i("IngredientDisplay", "IngredientNotFoundDisplay")
+  Box(
+      modifier =
+          Modifier.fillMaxSize()
+              .padding(C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_PADDING.dp),
+      contentAlignment = Alignment.Center) {
+        Text(
+            text = stringResource(R.string.ingredient_not_found),
+            style = MaterialTheme.typography.bodyLarge,
+            modifier =
+                Modifier.padding(
+                    vertical =
+                        C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_TEXT_NAME_PADDING_V
+                            .dp,
+                    horizontal =
+                        C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_TEXT_NAME_PADDING_H
+                            .dp))
+      }
+}
+
+@Preview
+@Composable
+private fun IngredientBeingFetchedDisplay() {
+  Box(
+      modifier =
+          Modifier.fillMaxSize()
+              .padding(C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_PADDING.dp),
+      contentAlignment = Alignment.Center) {
+        LoadingCook()
+      }
 }

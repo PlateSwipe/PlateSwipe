@@ -74,7 +74,8 @@
     <string name="axe_icon_description">Prep</string>
     <string name="chef_s_hat_icon_description">Cook</string>
 
-
+    //Scanner
+    <string name="ingredient_not_found">Ingredient not found</string>
 
     //PublishRecipeScreen
     <string name="done_text">Done !</string>
