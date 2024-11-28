@@ -26,7 +26,7 @@ object Screen {
 
   const val CREATE_RECIPE = "AddRecipe Screen"
 
-  const val CATEGORY_SCREEN = "Category Screen"
+  const val CREATE_CATEGORY_SCREEN = "Add Category Screen"
 
   const val CREATE_RECIPE_INGREDIENTS = "Add Recipe Ingredients"
 
@@ -57,7 +57,6 @@ object Screen {
 
 data class TopLevelDestination(val route: String, val iconId: Int, val textId: String)
 
-// TODO: Find good icons for each Route
 object TopLevelDestinations {
   val SWIPE = TopLevelDestination(Route.SWIPE, R.drawable.mainpageicon, "Swipe")
   val FRIDGE = TopLevelDestination(Route.FRIDGE, R.drawable.fridgeicon, "Fridge")
@@ -110,7 +109,13 @@ open class NavigationActions(
    * @param screen The screen to navigate to
    */
   open fun navigateTo(screen: String) {
-    navController.navigate(screen)
+    if (screen == Screen.CREATE_RECIPE_LIST_INGREDIENTS) {
+      navController.navigate(screen) {
+        popUpTo(Screen.CREATE_CATEGORY_SCREEN) { inclusive = false }
+      }
+    } else {
+      navController.navigate(screen)
+    }
   }
 
   /** Navigate back to the previous screen. */
@@ -125,5 +130,21 @@ open class NavigationActions(
    */
   open fun currentRoute(): String {
     return navController.currentDestination?.route ?: ""
+  }
+
+  /**
+   * Navigate to the specified screen and clear the back stack up to the specified destination. This
+   * is useful when navigating to a new screen from the bottom navigation bar as we don't want to
+   * keep the previous screen in the back stack.
+   *
+   * @param screen The screen to navigate to
+   * @param popUpTo The destination to clear the back stack up to
+   * @param inclusive Whether to include the destination in the back stack
+   */
+  open fun navigateToPop(screen: String, popUpTo: String?, inclusive: Boolean = false) {
+    navController.navigate(screen) {
+      popUpTo?.let { popUpTo(it) { this.inclusive = inclusive } }
+      launchSingleTop = true
+    }
   }
 }

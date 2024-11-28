@@ -12,6 +12,7 @@ import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.storage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import okhttp3.OkHttpClient
 
 /**
@@ -20,51 +21,90 @@ import okhttp3.OkHttpClient
  * @param repository
  * @constructor Create empty Ingredient view model
  */
-class IngredientViewModel(private val repository: IngredientRepository) : ViewModel() {
+class IngredientViewModel(private val repository: IngredientRepository) :
+    ViewModel(), SearchIngredientViewModel {
 
-  private val _ingredient = MutableStateFlow<Ingredient?>(null)
-  val ingredient: StateFlow<Ingredient?>
+  private val _ingredient = MutableStateFlow<Pair<Ingredient?, String?>>(Pair(null, null))
+  override val ingredient: StateFlow<Pair<Ingredient?, String?>>
     get() = _ingredient
 
-  private val _isFetchingByBarcode = MutableStateFlow(false)
-  val isFetchingByBarcode: StateFlow<Boolean>
-    get() = _isFetchingByBarcode
+    private val _isFetchingByBarcode = MutableStateFlow(false)
+    val isFetchingByBarcode: StateFlow<Boolean>
+        get() = _isFetchingByBarcode
+
+  private val _ingredientList = MutableStateFlow<List<Pair<Ingredient, String?>>>(emptyList())
+  override val ingredientList: StateFlow<List<Pair<Ingredient, String?>>>
 
   private val _ingredientList = MutableStateFlow<List<Ingredient>>(emptyList())
   val ingredientList: StateFlow<List<Ingredient>>
     get() = _ingredientList
 
-  private val _searchingIngredientList = MutableStateFlow<List<Ingredient>>(emptyList())
-  val searchingIngredientList: StateFlow<List<Ingredient>>
+  private val _searchingIngredientList =
+      MutableStateFlow<List<Pair<Ingredient, String?>>>(emptyList())
+  override val searchingIngredientList: StateFlow<List<Pair<Ingredient, String?>>>
     get() = _searchingIngredientList
 
-  private val _isFetchingByName = MutableStateFlow(false)
-  val isFetchingByName: StateFlow<Boolean>
-    get() = _isFetchingByName
+  private val _isSearching = MutableStateFlow(false)
+  override val isSearching: StateFlow<Boolean>
+    get() = _isSearching
 
   /**
    * Fetch ingredient
    *
    * @param barCode
    */
-  fun fetchIngredient(barCode: Long) {
-    if (_ingredient.value?.barCode == barCode) {
+  override fun fetchIngredient(barCode: Long) {
+    if (_ingredient.value.first?.barCode == barCode) {
       return
     }
+    // Fetch ingredient from repository
 
     _isFetchingByBarcode.value = true
     repository.get(
         barCode,
         onSuccess = { ingredient ->
-          _ingredient.value = ingredient
-          _isFetchingByBarcode.value = false
+          if (ingredient != null) {
+            _ingredient.value = Pair(ingredient, ingredient.quantity)
+          }
+
+            _isFetchingByBarcode.value = false
         },
         onFailure = {
           Log.e(INGREDIENT_VIEWMODEL_LOG_TAG, INGREDIENT_NOT_FOUND_MESSAGE)
-
-          _ingredient.value = null
+          _ingredient.value = Pair(null, null)
           _isFetchingByBarcode.value = false
         })
+  }
+  /** Clear ingredient after use */
+  override fun clearIngredient() {
+    _ingredient.value = Pair(null, null)
+  }
+
+  /**
+   * Add the first integer in the two strings
+   *
+   * @param quantity1
+   * @param quantity2
+   */
+  private fun addFirstInt(quantity1: String?, quantity2: String?): String {
+    if (quantity1 == null || quantity2 == null) {
+      return quantity1 ?: quantity2 ?: ""
+    }
+
+    // Regular expression to find the first integer in the string
+    val regex = Regex("""\d+""")
+    val match1 = regex.find(quantity1)
+    val match2 = regex.find(quantity2)
+
+    // If both strings contain an integer, add them together
+    return if (match1 != null && match2 != null) {
+      val addition = match1.value.toInt() + match2.value.toInt()
+      quantity1.replaceFirst(match1.value, addition.toString())
+    } else if (match1 != null) {
+      quantity1
+    } else {
+      quantity2
+    }
   }
 
   /**
@@ -72,8 +112,22 @@ class IngredientViewModel(private val repository: IngredientRepository) : ViewMo
    *
    * @param ingredient
    */
-  fun addIngredient(ingredient: Ingredient) {
-    _ingredientList.value += ingredient
+  override fun addIngredient(ingredient: Ingredient) {
+    _ingredientList.update { currentList ->
+      val existingItemIndex = currentList.indexOfFirst { it.first.barCode == ingredient.barCode }
+
+      if (existingItemIndex != -1) {
+        // Ingredient already exists; update its associated String value
+        currentList.toMutableList().apply {
+          this[existingItemIndex] =
+              this[existingItemIndex].copy(
+                  second = addFirstInt(this[existingItemIndex].second, ingredient.quantity))
+        }
+      } else {
+        // Ingredient doesn't exist; add it to the list
+        currentList + (ingredient to ingredient.quantity)
+      }
+    }
   }
 
   /**
@@ -85,8 +139,8 @@ class IngredientViewModel(private val repository: IngredientRepository) : ViewMo
   fun updateQuantity(ingredient: Ingredient, quantity: String) {
     _ingredientList.value =
         _ingredientList.value.map {
-          if (it == ingredient) {
-            it.copy(quantity = quantity)
+          if (it.first == ingredient) {
+            Pair(it.first, quantity)
           } else {
             it
           }
@@ -98,16 +152,16 @@ class IngredientViewModel(private val repository: IngredientRepository) : ViewMo
    *
    * @param name
    */
-  fun fetchIngredientByName(name: String) {
-    _isFetchingByName.value = true
+  override fun fetchIngredientByName(name: String) {
+    _isSearching.value = true
     repository.search(
         name,
         onSuccess = { ingredientList ->
-          _isFetchingByName.value = false
-          _searchingIngredientList.value = ingredientList
+          _isSearching.value = false
+          _searchingIngredientList.value = ingredientList.map { Pair(it, it.quantity) }
         },
         onFailure = {
-          _isFetchingByName.value = false
+          _isSearching.value = false
           _searchingIngredientList.value = emptyList()
         })
   }
@@ -118,7 +172,7 @@ class IngredientViewModel(private val repository: IngredientRepository) : ViewMo
    * @param ingredient
    */
   fun removeIngredient(ingredient: Ingredient) {
-    _ingredientList.value = _ingredientList.value.filter { it != ingredient }
+    _ingredientList.value = _ingredientList.value.filter { it.first != ingredient }
   }
 
   /** Clear search */

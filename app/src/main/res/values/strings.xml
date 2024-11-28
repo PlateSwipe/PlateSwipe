@@ -11,6 +11,7 @@
     <string name="search_bar_place_holder">Search</string>
     <string name="fridge_screen">Fridge Screen</string>
     <string name="fridge_screen_description">Work in progress…stay tuned!</string>
+    <string name="add_to_recipe">Add to Recipe</string>
     <string name="add_to_fridge">Add to Fridge</string>
 
     <string name="account_screen_default_user_name">User Name</string>
@@ -100,7 +101,9 @@
     <string name="RecipeListInstructionsScreen_Instructions">Instructions</string>
     <string name="RecipeListInstructionsScreen_Step">Step</string>
     <string name="RecipeListInstructionsScreen_Minutes">min</string>
+    <string name="RecipeListInstructionsScreen_Delete">Delete</string>
     <string name="image_failed_to_load">Image failed to load</string>
+    <string name="RecipeListInstruction_add_instruction_please">Please add at least one instruction</string>
     <string name="error_picture_not_taken">Please take or select a picture</string>
 
     //RecipeListIngredientsScreen
@@ -110,7 +113,8 @@
     <string name="pop_up_description">Do you want to add this ingredient to your recipe?</string>
     <string name="pop_up_confirmation">Add to Recipe</string>
     <string name="pop_up_cancel">Cancel</string>
-    <string name="ingredient_list_error">Please add at least one ingredient</string>
+    <string name="pop_up_message_no_quantity">All ingredients must have a quantity</string>
+    <string name="pop_up_message_no_ingredient">Please add at least one ingredient</string>
 
     //RecipeListScreen
     <string name="ingredient_list">Ingredients list</string>
@@ -130,5 +134,10 @@
     <string name="no_category">No category</string>
 
 
+
+    //AddInstructionStepScreen
+    <string name = "u_sure_u_want_to_delete">Are you sure you want to delete this step?</string>
+    <string name = "delete">Delete</string>
+    <string name="cancel">Cancel</string>
 
 </resources>

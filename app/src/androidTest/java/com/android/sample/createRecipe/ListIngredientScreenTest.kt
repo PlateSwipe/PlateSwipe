@@ -22,7 +22,6 @@ import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.utils.testIngredients
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -46,9 +45,6 @@ class ListIngredientScreenTest {
 
   // Sample ingredients list for testing
   private val mockedIngredients = testIngredients.filter { it.quantity != null }
-
-  private val ingredientPairs: List<Pair<String, String?>> =
-      mockedIngredients.map { it.name to it.quantity }
 
   @Before
   fun setup() {
@@ -108,34 +104,17 @@ class ListIngredientScreenTest {
     verify(mockNavigationActions).navigateTo(Screen.CREATE_RECIPE_SEARCH_INGREDIENTS)
   }
 
-  private fun compareIngredientPairs(
-      list1: List<Pair<String, String?>>,
-      list2: List<Pair<String, String?>>
-  ): Boolean {
-    // Check if both lists have the same size
-    if (list1.size != list2.size) return false
-
-    // Sort both lists to ensure the order doesn’t affect comparison
-    val sortedList1 = list1.sortedBy { it.first.lowercase() }
-    val sortedList2 = list2.sortedBy { it.first.lowercase() }
-
-    // Compare each pair in both sorted lists
-    return sortedList1 == sortedList2
-  }
-
   @Test
-  fun testNextStepButtonAddsIngredientsToRecipeAndNavigates() {
+  fun testNextStepButtonAddsIngredientsToRecipeNotPossible() {
+    composeTestRule
+        .onNodeWithTag("recipeNameTextField${mockedIngredients[0].name}", useUnmergedTree = true)
+        .performTextClearance()
     // Click the Next Step button
     composeTestRule.onNodeWithTag(NEXT_STEP_BUTTON, useUnmergedTree = true).assertIsDisplayed()
     composeTestRule.onNodeWithTag(NEXT_STEP_BUTTON, useUnmergedTree = true).performClick()
 
     // Verify each ingredient is added to the recipe
-    assertTrue(
-        compareIngredientPairs(
-            ingredientPairs, createRecipeViewModel.recipeBuilder.getIngredientsAndMeasurements()))
-
-    // Verify navigation to the instruction screen
-    verify(mockNavigationActions).navigateTo(Screen.CREATE_RECIPE_ADD_INSTRUCTION)
+    composeTestRule.onNodeWithText("All ingredients must have a quantity").assertIsDisplayed()
   }
 
   @Test
@@ -146,7 +125,24 @@ class ListIngredientScreenTest {
         .performClick()
 
     // Verify that the ingredient was removed from the view model
-    assertEquals(ingredientViewModel.ingredientList.value, mockedIngredients.drop(1))
+    assertEquals(
+        mockedIngredients.drop(1).map { ingredient -> Pair(ingredient, ingredient.quantity) },
+        ingredientViewModel.ingredientList.value)
+  }
+
+  @Test
+  fun testnextStepWithoutAnyIngredient() {
+    // Simulate clicking the remove icon for the first ingredient
+    ingredientViewModel.ingredientList.value.forEach {
+      ingredientViewModel.removeIngredient(it.first)
+    }
+    composeTestRule
+        .onNodeWithText("Next Step", useUnmergedTree = true)
+        .assertIsDisplayed()
+        .performClick()
+
+    // Verify that the ingredient was removed from the view model
+    composeTestRule.onNodeWithText("Please add at least one ingredient").assertIsDisplayed()
   }
 
   @Test
@@ -175,6 +171,43 @@ class ListIngredientScreenTest {
         .assertTextEquals(updatedQuantity)
 
     // Verify that the updateQuantity method was called with the correct parameters
-    assertEquals(updatedQuantity, ingredientViewModel.ingredientList.value[0].quantity)
+    assertEquals(updatedQuantity, ingredientViewModel.ingredientList.value[0].second)
+  }
+
+  @Test
+  fun testIngredientQuantityUpdateInTextFieldAndNavigates() {
+    val updatedQuantity = "3 cups" // New quantity to simulate user input
+
+    ingredientViewModel.ingredientList.value.forEachIndexed { i, (ingredient, _) ->
+      // Given the initial ingredient with a quantity
+      val initialQuantity = ingredient.quantity
+
+      // Verify that the initial quantity is displayed in the text field
+      composeTestRule
+          .onNodeWithTag("recipeNameTextField${ingredient.name}", useUnmergedTree = true)
+          .assertTextEquals(initialQuantity!!)
+
+      composeTestRule
+          .onNodeWithTag("recipeNameTextField${ingredient.name}", useUnmergedTree = true)
+          .performTextClearance()
+      // Simulate typing the updated quantity into the OutlinedTextField
+      composeTestRule
+          .onNodeWithTag("recipeNameTextField${ingredient.name}", useUnmergedTree = true)
+          .performTextInput(updatedQuantity)
+
+      // Verify that the updated quantity is now displayed in the text field
+      composeTestRule
+          .onNodeWithTag("recipeNameTextField${ingredient.name}", useUnmergedTree = true)
+          .assertTextEquals(updatedQuantity)
+
+      assertEquals(updatedQuantity, ingredientViewModel.ingredientList.value[i].second)
+    }
+
+    composeTestRule.waitForIdle()
+
+    composeTestRule.onNodeWithTag(NEXT_STEP_BUTTON, useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(NEXT_STEP_BUTTON, useUnmergedTree = true).performClick()
+
+    verify(mockNavigationActions).navigateTo(Screen.CREATE_RECIPE_ADD_INSTRUCTION)
   }
 }

@@ -4,7 +4,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.sample.R
 import com.android.sample.resources.C.Tag.ICON_CHEF_HAT
-import com.android.sample.resources.C.Tag.PADDING
 
 // Like R, but C
 object C {
@@ -568,6 +567,7 @@ object C {
       const val CARD_SHADOW_ELEVATION = 8
       const val ICON_SIZE = 24
       const val ROW_SIZE = 1f
+      const val RECIPE_NAME_MAX_CHAR = 14
 
       // progress bar value
       const val CURRENT_STEP = 2
@@ -594,10 +594,13 @@ object C {
       const val INGREDIENT_LIST_WEIGHT = 6f
       const val INGREDIENT_PREVIEW_ELEVATION = 4
       const val INGREDIENT_PREVIEW_CORNER = 8
-      const val IMAGE_SPACER = PADDING.times(6)
       const val INPUT_MAX_LINE = 1
       const val BUTTON_ROUND = 4
       const val BUTTON_Z = 1f
+      const val POP_UP_DELAY = 3000L
+      const val POP_UP_WIDTH = 2
+      const val ROUND_CORNER = 12
+      const val NAME_MAX_LINE = 2
     }
 
     object RecipeList {
@@ -737,6 +740,10 @@ object C {
       const val RECIPE_LIST_INSTRUCTIONS_SCREEN_SPACER1 = "RecipeListInstructionsScreenSpacer1"
       const val RECIPE_LIST_ITEM_THUMBNAIL = "InstructionThumbnail"
       const val RECIPE_LIST_INSTRUCTION_ICON = "InstructionIcon"
+      const val ADD_INSTRUCTION_BUTTON = "AddInstructionButton"
+      const val ADD_ICON_DESCRIPTION = "Add"
+      const val EDIT_ICON_DESCRIPTION = "Edit"
+      const val STEP_ICON_DESCRIPTION = "Step"
     }
 
     object RecipeAddImageScreen {
@@ -785,6 +792,15 @@ object C {
 
     object RecipeBuilder {
       const val OUT_OF_BOUNDS_MESSAGE = "Index out of bounds"
+    }
+
+    object AddInstructionStepScreen {
+      const val INPUT_CONTAINER = "InputContainer"
+      const val TIME_INPUT = "TimeInput"
+      const val ICON_DROPDOWN = "IconDropdown"
+      const val INSTRUCTION_INPUT = "InstructionInput"
+      const val INSTRUCTION_ERROR = "InstructionError"
+      const val DELETE_BUTTON = "DeleteButton"
     }
 
     object Category {

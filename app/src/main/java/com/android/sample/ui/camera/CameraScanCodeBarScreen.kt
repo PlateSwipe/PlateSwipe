@@ -28,15 +28,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
 import com.android.sample.R
 import com.android.sample.animation.LoadingCook
 import com.android.sample.feature.camera.CameraView
@@ -45,14 +42,15 @@ import com.android.sample.feature.camera.createImageCapture
 import com.android.sample.feature.camera.handleBarcodeDetection
 import com.android.sample.feature.camera.scan.CodeBarAnalyzer
 import com.android.sample.model.ingredient.Ingredient
-import com.android.sample.model.ingredient.IngredientViewModel
+import com.android.sample.model.ingredient.SearchIngredientViewModel
 import com.android.sample.resources.C
-import com.android.sample.resources.C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_IMAGE_BORDER_RADIUS
 import com.android.sample.resources.C.Dimension.PADDING_8
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_SMALL_URL
 import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_IMAGE_1
 import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
+import com.android.sample.ui.utils.IngredientImageBox
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 
@@ -60,7 +58,7 @@ import com.google.accompanist.permissions.rememberPermissionState
 @Composable
 fun CameraScanCodeBarScreen(
     navigationActions: NavigationActions,
-    ingredientViewModel: IngredientViewModel
+    searchIngredientViewModel: SearchIngredientViewModel
 ) {
   val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
 
@@ -71,15 +69,15 @@ fun CameraScanCodeBarScreen(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center,
         ) {
-          CameraSection(ingredientViewModel)
-          IngredientOverlay(ingredientViewModel, navigationActions)
+          CameraSection(searchIngredientViewModel)
+          IngredientOverlay(searchIngredientViewModel, navigationActions)
         }
       })
 }
 
 /** Display the camera view and the barcode frame */
 @Composable
-fun CameraSection(ingredientViewModel: IngredientViewModel) {
+fun CameraSection(searchIngredientViewModel: SearchIngredientViewModel) {
 
   val imageCapture = createImageCapture()
   var lastScannedBarcode: Long? = null
@@ -93,7 +91,7 @@ fun CameraSection(ingredientViewModel: IngredientViewModel) {
               recentBarcodes,
               lastScannedBarcode,
               onBarcodeDetected = { barcodeValue ->
-                ingredientViewModel.fetchIngredient(barcodeValue)
+                searchIngredientViewModel.fetchIngredient(barcodeValue)
                 lastScannedBarcode = barcodeValue
               },
               scanThreshold = C.Tag.SCAN_THRESHOLD)
@@ -130,7 +128,7 @@ fun BarCodeFrame() {
 /** Display the ingredient overlay */
 @Composable
 fun IngredientOverlay(
-    viewModel: IngredientViewModel,
+    searchIngredientViewModel: SearchIngredientViewModel,
     navigationActions: NavigationActions,
 ) {
   val ingredient by viewModel.ingredient.collectAsState()
@@ -184,8 +182,8 @@ fun IngredientOverlay(
  */
 @Composable
 fun IngredientDisplay(
-    ingredient: Ingredient,
-    viewModel: IngredientViewModel,
+    ingredient: Ingredient?,
+    searchIngredientViewModel: SearchIngredientViewModel,
     navigationActions: NavigationActions
 ) {
   Row(
