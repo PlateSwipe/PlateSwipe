@@ -27,8 +27,8 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 
 /**
@@ -37,12 +37,10 @@ import okhttp3.OkHttpClient
  * @param repository
  * @constructor Create empty Ingredient view model
  */
-class IngredientViewModel(private val repository: IngredientRepository) :
-    ViewModel(), SearchIngredientViewModel {
 class IngredientViewModel(
     private val repository: IngredientRepository,
     private val imgDownload: ImageDownload
-) : ViewModel() {
+) : ViewModel(), SearchIngredientViewModel {
 
   private val _ingredient = MutableStateFlow<Pair<Ingredient?, String?>>(Pair(null, null))
   override val ingredient: StateFlow<Pair<Ingredient?, String?>>

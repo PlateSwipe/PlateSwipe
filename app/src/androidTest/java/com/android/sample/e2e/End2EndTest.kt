@@ -24,8 +24,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.android.sample.model.image.ImageDownload
 import com.android.sample.R
+import com.android.sample.model.image.ImageDownload
 import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.ingredient.DefaultIngredientRepository
 import com.android.sample.model.ingredient.Ingredient
