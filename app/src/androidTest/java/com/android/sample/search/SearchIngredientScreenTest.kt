@@ -6,7 +6,8 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
-import com.android.sample.model.ingredient.AggregatorIngredientRepository
+import com.android.sample.model.image.ImageDownload
+import com.android.sample.model.ingredient.DefaultIngredientRepository
 import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.ingredient.IngredientViewModel
 import com.android.sample.model.ingredient.SearchIngredientViewModel
@@ -43,7 +44,7 @@ class SearchIngredientScreenTest {
 
   @Mock private lateinit var mockNavigationActions: NavigationActions
 
-  @Mock private lateinit var aggregatorIngredientRepository: AggregatorIngredientRepository
+  @Mock private lateinit var aggregatorIngredientRepository: DefaultIngredientRepository
 
   // Setting up some test data
   private val mockIngredients = testIngredients
@@ -53,7 +54,7 @@ class SearchIngredientScreenTest {
     // Mocking the ViewModel's flow
     mockNavigationActions = mock(NavigationActions::class.java)
     `when`(mockNavigationActions.currentRoute()).thenReturn(Route.CREATE_RECIPE)
-    aggregatorIngredientRepository = mock(AggregatorIngredientRepository::class.java)
+    aggregatorIngredientRepository = mock(DefaultIngredientRepository::class.java)
 
     `when`(aggregatorIngredientRepository.search(any(), any(), any(), any())).thenAnswer {
         invocation ->
@@ -61,7 +62,7 @@ class SearchIngredientScreenTest {
       onSuccess(mockIngredients)
       null
     }
-    searchIngredientViewModel = IngredientViewModel(aggregatorIngredientRepository)
+    searchIngredientViewModel = IngredientViewModel(aggregatorIngredientRepository, ImageDownload())
 
     composeTestRule.setContent {
       SearchIngredientScreen(
