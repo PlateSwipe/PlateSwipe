@@ -37,7 +37,7 @@ class OpenFoodFactsIngredientRepository(private val client: OkHttpClient) :
     val ingredientName = parseProductName(json)
 
     if (ingredientName.isNullOrEmpty()) {
-      throw Exception(C.Tag.INGREDIENT_NAME_NOT_PROVIDED)
+      throw JSONException(C.Tag.INGREDIENT_NAME_NOT_PROVIDED)
     }
 
     val brands = json.getString(PRODUCT_BRAND) ?: null
