@@ -120,7 +120,7 @@ class OpenFoodFactsIngredientRepositoryTest {
             """
 
   private val openFoodFactsJsonSingleIngredientJsonWithNoProductName =
-    """
+      """
             {
                 "count": 3,
                 "page": 1,
@@ -335,14 +335,14 @@ class OpenFoodFactsIngredientRepositoryTest {
     var searchException: Exception? = null
 
     openFoodFactsIngredientRepository.search(
-      "Ingredient 1",
-      onSuccess = { ingredients -> searchIngredients = ingredients },
-      onFailure = { exception -> searchException = exception })
+        "Ingredient 1",
+        onSuccess = { ingredients -> searchIngredients = ingredients },
+        onFailure = { exception -> searchException = exception })
 
     val searchCallBack = callbackCapture.value
 
     `when`(mockResponseBody.string())
-      .thenReturn(openFoodFactsJsonSingleIngredientJsonWithNoProductName)
+        .thenReturn(openFoodFactsJsonSingleIngredientJsonWithNoProductName)
     `when`(mockImageRef.putStream(any())).thenReturn(mockUpload)
     `when`(mockUpload.isSuccessful).thenReturn(true)
 

@@ -159,11 +159,12 @@ class OpenFoodFactsIngredientRepository(private val client: OkHttpClient) : Ingr
     val suffixes: Array<String> = PRODUCT_NAME_OFF_SUFFIXES
 
     for (suffix in suffixes) {
-      val ingredientName = try {
-        json.getString(PRODUCT_NAME + suffix)
-      } catch (e: JSONException) {
-        null
-      }
+      val ingredientName =
+          try {
+            json.getString(PRODUCT_NAME + suffix)
+          } catch (e: JSONException) {
+            null
+          }
       if (!ingredientName.isNullOrEmpty()) {
         return ingredientName
       }
