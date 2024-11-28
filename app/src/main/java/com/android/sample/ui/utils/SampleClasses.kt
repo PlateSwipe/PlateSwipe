@@ -109,6 +109,8 @@ val ingredientBrands = arrayOf("Apple Co", "Linted", null)
 
 val ingredientQuantities = arrayOf("1 apple", "200 g", null)
 
+val ingredientFridgeItemQuantities = arrayOf(1, 200, 0)
+
 val ingredientCategories =
     arrayOf(
         listOf("Healthy", "Fruit", "Vegan"),
@@ -137,17 +139,27 @@ val testIngredients =
 
 val ingredientExpirationDateExample: LocalDate = LocalDate.of(2024, 11, 25)
 
-const val ingredientQuantityExample: String = "500 g"
+val ingredientExpirationDateModifiedExample: LocalDate = LocalDate.of(2024, 11, 26)
+
+const val ingredientQuantityExample: Int = 500
 
 val testFridgeItem =
-    testIngredients.map { ingredient ->
+    testIngredients.mapIndexed { index, ingredient ->
       FridgeItem(
           ingredient.barCode.toString(),
-          ingredient.quantity.toString(),
+          ingredientFridgeItemQuantities[index],
           ingredientExpirationDateExample)
     }
 
-val testFridgeItemModified =
+val testFridgeItemModifiedExpirationDate =
+    testIngredients.mapIndexed { index, ingredient ->
+      FridgeItem(
+          ingredient.barCode.toString(),
+          ingredientFridgeItemQuantities[index],
+          ingredientExpirationDateModifiedExample)
+    }
+
+val testFridgeItemModifiedQuantity =
     testIngredients.map { ingredient ->
       FridgeItem(
           ingredient.barCode.toString(), ingredientQuantityExample, ingredientExpirationDateExample)
