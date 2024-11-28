@@ -32,7 +32,8 @@ class CodeBarAnalyzer(private val onBarcodeDetected: (Barcode) -> Unit) : ImageA
               .setBarcodeFormats(
                   Barcode.FORMAT_QR_CODE,
                   Barcode.FORMAT_AZTEC,
-                  Barcode.FORMAT_EAN_13, // Format for food item in Europe
+                  Barcode.FORMAT_EAN_13,
+                  Barcode.FORMAT_EAN_8 // Format for food item in Europe
               )
               .build()
       val scanner = BarcodeScanning.getClient(options)
