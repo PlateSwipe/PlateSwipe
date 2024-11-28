@@ -12,7 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -79,8 +79,8 @@ fun TimePickerContent(
   val initialHours = totalMinutes / 60
   val initialMinutes = totalMinutes % 60
 
-  val hours = remember { mutableStateOf(initialHours) }
-  val minutes = remember { mutableStateOf(initialMinutes) }
+  val hours = remember { mutableIntStateOf(initialHours) }
+  val minutes = remember { mutableIntStateOf(initialMinutes) }
 
   Box(modifier = modifier.padding(PADDING_8.dp), contentAlignment = Alignment.TopCenter) {
     Column(
@@ -119,11 +119,11 @@ fun TimePickerContent(
 
           // WheelTimePicker
           WheelTimePicker(
-              selectedHour = hours.value,
-              selectedMinute = minutes.value,
+              selectedHour = hours.intValue,
+              selectedMinute = minutes.intValue,
               onTimeSelected = { selectedHour, selectedMinute ->
-                hours.value = selectedHour
-                minutes.value = selectedMinute
+                hours.intValue = selectedHour
+                minutes.intValue = selectedMinute
               })
 
           Spacer(modifier = Modifier.weight(6f))
@@ -134,7 +134,7 @@ fun TimePickerContent(
         text = stringResource(R.string.next_step),
         modifier = Modifier.align(Alignment.BottomCenter).testTag(NEXT_BUTTON),
         onClick = {
-          val totalTimeInMinutes = (hours.value * 60) + minutes.value
+          val totalTimeInMinutes = (hours.intValue * 60) + minutes.intValue
           createRecipeViewModel.updateRecipeTime(totalTimeInMinutes.toString())
           navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_IMAGE)
         })
