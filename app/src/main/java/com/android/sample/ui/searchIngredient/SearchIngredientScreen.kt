@@ -77,7 +77,7 @@ fun SearchIngredientScreen(
     onConfirmation: (Ingredient) -> Unit,
 ) {
   val listIngredient = searchIngredientViewModel.searchingIngredientList.collectAsState()
-  val isSearching = searchIngredientViewModel.isSearching.collectAsState()
+  val isSearching = searchIngredientViewModel.isFetchingByName.collectAsState()
   var showConfirmation by remember { mutableStateOf(DO_NOT_SHOW_CONFIRMATION) }
   var selectedIngredient by remember { mutableStateOf<Ingredient?>(null) }
 

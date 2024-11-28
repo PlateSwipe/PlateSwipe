@@ -28,12 +28,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
 import com.android.sample.R
 import com.android.sample.animation.LoadingCook
 import com.android.sample.feature.camera.CameraView
@@ -44,13 +47,12 @@ import com.android.sample.feature.camera.scan.CodeBarAnalyzer
 import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.ingredient.SearchIngredientViewModel
 import com.android.sample.resources.C
+import com.android.sample.resources.C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_IMAGE_BORDER_RADIUS
 import com.android.sample.resources.C.Dimension.PADDING_8
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_SMALL_URL
 import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_IMAGE_1
 import com.android.sample.ui.navigation.NavigationActions
-import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
-import com.android.sample.ui.utils.IngredientImageBox
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 
@@ -131,9 +133,9 @@ fun IngredientOverlay(
     searchIngredientViewModel: SearchIngredientViewModel,
     navigationActions: NavigationActions,
 ) {
-  val ingredient by viewModel.ingredient.collectAsState()
+  val ingredient by searchIngredientViewModel.ingredient.collectAsState()
 
-  val isFetchingByBarcode by viewModel.isFetchingByBarcode.collectAsState()
+  val isFetchingByBarcode by searchIngredientViewModel.isFetchingByBarcode.collectAsState()
 
   // We need to know if the person has attempted to scan a barcode once
   // we do this to avoid showing the ingredientDisplay before any scan has even been done
@@ -165,10 +167,12 @@ fun IngredientOverlay(
                   .wrapContentHeight()) {
             if (isFetchingByBarcode) {
               IngredientBeingFetchedDisplay()
-            } else if (ingredient == null) {
+            } else if (ingredient.first == null) {
               IngredientNotFoundDisplay()
             } else {
-              ingredient?.let { IngredientDisplay(ingredient = it, viewModel, navigationActions) }
+              ingredient.first?.let {
+                IngredientDisplay(ingredient = it, searchIngredientViewModel, navigationActions)
+              }
             }
           }
     }
@@ -182,7 +186,7 @@ fun IngredientOverlay(
  */
 @Composable
 fun IngredientDisplay(
-    ingredient: Ingredient?,
+    ingredient: Ingredient,
     searchIngredientViewModel: SearchIngredientViewModel,
     navigationActions: NavigationActions
 ) {
@@ -209,7 +213,7 @@ fun IngredientDisplay(
                 .padding(C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_TEXT_PADDING.dp),
         verticalArrangement = Arrangement.Center) {
           IngredientNameAndBrand(ingredient)
-          IngredientSelectButton(ingredient, viewModel, navigationActions)
+          IngredientSelectButton(ingredient, searchIngredientViewModel, navigationActions)
         }
   }
 }
@@ -265,12 +269,12 @@ private fun IngredientNameAndBrand(ingredient: Ingredient) {
 @Composable
 private fun IngredientSelectButton(
     ingredient: Ingredient,
-    viewModel: IngredientViewModel,
+    searchIngredientViewModel: SearchIngredientViewModel,
     navigationActions: NavigationActions
 ) {
   Button(
       onClick = {
-        viewModel.addIngredient(ingredient)
+        searchIngredientViewModel.addIngredient(ingredient)
         navigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
       },
       modifier =

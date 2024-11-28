@@ -232,7 +232,7 @@ class SearchIngredientScreenTest {
       null
     }
     composeTestRule.onNodeWithTag(SEARCH_BAR, useUnmergedTree = true).performTextInput("a")
-    composeTestRule.waitUntil(5000) { !searchIngredientViewModel.isSearching.value }
+    composeTestRule.waitUntil(5000) { !searchIngredientViewModel.isFetchingByName.value }
     composeTestRule.onNodeWithText("No Ingredients", useUnmergedTree = true).assertIsDisplayed()
     composeTestRule.onNodeWithTag(CHEF_IMAGE, useUnmergedTree = true).assertIsDisplayed()
   }

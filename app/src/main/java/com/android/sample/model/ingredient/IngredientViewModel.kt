@@ -28,15 +28,12 @@ class IngredientViewModel(private val repository: IngredientRepository) :
   override val ingredient: StateFlow<Pair<Ingredient?, String?>>
     get() = _ingredient
 
-    private val _isFetchingByBarcode = MutableStateFlow(false)
-    val isFetchingByBarcode: StateFlow<Boolean>
-        get() = _isFetchingByBarcode
+  private val _isFetchingByBarcode = MutableStateFlow(false)
+  override val isFetchingByBarcode: StateFlow<Boolean>
+    get() = _isFetchingByBarcode
 
   private val _ingredientList = MutableStateFlow<List<Pair<Ingredient, String?>>>(emptyList())
   override val ingredientList: StateFlow<List<Pair<Ingredient, String?>>>
-
-  private val _ingredientList = MutableStateFlow<List<Ingredient>>(emptyList())
-  val ingredientList: StateFlow<List<Ingredient>>
     get() = _ingredientList
 
   private val _searchingIngredientList =
@@ -45,7 +42,7 @@ class IngredientViewModel(private val repository: IngredientRepository) :
     get() = _searchingIngredientList
 
   private val _isSearching = MutableStateFlow(false)
-  override val isSearching: StateFlow<Boolean>
+  override val isFetchingByName: StateFlow<Boolean>
     get() = _isSearching
 
   /**
@@ -67,7 +64,7 @@ class IngredientViewModel(private val repository: IngredientRepository) :
             _ingredient.value = Pair(ingredient, ingredient.quantity)
           }
 
-            _isFetchingByBarcode.value = false
+          _isFetchingByBarcode.value = false
         },
         onFailure = {
           Log.e(INGREDIENT_VIEWMODEL_LOG_TAG, INGREDIENT_NOT_FOUND_MESSAGE)

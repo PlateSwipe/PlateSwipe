@@ -6,14 +6,17 @@ interface SearchIngredientViewModel {
   // The ingredient to search with the barcode
   val ingredient: StateFlow<Pair<Ingredient?, String?>>
 
+  // The state of searching by barcode
+  val isFetchingByBarcode: StateFlow<Boolean>
+
   // The list of ingredients to display after fetching in the database
   val searchingIngredientList: StateFlow<List<Pair<Ingredient, String?>>>
 
   // The list of ingredient whe select
   val ingredientList: StateFlow<List<Pair<Ingredient, String?>>>
 
-  // The state of searching
-  val isSearching: StateFlow<Boolean>
+  // The state of searching by name
+  val isFetchingByName: StateFlow<Boolean>
 
   /**
    * Fetch ingredient
