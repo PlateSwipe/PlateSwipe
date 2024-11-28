@@ -223,6 +223,31 @@ object C {
     const val PRODUCT_FRONT_IMAGE_THUMBNAIL = "display_thumbnail"
     const val PRODUCT_FRONT_IMAGE_SMALL_URL = "image_front_small_url"
     const val PRODUCT_FRONT_IMAGE_SMALL = "display_small"
+    val PRODUCT_NAME_OFF_SUFFIXES = arrayOf(
+      "",
+      "_en",
+      "_fr",
+      "_es",
+      "_de",
+      "_it",
+      "_nl",
+      "_pt",
+      "_pl",
+      "_sv",
+      "_fi",
+      "_da",
+      "_cs",
+      "_sk",
+      "_hu",
+      "_lt",
+      "_lv",
+      "_et",
+      "_mt",
+      "_hr",
+      "_sl",
+      "_bg",
+      "_ro",
+      "_el")
 
     // EXCEPTION MESSAGES
     const val LIMIT_MUST_BE_POSITIVE_MESSAGE = "Limit must be greater than 0"

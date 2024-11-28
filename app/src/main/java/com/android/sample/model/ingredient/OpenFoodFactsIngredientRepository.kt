@@ -10,6 +10,7 @@ import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_SMALL_URL
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_THUMBNAIL_URL
 import com.android.sample.resources.C.Tag.PRODUCT_ID
 import com.android.sample.resources.C.Tag.PRODUCT_NAME
+import com.android.sample.resources.C.Tag.PRODUCT_NAME_OFF_SUFFIXES
 import com.android.sample.resources.C.Tag.PRODUCT_QUANTITY
 import java.io.IOException
 import okhttp3.Call
@@ -31,7 +32,7 @@ class OpenFoodFactsIngredientRepository(private val client: OkHttpClient) : Ingr
    */
   private fun parseOpenFoodFactsJsonToIngredient(json: JSONObject): Ingredient {
 
-    val ingredientName = json.getString(PRODUCT_NAME)
+    val ingredientName = parseProductName(json)
 
     if (ingredientName.isNullOrEmpty()) {
       throw Exception(C.Tag.INGREDIENT_NAME_NOT_PROVIDED)
@@ -151,5 +152,19 @@ class OpenFoodFactsIngredientRepository(private val client: OkHttpClient) : Ingr
                 }
               }
             })
+  }
+
+  private fun parseProductName(json: JSONObject): String? {
+
+    val suffixes: Array<String> = PRODUCT_NAME_OFF_SUFFIXES
+
+    for (suffix in suffixes) {
+      val ingredientName = json.getString(PRODUCT_NAME + suffix)
+      if (!ingredientName.isNullOrEmpty()) {
+        return ingredientName
+      }
+    }
+
+    return null
   }
 }
