@@ -17,7 +17,8 @@ object C {
     const val LOADING = "Loading..."
     const val PADDING = 16
     const val SMALL_PADDING = 8
-
+    const val IMG_COMPRESS_SIZE = 100
+    const val INGREDIENT_DATABASE_NAME = "ingredient_database"
     // Error
     const val ERROR_NULL_IMAGE = "Image is null"
     const val ERROR_STR_MEAL_BLANK = "Recipe name is required and cannot be blank."
@@ -208,6 +209,11 @@ object C {
     const val AGGREGATOR_ERROR_GET_INGR_FIRESTORE = "Error getting ingredient from Firestore:"
     const val OPENFOODFACT_REPO_IMAGE_ULR_INVALID = "Image URLs are not provided"
     const val INGREDIENT_VIEWMODEL_LOG_TAG = "IngredientViewModel"
+    const val INGR_DOWNLOAD_ERROR_GET_ING = "Error getting ingredient"
+    const val INGR_DOWNLOAD_ERROR_DOWNLOAD_IMAGE = "Error downloading image"
+    const val INGR_DOWNLOAD_ERROR_UPDATE_ING = "Error updating ingredient"
+    const val INGR_DOWNLOAD_ERROR_DELETE_ING = "Error deleting ingredient"
+    const val INGR_DOWNLOAD_ERROR_NULL_POINTER = "Error getting URI"
 
     // OpenFoodFactsIngredientRepository
     const val OPEN_FOOD_FACTS_URL = "https://world.openfoodfacts.org"
@@ -223,6 +229,14 @@ object C {
     const val PRODUCT_FRONT_IMAGE_SMALL_URL = "image_front_small_url"
     const val PRODUCT_FRONT_IMAGE_SMALL = "display_small"
 
+    const val INGR_DB_COL_NAME_UID = "uid"
+    const val INGR_DB_COL_NAME_BARCODE = "barcode"
+    const val INGR_DB_COL_NAME_NAME = "name"
+    const val INGR_DB_COL_NAME_BRANDS = "brands"
+    const val INGR_DB_COL_NAME_QUANTITY = "quantity"
+    const val INGR_DB_COL_NAME_CATEGORIES = "categories"
+    const val INGR_DB_COL_NAME_IMAGES = "images"
+    const val INGR_DB_COL_NAME_TABLE = "ingredient"
     // EXCEPTION MESSAGES
     const val LIMIT_MUST_BE_POSITIVE_MESSAGE = "Limit must be greater than 0"
     const val UNSUPPORTED_MESSAGE = "Operation not supported"

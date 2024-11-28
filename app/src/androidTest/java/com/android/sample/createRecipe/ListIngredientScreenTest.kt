@@ -9,7 +9,8 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
-import com.android.sample.model.ingredient.AggregatorIngredientRepository
+import com.android.sample.model.image.ImageDownload
+import com.android.sample.model.ingredient.DefaultIngredientRepository
 import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.ingredient.IngredientViewModel
 import com.android.sample.model.recipe.CreateRecipeViewModel
@@ -41,7 +42,7 @@ class ListIngredientScreenTest {
 
   @Mock private lateinit var mockNavigationActions: NavigationActions
 
-  @Mock private lateinit var aggregatorIngredientRepository: AggregatorIngredientRepository
+  @Mock private lateinit var aggregatorIngredientRepository: DefaultIngredientRepository
 
   // Sample ingredients list for testing
   private val mockedIngredients = testIngredients.filter { it.quantity != null }
@@ -52,7 +53,7 @@ class ListIngredientScreenTest {
     mockNavigationActions = mock(NavigationActions::class.java)
 
     `when`(mockNavigationActions.currentRoute()).thenReturn(Route.CREATE_RECIPE)
-    aggregatorIngredientRepository = mock(AggregatorIngredientRepository::class.java)
+    aggregatorIngredientRepository = mock(DefaultIngredientRepository::class.java)
 
     `when`(aggregatorIngredientRepository.search(any(), any(), any(), any())).thenAnswer {
         invocation ->
@@ -60,7 +61,7 @@ class ListIngredientScreenTest {
       onSuccess(mockedIngredients)
       null
     }
-    ingredientViewModel = IngredientViewModel(aggregatorIngredientRepository)
+    ingredientViewModel = IngredientViewModel(aggregatorIngredientRepository, ImageDownload())
     createRecipeViewModel = CreateRecipeViewModel.Factory.create(CreateRecipeViewModel::class.java)
     createRecipeViewModel.recipeBuilder.setName("Test Recipe")
 
