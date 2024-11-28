@@ -785,5 +785,13 @@ object C {
       // CategorySubtitle
       const val CATEGORY_SUBTITLE = "CategorySubtitle"
     }
+
+    object TimePicker {
+      const val TIME_PICKER_TITLE = "TimePickerTitle"
+      const val TIME_PICKER_DESCRIPTION = "TimePickerDescription"
+      const val HOUR_PICKER = "HourPicker"
+      const val MINUTE_PICKER = "MinutePicker"
+      const val NEXT_BUTTON = "NextButton"
+    }
   }
 }
