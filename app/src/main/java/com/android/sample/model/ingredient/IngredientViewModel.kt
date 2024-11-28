@@ -26,6 +26,10 @@ class IngredientViewModel(private val repository: IngredientRepository) : ViewMo
   val ingredient: StateFlow<Ingredient?>
     get() = _ingredient
 
+  private val _isFetchingByBarcode = MutableStateFlow(false)
+  val isFetchingByBarcode: StateFlow<Boolean>
+    get() = _isFetchingByBarcode
+
   private val _ingredientList = MutableStateFlow<List<Ingredient>>(emptyList())
   val ingredientList: StateFlow<List<Ingredient>>
     get() = _ingredientList
@@ -34,9 +38,9 @@ class IngredientViewModel(private val repository: IngredientRepository) : ViewMo
   val searchingIngredientList: StateFlow<List<Ingredient>>
     get() = _searchingIngredientList
 
-  private val _isSearching = MutableStateFlow(false)
-  val isSearching: StateFlow<Boolean>
-    get() = _isSearching
+  private val _isFetchingByName = MutableStateFlow(false)
+  val isFetchingByName: StateFlow<Boolean>
+    get() = _isFetchingByName
 
   /**
    * Fetch ingredient
@@ -47,12 +51,19 @@ class IngredientViewModel(private val repository: IngredientRepository) : ViewMo
     if (_ingredient.value?.barCode == barCode) {
       return
     }
+
+    _isFetchingByBarcode.value = true
     repository.get(
         barCode,
-        onSuccess = { ingredient -> _ingredient.value = ingredient },
+        onSuccess = { ingredient ->
+          _ingredient.value = ingredient
+          _isFetchingByBarcode.value = false
+        },
         onFailure = {
           Log.e(INGREDIENT_VIEWMODEL_LOG_TAG, INGREDIENT_NOT_FOUND_MESSAGE)
+
           _ingredient.value = null
+          _isFetchingByBarcode.value = false
         })
   }
 
@@ -88,15 +99,15 @@ class IngredientViewModel(private val repository: IngredientRepository) : ViewMo
    * @param name
    */
   fun fetchIngredientByName(name: String) {
-    _isSearching.value = true
+    _isFetchingByName.value = true
     repository.search(
         name,
         onSuccess = { ingredientList ->
-          _isSearching.value = false
+          _isFetchingByName.value = false
           _searchingIngredientList.value = ingredientList
         },
         onFailure = {
-          _isSearching.value = false
+          _isFetchingByName.value = false
           _searchingIngredientList.value = emptyList()
         })
   }
