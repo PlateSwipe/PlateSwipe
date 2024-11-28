@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -30,7 +31,6 @@ import com.android.sample.ui.createRecipe.AddInstructionStepScreen
 import com.android.sample.ui.createRecipe.CategoryScreen
 import com.android.sample.ui.createRecipe.CreateRecipeScreen
 import com.android.sample.ui.createRecipe.IngredientListScreen
-import com.android.sample.ui.createRecipe.IngredientSearchScreen
 import com.android.sample.ui.createRecipe.PublishRecipeScreen
 import com.android.sample.ui.createRecipe.RecipeAddImageScreen
 import com.android.sample.ui.createRecipe.RecipeIngredientsScreen
@@ -43,6 +43,7 @@ import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.recipe.SearchRecipeScreen
 import com.android.sample.ui.recipeOverview.RecipeOverview
+import com.android.sample.ui.searchIngredient.SearchIngredientScreen
 import com.android.sample.ui.swipePage.SwipePage
 import com.android.sample.ui.theme.SampleAppTheme
 
@@ -114,12 +115,14 @@ fun PlateSwipeApp() {
             navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
       }
 
-      composable(Screen.CATEGORY_SCREEN) {
+      composable(Screen.CREATE_CATEGORY_SCREEN) {
         CategoryScreen(navigationActions, createRecipeViewModel)
       }
       composable(Screen.CREATE_RECIPE_INGREDIENTS) {
         RecipeIngredientsScreen(
-            navigationActions = navigationActions, currentStep = SECOND_STEP_OF_THE_CREATION)
+            navigationActions = navigationActions,
+            currentStep = SECOND_STEP_OF_THE_CREATION,
+            ingredientViewModel = ingredientViewModel)
       }
       composable(Screen.CREATE_RECIPE_INSTRUCTIONS) {
         RecipeInstructionsScreen(
@@ -148,8 +151,16 @@ fun PlateSwipeApp() {
       }
 
       composable(Screen.CREATE_RECIPE_SEARCH_INGREDIENTS) {
-        IngredientSearchScreen(
-            navigationActions = navigationActions, ingredientViewModel = ingredientViewModel)
+        SearchIngredientScreen(
+            navigationActions = navigationActions,
+            searchIngredientViewModel = ingredientViewModel,
+            popUpTitle = stringResource(R.string.pop_up_title),
+            popUpConfirmationText = stringResource(R.string.pop_up_description),
+            popUpConfirmationButtonText = stringResource(R.string.pop_up_confirmation),
+            onConfirmation = {
+              ingredientViewModel.addIngredient(it)
+              navigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
+            })
       }
 
       composable(Screen.CREATE_RECIPE_LIST_INGREDIENTS) {
@@ -160,7 +171,7 @@ fun PlateSwipeApp() {
       }
       composable(Screen.CAMERA_SCAN_CODE_BAR) {
         CameraScanCodeBarScreen(
-            navigationActions = navigationActions, ingredientViewModel = ingredientViewModel)
+            navigationActions = navigationActions, searchIngredientViewModel = ingredientViewModel)
       }
     }
     navigation(

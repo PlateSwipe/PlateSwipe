@@ -4,7 +4,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.sample.R
 import com.android.sample.resources.C.Tag.ICON_CHEF_HAT
-import com.android.sample.resources.C.Tag.PADDING
 
 // Like R, but C
 object C {
@@ -569,10 +568,13 @@ object C {
       const val INGREDIENT_LIST_WEIGHT = 6f
       const val INGREDIENT_PREVIEW_ELEVATION = 4
       const val INGREDIENT_PREVIEW_CORNER = 8
-      const val IMAGE_SPACER = PADDING.times(6)
       const val INPUT_MAX_LINE = 1
       const val BUTTON_ROUND = 4
       const val BUTTON_Z = 1f
+      const val POP_UP_DELAY = 3000L
+      const val POP_UP_WIDTH = 2
+      const val ROUND_CORNER = 12
+      const val NAME_MAX_LINE = 2
     }
 
     object RecipeList {
