@@ -1,11 +1,19 @@
 package com.android.sample.model.user
 
 import android.util.Log
+import com.android.sample.model.fridge.FridgeItem
+import com.android.sample.resources.C.Tag.UserRepositoryFirestore.FRIDGE_FIELD_EXPIRATION_DATE
+import com.android.sample.resources.C.Tag.UserRepositoryFirestore.FRIDGE_FIELD_EXPIRATION_DATE_DAY
+import com.android.sample.resources.C.Tag.UserRepositoryFirestore.FRIDGE_FIELD_EXPIRATION_DATE_MONTH
+import com.android.sample.resources.C.Tag.UserRepositoryFirestore.FRIDGE_FIELD_EXPIRATION_DATE_YEAR
+import com.android.sample.resources.C.Tag.UserRepositoryFirestore.FRIDGE_FIELD_ID
+import com.android.sample.resources.C.Tag.UserRepositoryFirestore.FRIDGE_FIELD_QUANTITY
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import java.time.LocalDate
 
 class UserRepositoryFirestore(private val db: FirebaseFirestore) : UserRepository {
   private val collectionPath = "users"
@@ -61,7 +69,10 @@ class UserRepositoryFirestore(private val db: FirebaseFirestore) : UserRepositor
     return try {
       val userName = snapshot["userName"] as String
       val profilePictureUrl = snapshot["profilePictureUrl"] as String
-      val fridge = snapshot["fridge"] as List<Pair<String, Int>>
+      val fridge =
+          (snapshot["fridge"] as List<Map<String, Any>>).map { mapping ->
+            fridgeItemExtraction(mapping)
+          }
       val likedRecipes = snapshot["likedRecipes"] as List<String>
       val createdRecipes = snapshot["createdRecipes"] as List<String>
 
@@ -70,6 +81,25 @@ class UserRepositoryFirestore(private val db: FirebaseFirestore) : UserRepositor
       Log.e("UserRepositoryFirestore", "Error converting snapshot to user", e)
       null
     }
+  }
+
+  /**
+   * Method that transform the mapping of an FridgeItem from the database to the object [FridgeItem]
+   *
+   * @param mapping the mapping extracted from the database for a FridgeItem
+   * @return an object FridgeItem
+   */
+  @Suppress("UNCHECKED_CAST")
+  private fun fridgeItemExtraction(mapping: Map<String, Any>): FridgeItem {
+    val id = mapping[FRIDGE_FIELD_ID] as String
+    val quantity = mapping[FRIDGE_FIELD_QUANTITY] as Int
+    val dateMap = mapping[FRIDGE_FIELD_EXPIRATION_DATE] as Map<String, Any>
+    val date =
+        LocalDate.of(
+            (dateMap[FRIDGE_FIELD_EXPIRATION_DATE_YEAR] as Long).toInt(),
+            (dateMap[FRIDGE_FIELD_EXPIRATION_DATE_MONTH] as Long).toInt(),
+            (dateMap[FRIDGE_FIELD_EXPIRATION_DATE_DAY] as Long).toInt())
+    return FridgeItem(id, quantity, date)
   }
 
   /**

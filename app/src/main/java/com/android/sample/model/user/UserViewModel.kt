@@ -3,6 +3,7 @@ package com.android.sample.model.user
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.android.sample.model.fridge.FridgeItem
 import com.android.sample.model.image.ImageDirectoryType
 import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.ingredient.Ingredient
@@ -22,12 +23,12 @@ import com.android.sample.resources.C.Tag.UserViewModel.NOT_FOUND_INGREDIENT_IN_
 import com.android.sample.resources.C.Tag.UserViewModel.RECIPE_DELETED_SUCCESSFULY
 import com.android.sample.resources.C.Tag.UserViewModel.RECIPE_NOT_FOUND
 import com.android.sample.resources.C.Tag.UserViewModel.REMOVED_INGREDIENT_NOT_IN_FRIDGE_ERROR
-import com.android.sample.resources.C.Tag.UserViewModel.REMOVED_TOO_MANY_INGREDIENTS_ERROR
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import java.time.LocalDate
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -48,8 +49,8 @@ class UserViewModel(
   private val _profilePictureUrl: MutableStateFlow<String?> = MutableStateFlow(null)
   val profilePictureUrl: StateFlow<String?> = _profilePictureUrl
 
-  private val _fridge: MutableStateFlow<List<Pair<Ingredient, Int>>> = MutableStateFlow(emptyList())
-  val fridge: StateFlow<List<Pair<Ingredient, Int>>> = _fridge
+  private val _fridgeItems = MutableStateFlow<List<Pair<FridgeItem, Ingredient>>>(emptyList())
+  val fridgeItems: StateFlow<List<Pair<FridgeItem, Ingredient>>> = _fridgeItems
 
   private val _likedRecipes: MutableStateFlow<List<Recipe>> = MutableStateFlow(emptyList())
   val likedRecipes: StateFlow<List<Recipe>> = _likedRecipes
@@ -84,20 +85,7 @@ class UserViewModel(
         onSuccess = { user ->
           _userName.value = user.userName
           _profilePictureUrl.value = user.profilePictureUrl
-          user.fridge.forEach { (barcode, ingredientCount) ->
-            ingredientRepository.get(
-                barcode.toLong(),
-                onSuccess = { ingredient ->
-                  if (ingredient != null) {
-                    addIngredientToUserFridge(ingredient, ingredientCount)
-                  } else {
-                    Log.e(LOG_TAG, NOT_FOUND_INGREDIENT_IN_DATABASE_ERROR)
-                  }
-                },
-                onFailure = { e ->
-                  Log.e(LOG_TAG, FAILED_TO_FETCH_INGREDIENT_FROM_DATABASE_ERROR, e)
-                })
-          }
+          user.fridge.forEach { fridgeItem -> fetchIngredient(fridgeItem) }
           user.likedRecipes.forEach { uid ->
             fetchRecipe(
                 uid,
@@ -122,7 +110,7 @@ class UserViewModel(
                       uid = userId,
                       userName = userName.value ?: userId,
                       profilePictureUrl = "",
-                      fridge = _fridge.value.map { Pair(it.first.barCode.toString(), it.second) },
+                      fridge = _fridgeItems.value.map { it.first },
                       likedRecipes = _likedRecipes.value.map { it.uid },
                       createdRecipes = _createdRecipes.value.map { it.uid }),
               onSuccess = { getCurrentUser() },
@@ -140,7 +128,7 @@ class UserViewModel(
             uid = firebaseAuth.currentUser?.uid ?: return,
             userName = _userName.value ?: "",
             profilePictureUrl = _profilePictureUrl.value ?: "",
-            fridge = _fridge.value.map { Pair(it.first.barCode.toString(), it.second) },
+            fridge = _fridgeItems.value.map { it.first },
             likedRecipes = _likedRecipes.value.map { it.uid },
             createdRecipes = _createdRecipes.value.map { it.uid })
 
@@ -192,50 +180,87 @@ class UserViewModel(
   }
 
   /**
-   * Adds an ingredient to the user fridge. More precisely, it increases the count of said
-   * ingredient in the fridge.
+   * Method that add an [Ingredient] to the fridge of the user
    *
    * @param ingredient the ingredient to be added
-   * @param count the number of ingredients to be added
+   * @param quantity the quantity of the ingredient
+   * @param expirationDate the expiration date of the ingredient
    */
-  fun addIngredientToUserFridge(ingredient: Ingredient, count: Int = 1) {
-    try {
-      val changedElement: Pair<Ingredient, Int> =
-          _fridge.value.first { it.first.barCode == ingredient.barCode }
+  private fun addIngredientToUserFridge(
+      ingredient: Ingredient,
+      quantity: Int,
+      expirationDate: LocalDate
+  ) {
+    val newFridgeItem = FridgeItem(ingredient.barCode.toString(), quantity, expirationDate)
+    updateList(_fridgeItems, Pair(newFridgeItem, ingredient), add = true)
+  }
 
-      updateList(_fridge, changedElement, add = false)
-      updateList(_fridge, Pair(changedElement.first, changedElement.second + count), add = true)
+  /**
+   * Method that removes an [Ingredient] from the fridge of the user and updates the user in the
+   * database
+   *
+   * @param ingredient the ingredient to be removed
+   * @throws IllegalArgumentException if the count is greater than the number of ingredients in the
+   *   fridge
+   */
+  fun removeIngredientFromUserFridge(ingredient: Ingredient, expirationDate: LocalDate) {
+    try {
+      val deletedIngredient: Pair<FridgeItem, Ingredient> =
+          _fridgeItems.value.first {
+            (it.first.id == ingredient.barCode.toString()) &&
+                (it.first.expirationDate == expirationDate)
+          }
+      updateList(_fridgeItems, deletedIngredient, add = false)
     } catch (e: NoSuchElementException) {
-      updateList(_fridge, Pair(ingredient, count), add = true)
+      throw IllegalArgumentException(REMOVED_INGREDIENT_NOT_IN_FRIDGE_ERROR)
     }
     updateCurrentUser()
   }
 
   /**
-   * Removes an ingredient from the user fridge. More precisely, it will decrease the count of said
-   * ingredient in the fridge.
+   * Method that either add an ingredient to the user's fridge if it does not exist, and updates it
+   * with the new quantity if it is already in the fridge
    *
-   * @param ingredient the ingredient to be removed
-   * @param count the number of ingredients to be removed
-   * @throws IllegalArgumentException if the count is greater than the number of ingredients in the
-   *   fridge
+   * @param ingredient the ingredient to be updated/added
+   * @param quantity a valid quantity for the ingredient
+   * @param expirationDate the expiration date of the ingredient
+   * @param scannedItem boolean that the determines if we update via a scanned item or not
    */
-  fun removeIngredientFromUserFridge(ingredient: Ingredient, count: Int = 1) {
-    try {
-      val changedElement: Pair<Ingredient, Int> =
-          _fridge.value.first { it.first.barCode == ingredient.barCode }
+  fun updateIngredientFromFridge(
+      ingredient: Ingredient,
+      quantity: Int,
+      expirationDate: LocalDate,
+      scannedItem: Boolean
+  ) {
+    val changedIngredient =
+        _fridgeItems.value.find {
+          (it.first.id == ingredient.barCode.toString()) &&
+              (it.first.expirationDate == expirationDate)
+        }
+    if (changedIngredient != null) {
+      if (scannedItem) { // case there we scan an item that we want to add to the fridge
+        val actualQuantity = changedIngredient.first.quantity
+        val newQuantity = actualQuantity + quantity
 
-      if (changedElement.second - count > 0) {
-        updateList(_fridge, changedElement, add = false)
-        updateList(_fridge, Pair(changedElement.first, changedElement.second - count), add = true)
-      } else if (changedElement.second - count == 0) {
-        updateList(_fridge, changedElement, add = false)
-        updateList(_fridge, changedElement, add = false)
-      } else {
-        throw IllegalArgumentException(REMOVED_TOO_MANY_INGREDIENTS_ERROR)
+        val newFridgeItem =
+            FridgeItem(
+                changedIngredient.first.id, newQuantity, changedIngredient.first.expirationDate)
+
+        updateList(_fridgeItems, changedIngredient, add = false)
+        updateList(_fridgeItems, Pair(newFridgeItem, changedIngredient.second), add = true)
+      } else { // case where we modify the quantity in the fridge item
+        if (quantity <= 0) {
+          removeIngredientFromUserFridge(ingredient, changedIngredient.first.expirationDate)
+        } else {
+          val newFridgeItem =
+              FridgeItem(
+                  changedIngredient.first.id, quantity, changedIngredient.first.expirationDate)
+          updateList(_fridgeItems, changedIngredient, add = false)
+          updateList(_fridgeItems, Pair(newFridgeItem, changedIngredient.second), add = true)
+        }
       }
-    } catch (e: NoSuchElementException) {
-      throw IllegalArgumentException(REMOVED_INGREDIENT_NOT_IN_FRIDGE_ERROR)
+    } else {
+      addIngredientToUserFridge(ingredient, quantity, expirationDate)
     }
     updateCurrentUser()
   }
@@ -333,5 +358,24 @@ class UserViewModel(
             }
           }
         })
+  }
+
+  /**
+   * Method that fetches the ingredient described by the [FridgeItem] from the database
+   *
+   * @param fridgeItem the fridge item that describes the ingredient that we want to retrieve
+   */
+  private fun fetchIngredient(fridgeItem: FridgeItem) {
+    ingredientRepository.get(
+        fridgeItem.id.toLong(),
+        onSuccess = { ingredient ->
+          if (ingredient != null) {
+            updateIngredientFromFridge(
+                ingredient, fridgeItem.quantity, fridgeItem.expirationDate, false)
+          } else {
+            Log.e(LOG_TAG, NOT_FOUND_INGREDIENT_IN_DATABASE_ERROR)
+          }
+        },
+        onFailure = { e -> Log.e(LOG_TAG, FAILED_TO_FETCH_INGREDIENT_FROM_DATABASE_ERROR, e) })
   }
 }

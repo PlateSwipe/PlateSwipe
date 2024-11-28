@@ -1,5 +1,6 @@
 package com.android.sample.ui.utils
 
+import com.android.sample.model.fridge.FridgeItem
 import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.recipe.Instruction
 import com.android.sample.model.recipe.Recipe
@@ -7,6 +8,7 @@ import com.android.sample.model.user.User
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_NORMAL_URL
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_SMALL_URL
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_THUMBNAIL_URL
+import java.time.LocalDate
 
 val recipeNames =
     arrayOf(
@@ -107,6 +109,8 @@ val ingredientBrands = arrayOf("Apple Co", "Linted", null)
 
 val ingredientQuantities = arrayOf("1 apple", "200 g", null)
 
+val ingredientFridgeItemQuantities = arrayOf(1, 200, 0)
+
 val ingredientCategories =
     arrayOf(
         listOf("Healthy", "Fruit", "Vegan"),
@@ -133,13 +137,41 @@ val testIngredients =
       )
     }
 
+val ingredientExpirationDateExample: LocalDate = LocalDate.of(2024, 11, 25)
+
+val ingredientExpirationDateModifiedExample: LocalDate = LocalDate.of(2024, 11, 26)
+
+const val ingredientQuantityExample: Int = 500
+
+val testFridgeItem =
+    testIngredients.mapIndexed { index, ingredient ->
+      FridgeItem(
+          ingredient.barCode.toString(),
+          ingredientFridgeItemQuantities[index],
+          ingredientExpirationDateExample)
+    }
+
+val testFridgeItemModifiedExpirationDate =
+    testIngredients.mapIndexed { index, ingredient ->
+      FridgeItem(
+          ingredient.barCode.toString(),
+          ingredientFridgeItemQuantities[index],
+          ingredientExpirationDateModifiedExample)
+    }
+
+val testFridgeItemModifiedQuantity =
+    testIngredients.map { ingredient ->
+      FridgeItem(
+          ingredient.barCode.toString(), ingredientQuantityExample, ingredientExpirationDateExample)
+    }
+
 val testUsers: List<User> =
     listOf(
         User(
             "001",
             "Gigel Frone",
             "",
-            listOf(Pair(testIngredients[0].barCode.toString(), 1)),
+            listOf(testFridgeItem[0]),
             listOf(testRecipes[0].uid),
             listOf(testRecipes[1].uid)),
         User("002", "Ion Popescu", "", emptyList(), emptyList(), emptyList()),

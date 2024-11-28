@@ -171,6 +171,16 @@ object C {
       const val ERROR_GETTING_DOCUMENT = "Error getting documents"
     }
 
+    // UserRepositoryFirestore
+    object UserRepositoryFirestore {
+      const val FRIDGE_FIELD_ID = "id"
+      const val FRIDGE_FIELD_QUANTITY = "quantity"
+      const val FRIDGE_FIELD_EXPIRATION_DATE = "expirationDate"
+      const val FRIDGE_FIELD_EXPIRATION_DATE_YEAR = "year"
+      const val FRIDGE_FIELD_EXPIRATION_DATE_MONTH = "monthValue"
+      const val FRIDGE_FIELD_EXPIRATION_DATE_DAY = "dayOfMonth"
+    }
+
     // Values for storage
     const val FIRESTORE_RECIPE_NAME = "name"
     const val FIRESTORE_RECIPE_CATEGORY = "category"
