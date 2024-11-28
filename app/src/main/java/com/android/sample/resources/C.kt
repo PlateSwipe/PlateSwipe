@@ -342,6 +342,13 @@ object C {
 
     // Create Recipe Add Image
     const val ADD_IMAGE_STEP = 4
+
+    // TimePickerScreen
+    const val MINUTES_PER_HOUR = 60
+    const val HOUR_RANGE_START = 0
+    const val HOUR_RANGE_END = 23
+    const val MINUTE_RANGE_START = 0
+    const val MINUTE_RANGE_END = 59
   }
 
   object Values {

@@ -148,4 +148,41 @@ class TimePickerScreenTest {
     // Verify that the minute picker starts at 0
     composeTestRule.onNodeWithTag(MINUTE_PICKER).assertExists().assertContentDescriptionEquals("0")
   }
+
+  @Test
+  fun testGetRecipeTimeCalledOnce() {
+    // Mock the initial recipe time
+    every { createRecipeViewModel.getRecipeTime() } returns "125"
+
+    composeTestRule.setContent {
+      TimePickerScreen(
+          navigationActions = mockNavigationActions, createRecipeViewModel = createRecipeViewModel)
+    }
+
+    // Verify that getRecipeTime was called exactly once
+    verify(exactly = 1) { createRecipeViewModel.getRecipeTime() }
+  }
+
+  @Test
+  fun testPickerStateUpdatesIndependently() {
+    every { createRecipeViewModel.getRecipeTime() } returns "125"
+
+    composeTestRule.setContent {
+      TimePickerScreen(
+          navigationActions = mockNavigationActions, createRecipeViewModel = createRecipeViewModel)
+    }
+
+    // Simulate interacting with the hour picker
+    composeTestRule.onNodeWithTag(HOUR_PICKER).performClick()
+    composeTestRule
+        .onNodeWithTag(HOUR_PICKER)
+        .assertContentDescriptionEquals("2") // Initial value: 2
+
+    // Simulate changing the hour
+    composeTestRule.onNodeWithTag(HOUR_PICKER).performClick()
+    // Ensure minute picker value remains unchanged
+    composeTestRule
+        .onNodeWithTag(MINUTE_PICKER)
+        .assertContentDescriptionEquals("5") // Initial value: 5
+  }
 }

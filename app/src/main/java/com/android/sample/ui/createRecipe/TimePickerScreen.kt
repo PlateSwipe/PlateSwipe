@@ -25,8 +25,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.android.sample.R
 import com.android.sample.model.recipe.CreateRecipeViewModel
+import com.android.sample.resources.C.Dimension.PADDING_16
 import com.android.sample.resources.C.Dimension.PADDING_32
-import com.android.sample.resources.C.Dimension.PADDING_8
+import com.android.sample.resources.C.Tag.HOUR_RANGE_END
+import com.android.sample.resources.C.Tag.HOUR_RANGE_START
+import com.android.sample.resources.C.Tag.MINUTES_PER_HOUR
+import com.android.sample.resources.C.Tag.MINUTE_RANGE_END
+import com.android.sample.resources.C.Tag.MINUTE_RANGE_START
 import com.android.sample.resources.C.Tag.THIRD_STEP_OF_THE_CREATION
 import com.android.sample.resources.C.TestTag.TimePicker.HOURS_LABEL
 import com.android.sample.resources.C.TestTag.TimePicker.HOUR_PICKER
@@ -75,23 +80,22 @@ fun TimePickerContent(
     navigationActions: NavigationActions,
     createRecipeViewModel: CreateRecipeViewModel
 ) {
-  val totalMinutes = createRecipeViewModel.getRecipeTime()?.toIntOrNull() ?: 0
-  val initialHours = totalMinutes / 60
-  val initialMinutes = totalMinutes % 60
+  val totalMinutes = remember { createRecipeViewModel.getRecipeTime()?.toIntOrNull() ?: 0 }
+  val initialHours = totalMinutes / MINUTES_PER_HOUR
+  val initialMinutes = totalMinutes % MINUTES_PER_HOUR
 
   val hours = remember { mutableIntStateOf(initialHours) }
   val minutes = remember { mutableIntStateOf(initialMinutes) }
 
-  Box(modifier = modifier.padding(PADDING_8.dp), contentAlignment = Alignment.TopCenter) {
+  Box(modifier = modifier.padding(PADDING_16.dp), contentAlignment = Alignment.TopCenter) {
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top) {
-          Spacer(modifier = Modifier.weight(1f))
           // Progress Bar
           RecipeProgressBar(currentStep = currentStep)
 
-          Spacer(modifier = Modifier.weight(2f))
+          Spacer(modifier = Modifier.weight(1f))
 
           // Title
           Text(
@@ -134,7 +138,7 @@ fun TimePickerContent(
         text = stringResource(R.string.next_step),
         modifier = Modifier.align(Alignment.BottomCenter).testTag(NEXT_BUTTON),
         onClick = {
-          val totalTimeInMinutes = (hours.intValue * 60) + minutes.intValue
+          val totalTimeInMinutes = (hours.intValue * MINUTES_PER_HOUR) + minutes.intValue
           createRecipeViewModel.updateRecipeTime(totalTimeInMinutes.toString())
           navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_IMAGE)
         })
@@ -166,6 +170,8 @@ fun TimePickerContent(
  */
 @Composable
 fun WheelTimePicker(selectedHour: Int, selectedMinute: Int, onTimeSelected: (Int, Int) -> Unit) {
+  val currentHour = remember { mutableIntStateOf(selectedHour) }
+  val currentMinute = remember { mutableIntStateOf(selectedMinute) }
   Row(
       modifier = Modifier.fillMaxWidth().padding(horizontal = PADDING_32.dp),
       horizontalArrangement = Arrangement.SpaceAround,
@@ -181,9 +187,12 @@ fun WheelTimePicker(selectedHour: Int, selectedMinute: Int, onTimeSelected: (Int
 
           // Hour Picker
           NumberPickerComposable(
-              value = selectedHour,
-              range = 0..23,
-              onValueChange = { hour -> onTimeSelected(hour, selectedMinute) },
+              value = currentHour.intValue,
+              range = HOUR_RANGE_START..HOUR_RANGE_END,
+              onValueChange = { hour ->
+                currentHour.intValue = hour
+                onTimeSelected(hour, currentMinute.intValue)
+              },
               modifier = Modifier.testTag(HOUR_PICKER))
         }
 
@@ -205,9 +214,12 @@ fun WheelTimePicker(selectedHour: Int, selectedMinute: Int, onTimeSelected: (Int
 
           // Minute Picker
           NumberPickerComposable(
-              value = selectedMinute,
-              range = 0..59,
-              onValueChange = { minute -> onTimeSelected(selectedHour, minute) },
+              value = currentMinute.intValue,
+              range = MINUTE_RANGE_START..MINUTE_RANGE_END,
+              onValueChange = { minute ->
+                currentMinute.intValue = minute
+                onTimeSelected(currentHour.intValue, minute)
+              },
               modifier = Modifier.testTag(MINUTE_PICKER))
         }
       }
