@@ -14,6 +14,17 @@ import kotlinx.coroutines.withContext
 
 class ImageDownload {
 
+  companion object {
+    @Volatile private var imageLoader: ImageLoader? = null
+
+    fun getImageLoader(context: Context): ImageLoader {
+      // Use ApplicationContext to prevent memory leaks
+      val appContext = context.applicationContext
+      return imageLoader
+          ?: synchronized(this) { imageLoader ?: ImageLoader(appContext).also { imageLoader = it } }
+    }
+  }
+
   /**
    * Downloads an image from the given URL and saves it to the local storage with the specified file
    * name.
@@ -27,7 +38,7 @@ class ImageDownload {
     return withContext(Dispatchers.IO) {
       try {
         // Load the image from the URL and convert it to a Bitmap
-        val loader = ImageLoader(context)
+        val loader = getImageLoader(context)
         val request = ImageRequest.Builder(context).data(imageUrl).build()
         val result = loader.execute(request)
         val bitmap = (result.drawable as BitmapDrawable).bitmap

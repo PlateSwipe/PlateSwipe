@@ -9,7 +9,7 @@ import com.android.sample.model.ingredient.networkData.IngredientNetworkReposito
  * @property localRepository The local repository for ingredient data.
  * @property networkRepository The network repository for ingredient data.
  */
-open class DefaultIngredientRepository(
+class DefaultIngredientRepository(
     private val localRepository: IngredientLocalRepository,
     private val networkRepository: IngredientNetworkRepository
 ) : IngredientRepository {
