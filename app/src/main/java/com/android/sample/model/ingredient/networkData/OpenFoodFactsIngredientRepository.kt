@@ -1,5 +1,6 @@
-package com.android.sample.model.ingredient
+package com.android.sample.model.ingredient.networkData
 
+import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.resources.C
 import com.android.sample.resources.C.Tag.OPENFOODFACT_REPO_IMAGE_ULR_INVALID
 import com.android.sample.resources.C.Tag.OPEN_FOOD_FACTS_URL
@@ -21,7 +22,8 @@ import okhttp3.Response
 import org.json.JSONException
 import org.json.JSONObject
 
-class OpenFoodFactsIngredientRepository(private val client: OkHttpClient) : IngredientRepository {
+class OpenFoodFactsIngredientRepository(private val client: OkHttpClient) :
+    IngredientNetworkRepository {
 
   /**
    * Parses a JSON object from the Open Food Facts API to create an Ingredient object.
@@ -118,7 +120,6 @@ class OpenFoodFactsIngredientRepository(private val client: OkHttpClient) : Ingr
     val request =
         Request.Builder()
             .url(url)
-            // TODO: Add a proper User-Agent
             .header("User-Agent", "PlateSwipe/1.0 (plateswipe@gmail.com)")
             .build()
 

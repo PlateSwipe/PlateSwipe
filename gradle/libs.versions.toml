@@ -2,7 +2,7 @@
 # Plugins
 agp = "8.4.2"
 json = "20240303"
-kotlin = "1.9.0"
+kotlin = "1.9.21"
 gms = "4.4.2"
 ktfmt = "0.17.0"
 sonar = "4.4.1.3373"
@@ -80,6 +80,12 @@ googleidVersion = "1.1.1"
 
 # Image Picker
 activity = "1.9.3"
+
+# Room
+room = "2.6.1"
+kotlin-coroutines = "1.7.3"
+ksp = "1.9.21-1.0.15"
+gson = "2.8.8"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -176,6 +182,12 @@ compose-material-icons-extended = { group = "androidx.compose.material", name = 
 androidx-activity = { module = "androidx.activity:activity", version.ref = "activity" }
 androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activity" }
 
+room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
+room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlin-coroutines" }
+room-testing = { module = "androidx.room:room-testing", version.ref = "room" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -183,3 +195,4 @@ jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "k
 ktfmt = { id = "com.ncorti.ktfmt.gradle", version.ref = "ktfmt" }
 sonar = { id = "org.sonarqube", version.ref = "sonar" }
 gms = { id = "com.google.gms.google-services", version.ref = "gms" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

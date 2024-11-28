@@ -1,6 +1,8 @@
 package com.android.sample.model.ingredient
 
+import android.content.Context
 import androidx.test.core.app.ApplicationProvider
+import com.android.sample.model.image.ImageDownload
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_NORMAL_URL
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_SMALL_URL
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_THUMBNAIL_URL
@@ -11,6 +13,7 @@ import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -30,11 +33,13 @@ import org.robolectric.RobolectricTestRunner
 class IngredientViewModelTest {
   private lateinit var ingredientViewModel: IngredientViewModel
   private lateinit var ingredientRepository: IngredientRepository
+  private lateinit var imageDownload: ImageDownload
 
   @Before
   fun setUp() {
     ingredientRepository = mock(IngredientRepository::class.java)
-    ingredientViewModel = IngredientViewModel(ingredientRepository)
+    imageDownload = mock(ImageDownload::class.java)
+    ingredientViewModel = IngredientViewModel(ingredientRepository, imageDownload)
 
     Firebase.initialize(ApplicationProvider.getApplicationContext())
   }
@@ -286,9 +291,43 @@ class IngredientViewModelTest {
     assertEquals(newQuantity, updatedIngredient?.second)
   }
 
+  @OptIn(ExperimentalCoroutinesApi::class)
+  @Test
+  fun testDownloadIngredientSuccess() = runTest {
+    val context: Context = ApplicationProvider.getApplicationContext()
+    `when`(imageDownload.downloadAndSaveImage(any(), any(), any(), any())).thenReturn("path")
+
+    ingredientViewModel.downloadIngredient(testIngredients[0].copy(), context, Dispatchers.IO)
+    advanceUntilIdle()
+    verify(ingredientRepository).addDownload(any())
+  }
+
+  @OptIn(ExperimentalCoroutinesApi::class)
+  @Test
+  fun testDownloadIngredientFail() = runTest {
+    val ingr =
+        testIngredients[0].copy(
+            images =
+                mutableMapOf(
+                    PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
+                    PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
+                    PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
+    val context: Context = ApplicationProvider.getApplicationContext()
+
+    ingr.images.forEach { (format, url) ->
+      `when`(imageDownload.downloadAndSaveImage(context, url, ingr.name + format, Dispatchers.IO))
+          .thenThrow(RuntimeException("Error"))
+    }
+
+    ingredientViewModel.downloadIngredient(testIngredients[0], context, Dispatchers.IO)
+    advanceUntilIdle()
+    verify(ingredientRepository, times(0)).addDownload(testIngredients[0])
+  }
+
   @Test
   fun testFactory() {
-    val factory = IngredientViewModel.Factory
+    val factory =
+        IngredientViewModel.provideFactory(context = ApplicationProvider.getApplicationContext())
     val ingredientViewModel = factory.create(IngredientViewModel::class.java)
     assertNotNull(ingredientViewModel)
   }
@@ -552,5 +591,33 @@ class IngredientViewModelTest {
 
     ingredientViewModel.clearIngredient()
     assertEquals(Pair(null, null), ingredientViewModel.ingredient.value)
+  }
+
+  @Test
+  fun getAllDownloadedIngredientsSucces() {
+    val downloadedIngredients = testIngredients
+    `when`(ingredientRepository.getAllDownload(any(), any())).thenAnswer { invocation ->
+      val onSuccess: (List<Ingredient>) -> Unit = invocation.getArgument(0)
+      onSuccess(downloadedIngredients)
+    }
+    ingredientViewModel.getAllDownloadedIngredients()
+    assertEquals(downloadedIngredients, ingredientViewModel.ingredientDownloadList.value)
+  }
+
+  @Test
+  fun getAllDownloadedIngredientsFail() {
+    `when`(ingredientRepository.getAllDownload(any(), any())).thenAnswer { invocation ->
+      val onFailure: (Exception) -> Unit = invocation.getArgument(1)
+      onFailure(Exception("Error"))
+    }
+    ingredientViewModel.getAllDownloadedIngredients()
+    assertTrue(ingredientViewModel.ingredientDownloadList.value.isEmpty())
+  }
+
+  @Test
+  fun deleteDownloadedIngredient() {
+    val ingredient = testIngredients[0]
+    ingredientViewModel.deleteDownloadedIngredient(ingredient)
+    verify(ingredientRepository).deleteDownload(ingredient)
   }
 }
