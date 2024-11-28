@@ -1,7 +1,6 @@
 package com.android.sample.ui.camera
 
 import android.Manifest
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -52,6 +51,7 @@ import com.android.sample.resources.C.Dimension.PADDING_8
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_SMALL_URL
 import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_IMAGE_1
 import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
@@ -272,6 +272,7 @@ private fun IngredientSelectButton(
   Button(
       onClick = {
         searchIngredientViewModel.addIngredient(ingredient)
+        searchIngredientViewModel.clearIngredient()
         navigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
       },
       modifier =
@@ -282,7 +283,10 @@ private fun IngredientSelectButton(
                   C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_TEXT_BUTTON_PADDING_H
                       .dp)) {
         Text(
-            text = stringResource(R.string.add_to_fridge),
+            text =
+                if (navigationActions.currentRoute() == Route.FRIDGE)
+                    stringResource(R.string.add_to_fridge)
+                else stringResource(R.string.add_to_recipe),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onPrimary,
         )
@@ -291,7 +295,6 @@ private fun IngredientSelectButton(
 
 @Composable
 private fun IngredientNotFoundDisplay() {
-  Log.i("IngredientDisplay", "IngredientNotFoundDisplay")
   Box(
       modifier =
           Modifier.fillMaxSize()
