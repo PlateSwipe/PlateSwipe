@@ -28,7 +28,9 @@ import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.resources.C.Dimension.PADDING_32
 import com.android.sample.resources.C.Dimension.PADDING_8
 import com.android.sample.resources.C.Tag.THIRD_STEP_OF_THE_CREATION
+import com.android.sample.resources.C.TestTag.TimePicker.HOURS_LABEL
 import com.android.sample.resources.C.TestTag.TimePicker.HOUR_PICKER
+import com.android.sample.resources.C.TestTag.TimePicker.MINUTES_LABEL
 import com.android.sample.resources.C.TestTag.TimePicker.MINUTE_PICKER
 import com.android.sample.resources.C.TestTag.TimePicker.NEXT_BUTTON
 import com.android.sample.resources.C.TestTag.TimePicker.TIME_PICKER_DESCRIPTION
@@ -168,25 +170,46 @@ fun WheelTimePicker(selectedHour: Int, selectedMinute: Int, onTimeSelected: (Int
       modifier = Modifier.fillMaxWidth().padding(horizontal = PADDING_32.dp),
       horizontalArrangement = Arrangement.SpaceAround,
       verticalAlignment = Alignment.CenterVertically) {
-        // Hour Picker
-        NumberPickerComposable(
-            value = selectedHour,
-            range = 0..23,
-            onValueChange = { hour -> onTimeSelected(hour, selectedMinute) },
-            modifier = Modifier.weight(1f).testTag(HOUR_PICKER))
+        // Hour Column
+        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.weight(1f)) {
+          // Label for Hour
+          Text(
+              text = stringResource(R.string.hours),
+              style = MaterialTheme.typography.bodySmall,
+              color = MaterialTheme.colorScheme.onPrimary,
+              modifier = Modifier.testTag(HOURS_LABEL))
 
+          // Hour Picker
+          NumberPickerComposable(
+              value = selectedHour,
+              range = 0..23,
+              onValueChange = { hour -> onTimeSelected(hour, selectedMinute) },
+              modifier = Modifier.testTag(HOUR_PICKER))
+        }
+
+        // Colon Separator
         Text(
             text = ":",
             style = MaterialTheme.typography.displayLarge,
             color = MaterialTheme.colorScheme.onPrimary,
             modifier = Modifier.align(Alignment.CenterVertically))
 
-        // Minute Picker
-        NumberPickerComposable(
-            value = selectedMinute,
-            range = 0..59,
-            onValueChange = { minute -> onTimeSelected(selectedHour, minute) },
-            modifier = Modifier.weight(1f).testTag(MINUTE_PICKER))
+        // Minute Column
+        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.weight(1f)) {
+          // Label for Minute
+          Text(
+              text = stringResource(R.string.minutes),
+              style = MaterialTheme.typography.bodySmall,
+              color = MaterialTheme.colorScheme.onPrimary,
+              modifier = Modifier.testTag(MINUTES_LABEL))
+
+          // Minute Picker
+          NumberPickerComposable(
+              value = selectedMinute,
+              range = 0..59,
+              onValueChange = { minute -> onTimeSelected(selectedHour, minute) },
+              modifier = Modifier.testTag(MINUTE_PICKER))
+        }
       }
 }
 

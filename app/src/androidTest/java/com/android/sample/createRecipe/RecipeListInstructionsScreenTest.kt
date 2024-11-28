@@ -77,6 +77,6 @@ class RecipeListInstructionsScreenTest {
     composeTestRule.onNodeWithTag(NEXT_STEP_BUTTON).assertIsDisplayed().performClick()
 
     // Verify that the navigateTo function was called with the correct parameter
-    verify { navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_IMAGE) }
+    verify { navigationActions.navigateTo(Screen.CREATE_RECIPE_TIME_PICKER) }
   }
 }

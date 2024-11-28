@@ -792,6 +792,8 @@ object C {
       const val HOUR_PICKER = "HourPicker"
       const val MINUTE_PICKER = "MinutePicker"
       const val NEXT_BUTTON = "NextButton"
+      const val HOURS_LABEL = "HoursLabel"
+      const val MINUTES_LABEL = "MinutesLabel"
     }
   }
 }

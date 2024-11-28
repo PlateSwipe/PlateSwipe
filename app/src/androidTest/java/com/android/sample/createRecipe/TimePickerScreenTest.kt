@@ -8,7 +8,9 @@ import androidx.compose.ui.test.performClick
 import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.model.recipe.FirestoreRecipesRepository
+import com.android.sample.resources.C.TestTag.TimePicker.HOURS_LABEL
 import com.android.sample.resources.C.TestTag.TimePicker.HOUR_PICKER
+import com.android.sample.resources.C.TestTag.TimePicker.MINUTES_LABEL
 import com.android.sample.resources.C.TestTag.TimePicker.MINUTE_PICKER
 import com.android.sample.resources.C.TestTag.TimePicker.NEXT_BUTTON
 import com.android.sample.resources.C.TestTag.TimePicker.TIME_PICKER_DESCRIPTION
@@ -56,6 +58,12 @@ class TimePickerScreenTest {
 
     // Verify description is displayed
     composeTestRule.onNodeWithTag(TIME_PICKER_DESCRIPTION).assertExists().assertIsDisplayed()
+
+    // Verify "Hours" label is displayed
+    composeTestRule.onNodeWithTag(HOURS_LABEL).assertExists().assertIsDisplayed()
+
+    // Verify "Minutes" label is displayed
+    composeTestRule.onNodeWithTag(MINUTES_LABEL).assertExists().assertIsDisplayed()
 
     // Verify hour and minute pickers are displayed
     composeTestRule.onNodeWithTag(HOUR_PICKER).assertExists().assertIsDisplayed()
