@@ -229,6 +229,14 @@ object C {
     const val PRODUCT_FRONT_IMAGE_SMALL_URL = "image_front_small_url"
     const val PRODUCT_FRONT_IMAGE_SMALL = "display_small"
 
+    const val INGR_DB_COL_NAME_UID = "uid"
+    const val INGR_DB_COL_NAME_BARCODE = "barcode"
+    const val INGR_DB_COL_NAME_NAME = "name"
+    const val INGR_DB_COL_NAME_BRANDS = "brands"
+    const val INGR_DB_COL_NAME_QUANTITY = "quantity"
+    const val INGR_DB_COL_NAME_CATEGORIES = "categories"
+    const val INGR_DB_COL_NAME_IMAGES = "images"
+    const val INGR_DB_COL_NAME_TABLE = "ingredient"
     // EXCEPTION MESSAGES
     const val LIMIT_MUST_BE_POSITIVE_MESSAGE = "Limit must be greater than 0"
     const val UNSUPPORTED_MESSAGE = "Operation not supported"
