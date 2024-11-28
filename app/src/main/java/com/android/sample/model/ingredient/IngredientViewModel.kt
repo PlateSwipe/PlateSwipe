@@ -251,7 +251,7 @@ class IngredientViewModel(
               async {
                 try {
                   if (url != null) {
-                    val uri = imgDownload.downloadAndSaveImage(context, fileName, url)
+                    val uri = imgDownload.downloadAndSaveImage(context, fileName, url, dispatcher)
                     format to uri!!
                   } else {
                     null

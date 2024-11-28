@@ -62,8 +62,7 @@ class SearchIngredientScreenTest {
       onSuccess(mockIngredients)
       null
     }
-    searchIngredientViewModel = IngredientViewModel(aggregatorIngredientRepository)
-    ingredientViewModel = IngredientViewModel(aggregatorIngredientRepository, ImageDownload())
+    searchIngredientViewModel = IngredientViewModel(aggregatorIngredientRepository, ImageDownload())
 
     composeTestRule.setContent {
       SearchIngredientScreen(

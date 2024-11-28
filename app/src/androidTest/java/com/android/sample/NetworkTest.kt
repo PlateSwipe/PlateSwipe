@@ -9,6 +9,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.storage.storage
 import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertNull
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -46,7 +47,7 @@ class NetworkTest {
         val imageUrl =
             "https://firebasestorage.googleapis.com/v0/b/plateswipe.appspot.com/o/images%2Ftest%2F4104420057326%2Fdisplay_small.jpg?alt=media&token=7fd91ca3-dbef-4c6e-a004-1e4ee5d0879d"
         val fileName = "test"
-        val uri = imageDownload.downloadAndSaveImage(context, imageUrl, fileName)
+        val uri = imageDownload.downloadAndSaveImage(context, imageUrl, fileName, Dispatchers.IO)
         assertNotNull(uri)
       }
 
@@ -57,7 +58,9 @@ class NetworkTest {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val imageUrl = "https://wrong"
         val fileName = "test"
-        val uri = imageDownload.downloadAndSaveImage(context, imageUrl, fileName)
+        val uri =
+            imageDownload.downloadAndSaveImage(
+                context, imageUrl, fileName, dispatcher = Dispatchers.IO)
         assertNull(uri)
       }
 }

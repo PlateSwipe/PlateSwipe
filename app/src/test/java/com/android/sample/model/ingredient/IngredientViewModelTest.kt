@@ -295,7 +295,7 @@ class IngredientViewModelTest {
   @Test
   fun testDownloadIngredientSuccess() = runTest {
     val context: Context = ApplicationProvider.getApplicationContext()
-    `when`(imageDownload.downloadAndSaveImage(any(), any(), any())).thenReturn("path")
+    `when`(imageDownload.downloadAndSaveImage(any(), any(), any(), any())).thenReturn("path")
 
     ingredientViewModel.downloadIngredient(testIngredients[0].copy(), context, Dispatchers.IO)
     advanceUntilIdle()
@@ -315,7 +315,7 @@ class IngredientViewModelTest {
     val context: Context = ApplicationProvider.getApplicationContext()
 
     ingr.images.forEach { (format, url) ->
-      `when`(imageDownload.downloadAndSaveImage(context, url, ingr.name + format))
+      `when`(imageDownload.downloadAndSaveImage(context, url, ingr.name + format, Dispatchers.IO))
           .thenThrow(RuntimeException("Error"))
     }
 

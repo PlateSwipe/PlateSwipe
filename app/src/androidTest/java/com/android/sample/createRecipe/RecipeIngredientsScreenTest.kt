@@ -1,8 +1,12 @@
 package com.android.sample.createRecipe
 
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
-import com.android.sample.model.ingredient.AggregatorIngredientRepository
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import com.android.sample.model.image.ImageDownload
+import com.android.sample.model.ingredient.DefaultIngredientRepository
 import com.android.sample.model.ingredient.IngredientViewModel
 import com.android.sample.ui.createRecipe.RecipeIngredientsScreen
 import com.android.sample.ui.navigation.NavigationActions
@@ -25,7 +29,7 @@ class RecipeIngredientsScreenTest {
 
   @Mock private lateinit var ingredientViewModel: IngredientViewModel
 
-  @Mock private lateinit var aggregatorIngredientRepository: AggregatorIngredientRepository
+  @Mock private lateinit var aggregatorIngredientRepository: DefaultIngredientRepository
   @Mock private lateinit var mockNavigationActions: NavigationActions
 
   private val titleText = "No Ingredients"
@@ -35,14 +39,14 @@ class RecipeIngredientsScreenTest {
 
   @Before
   fun setup() {
-    aggregatorIngredientRepository = mock(AggregatorIngredientRepository::class.java)
+    aggregatorIngredientRepository = mock(DefaultIngredientRepository::class.java)
     mockNavigationActions = mock(NavigationActions::class.java)
     `when`(mockNavigationActions.currentRoute()).thenReturn(Route.CREATE_RECIPE)
   }
 
   @Test
   fun testRecipeIngredientsScreenComponentsAreDisplayed() {
-    ingredientViewModel = IngredientViewModel(aggregatorIngredientRepository)
+    ingredientViewModel = IngredientViewModel(aggregatorIngredientRepository, ImageDownload())
 
     composeTestRule.setContent {
       RecipeIngredientsScreen(
@@ -59,7 +63,7 @@ class RecipeIngredientsScreenTest {
 
   @Test
   fun testAddIngredientsButtonNavigatesToNextScreen() {
-    ingredientViewModel = IngredientViewModel(aggregatorIngredientRepository)
+    ingredientViewModel = IngredientViewModel(aggregatorIngredientRepository, ImageDownload())
 
     composeTestRule.setContent {
       RecipeIngredientsScreen(
@@ -76,7 +80,7 @@ class RecipeIngredientsScreenTest {
 
   @Test
   fun testEmptyNotEmptyRecipe() {
-    ingredientViewModel = IngredientViewModel(aggregatorIngredientRepository)
+    ingredientViewModel = IngredientViewModel(aggregatorIngredientRepository, ImageDownload())
 
     ingredientViewModel.addIngredient(mockIngredients[0])
 

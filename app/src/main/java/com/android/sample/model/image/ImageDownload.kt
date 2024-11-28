@@ -9,7 +9,7 @@ import coil.request.ImageRequest
 import com.android.sample.resources.C.Tag.IMG_COMPRESS_SIZE
 import java.io.File
 import java.io.FileOutputStream
-import kotlinx.coroutines.Dispatchers
+import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.withContext
 
 class ImageDownload {
@@ -34,8 +34,13 @@ class ImageDownload {
    * @param fileName The name of the file to save the image as.
    * @return The URI of the saved image file as a String, or null if an error occurs.
    */
-  suspend fun downloadAndSaveImage(context: Context, imageUrl: String, fileName: String): String? {
-    return withContext(Dispatchers.IO) {
+  suspend fun downloadAndSaveImage(
+      context: Context,
+      imageUrl: String,
+      fileName: String,
+      dispatcher: CoroutineContext
+  ): String? {
+    return withContext(dispatcher) {
       try {
         // Load the image from the URL and convert it to a Bitmap
         val loader = getImageLoader(context)
