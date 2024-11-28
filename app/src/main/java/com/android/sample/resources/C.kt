@@ -541,6 +541,7 @@ object C {
       const val CARD_SHADOW_ELEVATION = 8
       const val ICON_SIZE = 24
       const val ROW_SIZE = 1f
+      const val RECIPE_NAME_MAX_CHAR = 14
 
       // progress bar value
       const val CURRENT_STEP = 2
@@ -713,6 +714,10 @@ object C {
       const val RECIPE_LIST_INSTRUCTIONS_SCREEN_SPACER1 = "RecipeListInstructionsScreenSpacer1"
       const val RECIPE_LIST_ITEM_THUMBNAIL = "InstructionThumbnail"
       const val RECIPE_LIST_INSTRUCTION_ICON = "InstructionIcon"
+      const val ADD_INSTRUCTION_BUTTON = "AddInstructionButton"
+      const val ADD_ICON_DESCRIPTION = "Add"
+      const val EDIT_ICON_DESCRIPTION = "Edit"
+      const val STEP_ICON_DESCRIPTION = "Step"
     }
 
     object RecipeAddImageScreen {
@@ -761,6 +766,15 @@ object C {
 
     object RecipeBuilder {
       const val OUT_OF_BOUNDS_MESSAGE = "Index out of bounds"
+    }
+
+    object AddInstructionStepScreen {
+      const val INPUT_CONTAINER = "InputContainer"
+      const val TIME_INPUT = "TimeInput"
+      const val ICON_DROPDOWN = "IconDropdown"
+      const val INSTRUCTION_INPUT = "InstructionInput"
+      const val INSTRUCTION_ERROR = "InstructionError"
+      const val DELETE_BUTTON = "DeleteButton"
     }
 
     object Category {

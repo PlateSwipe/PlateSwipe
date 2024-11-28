@@ -200,7 +200,10 @@ private fun SaveButton(
                 }
               }
               if (!displayErrorIngredientMessage.value) {
-                navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_INSTRUCTION)
+                navigationActions.navigateTo(
+                    if (createRecipeViewModel.getRecipeListOfInstructions().isEmpty())
+                        Screen.CREATE_RECIPE_ADD_INSTRUCTION
+                    else Screen.CREATE_RECIPE_LIST_INSTRUCTIONS)
               }
             },
             modifier =
