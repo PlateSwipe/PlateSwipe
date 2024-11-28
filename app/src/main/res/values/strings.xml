@@ -11,7 +11,6 @@
     <string name="search_bar_place_holder">Search</string>
     <string name="fridge_screen">Fridge Screen</string>
     <string name="fridge_screen_description">Work in progress…stay tuned!</string>
-    <string name="add_to_recipe">Add to Recipe</string>
     <string name="add_to_fridge">Add to Fridge</string>
 
     <string name="account_screen_default_user_name">User Name</string>
