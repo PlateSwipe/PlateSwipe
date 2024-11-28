@@ -141,9 +141,6 @@ fun IngredientOverlay(
   // we do this to avoid showing the ingredientDisplay before any scan has even been done
   var hasFetchedBarcode by remember { mutableStateOf(false) }
 
-  Log.i(
-      "IngredientDisplay",
-      "isFetchingByBarcode: $isFetchingByBarcode + hasFetchedBarcode: $hasFetchedBarcode")
   if (isFetchingByBarcode) {
     hasFetchedBarcode = true
   }
