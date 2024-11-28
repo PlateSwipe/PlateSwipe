@@ -27,11 +27,18 @@ import com.android.sample.resources.C.Tag.MINLINES_VISIBLE_FOR_INSTRUCTION
 import com.android.sample.resources.C.Tag.SAVE_BUTTON_TAG
 import com.android.sample.resources.C.Tag.SPACE_BETWEEN_ELEMENTS
 import com.android.sample.resources.C.Tag.TIME_CHARACTER_LIMIT
+import com.android.sample.resources.C.TestTag.AddInstructionStepScreen.DELETE_BUTTON
+import com.android.sample.resources.C.TestTag.AddInstructionStepScreen.ICON_DROPDOWN
+import com.android.sample.resources.C.TestTag.AddInstructionStepScreen.INPUT_CONTAINER
+import com.android.sample.resources.C.TestTag.AddInstructionStepScreen.INSTRUCTION_ERROR
+import com.android.sample.resources.C.TestTag.AddInstructionStepScreen.INSTRUCTION_INPUT
+import com.android.sample.resources.C.TestTag.AddInstructionStepScreen.TIME_INPUT
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.Typography
 import com.android.sample.ui.theme.lightCream
+import com.android.sample.ui.utils.PlateSwipeAlertBox
 import com.android.sample.ui.utils.PlateSwipeButton
 import com.android.sample.ui.utils.PlateSwipeScaffold
 
@@ -83,17 +90,11 @@ fun AddInstructionStepContent(
             selectedInstruction = createRecipeViewModel.getSelectedInstruction(),
             onSuccess = { createRecipeViewModel.getInstruction(it).time }))
   }
-  var selectedIcon by remember {
-    mutableStateOf<IconType?>(
-        if (createRecipeViewModel.getSelectedInstruction() != null) {
-          createRecipeViewModel
-              .getInstruction(createRecipeViewModel.getSelectedInstruction()!!)
-              .icon
-        } else {
-          null
-        })
-  }
+  var selectedIcon by remember { mutableStateOf<IconType?>(defaultIcon(createRecipeViewModel)) }
   var showError by remember { mutableStateOf(false) }
+
+  // see if an instruction is being deleted
+  var isDeleting by remember { mutableStateOf(false) }
 
   Column(
       modifier =
@@ -103,7 +104,7 @@ fun AddInstructionStepContent(
         // Step Label
         Text(
             text = stringResource(R.string.step_label),
-            style = Typography.titleLarge,
+            style = Typography.titleMedium,
             color = MaterialTheme.colorScheme.onPrimary,
             modifier = Modifier.padding(vertical = 8.dp).testTag("StepLabel"))
 
@@ -113,7 +114,7 @@ fun AddInstructionStepContent(
                 Modifier.fillMaxWidth()
                     .background(color = lightCream, shape = RoundedCornerShape(8.dp))
                     .padding(CONTAINER_PADDING.dp)
-                    .testTag("InputContainer")) {
+                    .testTag(INPUT_CONTAINER)) {
               Column {
                 // Row for input fields for time, and icon
                 Row(
@@ -125,8 +126,7 @@ fun AddInstructionStepContent(
                       OutlinedTextField(
                           value = stepTime ?: "",
                           onValueChange = { newValue ->
-                            if (newValue.all { char -> char.isDigit() } &&
-                                newValue.length <= TIME_CHARACTER_LIMIT) {
+                            if (checkTimeFormat(newValue)) {
                               stepTime = newValue
                             }
                           },
@@ -141,14 +141,14 @@ fun AddInstructionStepContent(
                                   unfocusedLabelColor = MaterialTheme.colorScheme.onSecondary,
                                   focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
                                   unfocusedBorderColor = MaterialTheme.colorScheme.onSecondary),
-                          modifier = Modifier.weight(1f).testTag("TimeInput"),
+                          modifier = Modifier.weight(1f).testTag(TIME_INPUT),
                           maxLines = MAXLINES_TIME_FIELD)
 
                       // Icon dropdown menu
                       IconDropdownMenu(
                           selectedIcon = selectedIcon,
                           onIconSelected = { selectedIcon = it },
-                          modifier = Modifier.weight(1f).testTag("IconDropdown"))
+                          modifier = Modifier.weight(1f).testTag(ICON_DROPDOWN))
                     }
 
                 Spacer(modifier = Modifier.height(SPACE_BETWEEN_ELEMENTS.dp))
@@ -172,7 +172,7 @@ fun AddInstructionStepContent(
                         Modifier.fillMaxWidth()
                             .padding(vertical = INSTRUCTION_VERTICAL_PADDING.dp)
                             .verticalScroll(rememberScrollState())
-                            .testTag("InstructionInput"),
+                            .testTag(INSTRUCTION_INPUT),
                     isError = verifyStepDescription(showError, stepDescription),
                     textStyle = Typography.bodySmall,
                     minLines = MINLINES_VISIBLE_FOR_INSTRUCTION,
@@ -184,29 +184,59 @@ fun AddInstructionStepContent(
                       text = stringResource(R.string.error_message_empty_instruction),
                       style = Typography.bodySmall,
                       color = MaterialTheme.colorScheme.error,
-                      modifier = Modifier.padding(top = 4.dp).testTag("InstructionError"))
+                      modifier = Modifier.padding(top = 4.dp).testTag(INSTRUCTION_ERROR))
                 }
               }
             }
 
         Spacer(modifier = Modifier.height(SPACE_BETWEEN_ELEMENTS.dp))
 
-        // Save Button
-        PlateSwipeButton(
-            stringResource(R.string.save_label),
-            modifier = Modifier.fillMaxWidth().testTag(SAVE_BUTTON_TAG),
-            onClick = {
-              processValidInstruction(
-                  stepDescription = stepDescription,
-                  stepTime = stepTime,
-                  selectedIcon = selectedIcon,
-                  createRecipeViewModel = createRecipeViewModel,
-                  navigationActions = navigationActions,
-                  setShowError = { showError = it })
-            })
+        Row {
+          if (createRecipeViewModel.getSelectedInstruction() != null) {
+            // suppress button if editing an existing instruction
+            PlateSwipeButton(
+                stringResource(R.string.RecipeListInstructionsScreen_Delete),
+                modifier = Modifier.testTag(DELETE_BUTTON).weight(1f),
+                onClick = { isDeleting = true },
+                backgroundColor = MaterialTheme.colorScheme.error,
+                contentColor = MaterialTheme.colorScheme.onError)
+          }
+          // Save Button
+          PlateSwipeButton(
+              stringResource(R.string.save_label),
+              modifier = Modifier.testTag(SAVE_BUTTON_TAG).weight(1f),
+              onClick = {
+                processValidInstruction(
+                    stepDescription = stepDescription,
+                    stepTime = stepTime,
+                    selectedIcon = selectedIcon,
+                    createRecipeViewModel = createRecipeViewModel,
+                    navigationActions = navigationActions,
+                    setShowError = { showError = it })
+              })
+        }
+
+        Spacer(modifier = Modifier.height(SPACE_BETWEEN_ELEMENTS.dp))
+
+        if (isDeleting) {
+          PlateSwipeAlertBox(
+              popUpMessage = stringResource(R.string.u_sure_u_want_to_delete),
+              confirmMessage = stringResource(R.string.delete),
+              onConfirm = {
+                createRecipeViewModel.deleteRecipeInstruction(
+                    createRecipeViewModel.getSelectedInstruction()!!)
+                createRecipeViewModel.resetSelectedInstruction()
+                navigationActions.navigateToPop(
+                    Screen.CREATE_RECIPE_LIST_INSTRUCTIONS,
+                    popUpTo = Screen.CREATE_RECIPE_LIST_INGREDIENTS,
+                    inclusive = false)
+              },
+              dismissMessage = stringResource(R.string.cancel),
+              onDismiss = { isDeleting = false },
+          )
+        }
       }
 }
-
 /**
  * Processes a recipe step by validating the instruction and, if valid, assigning the provided
  * details to the recipe. Navigates to the instruction list screen upon success.
@@ -236,16 +266,44 @@ private fun processValidInstruction(
         createRecipeViewModel,
         onSuccess = {
           createRecipeViewModel.resetSelectedInstruction()
-          navigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INSTRUCTIONS)
+          navigationActions.navigateToPop(
+              Screen.CREATE_RECIPE_LIST_INSTRUCTIONS,
+              popUpTo = Screen.CREATE_RECIPE_LIST_INGREDIENTS,
+              inclusive = false)
         })
   }
 }
 
+/**
+ * Selects the default value based on the selected instruction. If an instruction is selected, the
+ * value of the instruction is returned. Otherwise, the default value is returned.
+ *
+ * @param defaultValue The default value to be returned if no instruction is selected.
+ * @param selectedInstruction The index of the selected instruction.
+ * @param onSuccess Callback to be executed if an instruction is selected.
+ * @param T The type of the default value.
+ * @return The selected instruction if it exists, otherwise the default value.
+ */
 fun <T> defaultValues(defaultValue: T, selectedInstruction: Int?, onSuccess: (Int) -> T): T {
   return if (selectedInstruction != null) {
     onSuccess(selectedInstruction)
   } else {
     defaultValue
+  }
+}
+
+/**
+ * Selects the default icon based on the selected instruction. If an instruction is selected, the
+ * icon of the instruction is returned. Otherwise, the default icon is returned.
+ *
+ * @param createRecipeViewModel ViewModel for managing the recipe creation process.
+ * @return The selected icon if it exists, otherwise null.
+ */
+fun defaultIcon(createRecipeViewModel: CreateRecipeViewModel): IconType? {
+  return if (createRecipeViewModel.getSelectedInstruction() != null) {
+    createRecipeViewModel.getInstruction(createRecipeViewModel.getSelectedInstruction()!!).icon
+  } else {
+    null
   }
 }
 
@@ -258,6 +316,15 @@ fun <T> defaultValues(defaultValue: T, selectedInstruction: Int?, onSuccess: (In
  */
 fun verifyStepDescription(showError: Boolean, stepDescription: String): Boolean {
   return showError && stepDescription.isBlank()
+}
+
+/**
+ * Checks if the time format is valid.
+ *
+ * @param time The time to be checked.
+ */
+fun checkTimeFormat(time: String): Boolean {
+  return time.all { char -> char.isDigit() } && time.length <= TIME_CHARACTER_LIMIT
 }
 
 /**

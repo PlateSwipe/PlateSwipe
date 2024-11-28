@@ -2,6 +2,7 @@ package com.android.sample.e2e
 
 import android.graphics.Bitmap
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.test.assertAny
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
@@ -24,6 +25,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.sample.model.image.ImageDownload
+import com.android.sample.R
 import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.ingredient.DefaultIngredientRepository
 import com.android.sample.model.ingredient.Ingredient
@@ -62,7 +64,6 @@ import com.android.sample.ui.createRecipe.AddInstructionStepScreen
 import com.android.sample.ui.createRecipe.CategoryScreen
 import com.android.sample.ui.createRecipe.CreateRecipeScreen
 import com.android.sample.ui.createRecipe.IngredientListScreen
-import com.android.sample.ui.createRecipe.IngredientSearchScreen
 import com.android.sample.ui.createRecipe.PublishRecipeScreen
 import com.android.sample.ui.createRecipe.RecipeAddImageScreen
 import com.android.sample.ui.createRecipe.RecipeIngredientsScreen
@@ -76,6 +77,7 @@ import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.navigation.TopLevelDestinations
 import com.android.sample.ui.recipe.SearchRecipeScreen
 import com.android.sample.ui.recipeOverview.RecipeOverview
+import com.android.sample.ui.searchIngredient.SearchIngredientScreen
 import com.android.sample.ui.swipePage.SwipePage
 import com.android.sample.ui.utils.testRecipes
 import com.google.firebase.auth.FirebaseAuth
@@ -488,12 +490,15 @@ class EndToEndTest {
           CreateRecipeScreen(
               navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
         }
-        composable(Screen.CATEGORY_SCREEN) {
+        composable(Screen.CREATE_CATEGORY_SCREEN) {
           CategoryScreen(
               navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
         }
         composable(Screen.CREATE_RECIPE_INGREDIENTS) {
-          RecipeIngredientsScreen(navigationActions = navigationActions, currentStep = 1)
+          RecipeIngredientsScreen(
+              navigationActions = navigationActions,
+              currentStep = 1,
+              ingredientViewModel = ingredientViewModel)
         }
         composable(Screen.CREATE_RECIPE_INSTRUCTIONS) {
           RecipeInstructionsScreen(navigationActions = navigationActions, currentStep = 2)
@@ -521,8 +526,16 @@ class EndToEndTest {
         }
 
         composable(Screen.CREATE_RECIPE_SEARCH_INGREDIENTS) {
-          IngredientSearchScreen(
-              navigationActions = navigationActions, ingredientViewModel = ingredientViewModel)
+          SearchIngredientScreen(
+              navigationActions = navigationActions,
+              searchIngredientViewModel = ingredientViewModel,
+              popUpTitle = stringResource(R.string.pop_up_title),
+              popUpConfirmationText = stringResource(R.string.pop_up_description),
+              popUpConfirmationButtonText = stringResource(R.string.pop_up_confirmation),
+              onConfirmation = {
+                ingredientViewModel.addIngredient(it)
+                navigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
+              })
         }
 
         composable(Screen.CREATE_RECIPE_LIST_INGREDIENTS) {
@@ -533,7 +546,8 @@ class EndToEndTest {
         }
         composable(Screen.CAMERA_SCAN_CODE_BAR) {
           CameraScanCodeBarScreen(
-              navigationActions = navigationActions, ingredientViewModel = ingredientViewModel)
+              navigationActions = navigationActions,
+              searchIngredientViewModel = ingredientViewModel)
         }
       }
       navigation(

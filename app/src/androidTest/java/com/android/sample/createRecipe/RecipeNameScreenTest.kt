@@ -109,7 +109,7 @@ class RecipeNameScreenTest {
     verify { createRecipeViewModel.updateRecipeName("Chocolate Cake") }
 
     // Verify navigation to the ingredients screen
-    verify { mockNavigationActions.navigateTo(Screen.CATEGORY_SCREEN) }
+    verify { mockNavigationActions.navigateTo(Screen.CREATE_CATEGORY_SCREEN) }
   }
 
   /**

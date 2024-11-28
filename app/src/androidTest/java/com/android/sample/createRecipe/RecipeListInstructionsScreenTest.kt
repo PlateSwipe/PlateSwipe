@@ -8,6 +8,7 @@ import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.model.recipe.FirestoreRecipesRepository
 import com.android.sample.model.recipe.Instruction
+import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.ADD_INSTRUCTION_BUTTON
 import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.INSTRUCTION_LIST_ITEM
 import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.INSTRUCTION_TEXT
 import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.NEXT_STEP_BUTTON
@@ -60,6 +61,7 @@ class RecipeListInstructionsScreenTest {
     composeTestRule.onNodeWithTag(SCREEN_COLUMN).assertIsDisplayed()
     composeTestRule.onNodeWithTag(RECIPE_NAME_TEXT).assertIsDisplayed()
     composeTestRule.onNodeWithTag(INSTRUCTION_TEXT).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(ADD_INSTRUCTION_BUTTON).assertIsDisplayed()
   }
 
   // Check if everything is clickable and verify navigation action
