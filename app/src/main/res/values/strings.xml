@@ -139,4 +139,9 @@
     <string name = "delete">Delete</string>
     <string name="cancel">Cancel</string>
 
+    //TimePickerScreen
+    <string name="select_total_time">Select Total Time</string>
+    <string name="select_time_description">Selecting the total time is optional, but it helps others understand how long your recipe will take.</string>
+    <string name="minutes">Minutes</string>
+    <string name="hours">Hours</string>
 </resources>

@@ -179,7 +179,7 @@ fun RecipeListInstructionsContent(
         modifier = Modifier.align(Alignment.CenterHorizontally).testTag(NEXT_STEP_BUTTON),
         onClick = {
           if (createRecipeViewModel.getRecipeListOfInstructions().isNotEmpty()) {
-            navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_IMAGE)
+            navigationActions.navigateTo(Screen.CREATE_RECIPE_TIME_PICKER)
           } else {
             Toast.makeText(
                     context,

@@ -56,6 +56,11 @@ import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_FAVORITE_ICON_TE
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_TITLE_TEST_TAG
 import com.android.sample.resources.C.TestTag.RecipeOverview.RECIPE_TITLE
 import com.android.sample.resources.C.TestTag.SwipePage.DRAGGABLE_ITEM
+import com.android.sample.resources.C.TestTag.TimePicker.HOUR_PICKER
+import com.android.sample.resources.C.TestTag.TimePicker.MINUTE_PICKER
+import com.android.sample.resources.C.TestTag.TimePicker.NEXT_BUTTON
+import com.android.sample.resources.C.TestTag.TimePicker.TIME_PICKER_DESCRIPTION
+import com.android.sample.resources.C.TestTag.TimePicker.TIME_PICKER_TITLE
 import com.android.sample.resources.C.TestTag.Utils.BACK_ARROW_ICON
 import com.android.sample.ui.account.AccountScreen
 import com.android.sample.ui.camera.CameraScanCodeBarScreen
@@ -69,6 +74,7 @@ import com.android.sample.ui.createRecipe.RecipeAddImageScreen
 import com.android.sample.ui.createRecipe.RecipeIngredientsScreen
 import com.android.sample.ui.createRecipe.RecipeInstructionsScreen
 import com.android.sample.ui.createRecipe.RecipeListInstructionsScreen
+import com.android.sample.ui.createRecipe.TimePickerScreen
 import com.android.sample.ui.filter.FilterPage
 import com.android.sample.ui.fridge.FridgeScreen
 import com.android.sample.ui.navigation.NavigationActions
@@ -429,6 +435,27 @@ class EndToEndTest {
         .performClick()
     composeTestRule.waitForIdle()
 
+    // Time Picker -------------------------------------------------------
+
+    // Verify the time picker screen is displayed
+    composeTestRule
+        .onNodeWithTag(TIME_PICKER_TITLE)
+        .assertExists()
+        .assertTextEquals("Select Total Time")
+    composeTestRule
+        .onNodeWithTag(TIME_PICKER_DESCRIPTION)
+        .assertExists()
+        .assertTextEquals(
+            "Selecting the total time is optional, but it helps others understand how long your recipe will take.")
+
+    // Simulate selecting 2 hours and 30 minutes
+    composeTestRule.onNodeWithTag(HOUR_PICKER).performClick() // Simulate selecting 2 hours
+    composeTestRule.onNodeWithTag(MINUTE_PICKER).performClick() // Simulate selecting 30 minutes
+
+    // Click Next Step button
+    composeTestRule.onNodeWithTag(NEXT_BUTTON).performClick()
+    composeTestRule.waitForIdle()
+
     // image -------------------------------------------------------
 
     composeTestRule.onNodeWithTag(DISPLAY_IMAGE_DEFAULT).assertIsDisplayed()
@@ -511,6 +538,9 @@ class EndToEndTest {
         composable(Screen.CREATE_RECIPE_LIST_INSTRUCTIONS) {
           RecipeListInstructionsScreen(
               navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
+        }
+        composable(Screen.CREATE_RECIPE_TIME_PICKER) {
+          TimePickerScreen(navigationActions, createRecipeViewModel)
         }
         composable(Screen.CREATE_RECIPE_ADD_IMAGE) {
           RecipeAddImageScreen(navigationActions, createRecipeViewModel)

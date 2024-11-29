@@ -352,6 +352,13 @@ object C {
 
     // Create Recipe Add Image
     const val ADD_IMAGE_STEP = 4
+
+    // TimePickerScreen
+    const val MINUTES_PER_HOUR = 60
+    const val HOUR_RANGE_START = 0
+    const val HOUR_RANGE_END = 23
+    const val MINUTE_RANGE_START = 0
+    const val MINUTE_RANGE_END = 59
   }
 
   object Values {
@@ -808,6 +815,16 @@ object C {
       const val CATEGORY_TITLE = "CategoryTitle"
       // CategorySubtitle
       const val CATEGORY_SUBTITLE = "CategorySubtitle"
+    }
+
+    object TimePicker {
+      const val TIME_PICKER_TITLE = "TimePickerTitle"
+      const val TIME_PICKER_DESCRIPTION = "TimePickerDescription"
+      const val HOUR_PICKER = "HourPicker"
+      const val MINUTE_PICKER = "MinutePicker"
+      const val NEXT_BUTTON = "NextButton"
+      const val HOURS_LABEL = "HoursLabel"
+      const val MINUTES_LABEL = "MinutesLabel"
     }
   }
 }
