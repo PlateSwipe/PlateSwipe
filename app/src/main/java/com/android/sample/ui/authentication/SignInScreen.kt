@@ -150,9 +150,11 @@ import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.google.firebase.Firebase
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider.getCredential
+import com.google.firebase.auth.auth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -184,7 +186,7 @@ fun SignInScreen(navigationActions: NavigationActions, userViewModel: UserViewMo
       content = { padding ->
         Box(modifier = Modifier.fillMaxSize().padding(padding)) {
           // Show the loading animation if the user is registered
-          if (registered.value) {
+          if (Firebase.auth.currentUser != null || registered.value) {
             LoadingAnimation(
                 onFinish = { navigationActions.navigateTo(Screen.SWIPE) },
                 duration = ANIMATION_DURATION)

@@ -17,7 +17,9 @@ plugins {
     alias(libs.plugins.ktfmt)
     alias(libs.plugins.gms)
     alias(libs.plugins.sonar)
+    alias(libs.plugins.ksp)
     id("jacoco")
+
 }
 
 jacoco {
@@ -82,7 +84,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.7"
     }
 
     packaging {
@@ -263,6 +265,13 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.activity.ktx)
 
+    // Room
+    implementation(libs.room.runtime) // Room runtime
+    implementation(libs.room.ktx) // Room KTX extensions
+    ksp(libs.room.compiler)
+    implementation(libs.kotlin.coroutines.core) // Coroutines (if not already added)
+    testImplementation(libs.room.testing) // For Room database testing utilities
+    implementation(libs.gson)
 }
 
 tasks.withType<Test> {

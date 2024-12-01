@@ -1,6 +1,8 @@
-package com.android.sample.model.ingredient
+package com.android.sample.model.ingredient.network
 
 import com.android.sample.model.image.ImageRepositoryFirebase
+import com.android.sample.model.ingredient.Ingredient
+import com.android.sample.model.ingredient.networkData.OpenFoodFactsIngredientRepository
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -84,6 +86,53 @@ class OpenFoodFactsIngredientRepositoryTest {
                         "_id": 1357924680,
                         "product_name": "Ingredient 3",
                         "brands": "Brand 3",
+                        "categories": "",
+                        "quantity": "",
+                        "image_front_url": "ww",
+                        "image_front_thumb_url": "ww",
+                        "image_front_small_url": "ww"
+                    }
+                ],
+                "skip": 0
+            }
+            """
+
+  private val openFoodFactsJsonSingleIngredientJsonWithEnglishProductName =
+      """
+            {
+                "count": 3,
+                "page": 1,
+                "page_count": 1,
+                "page_size": 50,    
+                "products": [
+                    {
+                        "_id": 1234567890,
+                        "product_name": "",
+                        "product_name_en": "Ingredient 1",
+                        "brands": "Brand 1",
+                        "categories": "",
+                        "quantity": "",
+                        "image_front_url": "ww",
+                        "image_front_thumb_url": "ww",
+                        "image_front_small_url": "ww"
+                    }
+                ],
+                "skip": 0
+            }
+            """
+
+  private val openFoodFactsJsonSingleIngredientJsonWithNoProductName =
+      """
+            {
+                "count": 3,
+                "page": 1,
+                "page_count": 1,
+                "page_size": 50,    
+                "products": [
+                    {
+                        "_id": 1234567890,
+                        "product_name": "",
+                        "brands": "Brand 1",
                         "categories": "",
                         "quantity": "",
                         "image_front_url": "ww",
@@ -241,6 +290,69 @@ class OpenFoodFactsIngredientRepositoryTest {
     assert(searchIngredients?.get(1)?.barCode == 9876543210L)
     assert(searchIngredients?.get(2)?.name == "Ingredient 3")
     assert(searchIngredients?.get(2)?.barCode == 1357924680L)
+  }
+
+  @Test
+  fun `test searching will correctly parse name on english name field`() {
+
+    val callbackCapture: ArgumentCaptor<Callback> = ArgumentCaptor.forClass(Callback::class.java)
+    val requestCapture: ArgumentCaptor<Request> = ArgumentCaptor.forClass(Request::class.java)
+
+    `when`(mockHttpClient.newCall(capture(requestCapture))).thenReturn(mockCall)
+    doNothing().`when`(mockCall).enqueue(capture(callbackCapture))
+
+    var searchIngredients: List<Ingredient>? = emptyList()
+    var searchException: Exception? = null
+
+    openFoodFactsIngredientRepository.search(
+        "Ingredient 1",
+        onSuccess = { ingredients -> searchIngredients = ingredients },
+        onFailure = { exception -> searchException = exception })
+
+    val searchCallBack = callbackCapture.value
+
+    `when`(mockResponseBody.string())
+        .thenReturn(openFoodFactsJsonSingleIngredientJsonWithEnglishProductName)
+    `when`(mockImageRef.putStream(any())).thenReturn(mockUpload)
+    `when`(mockUpload.isSuccessful).thenReturn(true)
+
+    searchCallBack.onResponse(mockCall, response)
+
+    assertNull(searchException)
+    assertNotNull(searchIngredients)
+
+    assert(searchIngredients?.get(0)?.name == "Ingredient 1")
+  }
+
+  @Test
+  fun `test searching will throw error on missing name`() {
+
+    val callbackCapture: ArgumentCaptor<Callback> = ArgumentCaptor.forClass(Callback::class.java)
+    val requestCapture: ArgumentCaptor<Request> = ArgumentCaptor.forClass(Request::class.java)
+
+    `when`(mockHttpClient.newCall(capture(requestCapture))).thenReturn(mockCall)
+    doNothing().`when`(mockCall).enqueue(capture(callbackCapture))
+
+    var searchIngredients: List<Ingredient>? = emptyList()
+    var searchException: Exception? = null
+
+    openFoodFactsIngredientRepository.search(
+        "Ingredient 1",
+        onSuccess = { ingredients -> searchIngredients = ingredients },
+        onFailure = { exception -> searchException = exception })
+
+    val searchCallBack = callbackCapture.value
+
+    `when`(mockResponseBody.string())
+        .thenReturn(openFoodFactsJsonSingleIngredientJsonWithNoProductName)
+    `when`(mockImageRef.putStream(any())).thenReturn(mockUpload)
+    `when`(mockUpload.isSuccessful).thenReturn(true)
+
+    searchCallBack.onResponse(mockCall, response)
+
+    assertNull(searchException)
+    assertNotNull(searchIngredients)
+    assert(searchIngredients?.isEmpty() == true)
   }
 
   @Test

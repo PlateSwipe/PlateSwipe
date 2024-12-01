@@ -27,4 +27,33 @@ interface IngredientRepository {
       onFailure: (Exception) -> Unit,
       count: Int = 20
   )
+
+  /**
+   * Add an ingredient to the DB.
+   *
+   * @param ingredient The ingredient to add.
+   */
+  fun addDownload(ingredient: Ingredient)
+
+  /**
+   * Update an ingredient in the DB.
+   *
+   * @param ingredient The ingredient to update.
+   */
+  fun updateDownload(ingredient: Ingredient)
+
+  /**
+   * Delete an ingredient from the DB.
+   *
+   * @param ingredient The ingredient to delete.
+   */
+  fun deleteDownload(ingredient: Ingredient)
+
+  /**
+   * Get all ingredients from the DB.
+   *
+   * @param onSuccess The callback to be called with the resulting ingredients.
+   * @param onFailure The callback to be called with an exception if the search fails.
+   */
+  fun getAllDownload(onSuccess: (List<Ingredient>) -> Unit, onFailure: (Exception) -> Unit)
 }

@@ -1,8 +1,9 @@
-package com.android.sample.model.ingredient
+package com.android.sample.model.ingredient.networkData
 
 import android.util.Log
 import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.image.ImageUploader
+import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.resources.C
 import com.android.sample.resources.C.Tag.AGGREGATOR_ERROR_FIRESTORE_ADD_INGR
 import com.android.sample.resources.C.Tag.AGGREGATOR_ERROR_GET_INGR_FIRESTORE
@@ -24,7 +25,9 @@ open class AggregatorIngredientRepository(
     private val openFoodFactsIngredientRepository: OpenFoodFactsIngredientRepository,
     private val imageStorage: ImageRepositoryFirebase,
     private val imageUploader: ImageUploader
-) : IngredientRepository {
+) : IngredientNetworkRepository {
+
+  val currentlyBeingAdded: MutableSet<Long> = mutableSetOf()
 
   /**
    * Get an ingredient by barcode. If it isn't found in Firestore, it will be searched in
@@ -88,54 +91,11 @@ open class AggregatorIngredientRepository(
   ) {
     openFoodFactsIngredientRepository.search(
         name,
-        onSuccess = { ingredientsOpenFoodFacts ->
-          checkFirestoreIngredients(
-              ingredientsOpenFoodFacts,
-              onSuccess = { ingredientsFirestore -> onSuccess(ingredientsFirestore) },
-              onFailure = onFailure)
-          onSuccess(ingredientsOpenFoodFacts)
-        },
+        onSuccess = { ingredientsOpenFoodFacts -> onSuccess(ingredientsOpenFoodFacts) },
         onFailure = onFailure,
         count = count)
   }
 
-  private fun checkFirestoreIngredients(
-      ingredientsOpenFoodFacts: List<Ingredient>,
-      onSuccess: (List<Ingredient>) -> Unit,
-      onFailure: (Exception) -> Unit
-  ) {
-    var confirmedCount = 0
-    val foundIngredients = mutableListOf<Ingredient>()
-
-    for (ingredient in ingredientsOpenFoodFacts) {
-      if (ingredient.barCode != null) {
-        firestoreIngredientRepository.get(
-            ingredient.barCode,
-            onSuccess = { ingredientFirestore ->
-              if (ingredientFirestore != null) {
-                foundIngredients.add(ingredientFirestore)
-              } else {
-                foundIngredients.add(ingredient)
-
-                firestoreIngredientRepository.add(
-                    ingredientsOpenFoodFacts,
-                    onSuccess = {
-                      Log.i(
-                          C.Tag.AGGREGATOR_TAG_ON_INGREDIENT_ADDED,
-                          ingredientsOpenFoodFacts.toString())
-                    },
-                    onFailure = onFailure)
-              }
-
-              confirmedCount++
-              if (confirmedCount == ingredientsOpenFoodFacts.size) {
-                onSuccess(foundIngredients)
-              }
-            },
-            onFailure = onFailure)
-      }
-    }
-  }
   /**
    * Uploads and saves ingredient images to Firebase Storage and updates the ingredient in
    * Firestore.

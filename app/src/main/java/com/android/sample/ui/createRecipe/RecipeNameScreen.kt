@@ -132,7 +132,7 @@ fun RecipeNameScreen(
                       TextFieldDefaults.outlinedTextFieldColors(
                           unfocusedBorderColor = Color.Transparent,
                           focusedBorderColor = Color.Transparent,
-                      ),
+                          cursorColor = MaterialTheme.colorScheme.onSecondary),
                   textStyle = MaterialTheme.typography.bodyMedium,
                   maxLines = MAXLINES_RECIPE_NAME_FIELD)
 
@@ -161,7 +161,7 @@ fun RecipeNameScreen(
                   onShowErrorChange = { showError = it },
                   onUpdateRecipeName = { createRecipeViewModel.updateRecipeName(it) },
                   onNavigateToNextScreen = {
-                    navigationActions.navigateTo(Screen.CREATE_RECIPE_INGREDIENTS)
+                    navigationActions.navigateTo(Screen.CREATE_CATEGORY_SCREEN)
                   })
             })
       }
@@ -199,7 +199,7 @@ fun getLabelText(recipeName: TextFieldValue): @Composable () -> Unit {
           style =
               MaterialTheme.typography.bodySmall.copy(
                   fontFamily = MeeraInimai, letterSpacing = RECIPE_NAME_FONT_SPACING / 1.4f),
-          color = MaterialTheme.colorScheme.secondary)
+          color = MaterialTheme.colorScheme.onSecondary)
     }
   }
 }

@@ -2,6 +2,7 @@ package com.android.sample.e2e
 
 import android.graphics.Bitmap
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.test.assertAny
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
@@ -12,6 +13,7 @@ import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeLeft
@@ -22,8 +24,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.android.sample.R
+import com.android.sample.model.image.ImageDownload
 import com.android.sample.model.image.ImageRepositoryFirebase
-import com.android.sample.model.ingredient.AggregatorIngredientRepository
+import com.android.sample.model.ingredient.DefaultIngredientRepository
 import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.ingredient.IngredientViewModel
 import com.android.sample.model.recipe.CreateRecipeViewModel
@@ -52,19 +56,25 @@ import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_FAVORITE_ICON_TE
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_TITLE_TEST_TAG
 import com.android.sample.resources.C.TestTag.RecipeOverview.RECIPE_TITLE
 import com.android.sample.resources.C.TestTag.SwipePage.DRAGGABLE_ITEM
+import com.android.sample.resources.C.TestTag.TimePicker.HOUR_PICKER
+import com.android.sample.resources.C.TestTag.TimePicker.MINUTE_PICKER
+import com.android.sample.resources.C.TestTag.TimePicker.NEXT_BUTTON
+import com.android.sample.resources.C.TestTag.TimePicker.TIME_PICKER_DESCRIPTION
+import com.android.sample.resources.C.TestTag.TimePicker.TIME_PICKER_TITLE
 import com.android.sample.resources.C.TestTag.Utils.BACK_ARROW_ICON
 import com.android.sample.ui.account.AccountScreen
 import com.android.sample.ui.camera.CameraScanCodeBarScreen
 import com.android.sample.ui.camera.CameraTakePhotoScreen
 import com.android.sample.ui.createRecipe.AddInstructionStepScreen
+import com.android.sample.ui.createRecipe.CategoryScreen
 import com.android.sample.ui.createRecipe.CreateRecipeScreen
 import com.android.sample.ui.createRecipe.IngredientListScreen
-import com.android.sample.ui.createRecipe.IngredientSearchScreen
 import com.android.sample.ui.createRecipe.PublishRecipeScreen
 import com.android.sample.ui.createRecipe.RecipeAddImageScreen
 import com.android.sample.ui.createRecipe.RecipeIngredientsScreen
 import com.android.sample.ui.createRecipe.RecipeInstructionsScreen
 import com.android.sample.ui.createRecipe.RecipeListInstructionsScreen
+import com.android.sample.ui.createRecipe.TimePickerScreen
 import com.android.sample.ui.filter.FilterPage
 import com.android.sample.ui.fridge.FridgeScreen
 import com.android.sample.ui.navigation.NavigationActions
@@ -73,6 +83,7 @@ import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.navigation.TopLevelDestinations
 import com.android.sample.ui.recipe.SearchRecipeScreen
 import com.android.sample.ui.recipeOverview.RecipeOverview
+import com.android.sample.ui.searchIngredient.SearchIngredientScreen
 import com.android.sample.ui.swipePage.SwipePage
 import com.android.sample.ui.utils.testRecipes
 import com.google.firebase.auth.FirebaseAuth
@@ -108,7 +119,7 @@ class EndToEndTest {
   private lateinit var navigationActions: NavigationActions
   private lateinit var mockUserRepository: UserRepository
   private lateinit var mockFirebaseAuth: FirebaseAuth
-  private lateinit var aggregatorIngredientRepository: AggregatorIngredientRepository
+  private lateinit var aggregatorIngredientRepository: DefaultIngredientRepository
 
   private lateinit var mockRepository: RecipesRepository
   private lateinit var userViewModel: UserViewModel
@@ -126,7 +137,7 @@ class EndToEndTest {
     mockFirebaseAuth = mock(FirebaseAuth::class.java)
     mockImageRepo = mockk<ImageRepositoryFirebase>(relaxed = true)
     mockRepository = mock(RecipesRepository::class.java)
-    aggregatorIngredientRepository = mock(AggregatorIngredientRepository::class.java)
+    aggregatorIngredientRepository = mock(DefaultIngredientRepository::class.java)
 
     `when`(aggregatorIngredientRepository.search(any(), any(), any(), any())).thenAnswer {
         invocation ->
@@ -154,7 +165,8 @@ class EndToEndTest {
     val repository = FirestoreRecipesRepository(firestore)
     createRecipeViewModel = CreateRecipeViewModel(repository, mockImageRepo)
     recipesViewModel = RecipesViewModel(mockRepository)
-    ingredientViewModel = IngredientViewModel(aggregatorIngredientRepository)
+
+    ingredientViewModel = IngredientViewModel(aggregatorIngredientRepository, ImageDownload())
 
     /*`when`(mockRepository..thenAnswer { invocation ->
         val onSuccess = invocation.getArgument<(List<Recipe>) -> Unit>(1)
@@ -338,6 +350,29 @@ class EndToEndTest {
     composeTestRule.onNodeWithTag("NextStepButton").performClick()
     composeTestRule.waitForIdle()
 
+    // category -------------------------------------------------------
+
+    // Verify the category screen is displayed by checking the title
+    composeTestRule.onNodeWithText("Select A Category").assertExists()
+
+    // Open the dropdown menu
+    composeTestRule.onNodeWithTag("DropdownMenuButton").performClick()
+    composeTestRule.waitForIdle()
+
+    // Scroll to the desired category if necessary
+    composeTestRule
+        .onNodeWithTag("DropdownMenuItem_Vegan", useUnmergedTree = true)
+        .performScrollTo()
+
+    // Select a category from the dropdown menu
+    composeTestRule.onNodeWithTag("DropdownMenuItem_Vegan").performClick()
+
+    // Verify the selected category is displayed in the dropdown button
+    composeTestRule.onNodeWithTag("DropdownMenuButton").assertTextEquals("Vegan")
+
+    composeTestRule.onNodeWithTag("NextStepButton").performClick()
+    composeTestRule.waitForIdle()
+
     // ingredients -------------------------------------------------------
 
     // get to ingredients step page
@@ -398,6 +433,27 @@ class EndToEndTest {
     composeTestRule
         .onNodeWithTag(CreateRecipeListInstructionsScreen.NEXT_STEP_BUTTON)
         .performClick()
+    composeTestRule.waitForIdle()
+
+    // Time Picker -------------------------------------------------------
+
+    // Verify the time picker screen is displayed
+    composeTestRule
+        .onNodeWithTag(TIME_PICKER_TITLE)
+        .assertExists()
+        .assertTextEquals("Select Total Time")
+    composeTestRule
+        .onNodeWithTag(TIME_PICKER_DESCRIPTION)
+        .assertExists()
+        .assertTextEquals(
+            "Selecting the total time is optional, but it helps others understand how long your recipe will take.")
+
+    // Simulate selecting 2 hours and 30 minutes
+    composeTestRule.onNodeWithTag(HOUR_PICKER).performClick() // Simulate selecting 2 hours
+    composeTestRule.onNodeWithTag(MINUTE_PICKER).performClick() // Simulate selecting 30 minutes
+
+    // Click Next Step button
+    composeTestRule.onNodeWithTag(NEXT_BUTTON).performClick()
     composeTestRule.waitForIdle()
 
     // image -------------------------------------------------------
@@ -461,8 +517,15 @@ class EndToEndTest {
           CreateRecipeScreen(
               navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
         }
+        composable(Screen.CREATE_CATEGORY_SCREEN) {
+          CategoryScreen(
+              navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
+        }
         composable(Screen.CREATE_RECIPE_INGREDIENTS) {
-          RecipeIngredientsScreen(navigationActions = navigationActions, currentStep = 1)
+          RecipeIngredientsScreen(
+              navigationActions = navigationActions,
+              currentStep = 1,
+              ingredientViewModel = ingredientViewModel)
         }
         composable(Screen.CREATE_RECIPE_INSTRUCTIONS) {
           RecipeInstructionsScreen(navigationActions = navigationActions, currentStep = 2)
@@ -475,6 +538,9 @@ class EndToEndTest {
         composable(Screen.CREATE_RECIPE_LIST_INSTRUCTIONS) {
           RecipeListInstructionsScreen(
               navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
+        }
+        composable(Screen.CREATE_RECIPE_TIME_PICKER) {
+          TimePickerScreen(navigationActions, createRecipeViewModel)
         }
         composable(Screen.CREATE_RECIPE_ADD_IMAGE) {
           RecipeAddImageScreen(navigationActions, createRecipeViewModel)
@@ -490,8 +556,16 @@ class EndToEndTest {
         }
 
         composable(Screen.CREATE_RECIPE_SEARCH_INGREDIENTS) {
-          IngredientSearchScreen(
-              navigationActions = navigationActions, ingredientViewModel = ingredientViewModel)
+          SearchIngredientScreen(
+              navigationActions = navigationActions,
+              searchIngredientViewModel = ingredientViewModel,
+              popUpTitle = stringResource(R.string.pop_up_title),
+              popUpConfirmationText = stringResource(R.string.pop_up_description),
+              popUpConfirmationButtonText = stringResource(R.string.pop_up_confirmation),
+              onConfirmation = {
+                ingredientViewModel.addIngredient(it)
+                navigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
+              })
         }
 
         composable(Screen.CREATE_RECIPE_LIST_INGREDIENTS) {
@@ -502,7 +576,8 @@ class EndToEndTest {
         }
         composable(Screen.CAMERA_SCAN_CODE_BAR) {
           CameraScanCodeBarScreen(
-              navigationActions = navigationActions, ingredientViewModel = ingredientViewModel)
+              navigationActions = navigationActions,
+              searchIngredientViewModel = ingredientViewModel)
         }
       }
       navigation(

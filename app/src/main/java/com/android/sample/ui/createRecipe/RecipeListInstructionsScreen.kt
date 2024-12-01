@@ -1,5 +1,6 @@
 package com.android.sample.ui.createRecipe
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ModeEdit
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -31,6 +33,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -46,9 +49,13 @@ import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScre
 import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScreen.ICON_SIZE
 import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScreen.MEDIUM_PADDING
 import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScreen.REALLY_SMALL_PADDING
+import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScreen.RECIPE_NAME_MAX_CHAR
 import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScreen.ROW_SIZE
 import com.android.sample.resources.C.Tag.RECIPE_NAME_BASE_PADDING
 import com.android.sample.resources.C.Tag.SMALL_PADDING
+import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.ADD_ICON_DESCRIPTION
+import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.ADD_INSTRUCTION_BUTTON
+import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.EDIT_ICON_DESCRIPTION
 import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.EDIT_INSTRUCTION_ICON
 import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.INSTRUCTION_LIST
 import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.INSTRUCTION_LIST_ITEM
@@ -62,6 +69,7 @@ import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen
 import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.RECIPE_LIST_ITEM_THUMBNAIL
 import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.RECIPE_NAME_TEXT
 import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.SCREEN_COLUMN
+import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.STEP_ICON_DESCRIPTION
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
@@ -102,12 +110,30 @@ fun RecipeListInstructionsContent(
         modifier = Modifier.height(BIG_PADDING.dp).testTag(RECIPE_LIST_INSTRUCTIONS_SCREEN_SPACER1))
 
     // This text represents the name of the recipe
-    Text(
-        modifier = Modifier.testTag(RECIPE_NAME_TEXT),
-        text = createRecipeViewModel.getRecipeName(),
-        style = MaterialTheme.typography.titleMedium,
-        color = MaterialTheme.colorScheme.onPrimary,
-    )
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+      Text(
+          modifier = Modifier.testTag(RECIPE_NAME_TEXT),
+          text =
+              if (createRecipeViewModel.getRecipeName().length > RECIPE_NAME_MAX_CHAR)
+                  createRecipeViewModel.getRecipeName().take(RECIPE_NAME_MAX_CHAR) + "..."
+              else createRecipeViewModel.getRecipeName(),
+          style = MaterialTheme.typography.titleMedium,
+          color = MaterialTheme.colorScheme.onPrimary,
+      )
+
+      Icon(
+          imageVector = Icons.Default.Add,
+          contentDescription = ADD_ICON_DESCRIPTION,
+          modifier =
+              Modifier.size(ICON_SIZE.dp)
+                  .clickable(
+                      onClick = {
+                        navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_INSTRUCTION)
+                      })
+                  .testTag(ADD_INSTRUCTION_BUTTON),
+          tint = MaterialTheme.colorScheme.onPrimary)
+    }
+
     // This text represents the "Instructions" title"
     Text(
         modifier = Modifier.testTag(INSTRUCTION_TEXT),
@@ -146,12 +172,22 @@ fun RecipeListInstructionsContent(
                 })
           }
         }
-
+    val context = LocalContext.current
     // Fixed button at the bottom
     PlateSwipeButton(
         text = stringResource(R.string.next_step),
         modifier = Modifier.align(Alignment.CenterHorizontally).testTag(NEXT_STEP_BUTTON),
-        onClick = { navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_IMAGE) },
+        onClick = {
+          if (createRecipeViewModel.getRecipeListOfInstructions().isNotEmpty()) {
+            navigationActions.navigateTo(Screen.CREATE_RECIPE_TIME_PICKER)
+          } else {
+            Toast.makeText(
+                    context,
+                    context.getString(R.string.RecipeListInstruction_add_instruction_please),
+                    Toast.LENGTH_SHORT)
+                .show()
+          }
+        },
     )
   }
 }
@@ -199,7 +235,7 @@ fun InstructionValue(
                     painter =
                         painterResource(
                             id = createRecipeViewModel.getRecipeInstruction(index).icon.iconResId),
-                    contentDescription = "Icon",
+                    contentDescription = STEP_ICON_DESCRIPTION,
                     modifier = Modifier.size(ICON_SIZE.dp).testTag(RECIPE_LIST_INSTRUCTION_ICON))
 
                 Column(modifier = Modifier.testTag(INSTRUCTION_TEXT_SPACE)) {
@@ -222,7 +258,7 @@ fun InstructionValue(
                 }
                 Icon(
                     imageVector = Icons.Default.ModeEdit,
-                    contentDescription = "Edit",
+                    contentDescription = EDIT_ICON_DESCRIPTION,
                     modifier = Modifier.size(ICON_SIZE.dp).testTag(EDIT_INSTRUCTION_ICON))
               }
         }

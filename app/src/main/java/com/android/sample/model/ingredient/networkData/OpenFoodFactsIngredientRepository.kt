@@ -1,5 +1,6 @@
-package com.android.sample.model.ingredient
+package com.android.sample.model.ingredient.networkData
 
+import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.resources.C
 import com.android.sample.resources.C.Tag.OPENFOODFACT_REPO_IMAGE_ULR_INVALID
 import com.android.sample.resources.C.Tag.OPEN_FOOD_FACTS_URL
@@ -10,6 +11,7 @@ import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_SMALL_URL
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_THUMBNAIL_URL
 import com.android.sample.resources.C.Tag.PRODUCT_ID
 import com.android.sample.resources.C.Tag.PRODUCT_NAME
+import com.android.sample.resources.C.Tag.PRODUCT_NAME_OFF_SUFFIXES
 import com.android.sample.resources.C.Tag.PRODUCT_QUANTITY
 import java.io.IOException
 import okhttp3.Call
@@ -20,7 +22,8 @@ import okhttp3.Response
 import org.json.JSONException
 import org.json.JSONObject
 
-class OpenFoodFactsIngredientRepository(private val client: OkHttpClient) : IngredientRepository {
+class OpenFoodFactsIngredientRepository(private val client: OkHttpClient) :
+    IngredientNetworkRepository {
 
   /**
    * Parses a JSON object from the Open Food Facts API to create an Ingredient object.
@@ -31,10 +34,10 @@ class OpenFoodFactsIngredientRepository(private val client: OkHttpClient) : Ingr
    */
   private fun parseOpenFoodFactsJsonToIngredient(json: JSONObject): Ingredient {
 
-    val ingredientName = json.getString(PRODUCT_NAME)
+    val ingredientName = parseProductName(json)
 
     if (ingredientName.isNullOrEmpty()) {
-      throw Exception(C.Tag.INGREDIENT_NAME_NOT_PROVIDED)
+      throw JSONException(C.Tag.INGREDIENT_NAME_NOT_PROVIDED)
     }
 
     val brands = json.getString(PRODUCT_BRAND) ?: null
@@ -117,7 +120,6 @@ class OpenFoodFactsIngredientRepository(private val client: OkHttpClient) : Ingr
     val request =
         Request.Builder()
             .url(url)
-            // TODO: Add a proper User-Agent
             .header("User-Agent", "PlateSwipe/1.0 (plateswipe@gmail.com)")
             .build()
 
@@ -151,5 +153,24 @@ class OpenFoodFactsIngredientRepository(private val client: OkHttpClient) : Ingr
                 }
               }
             })
+  }
+
+  private fun parseProductName(json: JSONObject): String? {
+
+    val suffixes: Array<String> = PRODUCT_NAME_OFF_SUFFIXES
+
+    for (suffix in suffixes) {
+      val ingredientName =
+          try {
+            json.getString(PRODUCT_NAME + suffix)
+          } catch (e: JSONException) {
+            null
+          }
+      if (!ingredientName.isNullOrEmpty()) {
+        return ingredientName
+      }
+    }
+
+    return null
   }
 }

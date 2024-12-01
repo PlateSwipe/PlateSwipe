@@ -1,15 +1,27 @@
 package com.android.sample.model.user
 
 import android.util.Log
-import com.android.sample.model.ingredient.FirestoreIngredientRepository
+import com.android.sample.model.fridge.FridgeItem
+import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.ingredient.Ingredient
+import com.android.sample.model.ingredient.networkData.FirestoreIngredientRepository
 import com.android.sample.model.recipe.FirestoreRecipesRepository
 import com.android.sample.model.recipe.Recipe
+import com.android.sample.resources.C.Tag.UserViewModel.FAILED_TO_DELETE_IMAGE
+import com.android.sample.resources.C.Tag.UserViewModel.FAILED_TO_DELETE_RECIPE
 import com.android.sample.resources.C.Tag.UserViewModel.FAILED_TO_FETCH_CREATED_RECIPE_FROM_DATABASE_ERROR
 import com.android.sample.resources.C.Tag.UserViewModel.FAILED_TO_FETCH_INGREDIENT_FROM_DATABASE_ERROR
 import com.android.sample.resources.C.Tag.UserViewModel.FAILED_TO_FETCH_LIKED_RECIPE_FROM_DATABASE_ERROR
+import com.android.sample.resources.C.Tag.UserViewModel.IMAGE_DELETION_SUCCESSFULY
 import com.android.sample.resources.C.Tag.UserViewModel.LOG_TAG
 import com.android.sample.resources.C.Tag.UserViewModel.NOT_FOUND_INGREDIENT_IN_DATABASE_ERROR
+import com.android.sample.resources.C.Tag.UserViewModel.RECIPE_DELETED_SUCCESSFULY
+import com.android.sample.ui.utils.ingredientExpirationDateExample
+import com.android.sample.ui.utils.ingredientExpirationDateModifiedExample
+import com.android.sample.ui.utils.ingredientQuantityExample
+import com.android.sample.ui.utils.testFridgeItem
+import com.android.sample.ui.utils.testFridgeItemModifiedExpirationDate
+import com.android.sample.ui.utils.testFridgeItemModifiedQuantity
 import com.android.sample.ui.utils.testIngredients
 import com.android.sample.ui.utils.testRecipes
 import com.android.sample.ui.utils.testUsers
@@ -51,6 +63,14 @@ class UserViewModelTest {
       Function1::class.java as Class<Function1<Recipe, Unit>>
 
   @Suppress("UNCHECKED_CAST")
+  private val onSuccessRecipeDeletionClass: Class<Function0<Unit>> =
+      Function0::class.java as Class<Function0<Unit>>
+
+  @Suppress("UNCHECKED_CAST")
+  private val onSuccessImageDeletionClass: Class<Function0<Unit>> =
+      Function0::class.java as Class<Function0<Unit>>
+
+  @Suppress("UNCHECKED_CAST")
   private val onFailureClass: Class<Function1<Exception, Unit>> =
       Function1::class.java as Class<Function1<Exception, Unit>>
 
@@ -59,6 +79,7 @@ class UserViewModelTest {
   private lateinit var mockCurrentUser: FirebaseUser
   private lateinit var mockIngredientRepository: FirestoreIngredientRepository
   private lateinit var mockRecipeRepository: FirestoreRecipesRepository
+  private lateinit var mockImageRepositoryFirebase: ImageRepositoryFirebase
 
   private lateinit var userViewModel: UserViewModel
 
@@ -67,6 +88,13 @@ class UserViewModelTest {
   private val userExample: User = testUsers[0]
 
   private val ingredientExample: Ingredient = testIngredients[0]
+
+  private val fridgeItemExample: FridgeItem = testFridgeItem[0]
+
+  private val fridgeItemModifiedQuantityExample: FridgeItem = testFridgeItemModifiedQuantity[0]
+
+  private val fridgeItemModifiedExpirationDateExample: FridgeItem =
+      testFridgeItemModifiedExpirationDate[0]
 
   private val recipeExample: Recipe = testRecipes[0]
 
@@ -82,13 +110,18 @@ class UserViewModelTest {
     mockCurrentUser = mock(FirebaseUser::class.java)
     mockIngredientRepository = mock(FirestoreIngredientRepository::class.java)
     mockRecipeRepository = mock(FirestoreRecipesRepository::class.java)
+    mockImageRepositoryFirebase = mock(ImageRepositoryFirebase::class.java)
 
     `when`(mockFirebaseAuth.currentUser).thenReturn(mockCurrentUser)
     `when`(mockCurrentUser.uid).thenReturn(userExample.uid)
 
     userViewModel =
         UserViewModel(
-            mockUserRepository, mockFirebaseAuth, mockRecipeRepository, mockIngredientRepository)
+            mockUserRepository,
+            mockFirebaseAuth,
+            mockRecipeRepository,
+            mockIngredientRepository,
+            mockImageRepositoryFirebase)
   }
 
   @Test
@@ -211,51 +244,102 @@ class UserViewModelTest {
   fun `test modifies elements correctly`() {
     userViewModel.changeUserName(userExample.userName)
     userViewModel.changeProfilePictureUrl(userExample.profilePictureUrl)
-    userViewModel.addIngredientToUserFridge(ingredientExample)
+    userViewModel.updateIngredientFromFridge(
+        ingredientExample, fridgeItemExample.quantity, ingredientExpirationDateExample, false)
     userViewModel.addRecipeToUserLikedRecipes(recipeExample)
     userViewModel.addRecipeToUserCreatedRecipes(createdRecipeExample)
 
     assertEquals(userViewModel.userName.value, userExample.userName)
     assertEquals(userViewModel.profilePictureUrl.value, userExample.profilePictureUrl)
-    assertEquals(userViewModel.fridge.value[0].first.name, ingredientExample.name)
+    assertEquals(userViewModel.fridgeItems.value[0].first, fridgeItemExample)
     assertEquals(userViewModel.likedRecipes.value[0].uid, recipeExample.uid)
     assertEquals(userViewModel.createdRecipes.value[0].uid, createdRecipeExample.uid)
 
-    userViewModel.removeIngredientFromUserFridge(ingredientExample)
+    userViewModel.removeIngredientFromUserFridge(ingredientExample, ingredientExpirationDateExample)
     userViewModel.removeRecipeFromUserLikedRecipes(recipeExample)
     userViewModel.removeRecipeFromUserCreatedRecipes(createdRecipeExample)
 
-    assertEquals(userViewModel.fridge.value.count(), 0)
+    assert(userViewModel.fridgeItems.value.isEmpty())
     assertEquals(userViewModel.likedRecipes.value.count(), 0)
     assertEquals(userViewModel.createdRecipes.value.count(), 0)
   }
 
   @Test
-  fun `test correctly adds and removes existing ingredient to count pairs in fridge`() {
-    userViewModel.addIngredientToUserFridge(ingredientExample, 2)
+  fun `test correctly adds, updates and removes existing ingredient in fridge`() {
+    userViewModel.updateIngredientFromFridge(
+        ingredientExample, fridgeItemExample.quantity, ingredientExpirationDateExample, false)
 
-    assertEquals(userViewModel.fridge.value[0].first.name, ingredientExample.name)
-    assertEquals(userViewModel.fridge.value[0].second, 2)
+    assertEquals(userViewModel.fridgeItems.value[0].first, fridgeItemExample)
+    assertEquals(userViewModel.fridgeItems.value[0].second, ingredientExample)
 
-    userViewModel.addIngredientToUserFridge(ingredientExample)
+    userViewModel.updateIngredientFromFridge(
+        ingredientExample, ingredientQuantityExample, ingredientExpirationDateExample, false)
 
-    assertEquals(userViewModel.fridge.value[0].second, 3)
+    assertEquals(userViewModel.fridgeItems.value[0].first, fridgeItemModifiedQuantityExample)
 
-    userViewModel.removeIngredientFromUserFridge(ingredientExample, 2)
+    userViewModel.removeIngredientFromUserFridge(ingredientExample, ingredientExpirationDateExample)
 
-    assertEquals(userViewModel.fridge.value[0].second, 1)
-
-    assertThrows(IllegalArgumentException::class.java) {
-      userViewModel.removeIngredientFromUserFridge(ingredientExample, 2)
-    }
-
-    userViewModel.removeIngredientFromUserFridge(ingredientExample)
-
-    assertEquals(userViewModel.fridge.value.count(), 0)
+    assert(userViewModel.fridgeItems.value.isEmpty())
 
     assertThrows(IllegalArgumentException::class.java) {
-      userViewModel.removeIngredientFromUserFridge(ingredientExample)
+      userViewModel.removeIngredientFromUserFridge(
+          ingredientExample, ingredientExpirationDateExample)
     }
+  }
+
+  @Test
+  fun `test update ingredient quantity with a zero quantity deletes item`() {
+    userViewModel.updateIngredientFromFridge(
+        ingredientExample, fridgeItemExample.quantity, ingredientExpirationDateExample, false)
+
+    userViewModel.updateIngredientFromFridge(
+        ingredientExample, 0, ingredientExpirationDateExample, false)
+    assertEquals(emptyList<Pair<FridgeItem, Ingredient>>(), userViewModel.fridgeItems.value)
+  }
+
+  @Test
+  fun `test add multiple times a scanned item`() {
+    userViewModel.updateIngredientFromFridge(
+        ingredientExample, fridgeItemExample.quantity, ingredientExpirationDateExample, true)
+    userViewModel.updateIngredientFromFridge(
+        ingredientExample, fridgeItemExample.quantity, ingredientExpirationDateExample, true)
+
+    assertEquals(fridgeItemExample.quantity * 2, userViewModel.fridgeItems.value[0].first.quantity)
+  }
+
+  @Test
+  fun `test add multiple times same ingredient but with different expiration dates`() {
+    userViewModel.updateIngredientFromFridge(
+        ingredientExample, fridgeItemExample.quantity, ingredientExpirationDateExample, true)
+    userViewModel.updateIngredientFromFridge(
+        ingredientExample,
+        fridgeItemExample.quantity,
+        ingredientExpirationDateModifiedExample,
+        true)
+
+    assert(userViewModel.fridgeItems.value.size == 2)
+    assertEquals(Pair(fridgeItemExample, ingredientExample), userViewModel.fridgeItems.value[0])
+    assertEquals(
+        Pair(fridgeItemModifiedExpirationDateExample, ingredientExample),
+        userViewModel.fridgeItems.value[1])
+  }
+
+  @Test
+  fun `test remove one item of the two appearing ingredients that are the same but with different expiration dates`() {
+    userViewModel.updateIngredientFromFridge(
+        ingredientExample, fridgeItemExample.quantity, ingredientExpirationDateExample, true)
+    userViewModel.updateIngredientFromFridge(
+        ingredientExample,
+        fridgeItemExample.quantity,
+        ingredientExpirationDateModifiedExample,
+        true)
+
+    assert(userViewModel.fridgeItems.value.size == 2)
+
+    userViewModel.removeIngredientFromUserFridge(
+        ingredientExample, ingredientExpirationDateModifiedExample)
+    assert(userViewModel.fridgeItems.value.size == 1)
+    assertEquals(Pair(fridgeItemExample, ingredientExample), userViewModel.fridgeItems.value[0])
   }
 
   @Test
@@ -276,7 +360,8 @@ class UserViewModelTest {
 
     assertEquals(userExample.userName, userViewModel.userName.value)
     assertEquals(userExample.profilePictureUrl, userViewModel.profilePictureUrl.value)
-    assertEquals(listOf(Pair(ingredientExample, 1)), userViewModel.fridge.value)
+    assertEquals(
+        listOf(Pair(fridgeItemExample, ingredientExample)), userViewModel.fridgeItems.value)
   }
 
   @Test
@@ -419,6 +504,60 @@ class UserViewModelTest {
 
       mockedLog.verify {
         Log.e(eq(LOG_TAG), eq(FAILED_TO_FETCH_CREATED_RECIPE_FROM_DATABASE_ERROR), any<Exception>())
+      }
+    }
+  }
+
+  @Test
+  fun `test deletion of recipe and of its image from the database is successful`() {
+    val onSuccessRecipeDeletionCaptor: ArgumentCaptor<Function0<Unit>> =
+        ArgumentCaptor.forClass(onSuccessRecipeDeletionClass)
+
+    val onSuccessImageDeletionCaptor: ArgumentCaptor<Function0<Unit>> =
+        ArgumentCaptor.forClass(onSuccessImageDeletionClass)
+
+    doNothing()
+        .`when`(mockRecipeRepository)
+        .deleteRecipe(any(), capture(onSuccessRecipeDeletionCaptor), any())
+    doNothing()
+        .`when`(mockImageRepositoryFirebase)
+        .deleteImage(any(), any(), any(), capture(onSuccessImageDeletionCaptor), any())
+
+    mockStatic(Log::class.java).use { mockedLog ->
+      userViewModel.removeRecipeFromUserCreatedRecipes(recipeExample)
+      onSuccessRecipeDeletionCaptor.value.invoke()
+      onSuccessImageDeletionCaptor.value.invoke()
+
+      mockedLog.verify {
+        Log.i(LOG_TAG, RECIPE_DELETED_SUCCESSFULY)
+        Log.i(LOG_TAG, IMAGE_DELETION_SUCCESSFULY)
+      }
+    }
+  }
+
+  @Test
+  fun `test deletion of recipe and of its image from the database failed`() {
+    val onFailureRecipeDeletionCaptor: ArgumentCaptor<Function1<Exception, Unit>> =
+        ArgumentCaptor.forClass(onFailureClass)
+
+    val onFailureImageDeletionCaptor: ArgumentCaptor<Function1<Exception, Unit>> =
+        ArgumentCaptor.forClass(onFailureClass)
+
+    doNothing()
+        .`when`(mockRecipeRepository)
+        .deleteRecipe(any(), any(), capture(onFailureRecipeDeletionCaptor))
+    doNothing()
+        .`when`(mockImageRepositoryFirebase)
+        .deleteImage(any(), any(), any(), any(), capture(onFailureImageDeletionCaptor))
+
+    mockStatic(Log::class.java).use { mockedLog ->
+      userViewModel.removeRecipeFromUserCreatedRecipes(recipeExample)
+      onFailureRecipeDeletionCaptor.value.invoke(Exception())
+      onFailureImageDeletionCaptor.value.invoke(Exception())
+
+      mockedLog.verify {
+        Log.e(eq(LOG_TAG), eq(FAILED_TO_DELETE_RECIPE), any<Exception>())
+        Log.e(eq(LOG_TAG), eq(FAILED_TO_DELETE_IMAGE), any<Exception>())
       }
     }
   }

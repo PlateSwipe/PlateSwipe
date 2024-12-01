@@ -10,7 +10,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.android.sample.resources.C
 import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScreen.ROUNDED_CORNER_SHAPE
@@ -28,20 +30,22 @@ fun PlateSwipeButton(
     text: String,
     modifier: Modifier,
     onClick: () -> Unit,
+    width: Dp = C.Tag.PlateSwipeButton.BUTTON_WIDTH,
+    height: Dp = C.Tag.PlateSwipeButton.BUTTON_HEIGHT,
+    backgroundColor: Color = MaterialTheme.colorScheme.primary,
+    contentColor: Color = MaterialTheme.colorScheme.onPrimary,
 ) {
   Button(
       onClick = { onClick() },
       modifier =
           modifier
-              .width(C.Tag.PlateSwipeButton.BUTTON_WIDTH)
-              .height(C.Tag.PlateSwipeButton.BUTTON_HEIGHT)
+              .width(width)
+              .height(height)
               .background(
-                  color = MaterialTheme.colorScheme.primary,
-                  shape = RoundedCornerShape(size = ROUNDED_CORNER_SHAPE.dp)),
+                  color = backgroundColor, shape = RoundedCornerShape(ROUNDED_CORNER_SHAPE.dp)),
       colors =
           ButtonDefaults.buttonColors(
-              MaterialTheme.colorScheme.primary,
-              contentColor = MaterialTheme.colorScheme.onPrimary),
+              containerColor = backgroundColor, contentColor = contentColor),
       shape = RoundedCornerShape(ROUNDED_CORNER_SHAPE.dp)) {
         Text(text = text, textAlign = TextAlign.Center)
       }
