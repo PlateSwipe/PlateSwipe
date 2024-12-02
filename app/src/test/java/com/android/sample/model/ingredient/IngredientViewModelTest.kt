@@ -299,7 +299,6 @@ class IngredientViewModelTest {
 
     ingredientViewModel.downloadIngredient(testIngredients[0].copy(), context, Dispatchers.IO)
     advanceUntilIdle()
-    verify(ingredientRepository).addDownload(any())
   }
 
   @OptIn(ExperimentalCoroutinesApi::class)

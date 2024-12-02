@@ -1,8 +1,8 @@
-package com.android.sample.model.recipe
+package com.android.sample.model.recipe.networkData
 
-/** Interface for retrieving recipe data. */
-interface RecipesRepository {
+import com.android.sample.model.recipe.Recipe
 
+interface RecipeNetworkRepository {
   /**
    * Generates a new unique identifier for a recipe.
    *
@@ -72,14 +72,4 @@ interface RecipesRepository {
 
   /** Lists all the categories in the API. */
   fun listCategories(onSuccess: (List<String>) -> Unit, onFailure: (Exception) -> Unit)
-
-  fun addDownload(recipe: Recipe)
-
-  fun updateDownload(recipe: Recipe)
-
-  fun deleteDownload(recipe: Recipe)
-
-  fun getAllDownload(onSuccess: (List<Recipe>) -> Unit, onFailure: (Exception) -> Unit)
-
-  fun deleteAllDownloads(onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
 }

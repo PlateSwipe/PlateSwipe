@@ -31,10 +31,10 @@ import com.android.sample.model.ingredient.DefaultIngredientRepository
 import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.ingredient.IngredientViewModel
 import com.android.sample.model.recipe.CreateRecipeViewModel
-import com.android.sample.model.recipe.FirestoreRecipesRepository
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.recipe.RecipesRepository
 import com.android.sample.model.recipe.RecipesViewModel
+import com.android.sample.model.recipe.networkData.FirestoreRecipesRepository
 import com.android.sample.model.user.UserRepository
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_NORMAL_URL
@@ -158,7 +158,7 @@ class EndToEndTest {
     val firestore = mockk<FirebaseFirestore>(relaxed = true)
     val repository = FirestoreRecipesRepository(firestore)
     createRecipeViewModel = CreateRecipeViewModel(repository, mockImageRepo)
-    recipesViewModel = RecipesViewModel(mockRepository)
+    recipesViewModel = RecipesViewModel(mockRepository, ImageDownload())
 
     ingredientViewModel = IngredientViewModel(aggregatorIngredientRepository, ImageDownload())
 
@@ -176,7 +176,10 @@ class EndToEndTest {
     `when`(navigationActions.currentRoute()).thenReturn(Screen.SWIPE)
     // Set the initial content to the MainScreen
     composeTestRule.setContent {
-      SwipePage(navigationActions = navigationActions, recipesViewModel = recipesViewModel)
+      SwipePage(
+          navigationActions = navigationActions,
+          recipesViewModel = recipesViewModel,
+          userViewModel = userViewModel)
     }
 
     // Click on Create Recipe Icon

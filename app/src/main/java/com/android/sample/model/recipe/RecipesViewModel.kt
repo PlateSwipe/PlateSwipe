@@ -1,5 +1,6 @@
 package com.android.sample.model.recipe
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -8,11 +9,19 @@ import com.android.sample.model.filter.Difficulty
 import com.android.sample.model.filter.Filter
 import com.android.sample.model.filter.FilterPageViewModel
 import com.android.sample.model.filter.FloatRange
+import com.android.sample.model.image.ImageDownload
+import com.android.sample.model.recipe.localData.RecipeDatabase
+import com.android.sample.model.recipe.localData.RoomRecipeRepository
+import com.android.sample.model.recipe.networkData.FirestoreRecipesRepository
 import com.android.sample.resources.C.Tag.Filter.UNINITIALIZED_BORN_VALUE
 import com.android.sample.resources.C.Tag.MINIMUM_RECIPES_BEFORE_FETCH
 import com.android.sample.resources.C.Tag.NUMBER_RECIPES_TO_FETCH
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -25,13 +34,23 @@ import kotlinx.coroutines.launch
  *
  * @property repository The repository used to fetch recipe data.
  */
-class RecipesViewModel(private val repository: RecipesRepository) :
-    ViewModel(), FilterPageViewModel, RecipeOverviewViewModel {
+class RecipesViewModel(
+    private val repository: RecipesRepository,
+    private val imageDownload: ImageDownload
+) : ViewModel(), FilterPageViewModel, RecipeOverviewViewModel {
 
   // StateFlow to monitor the list of recipes
   private val _recipes = MutableStateFlow<List<Recipe>>(emptyList())
   val recipes: StateFlow<List<Recipe>>
     get() = _recipes
+
+  private val _recipesTs = MutableStateFlow<List<Recipe>>(emptyList())
+  val recipesTs: StateFlow<List<Recipe>>
+    get() = _recipesTs
+
+  private val _recipesDl = MutableStateFlow<List<Recipe>>(emptyList())
+  val recipesDl: StateFlow<List<Recipe>>
+    get() = _recipesDl
 
   // StateFlow for loading/error states
   private val _loading = MutableStateFlow(false)
@@ -286,14 +305,99 @@ class RecipesViewModel(private val repository: RecipesRepository) :
         onFailure = { exception -> onFailure(exception) })
   }
 
-  companion object {
-    val Factory: ViewModelProvider.Factory =
-        object : ViewModelProvider.Factory {
-          @Suppress("UNCHECKED_CAST")
-          override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            val repository = FirestoreRecipesRepository(Firebase.firestore)
-            return RecipesViewModel(repository) as T
-          }
+  fun downloadRecipe(
+      recipe: Recipe,
+      onSuccess: (Recipe) -> Unit,
+      onFailure: (Exception) -> Unit,
+      context: Context
+  ) {
+    if (recipe.url == null) {
+      Log.d("RecipesViewModel", "Recipe does not have an image")
+      onFailure(Exception("Recipe does not have an image"))
+      return
+    }
+    downloadImage(
+        recipe.url!!,
+        recipe.uid,
+        context,
+        Dispatchers.IO,
+        onSuccess = { uri ->
+          Log.d("RecipesViewModel", "Image downloaded successfully")
+          println("Image downloaded successfully")
+          val newRecipe = recipe.copy(url = uri)
+          repository.addDownload(newRecipe)
+          println("add download call")
+          onSuccess(newRecipe)
+        },
+        onFailure = { e -> onFailure(e) })
+  }
+
+  private fun downloadImage(
+      url: String,
+      name: String,
+      context: Context,
+      dispatcher: CoroutineDispatcher,
+      onSuccess: (String) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    CoroutineScope(dispatcher).launch {
+      try {
+        val deferredUri = async {
+          imageDownload.downloadAndSaveImage(context, url, name, dispatcher)
         }
+        val uri = deferredUri.await()
+        if (uri != null) {
+          Log.d("RecipesViewModel", "Image downloaded successfully")
+          println("Image downloaded successfully")
+          onSuccess(uri)
+        } else {
+          Log.d("RecipesViewModel", "Image download failed")
+          onFailure(Exception("Image download failed"))
+        }
+      } catch (e: Exception) {
+        Log.e("RecipesViewModel", "Image download failed", e)
+        onFailure(e)
+      }
+    }
+  }
+
+  fun getAllDownloads(onSuccess: (List<Recipe>) -> Unit, onFailure: (Exception) -> Unit) {
+    repository.getAllDownload(
+        onSuccess = { recipes ->
+          Log.d("RecipesViewModel", "Got all downloads")
+          _recipesDl.value = recipes
+          onSuccess(recipes)
+        },
+        onFailure = { exception ->
+          Log.d("RecipesViewModel", "Failed to get all downloads")
+          onFailure(exception)
+        })
+  }
+
+  fun deleteDownload(recipe: Recipe) {
+    repository.deleteDownload(recipe)
+  }
+
+  fun deleteAllDownloads() {
+    repository.deleteAllDownloads(
+        onSuccess = { Log.d("RecipesViewModel", "All downloads deleted") },
+        onFailure = { Log.d("RecipesViewModel", "Failed to delete all downloads") })
+  }
+
+  companion object {
+    fun provideFactory(context: Context): ViewModelProvider.Factory {
+      val appContext = context.applicationContext
+      return object : ViewModelProvider.Factory {
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+          val networkRepository = FirestoreRecipesRepository(Firebase.firestore)
+          val appDatabase = RecipeDatabase.getDatabase(appContext)
+          val recipeDao = appDatabase.recipeDao()
+          val localRepository = RoomRecipeRepository(recipeDao, Dispatchers.IO)
+          val defaultRepository = DefaultRecipeRepository(localRepository, networkRepository)
+          return RecipesViewModel(defaultRepository, ImageDownload()) as T
+        }
+      }
+    }
   }
 }

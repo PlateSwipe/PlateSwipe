@@ -8,6 +8,8 @@ import com.android.sample.feature.camera.rotateBitmap
 import com.android.sample.model.image.ImageDirectoryType
 import com.android.sample.model.image.ImageRepository
 import com.android.sample.model.image.ImageRepositoryFirebase
+import com.android.sample.model.recipe.networkData.FirestoreRecipesRepository
+import com.android.sample.model.recipe.networkData.RecipeNetworkRepository
 import com.android.sample.resources.C
 import com.android.sample.resources.C.Tag.ERROR_NULL_IMAGE
 import com.android.sample.resources.C.Tag.RECIPE_PUBLISHED_SUCCESS_MESSAGE
@@ -25,7 +27,7 @@ import kotlinx.coroutines.flow.StateFlow
  * @property repository The repository used to add the recipe to Firestore.
  */
 class CreateRecipeViewModel(
-    private val repository: RecipesRepository,
+    private val repository: RecipeNetworkRepository,
     private val repoImg: ImageRepository
 ) : ViewModel() {
 
