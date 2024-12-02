@@ -209,7 +209,7 @@ class MealDBRecipesRepository(private val client: OkHttpClient) : RecipesReposit
             })
   }
 
-  override fun listCategories(onSuccess: (List<String>) -> Unit, onFailure: (Exception) -> Unit) {
+  fun listCategories(onSuccess: (List<String>) -> Unit, onFailure: (Exception) -> Unit) {
     val url = MEAL_DB_URL + "categories.php"
     val request =
         Request.Builder().url(url).header(MEAL_DB_USER_AGENT, MEAL_DB_USER_AGENT_VALUE).build()

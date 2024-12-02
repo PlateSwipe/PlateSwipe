@@ -380,9 +380,4 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
         }
         .addOnFailureListener(onFailure)
   }
-
-  /** Will be deleted in next PR */
-  override fun listCategories(onSuccess: (List<String>) -> Unit, onFailure: (Exception) -> Unit) {
-    throw NotImplementedError("Not implemented")
-  }
 }
