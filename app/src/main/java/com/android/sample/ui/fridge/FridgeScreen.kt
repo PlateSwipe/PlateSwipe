@@ -37,26 +37,31 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.zIndex
+import coil.compose.rememberAsyncImagePainter
 import com.android.sample.R
 import com.android.sample.model.fridge.FridgeItem
 import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.ingredient.IngredientViewModel
 import com.android.sample.model.user.UserViewModel
+import com.android.sample.resources.C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_IMAGE_BORDER_RADIUS
 import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScreen.CARD_BORDER_ROUND
 import com.android.sample.resources.C.Dimension.FridgeScreen.TITLE_FONT_SIZE
 import com.android.sample.resources.C.Dimension.PADDING_16
 import com.android.sample.resources.C.Dimension.PADDING_32
 import com.android.sample.resources.C.Dimension.PADDING_8
 import com.android.sample.resources.C.Tag.BASE_PADDING
+import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_THUMBNAIL_URL
+import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_IMAGE_1
 import com.android.sample.ui.createRecipe.ChefImage
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
@@ -240,11 +245,11 @@ private fun ItemCard(
   var updatedQuantity by remember { mutableStateOf(card.first.quantity) }
 
   Column(
-      modifier = Modifier.padding(8.dp),
+      modifier = Modifier.padding(8.dp).width(cardWidth),
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.Center) {
         Card(
-            modifier = Modifier.width(cardWidth).padding(8.dp),
+            modifier = Modifier.padding(8.dp),
             colors = CardDefaults.cardColors(MaterialTheme.colorScheme.secondary),
             shape = RoundedCornerShape(CARD_BORDER_ROUND.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)) {
@@ -275,16 +280,23 @@ private fun ItemCard(
                                 modifier =
                                     Modifier.testTag("${card.second.name} Quantity")
                                         .padding(horizontal = 12.dp, vertical = 4.dp),
-                                text = card.first.quantity.toString(),
+                                text = "${card.first.quantity} x ${card.second.quantity}",
                                 fontSize = 14.sp,
                                 color = Color.White // Text color
                                 )
                           }
-
                       Image(
-                          painter = painterResource(id = R.drawable.chef_image_in_egg),
-                          contentDescription = "${card.second.name}  Image",
-                          modifier = Modifier.size(100.dp))
+                          painter =
+                              rememberAsyncImagePainter(
+                                  model = card.second.images[PRODUCT_FRONT_IMAGE_THUMBNAIL_URL]),
+                          contentDescription = stringResource(R.string.recipe_image),
+                          modifier =
+                              Modifier.size(100.dp)
+                                  .testTag(RECIPE_IMAGE_1)
+                                  .clip(
+                                      RoundedCornerShape(
+                                          INGREDIENT_DISPLAY_IMAGE_BORDER_RADIUS.dp)),
+                          contentScale = ContentScale.Fit)
 
                       ExpirationBar(expirationDate = card.first.expirationDate)
                     }
@@ -295,7 +307,9 @@ private fun ItemCard(
             text = card.second.name,
             style = MaterialTheme.typography.titleMedium,
             fontSize = 16.sp,
-            color = MaterialTheme.colorScheme.onPrimary)
+            color = MaterialTheme.colorScheme.onPrimary,
+            maxLines = 3,
+            overflow = TextOverflow.Ellipsis)
 
         val formattedDate =
             card.first.expirationDate.format(
