@@ -37,6 +37,7 @@ import com.android.sample.ui.createRecipe.RecipeAddImageScreen
 import com.android.sample.ui.createRecipe.RecipeIngredientsScreen
 import com.android.sample.ui.createRecipe.RecipeInstructionsScreen
 import com.android.sample.ui.createRecipe.RecipeListInstructionsScreen
+import com.android.sample.ui.createRecipe.TimePickerScreen
 import com.android.sample.ui.filter.FilterPage
 import com.android.sample.ui.fridge.FridgeScreen
 import com.android.sample.ui.navigation.NavigationActions
@@ -140,6 +141,9 @@ fun PlateSwipeApp() {
       composable(Screen.CREATE_RECIPE_LIST_INSTRUCTIONS) {
         RecipeListInstructionsScreen(
             navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
+      }
+      composable(Screen.CREATE_RECIPE_TIME_PICKER) {
+        TimePickerScreen(navigationActions, createRecipeViewModel)
       }
       composable(Screen.CREATE_RECIPE_ADD_IMAGE) {
         RecipeAddImageScreen(navigationActions, createRecipeViewModel)

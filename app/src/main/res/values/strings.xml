@@ -75,7 +75,8 @@
     <string name="axe_icon_description">Prep</string>
     <string name="chef_s_hat_icon_description">Cook</string>
 
-
+    //Scanner
+    <string name="ingredient_not_found">Ingredient not found</string>
 
     //PublishRecipeScreen
     <string name="done_text">Done !</string>
@@ -139,4 +140,9 @@
     <string name = "delete">Delete</string>
     <string name="cancel">Cancel</string>
 
+    //TimePickerScreen
+    <string name="select_total_time">Select Total Time</string>
+    <string name="select_time_description">Selecting the total time is optional, but it helps others understand how long your recipe will take.</string>
+    <string name="minutes">Minutes</string>
+    <string name="hours">Hours</string>
 </resources>

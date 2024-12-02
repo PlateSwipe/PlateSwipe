@@ -64,12 +64,14 @@ class CameraScanCodeBarScreenTest {
                     PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
 
     `when`(mockRepo.get(any(), any(), any())).thenAnswer { invocation ->
+      composeTestRule.waitForIdle()
       val onSuccess = invocation.getArgument<(Ingredient) -> Unit>(1)
       onSuccess(ingredient)
       null
     }
-    mockIngredientViewModel.fetchIngredient(123L)
     composeTestRule.setContent { IngredientOverlay(mockIngredientViewModel, mockNavigationActions) }
+
+    mockIngredientViewModel.fetchIngredient(123L)
 
     composeTestRule.onNodeWithText("Test Ingredient", useUnmergedTree = true).assertIsDisplayed()
     composeTestRule.onNodeWithText("Test Brand", useUnmergedTree = true).assertIsDisplayed()
