@@ -148,7 +148,7 @@ class UserRepositoryFirestoreTest {
     val mapping =
         mapOf(
             FRIDGE_FIELD_ID to fridgeItemExample.id,
-            FRIDGE_FIELD_QUANTITY to fridgeItemExample.quantity,
+            FRIDGE_FIELD_QUANTITY to fridgeItemExample.quantity.toLong(),
             FRIDGE_FIELD_EXPIRATION_DATE to
                 mapOf(
                     FRIDGE_FIELD_EXPIRATION_DATE_YEAR to
@@ -177,7 +177,7 @@ class UserRepositoryFirestoreTest {
             listOf(
                 mapOf(
                     FRIDGE_FIELD_ID to fridgeItemExample.id,
-                    FRIDGE_FIELD_QUANTITY to fridgeItemExample.quantity,
+                    FRIDGE_FIELD_QUANTITY to fridgeItemExample.quantity.toLong(),
                     FRIDGE_FIELD_EXPIRATION_DATE to
                         mapOf(
                             FRIDGE_FIELD_EXPIRATION_DATE_YEAR to
