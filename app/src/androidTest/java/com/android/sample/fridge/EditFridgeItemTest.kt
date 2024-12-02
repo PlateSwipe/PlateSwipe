@@ -42,66 +42,87 @@ class EditFridgeItemTest {
 
   @Test
   fun assertEditComposableAreAllDisplayed() {
-    composeTestRule.onNodeWithText(testIngredients[0].name).assertIsDisplayed()
     composeTestRule
-        .onNodeWithText("Quantity (x ${testIngredients[0].quantity}):")
+        .onNodeWithText(testIngredients[0].name, useUnmergedTree = true)
         .assertIsDisplayed()
-    composeTestRule.onNodeWithText("Expiration Date:").assertIsDisplayed()
+    composeTestRule
+        .onNodeWithText("Quantity (x ${testIngredients[0].quantity}):", useUnmergedTree = true)
+        .assertIsDisplayed()
+    composeTestRule.onNodeWithText("Expiration Date:", useUnmergedTree = true).assertIsDisplayed()
     composeTestRule
         .onNodeWithText(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
         .assertIsDisplayed()
-    composeTestRule.onNodeWithText("+").assertIsDisplayed()
-    composeTestRule.onNodeWithText("-").assertIsDisplayed()
-    composeTestRule.onNodeWithText("1").assertIsDisplayed()
-    composeTestRule.onNodeWithText("Save").assertIsDisplayed()
+    composeTestRule.onNodeWithText("+", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithText("-", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithText("1", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithText("Save", useUnmergedTree = true).assertIsDisplayed()
   }
 
   @Test
   fun testIncreaseQuantity() {
-    composeTestRule.onNodeWithText("+").assertIsDisplayed().performClick()
-    composeTestRule.onNodeWithText("2").assertIsDisplayed()
+    composeTestRule.onNodeWithText("+", useUnmergedTree = true).assertIsDisplayed().performClick()
+    composeTestRule.onNodeWithText("2", useUnmergedTree = true).assertIsDisplayed()
   }
 
   @Test
   fun testDecreaseQuantity() {
-    composeTestRule.onNodeWithText("+").assertIsDisplayed().performClick()
-    composeTestRule.onNodeWithText("-").assertIsDisplayed().performClick()
-    composeTestRule.onNodeWithText("1").assertIsDisplayed()
+    composeTestRule.onNodeWithText("+", useUnmergedTree = true).assertIsDisplayed().performClick()
+    composeTestRule.onNodeWithText("-", useUnmergedTree = true).assertIsDisplayed().performClick()
+    composeTestRule.onNodeWithText("1", useUnmergedTree = true).assertIsDisplayed()
   }
 
   @Test
   fun testExpirationDateSelection() {
     composeTestRule
-        .onNodeWithText(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
+        .onNodeWithText(
+            LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+            useUnmergedTree = true)
         .assertIsDisplayed()
         .performClick()
-    composeTestRule.onNodeWithText("Confirm").assertIsDisplayed()
-    composeTestRule.onNodeWithText("Cancel").assertIsDisplayed()
+    composeTestRule.onNodeWithText("Confirm", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithText("Cancel", useUnmergedTree = true).assertIsDisplayed()
   }
 
   @Test
   fun testExpirationDateSelectAndConfirm() {
     composeTestRule
-        .onNodeWithText(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
+        .onNodeWithText(
+            LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+            useUnmergedTree = true)
         .assertIsDisplayed()
         .performClick()
-    composeTestRule.onNodeWithText("Confirm").assertIsDisplayed().performClick()
-    composeTestRule.onNodeWithText(testIngredients[0].name).assertIsDisplayed()
+    composeTestRule
+        .onNodeWithText("Confirm", useUnmergedTree = true)
+        .assertIsDisplayed()
+        .performClick()
+    composeTestRule
+        .onNodeWithText(testIngredients[0].name, useUnmergedTree = true)
+        .assertIsDisplayed()
   }
 
   @Test
   fun testExpirationDateSelectAndCancel() {
     composeTestRule
-        .onNodeWithText(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
+        .onNodeWithText(
+            LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+            useUnmergedTree = true)
         .assertIsDisplayed()
         .performClick()
-    composeTestRule.onNodeWithText("Cancel").assertIsDisplayed().performClick()
-    composeTestRule.onNodeWithText(testIngredients[0].name).assertIsDisplayed()
+    composeTestRule
+        .onNodeWithText("Cancel", useUnmergedTree = true)
+        .assertIsDisplayed()
+        .performClick()
+    composeTestRule
+        .onNodeWithText(testIngredients[0].name, useUnmergedTree = true)
+        .assertIsDisplayed()
   }
 
   @Test
   fun testSaveButtonNavigation() {
-    composeTestRule.onNodeWithText("Save").assertIsDisplayed().performClick()
+    composeTestRule
+        .onNodeWithText("Save", useUnmergedTree = true)
+        .assertIsDisplayed()
+        .performClick()
     assert(userViewModel.ingredientList.value.map { it.first }.contains(testIngredients[0]))
     verify(navigationActions).navigateTo(Screen.FRIDGE)
   }
