@@ -289,10 +289,11 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
    */
   fun filterSearch(
       filter: Filter,
-      nbOfElements: Int,
+      limit: Int,
       onSuccess: (List<Recipe>) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
+    require(limit > 0) { LIMIT_MUST_BE_POSITIVE_MESSAGE }
     val recipes = mutableListOf<Recipe>()
     val query = db.collection(FIRESTORE_COLLECTION_NAME)
 
@@ -340,7 +341,7 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
 
     // Fetch the recipes
     finalQuery
-        .limit(nbOfElements.toLong() * FILTER_RANDOM_FACTOR)
+        .limit(limit.toLong() * FILTER_RANDOM_FACTOR)
         .get()
         .addOnSuccessListener { result ->
           result.documents.forEach { document ->
@@ -350,7 +351,7 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
             }
           }
           recipes.shuffle()
-          onSuccess(recipes.take(nbOfElements))
+          onSuccess(recipes.take(limit))
         }
         .addOnFailureListener(onFailure)
   }
