@@ -1,5 +1,13 @@
 package com.android.sample.model.user
 
+import android.util.Log
+import com.android.sample.resources.C.Tag.UserRepositoryFirestore.FRIDGE_FIELD_EXPIRATION_DATE
+import com.android.sample.resources.C.Tag.UserRepositoryFirestore.FRIDGE_FIELD_EXPIRATION_DATE_DAY
+import com.android.sample.resources.C.Tag.UserRepositoryFirestore.FRIDGE_FIELD_EXPIRATION_DATE_MONTH
+import com.android.sample.resources.C.Tag.UserRepositoryFirestore.FRIDGE_FIELD_EXPIRATION_DATE_YEAR
+import com.android.sample.resources.C.Tag.UserRepositoryFirestore.FRIDGE_FIELD_ID
+import com.android.sample.resources.C.Tag.UserRepositoryFirestore.FRIDGE_FIELD_QUANTITY
+import com.android.sample.ui.utils.testFridgeItem
 import com.android.sample.ui.utils.testUsers
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
@@ -7,17 +15,21 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import java.lang.reflect.Method
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotNull
+import junit.framework.TestCase.assertNull
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.Mock
+import org.mockito.Mockito.mockStatic
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
 import org.robolectric.RobolectricTestRunner
 
@@ -33,7 +45,12 @@ class UserRepositoryFirestoreTest {
 
   private lateinit var userRepositoryFirestore: UserRepositoryFirestore
 
+  private lateinit var fridgeItemExtractionMethod: Method
+  private lateinit var convertSnapshotMethod: Method
+
   private val user = testUsers[0]
+
+  private val fridgeItemExample = testFridgeItem[0]
 
   @Captor
   lateinit var onCompleteListenerCaptor: ArgumentCaptor<OnCompleteListener<DocumentSnapshot>>
@@ -47,6 +64,15 @@ class UserRepositoryFirestoreTest {
     `when`(mockCollection.document(any())).thenReturn(mockDocument)
 
     userRepositoryFirestore = UserRepositoryFirestore(mockFirestore)
+
+    fridgeItemExtractionMethod =
+        UserRepositoryFirestore::class
+            .java
+            .getDeclaredMethod("fridgeItemExtraction", Map::class.java)
+    convertSnapshotMethod =
+        UserRepositoryFirestore::class
+            .java
+            .getDeclaredMethod("convertSnapshot", String::class.java, DocumentSnapshot::class.java)
   }
 
   @Test
@@ -118,6 +144,83 @@ class UserRepositoryFirestoreTest {
   }
 
   @Test
+  fun fridgeItemExtractionTest() {
+    val mapping =
+        mapOf(
+            FRIDGE_FIELD_ID to fridgeItemExample.id,
+            FRIDGE_FIELD_QUANTITY to fridgeItemExample.quantity,
+            FRIDGE_FIELD_EXPIRATION_DATE to
+                mapOf(
+                    FRIDGE_FIELD_EXPIRATION_DATE_YEAR to
+                        fridgeItemExample.expirationDate.year.toLong(),
+                    FRIDGE_FIELD_EXPIRATION_DATE_MONTH to
+                        fridgeItemExample.expirationDate.monthValue.toLong(),
+                    FRIDGE_FIELD_EXPIRATION_DATE_DAY to
+                        fridgeItemExample.expirationDate.dayOfMonth.toLong()))
+
+    try {
+      fridgeItemExtractionMethod.isAccessible = true
+      val fridgeItem = fridgeItemExtractionMethod.invoke(userRepositoryFirestore, mapping)
+
+      assertEquals(fridgeItem, fridgeItemExample)
+    } finally {
+      fridgeItemExtractionMethod.isAccessible = false
+    }
+  }
+
+  @Test
+  fun snapshotConversionIsSuccessfulTest() {
+    `when`(mockSnapshot.get("userName")).thenReturn(user.userName)
+    `when`(mockSnapshot.get("profilePictureUrl")).thenReturn(user.profilePictureUrl)
+    `when`(mockSnapshot.get("fridge"))
+        .thenReturn(
+            listOf(
+                mapOf(
+                    FRIDGE_FIELD_ID to fridgeItemExample.id,
+                    FRIDGE_FIELD_QUANTITY to fridgeItemExample.quantity,
+                    FRIDGE_FIELD_EXPIRATION_DATE to
+                        mapOf(
+                            FRIDGE_FIELD_EXPIRATION_DATE_YEAR to
+                                fridgeItemExample.expirationDate.year.toLong(),
+                            FRIDGE_FIELD_EXPIRATION_DATE_MONTH to
+                                fridgeItemExample.expirationDate.monthValue.toLong(),
+                            FRIDGE_FIELD_EXPIRATION_DATE_DAY to
+                                fridgeItemExample.expirationDate.dayOfMonth.toLong()))))
+    `when`(mockSnapshot.get("createdRecipes")).thenReturn(user.createdRecipes)
+    `when`(mockSnapshot.get("likedRecipes")).thenReturn(user.likedRecipes)
+
+    try {
+      convertSnapshotMethod.isAccessible = true
+      val obtainedUser =
+          convertSnapshotMethod.invoke(userRepositoryFirestore, user.uid, mockSnapshot)
+
+      assertEquals(user, obtainedUser)
+    } finally {
+      convertSnapshotMethod.isAccessible = false
+    }
+  }
+
+  @Test
+  fun snapshotConversionFailsTest() {
+    try {
+      convertSnapshotMethod.isAccessible = true
+      mockStatic(Log::class.java).use { mockedLog ->
+        val obtainesUser = convertSnapshotMethod.invoke(userRepositoryFirestore, user.uid, null)
+
+        mockedLog.verify {
+          Log.e(
+              eq("UserRepositoryFirestore"),
+              eq("Error converting snapshot to user"),
+              any<Exception>())
+        }
+        assertNull(obtainesUser)
+      }
+    } finally {
+      convertSnapshotMethod.isAccessible = false
+    }
+  }
+
+  @Test
   fun getUserByIdSuccessTest() {
     `when`(mockDocument.get()).thenReturn(mockTask)
     `when`(mockTask.isSuccessful).thenReturn(true)
@@ -125,7 +228,20 @@ class UserRepositoryFirestoreTest {
 
     `when`(mockSnapshot.get("userName")).thenReturn(user.userName)
     `when`(mockSnapshot.get("profilePictureUrl")).thenReturn(user.profilePictureUrl)
-    `when`(mockSnapshot.get("fridge")).thenReturn(user.fridge)
+    `when`(mockSnapshot.get("fridge"))
+        .thenReturn(
+            listOf(
+                mapOf(
+                    FRIDGE_FIELD_ID to fridgeItemExample.id,
+                    FRIDGE_FIELD_QUANTITY to fridgeItemExample.quantity,
+                    FRIDGE_FIELD_EXPIRATION_DATE to
+                        mapOf(
+                            FRIDGE_FIELD_EXPIRATION_DATE_YEAR to
+                                fridgeItemExample.expirationDate.year.toLong(),
+                            FRIDGE_FIELD_EXPIRATION_DATE_MONTH to
+                                fridgeItemExample.expirationDate.monthValue.toLong(),
+                            FRIDGE_FIELD_EXPIRATION_DATE_DAY to
+                                fridgeItemExample.expirationDate.dayOfMonth.toLong()))))
     `when`(mockSnapshot.get("createdRecipes")).thenReturn(user.createdRecipes)
     `when`(mockSnapshot.get("likedRecipes")).thenReturn(user.likedRecipes)
 

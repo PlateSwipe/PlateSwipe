@@ -1,5 +1,7 @@
 package com.android.sample.model.user
 
+import com.android.sample.model.fridge.FridgeItem
+
 /**
  * @param uid unique id of the user
  * @param userName user name that will be displayed in the account page
@@ -12,7 +14,7 @@ data class User(
     val uid: String,
     val userName: String,
     val profilePictureUrl: String,
-    val fridge: List<Pair<String, Int>>,
+    val fridge: List<FridgeItem>,
     val likedRecipes: List<String>,
     val createdRecipes: List<String>
 )

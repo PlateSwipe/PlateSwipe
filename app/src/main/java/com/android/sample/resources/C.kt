@@ -171,6 +171,16 @@ object C {
       const val ERROR_GETTING_DOCUMENT = "Error getting documents"
     }
 
+    // UserRepositoryFirestore
+    object UserRepositoryFirestore {
+      const val FRIDGE_FIELD_ID = "id"
+      const val FRIDGE_FIELD_QUANTITY = "quantity"
+      const val FRIDGE_FIELD_EXPIRATION_DATE = "expirationDate"
+      const val FRIDGE_FIELD_EXPIRATION_DATE_YEAR = "year"
+      const val FRIDGE_FIELD_EXPIRATION_DATE_MONTH = "monthValue"
+      const val FRIDGE_FIELD_EXPIRATION_DATE_DAY = "dayOfMonth"
+    }
+
     // Values for storage
     const val FIRESTORE_RECIPE_NAME = "name"
     const val FIRESTORE_RECIPE_CATEGORY = "category"
@@ -368,6 +378,13 @@ object C {
 
     // Create Recipe Add Image
     const val ADD_IMAGE_STEP = 4
+
+    // TimePickerScreen
+    const val MINUTES_PER_HOUR = 60
+    const val HOUR_RANGE_START = 0
+    const val HOUR_RANGE_END = 23
+    const val MINUTE_RANGE_START = 0
+    const val MINUTE_RANGE_END = 59
   }
 
   object Values {
@@ -824,6 +841,16 @@ object C {
       const val CATEGORY_TITLE = "CategoryTitle"
       // CategorySubtitle
       const val CATEGORY_SUBTITLE = "CategorySubtitle"
+    }
+
+    object TimePicker {
+      const val TIME_PICKER_TITLE = "TimePickerTitle"
+      const val TIME_PICKER_DESCRIPTION = "TimePickerDescription"
+      const val HOUR_PICKER = "HourPicker"
+      const val MINUTE_PICKER = "MinutePicker"
+      const val NEXT_BUTTON = "NextButton"
+      const val HOURS_LABEL = "HoursLabel"
+      const val MINUTES_LABEL = "MinutesLabel"
     }
   }
 }

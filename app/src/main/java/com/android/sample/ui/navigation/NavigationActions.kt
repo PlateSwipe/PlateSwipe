@@ -53,6 +53,8 @@ object Screen {
   const val CREATE_RECIPE_ADD_IMAGE = "Create Recipe Add Image Screen"
 
   const val CREATE_RECIPE_LIST_INGREDIENTS = "List Ingredients Screen"
+
+  const val CREATE_RECIPE_TIME_PICKER = "Time Picker Screen"
 }
 
 data class TopLevelDestination(val route: String, val iconId: Int, val textId: String)
