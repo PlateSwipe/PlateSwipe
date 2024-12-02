@@ -169,6 +169,7 @@ object C {
       const val NOT_ENOUGH_RECIPE_MSG = "Not enough recipes found"
       const val REPOSITORY_TAG_MSG = "FirestoreRecipesRepository"
       const val ERROR_GETTING_DOCUMENT = "Error getting documents"
+      const val FILTER_RANDOM_FACTOR = 5
     }
 
     // UserRepositoryFirestore

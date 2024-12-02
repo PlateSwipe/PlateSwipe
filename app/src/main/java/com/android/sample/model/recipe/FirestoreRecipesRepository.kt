@@ -1,6 +1,7 @@
 package com.android.sample.model.recipe
 
 import android.util.Log
+import com.android.sample.model.filter.Filter
 import com.android.sample.resources.C.Tag.CHARACTERS
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_AREA
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_CATEGORY
@@ -15,7 +16,9 @@ import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_PICTURE_ID
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_PRICE
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_TIME
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_URL
+import com.android.sample.resources.C.Tag.Filter.UNINITIALIZED_BORN_VALUE
 import com.android.sample.resources.C.Tag.FirestoreRecipesRepository.ERROR_GETTING_DOCUMENT
+import com.android.sample.resources.C.Tag.FirestoreRecipesRepository.FILTER_RANDOM_FACTOR
 import com.android.sample.resources.C.Tag.FirestoreRecipesRepository.FIRESTORE_COLLECTION_NAME
 import com.android.sample.resources.C.Tag.FirestoreRecipesRepository.MAX_FIRESTORE_FETCH
 import com.android.sample.resources.C.Tag.FirestoreRecipesRepository.NOT_ENOUGH_RECIPE_MSG
@@ -275,6 +278,73 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
           onSuccess(recipes)
         }
         .addOnFailureListener { e -> onFailure(e) }
+  }
+
+  /**
+   * Fetches a list of recipes from Firestore that match the given filter.
+   *
+   * @param filter The filter to apply to the search.
+   * @param nbOfElements The number of recipes to fetch.
+   */
+  fun filterSearch(
+      filter: Filter,
+      nbOfElements: Int,
+      onSuccess: (List<Recipe>) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    val recipes = mutableListOf<Recipe>()
+    val query = db.collection(FIRESTORE_COLLECTION_NAME)
+
+    // Filter the recipes based on the filter
+    var finalQuery =
+        if (filter.category != null) {
+          query.whereEqualTo(FIRESTORE_RECIPE_CATEGORY, filter.category)
+        } else {
+          query
+        }
+
+    finalQuery =
+        if (filter.timeRange.min != UNINITIALIZED_BORN_VALUE) {
+          finalQuery.whereGreaterThan(FIRESTORE_RECIPE_TIME, filter.timeRange.min.toString())
+        } else {
+          finalQuery
+        }
+
+    finalQuery =
+        if (filter.timeRange.max != UNINITIALIZED_BORN_VALUE) {
+          finalQuery.whereLessThan(FIRESTORE_RECIPE_TIME, filter.timeRange.max.toInt().toString())
+        } else {
+          finalQuery
+        }
+    finalQuery =
+        if (filter.priceRange.min != UNINITIALIZED_BORN_VALUE) {
+          finalQuery.whereGreaterThan(FIRESTORE_RECIPE_PRICE, filter.priceRange.min.toString())
+        } else {
+          finalQuery
+        }
+
+    finalQuery =
+        if (filter.priceRange.max != UNINITIALIZED_BORN_VALUE) {
+          finalQuery.whereLessThan(FIRESTORE_RECIPE_PRICE, filter.priceRange.max.toString())
+        } else {
+          finalQuery
+        }
+
+    // Fetch the recipes
+    finalQuery
+        .limit(nbOfElements.toLong() * FILTER_RANDOM_FACTOR)
+        .get()
+        .addOnSuccessListener { result ->
+          result.documents.forEach { document ->
+            val recipe = documentToRecipe(document)
+            if (recipe != null) {
+              recipes.add(recipe)
+            }
+          }
+          recipes.shuffle()
+          onSuccess(recipes.take(nbOfElements))
+        }
+        .addOnFailureListener(onFailure)
   }
 
   /** Will be deleted in next PR */
