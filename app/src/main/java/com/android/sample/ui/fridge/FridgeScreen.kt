@@ -445,13 +445,17 @@ private fun UpdateQuantityDialog(
 
                 // Save Button
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-                  TextButton(onClick = hiddeEditDialog) {
-                    Text(
-                        text = stringResource(R.string.cancel),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer,
-                    )
-                  }
+                  TextButton(
+                      onClick = {
+                        setUpdatedQuantity(fridgeIngredientPair.first.quantity)
+                        hiddeEditDialog()
+                      }) {
+                        Text(
+                            text = stringResource(R.string.cancel),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSecondaryContainer,
+                        )
+                      }
                   Spacer(modifier = Modifier.width(PADDING_8.dp))
                   Button(
                       onClick = {
@@ -528,8 +532,8 @@ private fun ExpirationBar(expirationDate: LocalDate?, testTag: String) {
 
     Text(
         text = "${max(daysLeft, 0)} day left",
-        modifier = Modifier.padding(8.dp),
+        modifier = Modifier.padding(PADDING_8.dp),
         style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f))
+        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = ITEM_ALPHA))
   }
 }

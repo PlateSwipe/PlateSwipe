@@ -78,7 +78,7 @@ fun PlateSwipeApp() {
   val createRecipeViewModel: CreateRecipeViewModel =
       viewModel(factory = CreateRecipeViewModel.Factory)
 
-  NavHost(navController = navController, startDestination = Route.FRIDGE) {
+  NavHost(navController = navController, startDestination = Route.AUTH) {
     navigation(
         startDestination = Screen.AUTH,
         route = Route.AUTH,
