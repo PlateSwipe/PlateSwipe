@@ -41,13 +41,13 @@ class FridgeScreenTest {
   fun mainTextIsDisplayed() {
     composeTestRule.onNodeWithText("Fridge").assertIsDisplayed()
     composeTestRule
-        .onNodeWithText("${userViewModel.listFridgeItems.value.size} items")
+        .onNodeWithText("${userViewModel.fridgeItems.value.size} items")
         .assertIsDisplayed()
   }
 
   @Test
   fun testFridgeDisplays() {
-    userViewModel.listFridgeItems.value.forEach { (fridgeItem, ingredient) ->
+    userViewModel.fridgeItems.value.forEach { (fridgeItem, ingredient) ->
       // composeTestRule.onNodeWithText(ingredient.name).assertExists()
       // composeTestRule.onNodeWithContentDescription("Edit ${ingredient.name}
       // Quantity").assertIsDisplayed()
@@ -55,7 +55,7 @@ class FridgeScreenTest {
           .onAllNodesWithText(
               fridgeItem.expirationDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
           .assertCountEquals(
-              userViewModel.listFridgeItems.value
+              userViewModel.fridgeItems.value
                   .filter { it.first.expirationDate == fridgeItem.expirationDate }
                   .size)
       // composeTestRule.onNodeWithContentDescription( "${ingredient.name} Image")

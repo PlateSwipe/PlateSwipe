@@ -1,6 +1,7 @@
 package com.android.sample.ui.searchIngredient
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -188,7 +189,17 @@ private fun SearchDisplay(
                 Modifier.weight(ICON_SCANNER_WEIGHT)
                     .size(ICON_SCANNER_SIZE.dp)
                     .testTag(SCANNER_ICON)
-                    .clickable { navigationActions.navigateTo(Screen.CAMERA_SCAN_CODE_BAR) },
+                    .clickable {
+                      Log.d(
+                          "SearchDisplay",
+                          "navigationActions.currentRoute() = ${navigationActions.currentRoute()}")
+                      if (navigationActions.currentRoute() == Screen.FRIDGE_SEARCH_ITEM) {
+                        navigationActions.navigateTo(Screen.FRIDGE_SCAN_CODE_BAR)
+                      } else if (navigationActions.currentRoute() ==
+                          Screen.CREATE_RECIPE_SEARCH_INGREDIENTS) {
+                        navigationActions.navigateTo(Screen.CAMERA_SCAN_CODE_BAR)
+                      }
+                    },
             tint = MaterialTheme.colorScheme.onPrimary,
             contentDescription = stringResource(R.string.scanner_instruction))
       }

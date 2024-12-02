@@ -6,11 +6,17 @@ import androidx.lifecycle.ViewModelProvider
 import com.android.sample.model.fridge.FridgeItem
 import com.android.sample.model.image.ImageDirectoryType
 import com.android.sample.model.image.ImageRepositoryFirebase
+import com.android.sample.model.image.ImageUploader
 import com.android.sample.model.ingredient.Ingredient
+import com.android.sample.model.ingredient.SearchIngredientViewModel
+import com.android.sample.model.ingredient.networkData.AggregatorIngredientRepository
 import com.android.sample.model.ingredient.networkData.FirestoreIngredientRepository
+import com.android.sample.model.ingredient.networkData.OpenFoodFactsIngredientRepository
 import com.android.sample.model.recipe.FirestoreRecipesRepository
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.recipe.RecipeOverviewViewModel
+import com.android.sample.resources.C.Tag.INGREDIENT_NOT_FOUND_MESSAGE
+import com.android.sample.resources.C.Tag.INGREDIENT_VIEWMODEL_LOG_TAG
 import com.android.sample.resources.C.Tag.UserViewModel.FAILED_TO_DELETE_IMAGE
 import com.android.sample.resources.C.Tag.UserViewModel.FAILED_TO_DELETE_RECIPE
 import com.android.sample.resources.C.Tag.UserViewModel.FAILED_TO_FETCH_CREATED_RECIPE_FROM_DATABASE_ERROR
@@ -25,23 +31,31 @@ import com.android.sample.resources.C.Tag.UserViewModel.RECIPE_NOT_FOUND
 import com.android.sample.resources.C.Tag.UserViewModel.REMOVED_INGREDIENT_NOT_IN_FRIDGE_ERROR
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import com.google.firebase.storage.storage
 import java.time.LocalDate
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
+import okhttp3.OkHttpClient
 
 class UserViewModel(
     private val userRepository: UserRepository,
     private val firebaseAuth: FirebaseAuth = Firebase.auth,
     private val recipesRepository: FirestoreRecipesRepository =
         FirestoreRecipesRepository(Firebase.firestore),
-    private val ingredientRepository: FirestoreIngredientRepository =
-        FirestoreIngredientRepository(Firebase.firestore),
+    private val ingredientRepository: AggregatorIngredientRepository =
+        AggregatorIngredientRepository(
+            FirestoreIngredientRepository(Firebase.firestore),
+            OpenFoodFactsIngredientRepository(OkHttpClient()),
+            ImageRepositoryFirebase(Firebase.storage),
+            ImageUploader()),
     private val imageRepositoryFirebase: ImageRepositoryFirebase =
         ImageRepositoryFirebase(Firebase.storage)
-) : ViewModel(), RecipeOverviewViewModel {
+) : ViewModel(), RecipeOverviewViewModel, SearchIngredientViewModel {
 
   private val _userName: MutableStateFlow<String?> = MutableStateFlow(null)
   val userName: StateFlow<String?> = _userName
@@ -62,11 +76,33 @@ class UserViewModel(
   override val currentRecipe: StateFlow<Recipe?>
     get() = _currentRecipe
 
+  private val _ingredient = MutableStateFlow<Pair<Ingredient?, String?>>(Pair(null, null))
+  override val ingredient: StateFlow<Pair<Ingredient?, String?>>
+    get() = _ingredient
+
+  private val _isFetchingByBarcode = MutableStateFlow(false)
+  override val isFetchingByBarcode: StateFlow<Boolean>
+    get() = _isFetchingByBarcode
+
+  private val _ingredientList = MutableStateFlow<List<Pair<Ingredient, String?>>>(emptyList())
+  override val ingredientList: StateFlow<List<Pair<Ingredient, String?>>>
+    get() = _ingredientList
+
+  private val _searchingIngredientList =
+      MutableStateFlow<List<Pair<Ingredient, String?>>>(emptyList())
+  override val searchingIngredientList: StateFlow<List<Pair<Ingredient, String?>>>
+    get() = _searchingIngredientList
+
+  private val _isSearching = MutableStateFlow(false)
+  override val isFetchingByName: StateFlow<Boolean>
+    get() = _isSearching
+
   companion object {
     val Factory: ViewModelProvider.Factory =
         object : ViewModelProvider.Factory {
           @Suppress("UNCHECKED_CAST")
           override fun <T : ViewModel> create(modelClass: Class<T>): T {
+
             return UserViewModel(userRepository = UserRepositoryFirestore(Firebase.firestore)) as T
           }
         }
@@ -75,13 +111,11 @@ class UserViewModel(
   init {
     // init the fridge item for testing
 
-    var id = 0
+    /*var id = 0
     _fridgeItems.value +=
         Pair(
             FridgeItem(
-                quantity = 2,
-                id = id++.toString(),
-                expirationDate = LocalDate.of(2024, 11, 29)),
+                quantity = 2, id = id++.toString(), expirationDate = LocalDate.of(2024, 11, 29)),
             Ingredient(
                 name = "Ingredient2222222222222222222222222222222222222",
                 categories = listOf(),
@@ -90,9 +124,7 @@ class UserViewModel(
     _fridgeItems.value +=
         Pair(
             FridgeItem(
-                quantity = 2,
-                id = id++.toString(),
-                expirationDate = LocalDate.of(2024, 11, 30)),
+                quantity = 2, id = id++.toString(), expirationDate = LocalDate.of(2024, 11, 30)),
             Ingredient(
                 name = "Ingredient",
                 categories = listOf(),
@@ -101,9 +133,7 @@ class UserViewModel(
     _fridgeItems.value +=
         Pair(
             FridgeItem(
-                quantity = 2,
-                id = id++.toString(),
-                expirationDate = LocalDate.of(2024, 12, 1)),
+                quantity = 2, id = id++.toString(), expirationDate = LocalDate.of(2024, 12, 1)),
             Ingredient(
                 name = "Ingredient",
                 categories = listOf(),
@@ -112,9 +142,7 @@ class UserViewModel(
     _fridgeItems.value +=
         Pair(
             FridgeItem(
-                quantity = 2,
-                id = id++.toString(),
-                expirationDate = LocalDate.of(2024, 12, 2)),
+                quantity = 2, id = id++.toString(), expirationDate = LocalDate.of(2024, 12, 2)),
             Ingredient(
                 name = "Ingredient",
                 categories = listOf(),
@@ -123,9 +151,7 @@ class UserViewModel(
     _fridgeItems.value +=
         Pair(
             FridgeItem(
-                quantity = 2,
-                id = id++.toString(),
-                expirationDate = LocalDate.of(2024, 12, 3)),
+                quantity = 2, id = id++.toString(), expirationDate = LocalDate.of(2024, 12, 3)),
             Ingredient(
                 name = "Ingredient",
                 categories = listOf(),
@@ -135,9 +161,7 @@ class UserViewModel(
     _fridgeItems.value +=
         Pair(
             FridgeItem(
-                quantity = 6,
-                id = id++.toString(),
-                expirationDate = LocalDate.of(2024, 11, 6)),
+                quantity = 6, id = id++.toString(), expirationDate = LocalDate.of(2024, 11, 6)),
             Ingredient(
                 name = "Ingredient",
                 categories = listOf(),
@@ -146,9 +170,7 @@ class UserViewModel(
     _fridgeItems.value +=
         Pair(
             FridgeItem(
-                quantity = 1,
-                id = id++.toString(),
-                expirationDate = LocalDate.of(2024, 10, 6)),
+                quantity = 1, id = id++.toString(), expirationDate = LocalDate.of(2024, 10, 6)),
             Ingredient(
                 name = "Ingredient",
                 categories = listOf(),
@@ -166,9 +188,7 @@ class UserViewModel(
     _fridgeItems.value +=
         Pair(
             FridgeItem(
-                quantity = 2,
-                id = id++.toString(),
-                expirationDate = LocalDate.of(2024, 11, 7)),
+                quantity = 2, id = id++.toString(), expirationDate = LocalDate.of(2024, 11, 7)),
             Ingredient(
                 name = "Ingredient",
                 categories = listOf(),
@@ -177,9 +197,7 @@ class UserViewModel(
     _fridgeItems.value +=
         Pair(
             FridgeItem(
-                quantity = 6,
-                id = id++.toString(),
-                expirationDate = LocalDate.of(2024, 11, 8)),
+                quantity = 6, id = id++.toString(), expirationDate = LocalDate.of(2024, 11, 8)),
             Ingredient(
                 name = "Ingredient",
                 categories = listOf(),
@@ -188,9 +206,7 @@ class UserViewModel(
     _fridgeItems.value +=
         Pair(
             FridgeItem(
-                quantity = 1,
-                id = id++.toString(),
-                expirationDate = LocalDate.of(2024, 11, 9)),
+                quantity = 1, id = id++.toString(), expirationDate = LocalDate.of(2024, 11, 9)),
             Ingredient(
                 name = "Ingredient",
                 categories = listOf(),
@@ -199,9 +215,7 @@ class UserViewModel(
     _fridgeItems.value +=
         Pair(
             FridgeItem(
-                quantity = 3,
-                id = id++.toString(),
-                expirationDate = LocalDate.of(2024, 11, 20)),
+                quantity = 3, id = id++.toString(), expirationDate = LocalDate.of(2024, 11, 20)),
             Ingredient(
                 name = "Ingredient",
                 categories = listOf(),
@@ -210,9 +224,7 @@ class UserViewModel(
     _fridgeItems.value +=
         Pair(
             FridgeItem(
-                quantity = 2,
-                id = id++.toString(),
-                expirationDate = LocalDate.of(2024, 11, 21)),
+                quantity = 2, id = id++.toString(), expirationDate = LocalDate.of(2024, 11, 21)),
             Ingredient(
                 name = "Ingredient",
                 categories = listOf(),
@@ -221,9 +233,7 @@ class UserViewModel(
     _fridgeItems.value +=
         Pair(
             FridgeItem(
-                quantity = 6,
-                id = id++.toString(),
-                expirationDate = LocalDate.of(2024, 11, 22)),
+                quantity = 6, id = id++.toString(), expirationDate = LocalDate.of(2024, 11, 22)),
             Ingredient(
                 name = "Ingredient",
                 categories = listOf(),
@@ -232,9 +242,7 @@ class UserViewModel(
     _fridgeItems.value +=
         Pair(
             FridgeItem(
-                quantity = 1,
-                id = id++.toString(),
-                expirationDate = LocalDate.of(2024, 11, 23)),
+                quantity = 1, id = id++.toString(), expirationDate = LocalDate.of(2024, 11, 23)),
             Ingredient(
                 name = "Ingredient",
                 categories = listOf(),
@@ -243,9 +251,7 @@ class UserViewModel(
     _fridgeItems.value +=
         Pair(
             FridgeItem(
-                quantity = 3,
-                id = id++.toString(),
-                expirationDate = LocalDate.of(2024, 11, 24)),
+                quantity = 3, id = id++.toString(), expirationDate = LocalDate.of(2024, 11, 24)),
             Ingredient(
                 name = "Ingredient",
                 categories = listOf(),
@@ -254,9 +260,7 @@ class UserViewModel(
     _fridgeItems.value +=
         Pair(
             FridgeItem(
-                quantity = 2,
-                id = id++.toString(),
-                expirationDate = LocalDate.of(2024, 11, 25)),
+                quantity = 2, id = id++.toString(), expirationDate = LocalDate.of(2024, 11, 25)),
             Ingredient(
                 name = "Ingredient",
                 categories = listOf(),
@@ -265,9 +269,7 @@ class UserViewModel(
     _fridgeItems.value +=
         Pair(
             FridgeItem(
-                quantity = 3,
-                id = id++.toString(),
-                expirationDate = LocalDate.of(2024, 11, 26)),
+                quantity = 3, id = id++.toString(), expirationDate = LocalDate.of(2024, 11, 26)),
             Ingredient(
                 name = "Ingredient",
                 categories = listOf(),
@@ -276,9 +278,7 @@ class UserViewModel(
     _fridgeItems.value +=
         Pair(
             FridgeItem(
-                quantity = 2,
-                id = id++.toString(),
-                expirationDate = LocalDate.of(2024, 11, 27)),
+                quantity = 2, id = id++.toString(), expirationDate = LocalDate.of(2024, 11, 27)),
             Ingredient(
                 name = "Ingredient",
                 categories = listOf(),
@@ -287,9 +287,7 @@ class UserViewModel(
     _fridgeItems.value +=
         Pair(
             FridgeItem(
-                quantity = 2,
-                id = id++.toString(),
-                expirationDate = LocalDate.of(2024, 11, 28)),
+                quantity = 2, id = id++.toString(), expirationDate = LocalDate.of(2024, 11, 28)),
             Ingredient(
                 name = "Ingredient",
                 categories = listOf(),
@@ -298,9 +296,7 @@ class UserViewModel(
     _fridgeItems.value +=
         Pair(
             FridgeItem(
-                quantity = 2,
-                id = id++.toString(),
-                expirationDate = LocalDate.of(2024, 11, 29)),
+                quantity = 2, id = id++.toString(), expirationDate = LocalDate.of(2024, 11, 29)),
             Ingredient(
                 name = "Ingredient",
                 categories = listOf(),
@@ -309,9 +305,7 @@ class UserViewModel(
     _fridgeItems.value +=
         Pair(
             FridgeItem(
-                quantity = 2,
-                id = id++.toString(),
-                expirationDate = LocalDate.of(2024, 11, 30)),
+                quantity = 2, id = id++.toString(), expirationDate = LocalDate.of(2024, 11, 30)),
             Ingredient(
                 name = "Ingredient",
                 categories = listOf(),
@@ -320,9 +314,7 @@ class UserViewModel(
     _fridgeItems.value +=
         Pair(
             FridgeItem(
-                quantity = 2,
-                id = id++.toString(),
-                expirationDate = LocalDate.of(2024, 12, 1)),
+                quantity = 2, id = id++.toString(), expirationDate = LocalDate.of(2024, 12, 1)),
             Ingredient(
                 name = "Ingredient",
                 categories = listOf(),
@@ -331,9 +323,7 @@ class UserViewModel(
     _fridgeItems.value +=
         Pair(
             FridgeItem(
-                quantity = 2,
-                id = id++.toString(),
-                expirationDate = LocalDate.of(2024, 12, 2)),
+                quantity = 2, id = id++.toString(), expirationDate = LocalDate.of(2024, 12, 2)),
             Ingredient(
                 name = "Ingredient",
                 categories = listOf(),
@@ -347,7 +337,7 @@ class UserViewModel(
                 name = "Ingredient",
                 categories = listOf(),
                 images = mutableMapOf(),
-                quantity = "400g"))
+                quantity = "400g"))*/
   }
 
   /**
@@ -655,5 +645,104 @@ class UserViewModel(
           }
         },
         onFailure = { e -> Log.e(LOG_TAG, FAILED_TO_FETCH_INGREDIENT_FROM_DATABASE_ERROR, e) })
+  }
+
+  override fun fetchIngredient(barCode: Long) {
+    clearIngredient()
+    clearSearchingIngredientList()
+    clearIngredientList()
+    if (_ingredient.value.first?.barCode == barCode) {
+      return
+    }
+    // Fetch ingredient from repository
+    _isFetchingByBarcode.value = true
+    ingredientRepository.get(
+        barCode,
+        onSuccess = { ingredient ->
+          if (ingredient != null) {
+            _ingredient.value = Pair(ingredient, ingredient.quantity)
+          }
+
+          _isFetchingByBarcode.value = false
+        },
+        onFailure = {
+          Log.e(INGREDIENT_VIEWMODEL_LOG_TAG, INGREDIENT_NOT_FOUND_MESSAGE)
+          _ingredient.value = Pair(null, null)
+          _isFetchingByBarcode.value = false
+        })
+  }
+
+  override fun clearIngredient() {
+    _ingredient.value = Pair(null, null)
+  }
+
+  fun clearSearchingIngredientList() {
+    _searchingIngredientList.value = emptyList()
+  }
+
+  fun clearIngredientList() {
+    _ingredientList.value = emptyList()
+  }
+
+  /**
+   * Add the first integer in the two strings
+   *
+   * @param quantity1
+   * @param quantity2
+   */
+  private fun addFirstInt(quantity1: String?, quantity2: String?): String {
+    if (quantity1 == null || quantity2 == null) {
+      return quantity1 ?: quantity2 ?: ""
+    }
+
+    // Regular expression to find the first integer in the string
+    val regex = Regex("""\d+""")
+    val match1 = regex.find(quantity1)
+    val match2 = regex.find(quantity2)
+
+    // If both strings contain an integer, add them together
+    return if (match1 != null && match2 != null) {
+      val addition = match1.value.toInt() + match2.value.toInt()
+      quantity1.replaceFirst(match1.value, addition.toString())
+    } else if (match1 != null) {
+      quantity1
+    } else {
+      quantity2
+    }
+  }
+
+  override fun addIngredient(ingredient: Ingredient) {
+    _ingredientList.update { currentList ->
+      val existingItemIndex = currentList.indexOfFirst { it.first.barCode == ingredient.barCode }
+
+      if (existingItemIndex != -1) {
+        // Ingredient already exists; update its associated String value
+        currentList.toMutableList().apply {
+          this[existingItemIndex] =
+              this[existingItemIndex].copy(
+                  second = addFirstInt(this[existingItemIndex].second, ingredient.quantity))
+        }
+      } else {
+        // Ingredient doesn't exist; add it to the list
+        currentList + (ingredient to ingredient.quantity)
+      }
+    }
+  }
+
+  override fun fetchIngredientByName(name: String) {
+    clearIngredient()
+    clearSearchingIngredientList()
+    clearIngredientList()
+    _isSearching.value = true
+    ingredientRepository.search(
+        name,
+        onSuccess = { ingredientList ->
+          _isSearching.value = false
+          _searchingIngredientList.value = ingredientList.map { Pair(it, it.quantity) }
+        },
+        onFailure = {
+          _isSearching.value = false
+          _searchingIngredientList.value = emptyList()
+        })
   }
 }

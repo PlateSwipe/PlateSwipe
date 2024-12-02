@@ -25,10 +25,8 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -90,18 +88,22 @@ fun FridgeScreen(navigationActions: NavigationActions, userViewModel: UserViewMo
       navigationActions = navigationActions,
       selectedItem = navigationActions.currentRoute(),
       content = { paddingValues ->
-        val listFridgeItem by userViewModel.listFridgeItems.collectAsState()
+        val listFridgeItem by userViewModel.fridgeItems.collectAsState()
         if (listFridgeItem.isEmpty()) {
-          EmptyFridge(paddingValues, navigationActions)
+          EmptyFridge(paddingValues, navigationActions, userViewModel)
         } else {
-          FridgeContent(paddingValues, userViewModel, listFridgeItem)
+          FridgeContent(navigationActions, paddingValues, userViewModel, listFridgeItem)
         }
       },
       showBackArrow = true)
 }
 
 @Composable
-fun EmptyFridge(paddingValues: PaddingValues, navigationActions: NavigationActions) {
+fun EmptyFridge(
+    paddingValues: PaddingValues,
+    navigationActions: NavigationActions,
+    userViewModel: UserViewModel
+) {
   Box(modifier = Modifier.fillMaxSize().padding(paddingValues).padding(BASE_PADDING)) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -141,72 +143,91 @@ fun EmptyFridge(paddingValues: PaddingValues, navigationActions: NavigationActio
     PlateSwipeButton(
         "Add Ingredient",
         modifier = Modifier.align(Alignment.BottomCenter).testTag("NextStepButton"),
-        onClick = { navigationActions.navigateTo(Screen.CREATE_RECIPE_SEARCH_INGREDIENTS) })
+        onClick = {
+          userViewModel.clearIngredientList()
+          userViewModel.clearSearchingIngredientList()
+          userViewModel.clearIngredient()
+          navigationActions.navigateTo(Screen.FRIDGE_SEARCH_ITEM)
+        })
   }
 }
 
 @Composable
 fun FridgeContent(
+    navigationActions: NavigationActions,
     paddingValues: PaddingValues,
     userViewModel: UserViewModel,
     listFridgeItem: List<Pair<FridgeItem, Ingredient>>
 ) {
-  Column(
-      modifier = Modifier.fillMaxSize().padding(paddingValues),
-      verticalArrangement = Arrangement.Center,
-      horizontalAlignment = Alignment.CenterHorizontally) {
-        Row(
-            modifier =
-                Modifier.fillMaxWidth()
-                    .padding(
-                        start = PADDING_32.dp,
-                        end = PADDING_32.dp,
-                        top = PADDING_16.dp,
-                        bottom = PADDING_8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween) {
-              Text(
-                  text = stringResource(R.string.fridge_title),
-                  style = MaterialTheme.typography.titleMedium,
-                  fontSize = TITLE_FONT_SIZE.sp,
-                  color = MaterialTheme.colorScheme.onPrimary)
-              Text(
-                  text = "${listFridgeItem.size} items",
-                  style = MaterialTheme.typography.bodyMedium,
-                  fontSize = TITLE_FONT_SIZE.sp,
-                  color = MaterialTheme.colorScheme.onPrimary)
+  Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally) {
+          Row(
+              modifier =
+                  Modifier.fillMaxWidth()
+                      .padding(
+                          start = PADDING_32.dp,
+                          end = PADDING_32.dp,
+                          top = PADDING_16.dp,
+                          bottom = PADDING_8.dp),
+              horizontalArrangement = Arrangement.SpaceBetween) {
+                Text(
+                    text = stringResource(R.string.fridge_title),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontSize = TITLE_FONT_SIZE.sp,
+                    color = MaterialTheme.colorScheme.onPrimary)
+                Text(
+                    text = "${listFridgeItem.size} items",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontSize = TITLE_FONT_SIZE.sp,
+                    color = MaterialTheme.colorScheme.onPrimary)
+              }
+
+          LazyColumn(modifier = Modifier.fillMaxSize()) {
+            item {
+              listFridgeItem
+                  .sortedBy { it.first.expirationDate }
+                  .chunked(2)
+                  .forEach { chunk ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center // Distribute cards evenly
+                        ) {
+                          val cardWidth = 150.dp // Define a fixed width for the cards
+
+                          // First card in the chunk
+                          chunk.getOrNull(0)?.let { card1 ->
+                            ItemCard(cardWidth, card1, userViewModel)
+                          }
+
+                          // Second card in the chunk (if present)
+                          chunk.getOrNull(1)?.let { card2 ->
+                            ItemCard(cardWidth, card2, userViewModel)
+                          }
+
+                          // Add an empty spacer if only one card exists in the chunk
+                          if (chunk.size == 1) {
+                            Spacer(modifier = Modifier.width(cardWidth).padding(4.dp))
+                          }
+                        }
+                  }
             }
-
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
-          item {
-            listFridgeItem
-                .sortedBy { it.first.expirationDate }
-                .chunked(2)
-                .forEach { chunk ->
-                  Row(
-                      modifier = Modifier.fillMaxWidth(),
-                      horizontalArrangement = Arrangement.Center // Distribute cards evenly
-                      ) {
-                        val cardWidth = 150.dp // Define a fixed width for the cards
-
-                        // First card in the chunk
-                        chunk.getOrNull(0)?.let { card1 ->
-                          ItemCard(cardWidth, card1, userViewModel)
-                        }
-
-                        // Second card in the chunk (if present)
-                        chunk.getOrNull(1)?.let { card2 ->
-                          ItemCard(cardWidth, card2, userViewModel)
-                        }
-
-                        // Add an empty spacer if only one card exists in the chunk
-                        if (chunk.size == 1) {
-                          Spacer(modifier = Modifier.width(cardWidth).padding(4.dp))
-                        }
-                      }
-                }
           }
         }
-      }
+    // Action button
+    PlateSwipeButton(
+        "Add Ingredient",
+        modifier =
+            Modifier.padding(PADDING_16.dp).align(Alignment.BottomCenter).testTag("NextStepButton"),
+        onClick = {
+          userViewModel.clearIngredientList()
+          userViewModel.clearSearchingIngredientList()
+          userViewModel.clearIngredient()
+          navigationActions.navigateTo(Screen.FRIDGE_SEARCH_ITEM)
+        })
+  }
 }
 
 @Composable
@@ -254,7 +275,7 @@ private fun ItemCard(
                                 modifier =
                                     Modifier.testTag("${card.second.name} Quantity")
                                         .padding(horizontal = 12.dp, vertical = 4.dp),
-                                text = card.first.quantity,
+                                text = card.first.quantity.toString(),
                                 fontSize = 14.sp,
                                 color = Color.White // Text color
                                 )
@@ -299,9 +320,9 @@ private fun ItemCard(
 
 @Composable
 private fun UpdateQuantityDialog(
-    updatedQuantity: String,
+    updatedQuantity: Int,
     hiddeEditDialog: () -> Unit,
-    setUpdatedQuantity: (String) -> Unit,
+    setUpdatedQuantity: (Int) -> Unit,
     userViewModel: UserViewModel
 ) {
   Dialog(onDismissRequest = hiddeEditDialog) {
@@ -321,28 +342,69 @@ private fun UpdateQuantityDialog(
                     modifier = Modifier.padding(bottom = 16.dp))
 
                 // Input Field for Quantity
-                OutlinedTextField(
-                    value = updatedQuantity,
-                    onValueChange = { setUpdatedQuantity(it) },
-                    label = { Text("Quantity") },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true,
-                    colors =
-                        TextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent,
-                            focusedIndicatorColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                            unfocusedIndicatorColor =
-                                MaterialTheme.colorScheme.onSecondaryContainer,
-                            cursorColor =
-                                MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.6f),
-                            focusedLabelColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                            unfocusedLabelColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                            focusedTextColor =
-                                MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f),
-                            unfocusedTextColor =
-                                MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f),
-                        ))
+                /*OutlinedTextField(
+                value = updatedQuantity,
+                onValueChange = { setUpdatedQuantity(it) },
+                label = { Text("Quantity") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                colors =
+                    TextFieldDefaults.colors(
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        focusedIndicatorColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                        unfocusedIndicatorColor =
+                            MaterialTheme.colorScheme.onSecondaryContainer,
+                        cursorColor =
+                            MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.6f),
+                        focusedLabelColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                        unfocusedLabelColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                        focusedTextColor =
+                            MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f),
+                        unfocusedTextColor =
+                            MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f),
+                    ))*/
+                // Quantity Adjust Buttons
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically) {
+                      Button(
+                          onClick = {
+                            if (updatedQuantity > 0) setUpdatedQuantity(updatedQuantity - 1)
+                          },
+                          modifier = Modifier.size(48.dp),
+                          colors =
+                              ButtonDefaults.buttonColors(
+                                  MaterialTheme.colorScheme.onSecondaryContainer)) {
+                            Text(
+                                text = "-",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = Color.White)
+                          }
+
+                      Spacer(modifier = Modifier.width(24.dp))
+
+                      Text(
+                          text = updatedQuantity.toString(),
+                          style = MaterialTheme.typography.bodyLarge,
+                          fontSize = 20.sp,
+                          color = MaterialTheme.colorScheme.onPrimary)
+
+                      Spacer(modifier = Modifier.width(24.dp))
+
+                      Button(
+                          onClick = { setUpdatedQuantity(updatedQuantity + 1) },
+                          modifier = Modifier.size(48.dp),
+                          colors =
+                              ButtonDefaults.buttonColors(
+                                  MaterialTheme.colorScheme.onSecondaryContainer)) {
+                            Text(
+                                text = "+",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = Color.White)
+                          }
+                    }
 
                 Spacer(modifier = Modifier.height(16.dp))
 

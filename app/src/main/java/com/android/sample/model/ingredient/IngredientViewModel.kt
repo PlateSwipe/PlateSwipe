@@ -77,7 +77,6 @@ class IngredientViewModel(
       return
     }
     // Fetch ingredient from repository
-
     _isFetchingByBarcode.value = true
     repository.get(
         barCode,
