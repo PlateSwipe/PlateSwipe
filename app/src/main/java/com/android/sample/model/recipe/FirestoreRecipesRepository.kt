@@ -300,7 +300,11 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
     val recipes = mutableListOf<Recipe>()
     var finalQuery: Query = db.collection(FIRESTORE_COLLECTION_NAME)
 
-    // Filter the recipes based on the filter
+    /** ******************** Apply all the filters ********************* */
+
+    /*
+     * Category filter
+     */
     finalQuery =
         if (filter.category != null) {
           finalQuery.whereEqualTo(FIRESTORE_RECIPE_CATEGORY, (filter.category!!.toString()))
@@ -308,6 +312,9 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
           finalQuery
         }
 
+    /*
+     * Time filter
+     */
     finalQuery =
         if (filter.timeRange.min != UNINITIALIZED_BORN_VALUE) {
           finalQuery.whereGreaterThan(
@@ -322,6 +329,10 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
         } else {
           finalQuery
         }
+
+    /*
+     * Price filter
+     */
     finalQuery =
         if (filter.priceRange.min != UNINITIALIZED_BORN_VALUE) {
           finalQuery.whereGreaterThan(FIRESTORE_RECIPE_PRICE, filter.priceRange.min.toString())
@@ -336,14 +347,20 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
           finalQuery
         }
 
+    /*
+     * Difficulty filter
+     */
     finalQuery =
         if (filter.difficulty != Difficulty.Undefined) {
           finalQuery.whereEqualTo(FIRESTORE_RECIPE_DIFFICULTY, filter.difficulty.toString())
         } else {
           finalQuery
         }
+    /** ******************* End of the filters ********************* */
 
-    // Fetch the recipes
+    /*
+     * Fetch the recipes
+     */
     finalQuery
         .limit(limit.toLong() * FILTER_RANDOM_FACTOR)
         .get()
@@ -354,6 +371,10 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
               recipes.add(recipe)
             }
           }
+          /*
+           * Create a randomness by shuffling the recipes we fetched but only taking
+           * the first nbOfElements recipes
+           */
           recipes.shuffle()
           onSuccess(recipes.take(limit))
         }
