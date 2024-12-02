@@ -13,9 +13,14 @@ import com.android.sample.model.image.ImageDownload
 import com.android.sample.model.recipe.localData.RecipeDatabase
 import com.android.sample.model.recipe.localData.RoomRecipeRepository
 import com.android.sample.model.recipe.networkData.FirestoreRecipesRepository
+import com.android.sample.resources.C.Tag.ERROR_DELETE_DOWNLOAD
+import com.android.sample.resources.C.Tag.ERROR_DOWNLOAD_IMG
+import com.android.sample.resources.C.Tag.ERROR_RECIPE_WITH_NO_IMG
 import com.android.sample.resources.C.Tag.Filter.UNINITIALIZED_BORN_VALUE
+import com.android.sample.resources.C.Tag.LOG_TAG_RECIPE_VIEWMODEL
 import com.android.sample.resources.C.Tag.MINIMUM_RECIPES_BEFORE_FETCH
 import com.android.sample.resources.C.Tag.NUMBER_RECIPES_TO_FETCH
+import com.android.sample.resources.C.Tag.SUCCESS_DELETE_DOWNLOAD_ALL
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.CoroutineDispatcher
@@ -305,6 +310,14 @@ class RecipesViewModel(
         onFailure = { exception -> onFailure(exception) })
   }
 
+  /**
+   * Downloads a recipe and updates the recipe with the new image URI.
+   *
+   * @param recipe The recipe to download.
+   * @param onSuccess Callback to be invoked when the download is successful.
+   * @param onFailure Callback to be invoked when the download fails.
+   * @param context The context used for downloading the image.
+   */
   fun downloadRecipe(
       recipe: Recipe,
       onSuccess: (Recipe) -> Unit,
@@ -312,26 +325,34 @@ class RecipesViewModel(
       context: Context
   ) {
     if (recipe.url == null) {
-      Log.d("RecipesViewModel", "Recipe does not have an image")
-      onFailure(Exception("Recipe does not have an image"))
+      onFailure(Exception(ERROR_RECIPE_WITH_NO_IMG))
       return
     }
+    // Download the Image of the Recipe, if successful update the recipe with the new URI and add it
+    // to the database
     downloadImage(
         recipe.url!!,
         recipe.uid,
         context,
         Dispatchers.IO,
         onSuccess = { uri ->
-          Log.d("RecipesViewModel", "Image downloaded successfully")
-          println("Image downloaded successfully")
           val newRecipe = recipe.copy(url = uri)
           repository.addDownload(newRecipe)
-          println("add download call")
           onSuccess(newRecipe)
         },
         onFailure = { e -> onFailure(e) })
   }
 
+  /**
+   * Downloads an image from a URL and saves it locally.
+   *
+   * @param url The URL of the image to download.
+   * @param name The name to save the image as.
+   * @param context The context used for downloading the image.
+   * @param dispatcher The coroutine dispatcher to use for the download.
+   * @param onSuccess Callback to be invoked when the download is successful.
+   * @param onFailure Callback to be invoked when the download fails.
+   */
   private fun downloadImage(
       url: String,
       name: String,
@@ -342,46 +363,50 @@ class RecipesViewModel(
   ) {
     CoroutineScope(dispatcher).launch {
       try {
+        // Download the image and save it locally, return the URI of the saved image
         val deferredUri = async {
           imageDownload.downloadAndSaveImage(context, url, name, dispatcher)
         }
         val uri = deferredUri.await()
         if (uri != null) {
-          Log.d("RecipesViewModel", "Image downloaded successfully")
-          println("Image downloaded successfully")
           onSuccess(uri)
         } else {
-          Log.d("RecipesViewModel", "Image download failed")
-          onFailure(Exception("Image download failed"))
+          onFailure(Exception(ERROR_DOWNLOAD_IMG))
         }
       } catch (e: Exception) {
-        Log.e("RecipesViewModel", "Image download failed", e)
         onFailure(e)
       }
     }
   }
-
+  /**
+   * Retrieves all downloaded recipes and updates the recipeDL StateFlow.
+   *
+   * @param onSuccess Callback to be invoked when the retrieval is successful.
+   * @param onFailure Callback to be invoked when the retrieval fails.
+   */
   fun getAllDownloads(onSuccess: (List<Recipe>) -> Unit, onFailure: (Exception) -> Unit) {
     repository.getAllDownload(
         onSuccess = { recipes ->
-          Log.d("RecipesViewModel", "Got all downloads")
           _recipesDl.value = recipes
           onSuccess(recipes)
         },
-        onFailure = { exception ->
-          Log.d("RecipesViewModel", "Failed to get all downloads")
-          onFailure(exception)
-        })
+        onFailure = { exception -> onFailure(exception) })
   }
 
+  /**
+   * Deletes a downloaded recipe.
+   *
+   * @param recipe The recipe to delete.
+   */
   fun deleteDownload(recipe: Recipe) {
     repository.deleteDownload(recipe)
   }
 
+  /** Deletes all downloaded recipes. */
   fun deleteAllDownloads() {
     repository.deleteAllDownloads(
-        onSuccess = { Log.d("RecipesViewModel", "All downloads deleted") },
-        onFailure = { Log.d("RecipesViewModel", "Failed to delete all downloads") })
+        onSuccess = { Log.d(LOG_TAG_RECIPE_VIEWMODEL, SUCCESS_DELETE_DOWNLOAD_ALL) },
+        onFailure = { Log.d(LOG_TAG_RECIPE_VIEWMODEL, ERROR_DELETE_DOWNLOAD) })
   }
 
   companion object {
