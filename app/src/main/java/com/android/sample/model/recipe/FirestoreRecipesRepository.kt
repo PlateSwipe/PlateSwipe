@@ -1,6 +1,7 @@
 package com.android.sample.model.recipe
 
 import android.util.Log
+import com.android.sample.model.filter.Difficulty
 import com.android.sample.model.filter.Filter
 import com.android.sample.resources.C.Tag.CHARACTERS
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_AREA
@@ -326,6 +327,13 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
     finalQuery =
         if (filter.priceRange.max != UNINITIALIZED_BORN_VALUE) {
           finalQuery.whereLessThan(FIRESTORE_RECIPE_PRICE, filter.priceRange.max.toString())
+        } else {
+          finalQuery
+        }
+
+    finalQuery =
+        if (filter.difficulty != Difficulty.Undefined) {
+          finalQuery.whereEqualTo(FIRESTORE_RECIPE_DIFFICULTY, filter.difficulty.toString())
         } else {
           finalQuery
         }
