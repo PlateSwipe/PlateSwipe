@@ -1,0 +1,108 @@
+package com.android.sample.fridge
+
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import com.android.sample.model.user.UserViewModel
+import com.android.sample.ui.fridge.EditFridgeItemScreen
+import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.navigation.Screen
+import com.android.sample.ui.utils.testIngredients
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.`when`
+import org.mockito.kotlin.verify
+
+class EditFridgeItemTest {
+  private lateinit var navigationActions: NavigationActions
+
+  private lateinit var userViewModel: UserViewModel
+  private val userName: String = "John Doe"
+
+  @get:Rule val composeTestRule = createComposeRule()
+
+  @Before
+  fun setUp() {
+    navigationActions = mock(NavigationActions::class.java)
+    userViewModel = UserViewModel.Factory.create(UserViewModel::class.java)
+    userViewModel.changeUserName(userName)
+
+    userViewModel.ingredientList
+    `when`(navigationActions.currentRoute()).thenReturn(Screen.FRIDGE)
+    userViewModel.addIngredient(testIngredients[0])
+    composeTestRule.setContent {
+      EditFridgeItemScreen(navigationActions = navigationActions, userViewModel = userViewModel)
+    }
+  }
+
+  @Test
+  fun assertEditComposableAreAllDisplayed() {
+    composeTestRule.onNodeWithText(testIngredients[0].name).assertIsDisplayed()
+    composeTestRule
+        .onNodeWithText("Quantity (x ${testIngredients[0].quantity}):")
+        .assertIsDisplayed()
+    composeTestRule.onNodeWithText("Expiration Date:").assertIsDisplayed()
+    composeTestRule
+        .onNodeWithText(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
+        .assertIsDisplayed()
+    composeTestRule.onNodeWithText("+").assertIsDisplayed()
+    composeTestRule.onNodeWithText("-").assertIsDisplayed()
+    composeTestRule.onNodeWithText("1").assertIsDisplayed()
+    composeTestRule.onNodeWithText("Save").assertIsDisplayed()
+  }
+
+  @Test
+  fun testIncreaseQuantity() {
+    composeTestRule.onNodeWithText("+").assertIsDisplayed().performClick()
+    composeTestRule.onNodeWithText("2").assertIsDisplayed()
+  }
+
+  @Test
+  fun testDecreaseQuantity() {
+    composeTestRule.onNodeWithText("+").assertIsDisplayed().performClick()
+    composeTestRule.onNodeWithText("-").assertIsDisplayed().performClick()
+    composeTestRule.onNodeWithText("1").assertIsDisplayed()
+  }
+
+  @Test
+  fun testExpirationDateSelection() {
+    composeTestRule
+        .onNodeWithText(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
+        .assertIsDisplayed()
+        .performClick()
+    composeTestRule.onNodeWithText("Confirm").assertIsDisplayed()
+    composeTestRule.onNodeWithText("Cancel").assertIsDisplayed()
+  }
+
+  @Test
+  fun testExpirationDateSelectAndConfirm() {
+    composeTestRule
+        .onNodeWithText(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
+        .assertIsDisplayed()
+        .performClick()
+    composeTestRule.onNodeWithText("Confirm").assertIsDisplayed().performClick()
+    composeTestRule.onNodeWithText(testIngredients[0].name).assertIsDisplayed()
+  }
+
+  @Test
+  fun testExpirationDateSelectAndCancel() {
+    composeTestRule
+        .onNodeWithText(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
+        .assertIsDisplayed()
+        .performClick()
+    composeTestRule.onNodeWithText("Cancel").assertIsDisplayed().performClick()
+    composeTestRule.onNodeWithText(testIngredients[0].name).assertIsDisplayed()
+  }
+
+  @Test
+  fun testSaveButtonNavigation() {
+    composeTestRule.onNodeWithText("Save").assertIsDisplayed().performClick()
+    assert(userViewModel.ingredientList.value.map { it.first }.contains(testIngredients[0]))
+    verify(navigationActions).navigateTo(Screen.FRIDGE)
+  }
+}
