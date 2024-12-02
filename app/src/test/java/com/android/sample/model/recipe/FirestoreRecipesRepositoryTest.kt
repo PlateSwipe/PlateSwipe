@@ -671,6 +671,7 @@ class FirestoreRecipesRepositoryTest {
         onFailure = { fail("Failure callback should not be called") },
         limit = 1)
 
+    shadowOf(Looper.getMainLooper()).idle()
     assertEquals(1, fetchedRecipes.size)
   }
 
