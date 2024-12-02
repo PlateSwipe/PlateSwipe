@@ -31,11 +31,9 @@ import com.android.sample.resources.C.Tag.UserViewModel.RECIPE_NOT_FOUND
 import com.android.sample.resources.C.Tag.UserViewModel.REMOVED_INGREDIENT_NOT_IN_FRIDGE_ERROR
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-import com.google.firebase.storage.storage
 import java.time.LocalDate
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -117,7 +115,8 @@ class UserViewModel(
             FridgeItem(
                 quantity = 2, id = id++.toString(), expirationDate = LocalDate.of(2024, 11, 29)),
             Ingredient(
-                name = "Ingredient2222222222222222222222222222222222222",
+                name =
+                    "Ingredient222222222222222222222222222222222222222222222222222222222222222222222222",
                 categories = listOf(),
                 images = mutableMapOf(),
                 quantity = "400g"))

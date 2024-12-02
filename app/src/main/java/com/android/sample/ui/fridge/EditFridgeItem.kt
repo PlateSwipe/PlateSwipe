@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
@@ -89,31 +88,7 @@ fun EditComposable(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp)) {
               Text(text = "Quantity:", style = MaterialTheme.typography.bodyMedium)
-              /*Button(
-                  onClick = { if (quantity > 0) quantity -= 1 },
-                  modifier = Modifier.size(48.dp),
-                  colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary)
-              ) {
-                  Text(text = "-", style = MaterialTheme.typography.bodyLarge, fontSize = 20.sp, color = Color.Transparent)
-              }
-
-              Text(
-                  text = quantity.toString(),
-                  style = MaterialTheme.typography.bodyLarge,
-                  color = MaterialTheme.colorScheme.onBackground
-              )
-
-              Button(
-                  onClick = { quantity += 1 },
-                  modifier = Modifier.size(48.dp),
-                  colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary)
-              ) {
-                  Text(text = "+", style = MaterialTheme.typography.bodyLarge, fontSize = 20.sp, color = Color.Transparent)
-              }*/
-              Counter(
-                  count = quantity,
-                  modifier = Modifier.size(48.dp),
-                  onCounterChange = { quantity = it })
+              Counter(count = quantity, onCounterChange = { quantity = it })
             }
 
         // Expiration Date Picker

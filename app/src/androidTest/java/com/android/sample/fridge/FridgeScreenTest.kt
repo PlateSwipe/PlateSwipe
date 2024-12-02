@@ -39,10 +39,7 @@ class FridgeScreenTest {
 
   @Test
   fun mainTextIsDisplayed() {
-    composeTestRule.onNodeWithText("Fridge").assertIsDisplayed()
-    composeTestRule
-        .onNodeWithText("${userViewModel.fridgeItems.value.size} items")
-        .assertIsDisplayed()
+    composeTestRule.onNodeWithText("Empty Fridge").assertIsDisplayed()
   }
 
   @Test

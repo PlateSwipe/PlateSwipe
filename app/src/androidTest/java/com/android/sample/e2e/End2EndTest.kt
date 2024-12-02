@@ -223,7 +223,7 @@ class EndToEndTest {
     composeTestRule.onNodeWithTag("RecipeTitle").assertExists()
 
     composeTestRule.onNodeWithTag("tabFridge").assertExists().performClick()
-    composeTestRule.onNodeWithText("Fridge").assertExists()
+    composeTestRule.onNodeWithText("Empty Fridge").assertExists()
   }
 
   /** Test the filter feature */

@@ -54,6 +54,7 @@ import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.ingredient.IngredientViewModel
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_IMAGE_BORDER_RADIUS
+import com.android.sample.resources.C.Dimension.Counter.MAX_VALUE
 import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScreen.CARD_BORDER_ROUND
 import com.android.sample.resources.C.Dimension.FridgeScreen.TITLE_FONT_SIZE
 import com.android.sample.resources.C.Dimension.PADDING_16
@@ -270,6 +271,22 @@ private fun ItemCard(
                 Column(
                     modifier = Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally) {
+                      Spacer(Modifier.size(20.dp).padding(PADDING_8.dp))
+
+                      Image(
+                          painter =
+                              rememberAsyncImagePainter(
+                                  model = card.second.images[PRODUCT_FRONT_IMAGE_THUMBNAIL_URL]),
+                          contentDescription = stringResource(R.string.recipe_image),
+                          modifier =
+                              Modifier.size(100.dp)
+                                  .padding(PADDING_8.dp)
+                                  .testTag(RECIPE_IMAGE_1)
+                                  .clip(
+                                      RoundedCornerShape(
+                                          INGREDIENT_DISPLAY_IMAGE_BORDER_RADIUS.dp)),
+                          contentScale = ContentScale.Fit)
+
                       Row(
                           modifier =
                               Modifier.padding(8.dp, 8.dp, 8.dp, 8.dp)
@@ -286,18 +303,6 @@ private fun ItemCard(
                                 color = Color.White // Text color
                                 )
                           }
-                      Image(
-                          painter =
-                              rememberAsyncImagePainter(
-                                  model = card.second.images[PRODUCT_FRONT_IMAGE_THUMBNAIL_URL]),
-                          contentDescription = stringResource(R.string.recipe_image),
-                          modifier =
-                              Modifier.size(100.dp)
-                                  .testTag(RECIPE_IMAGE_1)
-                                  .clip(
-                                      RoundedCornerShape(
-                                          INGREDIENT_DISPLAY_IMAGE_BORDER_RADIUS.dp)),
-                          contentScale = ContentScale.Fit)
 
                       ExpirationBar(expirationDate = card.first.expirationDate)
                     }
@@ -325,7 +330,8 @@ private fun ItemCard(
         // Edit Quantity Popup Dialog
         if (showEditDialog) {
           UpdateQuantityDialog(
-              updatedQuantity,
+              fridgeIngredientPair = card,
+              updatedQuantity = updatedQuantity,
               hiddeEditDialog = { showEditDialog = false },
               setUpdatedQuantity = { updatedQuantity = it },
               userViewModel = userViewModel)
@@ -335,6 +341,7 @@ private fun ItemCard(
 
 @Composable
 private fun UpdateQuantityDialog(
+    fridgeIngredientPair: Pair<FridgeItem, Ingredient>,
     updatedQuantity: Int,
     hiddeEditDialog: () -> Unit,
     setUpdatedQuantity: (Int) -> Unit,
@@ -350,8 +357,10 @@ private fun UpdateQuantityDialog(
               modifier = Modifier.padding(16.dp),
               horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    text = "Edit Quantity",
+                    text =
+                        "Update Quantity: ${fridgeIngredientPair.second.name} (${fridgeIngredientPair.second.quantity})",
                     style = MaterialTheme.typography.titleMedium,
+                    lineHeight = 28.sp,
                     fontSize = 22.sp,
                     color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.6f),
                     modifier = Modifier.padding(bottom = 16.dp))
@@ -384,44 +393,10 @@ private fun UpdateQuantityDialog(
                     modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically) {
-                      /*Button(
-                          onClick = {
-                            if (updatedQuantity > 0) setUpdatedQuantity(updatedQuantity - 1)
-                          },
-                          modifier = Modifier.size(48.dp),
-                          colors =
-                              ButtonDefaults.buttonColors(
-                                  MaterialTheme.colorScheme.onSecondaryContainer)) {
-                            Text(
-                                text = "-",
-                                style = MaterialTheme.typography.titleMedium,
-                                color = Color.White)
-                          }
-
-                      Spacer(modifier = Modifier.width(24.dp))
-
-                      Text(
-                          text = updatedQuantity.toString(),
-                          style = MaterialTheme.typography.bodyLarge,
-                          fontSize = 20.sp,
-                          color = MaterialTheme.colorScheme.onPrimary)
-
-                      Spacer(modifier = Modifier.width(24.dp))
-
-                      Button(
-                          onClick = { setUpdatedQuantity(updatedQuantity + 1) },
-                          modifier = Modifier.size(48.dp),
-                          colors =
-                              ButtonDefaults.buttonColors(
-                                  MaterialTheme.colorScheme.onSecondaryContainer)) {
-                            Text(
-                                text = "+",
-                                style = MaterialTheme.typography.titleMedium,
-                                color = Color.White)
-                          }*/
                       Counter(
                           count = updatedQuantity,
-                          modifier = Modifier.size(48.dp),
+                          minValue = 0,
+                          maxValue = MAX_VALUE,
                           onCounterChange = { setUpdatedQuantity(it) })
                     }
 
@@ -439,8 +414,11 @@ private fun UpdateQuantityDialog(
                   Spacer(modifier = Modifier.width(8.dp))
                   Button(
                       onClick = {
-                        // TODO(): call quantity update
-                        // userViewModel.updateFridgeItemQuantity(updatedQuantity)
+                        userViewModel.updateIngredientFromFridge(
+                            fridgeIngredientPair.second,
+                            updatedQuantity,
+                            fridgeIngredientPair.first.expirationDate,
+                            false)
                         hiddeEditDialog()
                       },
                       colors =

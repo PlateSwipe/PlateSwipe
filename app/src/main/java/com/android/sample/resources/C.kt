@@ -464,7 +464,7 @@ object C {
     object Counter {
       const val MIN_VALUE = 1
       const val MAX_VALUE = 99
-      const val COUNTER_MIN_MAX_SIZE = 35
+      const val COUNTER_MIN_MAX_SIZE = 38
       const val COUNTER_TEXT_SIZE = 28
       const val COUNTER_FONT_SIZE = 20
       const val RECIPE_COUNTER_PADDING = 0
