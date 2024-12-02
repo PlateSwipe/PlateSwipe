@@ -30,6 +30,7 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 
 class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRepository {
   /** ****************************************** */
@@ -295,19 +296,20 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
   ) {
     require(limit > 0) { LIMIT_MUST_BE_POSITIVE_MESSAGE }
     val recipes = mutableListOf<Recipe>()
-    val query = db.collection(FIRESTORE_COLLECTION_NAME)
+    var finalQuery: Query = db.collection(FIRESTORE_COLLECTION_NAME)
 
     // Filter the recipes based on the filter
-    var finalQuery =
+    finalQuery =
         if (filter.category != null) {
-          query.whereEqualTo(FIRESTORE_RECIPE_CATEGORY, filter.category)
+          finalQuery.whereEqualTo(FIRESTORE_RECIPE_CATEGORY, (filter.category!!.toString()))
         } else {
-          query
+          finalQuery
         }
 
     finalQuery =
         if (filter.timeRange.min != UNINITIALIZED_BORN_VALUE) {
-          finalQuery.whereGreaterThan(FIRESTORE_RECIPE_TIME, filter.timeRange.min.toString())
+          finalQuery.whereGreaterThan(
+              FIRESTORE_RECIPE_TIME, filter.timeRange.min.toInt().toString())
         } else {
           finalQuery
         }
