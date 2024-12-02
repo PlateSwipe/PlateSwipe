@@ -655,6 +655,28 @@ object C {
 
     object FridgeScreen {
       const val TITLE_FONT_SIZE = 20
+      const val MAX_ORANGE_DAY = 5
+      const val MIN_ORANGE_DAY = 1
+      const val ALL_BAR = 1.0f
+      const val MAX_PROPORTION = 15f
+      const val MIN_PROPORTION = 0.1f
+      const val BAR_HEIGHT = 10
+      const val BAR_ROUND_CORNER = 4
+      const val DIALOG_CORNER = 12
+      const val DIALOG_ELEVATION = 8
+      const val DIALOG_TITLE_LINE_HEIGHT = 28
+      const val DIALOG_TITLE_FONT_SIZE = 22
+      const val DIALOG_TITLE_ALPHA = 0.6f
+      const val MIN_VALUE = 0
+      const val ITEM_ALPHA = 0.7f
+      const val INGREDIENT_MAX_LINE = 3
+      const val INGREDIENT_NAME_FONT_SIZE = 16
+      const val FRIDGE_TAG_CORNER = 16
+      const val INGREDIENT_IMAGE_SIZE = 100
+      const val EDIT_ICON_SIZE = 20
+      const val CARD_ELEVATION = 4
+      const val EMPTY_FRIDGE_FONT_SIZE = 40
+      const val NUMBER_CARD_IN_A_ROW = 2
     }
   }
 
@@ -852,6 +874,12 @@ object C {
       const val NEXT_BUTTON = "NextButton"
       const val HOURS_LABEL = "HoursLabel"
       const val MINUTES_LABEL = "MinutesLabel"
+    }
+
+    object Fridge {
+      const val RED = "red"
+      const val GREEN = "green"
+      const val ORANGE = "orange"
     }
   }
 }

@@ -1,5 +1,6 @@
 package com.android.sample.ui.fridge
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -30,6 +31,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -38,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -56,17 +59,45 @@ import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_IMAGE_BORDER_RADIUS
 import com.android.sample.resources.C.Dimension.Counter.MAX_VALUE
 import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScreen.CARD_BORDER_ROUND
+import com.android.sample.resources.C.Dimension.FridgeScreen.ALL_BAR
+import com.android.sample.resources.C.Dimension.FridgeScreen.BAR_HEIGHT
+import com.android.sample.resources.C.Dimension.FridgeScreen.BAR_ROUND_CORNER
+import com.android.sample.resources.C.Dimension.FridgeScreen.CARD_ELEVATION
+import com.android.sample.resources.C.Dimension.FridgeScreen.DIALOG_CORNER
+import com.android.sample.resources.C.Dimension.FridgeScreen.DIALOG_ELEVATION
+import com.android.sample.resources.C.Dimension.FridgeScreen.DIALOG_TITLE_ALPHA
+import com.android.sample.resources.C.Dimension.FridgeScreen.DIALOG_TITLE_FONT_SIZE
+import com.android.sample.resources.C.Dimension.FridgeScreen.DIALOG_TITLE_LINE_HEIGHT
+import com.android.sample.resources.C.Dimension.FridgeScreen.EDIT_ICON_SIZE
+import com.android.sample.resources.C.Dimension.FridgeScreen.EMPTY_FRIDGE_FONT_SIZE
+import com.android.sample.resources.C.Dimension.FridgeScreen.FRIDGE_TAG_CORNER
+import com.android.sample.resources.C.Dimension.FridgeScreen.INGREDIENT_IMAGE_SIZE
+import com.android.sample.resources.C.Dimension.FridgeScreen.INGREDIENT_MAX_LINE
+import com.android.sample.resources.C.Dimension.FridgeScreen.INGREDIENT_NAME_FONT_SIZE
+import com.android.sample.resources.C.Dimension.FridgeScreen.ITEM_ALPHA
+import com.android.sample.resources.C.Dimension.FridgeScreen.MAX_ORANGE_DAY
+import com.android.sample.resources.C.Dimension.FridgeScreen.MAX_PROPORTION
+import com.android.sample.resources.C.Dimension.FridgeScreen.MIN_ORANGE_DAY
+import com.android.sample.resources.C.Dimension.FridgeScreen.MIN_PROPORTION
+import com.android.sample.resources.C.Dimension.FridgeScreen.MIN_VALUE
+import com.android.sample.resources.C.Dimension.FridgeScreen.NUMBER_CARD_IN_A_ROW
 import com.android.sample.resources.C.Dimension.FridgeScreen.TITLE_FONT_SIZE
 import com.android.sample.resources.C.Dimension.PADDING_16
 import com.android.sample.resources.C.Dimension.PADDING_32
+import com.android.sample.resources.C.Dimension.PADDING_4
 import com.android.sample.resources.C.Dimension.PADDING_8
 import com.android.sample.resources.C.Tag.BASE_PADDING
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_THUMBNAIL_URL
+import com.android.sample.resources.C.TestTag.Fridge.GREEN
+import com.android.sample.resources.C.TestTag.Fridge.ORANGE
+import com.android.sample.resources.C.TestTag.Fridge.RED
 import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_IMAGE_1
 import com.android.sample.ui.createRecipe.ChefImage
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.firebrickRed
+import com.android.sample.ui.theme.jungleGreen
+import com.android.sample.ui.theme.orangeExpirationBar
 import com.android.sample.ui.theme.tagBackground
 import com.android.sample.ui.utils.Counter
 import com.android.sample.ui.utils.PlateSwipeButton
@@ -105,6 +136,13 @@ fun FridgeScreen(navigationActions: NavigationActions, userViewModel: UserViewMo
       showBackArrow = true)
 }
 
+/**
+ * Empty Fridge
+ *
+ * @param paddingValues
+ * @param navigationActions
+ * @param userViewModel
+ */
 @Composable
 fun EmptyFridge(
     paddingValues: PaddingValues,
@@ -116,20 +154,19 @@ fun EmptyFridge(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top,
         modifier = Modifier.fillMaxSize()) {
-          // Progress bar to show the current step
-
           // Title text
           Text(
-              text = "Empty Fridge",
-              style = MaterialTheme.typography.titleMedium.copy(lineHeight = 40.sp),
-              fontSize = 40.sp,
+              text = stringResource(R.string.empty_fridge_title),
+              style =
+                  MaterialTheme.typography.titleMedium.copy(lineHeight = EMPTY_FRIDGE_FONT_SIZE.sp),
+              fontSize = EMPTY_FRIDGE_FONT_SIZE.sp,
               color = MaterialTheme.colorScheme.onPrimary,
               modifier = Modifier.fillMaxWidth().padding(PADDING_32.dp),
               textAlign = TextAlign.Center)
           Spacer(modifier = Modifier.size(PADDING_16.dp))
           // Subtitle text
           Text(
-              text = "Your fridge is currently empty, click below to add ingredient",
+              text = stringResource(R.string.empty_fridge_description),
               style = MaterialTheme.typography.bodyMedium,
               color = MaterialTheme.colorScheme.onPrimary,
               modifier = Modifier.padding(horizontal = PADDING_32.dp).zIndex(1f),
@@ -148,8 +185,8 @@ fun EmptyFridge(
 
     // Action button
     PlateSwipeButton(
-        "Add Ingredient",
-        modifier = Modifier.align(Alignment.BottomCenter).testTag("NextStepButton"),
+        stringResource(R.string.add_ingredient),
+        modifier = Modifier.align(Alignment.BottomCenter),
         onClick = {
           userViewModel.clearIngredientList()
           userViewModel.clearSearchingIngredientList()
@@ -159,8 +196,16 @@ fun EmptyFridge(
   }
 }
 
+/**
+ * Fridge Content when not empty
+ *
+ * @param navigationActions
+ * @param paddingValues
+ * @param userViewModel
+ * @param listFridgeItem
+ */
 @Composable
-fun FridgeContent(
+private fun FridgeContent(
     navigationActions: NavigationActions,
     paddingValues: PaddingValues,
     userViewModel: UserViewModel,
@@ -171,6 +216,7 @@ fun FridgeContent(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally) {
+          // Row to display the title and number of items
           Row(
               modifier =
                   Modifier.fillMaxWidth()
@@ -192,6 +238,7 @@ fun FridgeContent(
                     color = MaterialTheme.colorScheme.onPrimary)
               }
 
+          // Lazy Column to display the fridge items
           LazyColumn(modifier = Modifier.fillMaxSize()) {
             item {
               listFridgeItem
@@ -202,7 +249,11 @@ fun FridgeContent(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center // Distribute cards evenly
                         ) {
-                          val cardWidth = 150.dp // Define a fixed width for the cards
+                          val screenWidth = LocalConfiguration.current.screenWidthDp
+                          // get the card width depending on the screen width
+                          val cardWidth =
+                              ((screenWidth - PADDING_32 * 2 - PADDING_16) / NUMBER_CARD_IN_A_ROW)
+                                  .dp
 
                           // First card in the chunk
                           chunk.getOrNull(0)?.let { card1 ->
@@ -216,18 +267,17 @@ fun FridgeContent(
 
                           // Add an empty spacer if only one card exists in the chunk
                           if (chunk.size == 1) {
-                            Spacer(modifier = Modifier.width(cardWidth).padding(4.dp))
+                            Spacer(modifier = Modifier.width(cardWidth).padding(PADDING_4.dp))
                           }
                         }
                   }
             }
           }
         }
-    // Action button
+    // button to add ingredient
     PlateSwipeButton(
-        "Add Ingredient",
-        modifier =
-            Modifier.padding(PADDING_16.dp).align(Alignment.BottomCenter).testTag("NextStepButton"),
+        stringResource(R.string.add_ingredient),
+        modifier = Modifier.padding(PADDING_16.dp).align(Alignment.BottomCenter),
         onClick = {
           userViewModel.clearIngredientList()
           userViewModel.clearSearchingIngredientList()
@@ -237,6 +287,14 @@ fun FridgeContent(
   }
 }
 
+/**
+ * Item Card
+ *
+ * @param cardWidth
+ * @param card
+ * @param userViewModel
+ */
+@SuppressLint("AutoboxingStateCreation")
 @Composable
 private fun ItemCard(
     cardWidth: Dp,
@@ -244,22 +302,25 @@ private fun ItemCard(
     userViewModel: UserViewModel
 ) {
   var showEditDialog by remember { mutableStateOf(false) }
-  var updatedQuantity by remember { mutableStateOf(card.first.quantity) }
+  var updatedQuantity by remember { mutableIntStateOf(card.first.quantity) }
 
   Column(
-      modifier = Modifier.padding(8.dp).width(cardWidth),
+      modifier = Modifier.padding(PADDING_8.dp).width(cardWidth),
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.Center) {
         Card(
-            modifier = Modifier.padding(8.dp),
+            modifier = Modifier.padding(PADDING_8.dp),
             colors = CardDefaults.cardColors(MaterialTheme.colorScheme.secondary),
             shape = RoundedCornerShape(CARD_BORDER_ROUND.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)) {
+            elevation = CardDefaults.cardElevation(defaultElevation = CARD_ELEVATION.dp)) {
               Box(modifier = Modifier.fillMaxSize()) {
                 // Pencil Icon - Positioned at Top Left
                 IconButton(
                     onClick = { showEditDialog = true },
-                    modifier = Modifier.align(Alignment.TopEnd).padding(8.dp).size(20.dp),
+                    modifier =
+                        Modifier.align(Alignment.TopEnd)
+                            .padding(PADDING_8.dp)
+                            .size(EDIT_ICON_SIZE.dp),
                 ) {
                   Icon(
                       imageVector = Icons.Default.Edit,
@@ -271,7 +332,7 @@ private fun ItemCard(
                 Column(
                     modifier = Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally) {
-                      Spacer(Modifier.size(20.dp).padding(PADDING_8.dp))
+                      Spacer(Modifier.size(EDIT_ICON_SIZE.dp).padding(PADDING_8.dp))
 
                       Image(
                           painter =
@@ -279,7 +340,7 @@ private fun ItemCard(
                                   model = card.second.images[PRODUCT_FRONT_IMAGE_THUMBNAIL_URL]),
                           contentDescription = stringResource(R.string.recipe_image),
                           modifier =
-                              Modifier.size(100.dp)
+                              Modifier.size(INGREDIENT_IMAGE_SIZE.dp)
                                   .padding(PADDING_8.dp)
                                   .testTag(RECIPE_IMAGE_1)
                                   .clip(
@@ -289,32 +350,36 @@ private fun ItemCard(
 
                       Row(
                           modifier =
-                              Modifier.padding(8.dp, 8.dp, 8.dp, 8.dp)
+                              Modifier.padding(
+                                      PADDING_8.dp, PADDING_8.dp, PADDING_8.dp, PADDING_8.dp)
                                   .background(
-                                      color = tagBackground, shape = RoundedCornerShape(16.dp)),
+                                      color = tagBackground,
+                                      shape = RoundedCornerShape(FRIDGE_TAG_CORNER.dp)),
                           verticalAlignment = Alignment.CenterVertically,
                           horizontalArrangement = Arrangement.Center) {
                             Text(
                                 modifier =
-                                    Modifier.testTag("${card.second.name} Quantity")
-                                        .padding(horizontal = 12.dp, vertical = 4.dp),
+                                    Modifier.padding(
+                                        horizontal = PADDING_16.dp, vertical = PADDING_4.dp),
                                 text = "${card.first.quantity} x ${card.second.quantity}",
                                 fontSize = 14.sp,
                                 color = Color.White // Text color
                                 )
                           }
 
-                      ExpirationBar(expirationDate = card.first.expirationDate)
+                      ExpirationBar(
+                          testTag = "expirationBar${card.second.name}${card.first.expirationDate}",
+                          expirationDate = card.first.expirationDate)
                     }
               }
             }
         Text(
-            modifier = Modifier.padding(vertical = 2.dp, horizontal = 8.dp),
+            modifier = Modifier.padding(vertical = (PADDING_4 / 2).dp, horizontal = PADDING_8.dp),
             text = card.second.name,
             style = MaterialTheme.typography.titleMedium,
-            fontSize = 16.sp,
+            fontSize = INGREDIENT_NAME_FONT_SIZE.sp,
             color = MaterialTheme.colorScheme.onPrimary,
-            maxLines = 3,
+            maxLines = INGREDIENT_MAX_LINE,
             overflow = TextOverflow.Ellipsis)
 
         val formattedDate =
@@ -322,10 +387,10 @@ private fun ItemCard(
                 DateTimeFormatter.ofPattern(stringResource(R.string.date_pattern)))
 
         Text(
-            modifier = Modifier.padding(vertical = 2.dp, horizontal = 8.dp),
+            modifier = Modifier.padding(vertical = (PADDING_4 / 2).dp, horizontal = PADDING_8.dp),
             text = formattedDate,
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f))
+            color = MaterialTheme.colorScheme.onPrimary.copy(alpha = ITEM_ALPHA))
 
         // Edit Quantity Popup Dialog
         if (showEditDialog) {
@@ -349,69 +414,45 @@ private fun UpdateQuantityDialog(
 ) {
   Dialog(onDismissRequest = hiddeEditDialog) {
     Card(
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-        modifier = Modifier.padding(16.dp),
+        shape = RoundedCornerShape(DIALOG_CORNER.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = DIALOG_ELEVATION.dp),
+        modifier = Modifier.padding(PADDING_16.dp),
         colors = CardDefaults.cardColors(MaterialTheme.colorScheme.secondary)) {
           Column(
-              modifier = Modifier.padding(16.dp),
+              modifier = Modifier.padding(PADDING_16.dp),
               horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
                     text =
                         "Update Quantity: ${fridgeIngredientPair.second.name} (${fridgeIngredientPair.second.quantity})",
                     style = MaterialTheme.typography.titleMedium,
-                    lineHeight = 28.sp,
-                    fontSize = 22.sp,
-                    color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.6f),
-                    modifier = Modifier.padding(bottom = 16.dp))
-
-                // Input Field for Quantity
-                /*OutlinedTextField(
-                value = updatedQuantity,
-                onValueChange = { setUpdatedQuantity(it) },
-                label = { Text("Quantity") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                colors =
-                    TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
-                        focusedIndicatorColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                        unfocusedIndicatorColor =
-                            MaterialTheme.colorScheme.onSecondaryContainer,
-                        cursorColor =
-                            MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.6f),
-                        focusedLabelColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                        unfocusedLabelColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                        focusedTextColor =
-                            MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f),
-                        unfocusedTextColor =
-                            MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f),
-                    ))*/
+                    lineHeight = DIALOG_TITLE_LINE_HEIGHT.sp,
+                    fontSize = DIALOG_TITLE_FONT_SIZE.sp,
+                    color = MaterialTheme.colorScheme.onPrimary.copy(alpha = DIALOG_TITLE_ALPHA),
+                    modifier = Modifier.padding(bottom = PADDING_16.dp))
                 // Quantity Adjust Buttons
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
+                    modifier = Modifier.fillMaxWidth().padding(vertical = PADDING_16.dp),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically) {
                       Counter(
                           count = updatedQuantity,
-                          minValue = 0,
+                          minValue = MIN_VALUE,
                           maxValue = MAX_VALUE,
                           onCounterChange = { setUpdatedQuantity(it) })
                     }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(PADDING_16.dp))
 
                 // Save Button
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
                   TextButton(onClick = hiddeEditDialog) {
                     Text(
-                        text = "Cancel",
+                        text = stringResource(R.string.cancel),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSecondaryContainer,
                     )
                   }
-                  Spacer(modifier = Modifier.width(8.dp))
+                  Spacer(modifier = Modifier.width(PADDING_8.dp))
                   Button(
                       onClick = {
                         userViewModel.updateIngredientFromFridge(
@@ -425,7 +466,7 @@ private fun UpdateQuantityDialog(
                           ButtonDefaults.buttonColors(
                               MaterialTheme.colorScheme.onSecondaryContainer)) {
                         Text(
-                            text = "Save",
+                            text = stringResource(R.string.save),
                             style = MaterialTheme.typography.bodyMedium,
                             color = Color.White,
                         )
@@ -436,42 +477,51 @@ private fun UpdateQuantityDialog(
   }
 }
 
+/**
+ * Expiration Bar of an ingredient
+ *
+ * @param expirationDate
+ * @param testTag
+ */
 @Composable
-fun ExpirationBar(expirationDate: LocalDate?) {
+private fun ExpirationBar(expirationDate: LocalDate?, testTag: String) {
   val today = LocalDate.now()
   val daysLeft = expirationDate?.let { ChronoUnit.DAYS.between(today, it).toInt() } ?: 0
 
   // Define bar properties based on the days left
-  val barColor =
+  val (barColor, tagColor) =
       when {
-        daysLeft > 5 -> Color(0xFF4CAF50) // Small green bar
-        daysLeft in 1..5 -> Color(0xFFFFA500) // Medium orange bar
-        else -> firebrickRed // Full red bar
+        daysLeft > MAX_ORANGE_DAY -> jungleGreen to GREEN
+        daysLeft in MIN_ORANGE_DAY..MAX_ORANGE_DAY -> orangeExpirationBar to ORANGE
+        else -> firebrickRed to RED
       }
   val widthFraction =
       when {
-        daysLeft >= 13 -> 0.1f
-        daysLeft <= 0 -> 1.0f
-        else -> (15 - daysLeft.toFloat()) / 15f
+        daysLeft >= (MAX_PROPORTION - MIN_PROPORTION * MAX_PROPORTION) -> MIN_PROPORTION
+        daysLeft <= 0 -> ALL_BAR
+        else -> (MAX_PROPORTION - daysLeft.toFloat()) / MAX_PROPORTION
       }
   Column(horizontalAlignment = Alignment.CenterHorizontally) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+        modifier =
+            Modifier.testTag("$testTag$tagColor")
+                .fillMaxWidth()
+                .padding(horizontal = PADDING_16.dp, vertical = PADDING_8.dp),
         horizontalArrangement = Arrangement.Start) {
           Box(
               modifier =
                   Modifier.fillMaxWidth()
-                      .height(10.dp) // Set a consistent height for the bar
-                      .clip(RoundedCornerShape(4.dp)) // Add rounded corners
+                      .height(BAR_HEIGHT.dp) // Set a consistent height for the bar
+                      .clip(RoundedCornerShape(BAR_ROUND_CORNER.dp)) // Add rounded corners
                       .background(Color.LightGray) // Light cream color
               ) {
                 Box(
                     modifier =
                         Modifier.fillMaxWidth(fraction = widthFraction)
-                            .height(10.dp)
-                            .clip(RoundedCornerShape(4.dp))
+                            .height(BAR_HEIGHT.dp)
+                            .clip(RoundedCornerShape(BAR_ROUND_CORNER.dp))
                             .background(barColor)
-                            .padding(horizontal = 4.dp)
+                            .padding(horizontal = PADDING_4.dp)
                             .zIndex(1f))
               }
         }

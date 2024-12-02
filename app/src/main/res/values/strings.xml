@@ -84,7 +84,7 @@
 
     //RecipeIngredientScreen
     <string name="list_ingredients">List the ingredients needed for your recipe. Add as many as you need.</string>
-    <string name="add_ingredient">Add Ingredients</string>
+    <string name="add_ingredient">Add Ingredient</string>
     <string name="no_ingredients">No Ingredients</string>
 
     //RecipeInstructionsScreen
@@ -147,7 +147,11 @@
     <string name="hours">Hours</string>
     //Fridge
     <string name="fridge_title">Fridge</string>
+    <string name="empty_fridge_title">Empty Fridge</string>
+    <string name="empty_fridge_description">Your fridge is currently empty, click below to add ingredient</string>
     <string name="date_pattern">dd/MM/yyyy</string>
     <string name="no_date">No Date</string>
+    <string name="save">Save</string>
+
 
 </resources>

@@ -187,7 +187,7 @@ class UserViewModel(
     _fridgeItems.value +=
         Pair(
             FridgeItem(
-                quantity = 2, id = id++.toString(), expirationDate = LocalDate.of(2024, 11, 7)),
+                quantity = 2, id = id++.toString(), expirationDate = LocalDate.of(2024, 12, 7)),
             Ingredient(
                 name = "Ingredient",
                 categories = listOf(),
@@ -196,7 +196,7 @@ class UserViewModel(
     _fridgeItems.value +=
         Pair(
             FridgeItem(
-                quantity = 6, id = id++.toString(), expirationDate = LocalDate.of(2024, 11, 8)),
+                quantity = 6, id = id++.toString(), expirationDate = LocalDate.of(2024, 12, 8)),
             Ingredient(
                 name = "Ingredient",
                 categories = listOf(),
@@ -205,7 +205,7 @@ class UserViewModel(
     _fridgeItems.value +=
         Pair(
             FridgeItem(
-                quantity = 1, id = id++.toString(), expirationDate = LocalDate.of(2024, 11, 9)),
+                quantity = 1, id = id++.toString(), expirationDate = LocalDate.of(2024, 12, 9)),
             Ingredient(
                 name = "Ingredient",
                 categories = listOf(),
@@ -214,7 +214,7 @@ class UserViewModel(
     _fridgeItems.value +=
         Pair(
             FridgeItem(
-                quantity = 3, id = id++.toString(), expirationDate = LocalDate.of(2024, 11, 20)),
+                quantity = 3, id = id++.toString(), expirationDate = LocalDate.of(2024, 12, 20)),
             Ingredient(
                 name = "Ingredient",
                 categories = listOf(),
@@ -223,7 +223,7 @@ class UserViewModel(
     _fridgeItems.value +=
         Pair(
             FridgeItem(
-                quantity = 2, id = id++.toString(), expirationDate = LocalDate.of(2024, 11, 21)),
+                quantity = 2, id = id++.toString(), expirationDate = LocalDate.of(2024, 12, 21)),
             Ingredient(
                 name = "Ingredient",
                 categories = listOf(),
@@ -232,7 +232,7 @@ class UserViewModel(
     _fridgeItems.value +=
         Pair(
             FridgeItem(
-                quantity = 6, id = id++.toString(), expirationDate = LocalDate.of(2024, 11, 22)),
+                quantity = 6, id = id++.toString(), expirationDate = LocalDate.of(2024, 12, 22)),
             Ingredient(
                 name = "Ingredient",
                 categories = listOf(),
@@ -241,7 +241,7 @@ class UserViewModel(
     _fridgeItems.value +=
         Pair(
             FridgeItem(
-                quantity = 1, id = id++.toString(), expirationDate = LocalDate.of(2024, 11, 23)),
+                quantity = 1, id = id++.toString(), expirationDate = LocalDate.of(2024, 12, 23)),
             Ingredient(
                 name = "Ingredient",
                 categories = listOf(),
@@ -250,7 +250,7 @@ class UserViewModel(
     _fridgeItems.value +=
         Pair(
             FridgeItem(
-                quantity = 3, id = id++.toString(), expirationDate = LocalDate.of(2024, 11, 24)),
+                quantity = 3, id = id++.toString(), expirationDate = LocalDate.of(2024, 12, 24)),
             Ingredient(
                 name = "Ingredient",
                 categories = listOf(),
@@ -259,7 +259,7 @@ class UserViewModel(
     _fridgeItems.value +=
         Pair(
             FridgeItem(
-                quantity = 2, id = id++.toString(), expirationDate = LocalDate.of(2024, 11, 25)),
+                quantity = 2, id = id++.toString(), expirationDate = LocalDate.of(2024, 12, 25)),
             Ingredient(
                 name = "Ingredient",
                 categories = listOf(),
@@ -268,7 +268,7 @@ class UserViewModel(
     _fridgeItems.value +=
         Pair(
             FridgeItem(
-                quantity = 3, id = id++.toString(), expirationDate = LocalDate.of(2024, 11, 26)),
+                quantity = 3, id = id++.toString(), expirationDate = LocalDate.of(2024, 12, 26)),
             Ingredient(
                 name = "Ingredient",
                 categories = listOf(),
@@ -277,7 +277,7 @@ class UserViewModel(
     _fridgeItems.value +=
         Pair(
             FridgeItem(
-                quantity = 2, id = id++.toString(), expirationDate = LocalDate.of(2024, 11, 27)),
+                quantity = 2, id = id++.toString(), expirationDate = LocalDate.of(2024, 12, 27)),
             Ingredient(
                 name = "Ingredient",
                 categories = listOf(),
@@ -286,7 +286,7 @@ class UserViewModel(
     _fridgeItems.value +=
         Pair(
             FridgeItem(
-                quantity = 2, id = id++.toString(), expirationDate = LocalDate.of(2024, 11, 28)),
+                quantity = 2, id = id++.toString(), expirationDate = LocalDate.of(2024, 12, 28)),
             Ingredient(
                 name = "Ingredient",
                 categories = listOf(),
@@ -295,7 +295,7 @@ class UserViewModel(
     _fridgeItems.value +=
         Pair(
             FridgeItem(
-                quantity = 2, id = id++.toString(), expirationDate = LocalDate.of(2024, 11, 29)),
+                quantity = 2, id = id++.toString(), expirationDate = LocalDate.of(2024, 12, 29)),
             Ingredient(
                 name = "Ingredient",
                 categories = listOf(),
@@ -304,7 +304,7 @@ class UserViewModel(
     _fridgeItems.value +=
         Pair(
             FridgeItem(
-                quantity = 2, id = id++.toString(), expirationDate = LocalDate.of(2024, 11, 30)),
+                quantity = 2, id = id++.toString(), expirationDate = LocalDate.of(2024, 12, 30)),
             Ingredient(
                 name = "Ingredient",
                 categories = listOf(),
@@ -331,12 +331,39 @@ class UserViewModel(
     _fridgeItems.value +=
         Pair(
             FridgeItem(
-                quantity = 2, id = id.toString(), expirationDate = LocalDate.of(2024, 12, 3)),
+                quantity = 2, id = id++.toString(), expirationDate = LocalDate.of(2024, 12, 3)),
             Ingredient(
                 name = "Ingredient",
                 categories = listOf(),
                 images = mutableMapOf(),
-                quantity = "400g"))*/
+                quantity = "400g"))
+      _fridgeItems.value +=
+          Pair(
+              FridgeItem(
+                  quantity = 2, id = id++.toString(), expirationDate = LocalDate.of(2024, 12, 4)),
+              Ingredient(
+                  name = "Ingredient",
+                  categories = listOf(),
+                  images = mutableMapOf(),
+                  quantity = "400g"))
+      _fridgeItems.value +=
+          Pair(
+              FridgeItem(
+                  quantity = 2, id = id++.toString(), expirationDate = LocalDate.of(2024, 12, 5)),
+              Ingredient(
+                  name = "Ingredient",
+                  categories = listOf(),
+                  images = mutableMapOf(),
+                  quantity = "400g"))
+      _fridgeItems.value +=
+          Pair(
+              FridgeItem(
+                  quantity = 2, id = id++.toString(), expirationDate = LocalDate.of(2024, 12, 6)),
+              Ingredient(
+                  name = "Ingredient",
+                  categories = listOf(),
+                  images = mutableMapOf(),
+                  quantity = "400g"))*/
   }
 
   /**
