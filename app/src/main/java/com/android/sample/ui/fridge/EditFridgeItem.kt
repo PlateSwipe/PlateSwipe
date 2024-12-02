@@ -1,7 +1,6 @@
 package com.android.sample.ui.fridge
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -11,8 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
@@ -33,27 +30,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.sample.R
 import com.android.sample.model.user.UserViewModel
-import com.android.sample.resources.C.Dimension.RecipeOverview.COUNTER_MIN_MAX_SIZE
-import com.android.sample.resources.C.Dimension.RecipeOverview.COUNTER_ROUND_CORNER
-import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_COUNTER_TEXT_SIZE
-import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_FONT_SIZE_MEDIUM
-import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_MAX_COUNTER_VALUE
-import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_MIN_COUNTER_VALUE
-import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_RECIPE_COUNTER_PADDING
-import com.android.sample.resources.C.Tag.PADDING
-import com.android.sample.resources.C.Tag.SMALL_PADDING
-import com.android.sample.resources.C.TestTag.RecipeOverview.ADD_SERVINGS
-import com.android.sample.resources.C.TestTag.RecipeOverview.NUMBER_SERVINGS
-import com.android.sample.resources.C.TestTag.RecipeOverview.REMOVE_SERVINGS
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
+import com.android.sample.ui.utils.Counter
 import com.android.sample.ui.utils.IngredientImageBox
 import com.android.sample.ui.utils.PlateSwipeScaffold
 import java.time.LocalDate
@@ -126,7 +110,10 @@ fun EditComposable(
               ) {
                   Text(text = "+", style = MaterialTheme.typography.bodyLarge, fontSize = 20.sp, color = Color.Transparent)
               }*/
-              Counter(quantity) { quantity = it }
+              Counter(
+                  count = quantity,
+                  modifier = Modifier.size(48.dp),
+                  onCounterChange = { quantity = it })
             }
 
         // Expiration Date Picker
@@ -192,65 +179,5 @@ fun EditComposable(
                 }
               }
         }
-      }
-}
-/**
- * Display of the counter to change the number of servings
- *
- * @param servingsCount: The current number of servings
- * @param onCounterChange: The function to change the number of servings
- */
-@Composable
-private fun Counter(servingsCount: Int, onCounterChange: (Int) -> Unit) {
-  Row(
-      modifier =
-          Modifier.background(
-                  MaterialTheme.colorScheme.onSecondaryContainer,
-                  shape = RoundedCornerShape(COUNTER_ROUND_CORNER.dp))
-              .padding(horizontal = SMALL_PADDING.dp, vertical = (PADDING / 4).dp),
-      verticalAlignment = Alignment.CenterVertically,
-      horizontalArrangement = Arrangement.spacedBy(SMALL_PADDING.dp)) {
-        // - button
-        Button(
-            onClick = {
-              if (servingsCount > OVERVIEW_MIN_COUNTER_VALUE) onCounterChange(servingsCount - 1)
-            },
-            colors =
-                ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                    contentColor = MaterialTheme.colorScheme.background),
-            modifier = Modifier.size(COUNTER_MIN_MAX_SIZE.dp).testTag(REMOVE_SERVINGS),
-            contentPadding = PaddingValues(OVERVIEW_RECIPE_COUNTER_PADDING.dp)) {
-              Text(
-                  stringResource(R.string.counter_min),
-                  style = MaterialTheme.typography.titleMedium,
-                  color = MaterialTheme.colorScheme.background)
-            }
-
-        // Display the count
-        Text(
-            text = servingsCount.toString(),
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.background,
-            textAlign = TextAlign.Center,
-            fontSize = OVERVIEW_FONT_SIZE_MEDIUM.sp,
-            modifier = Modifier.testTag(NUMBER_SERVINGS).width(OVERVIEW_COUNTER_TEXT_SIZE.dp))
-
-        // + button
-        Button(
-            onClick = {
-              if (servingsCount < OVERVIEW_MAX_COUNTER_VALUE) onCounterChange(servingsCount + 1)
-            },
-            colors =
-                ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                    contentColor = MaterialTheme.colorScheme.background),
-            modifier = Modifier.size(COUNTER_MIN_MAX_SIZE.dp).testTag(ADD_SERVINGS),
-            contentPadding = PaddingValues(OVERVIEW_RECIPE_COUNTER_PADDING.dp)) {
-              Text(
-                  stringResource(R.string.counter_max),
-                  style = MaterialTheme.typography.titleMedium,
-                  color = MaterialTheme.colorScheme.background)
-            }
       }
 }

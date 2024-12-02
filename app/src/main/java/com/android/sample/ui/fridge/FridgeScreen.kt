@@ -67,6 +67,7 @@ import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.firebrickRed
 import com.android.sample.ui.theme.tagBackground
+import com.android.sample.ui.utils.Counter
 import com.android.sample.ui.utils.PlateSwipeButton
 import com.android.sample.ui.utils.PlateSwipeScaffold
 import java.time.LocalDate
@@ -383,7 +384,7 @@ private fun UpdateQuantityDialog(
                     modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically) {
-                      Button(
+                      /*Button(
                           onClick = {
                             if (updatedQuantity > 0) setUpdatedQuantity(updatedQuantity - 1)
                           },
@@ -417,7 +418,11 @@ private fun UpdateQuantityDialog(
                                 text = "+",
                                 style = MaterialTheme.typography.titleMedium,
                                 color = Color.White)
-                          }
+                          }*/
+                      Counter(
+                          count = updatedQuantity,
+                          modifier = Modifier.size(48.dp),
+                          onCounterChange = { setUpdatedQuantity(it) })
                     }
 
                 Spacer(modifier = Modifier.height(16.dp))

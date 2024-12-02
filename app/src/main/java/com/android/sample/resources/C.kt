@@ -69,7 +69,6 @@ object C {
 
     object IngredientSearchScreen {
       const val DO_NOT_SHOW_CONFIRMATION = false
-      const val INITIAL_LOADING_STATE = false
     }
 
     object Filter {
@@ -221,8 +220,6 @@ object C {
     const val INGREDIENT_VIEWMODEL_LOG_TAG = "IngredientViewModel"
     const val INGR_DOWNLOAD_ERROR_GET_ING = "Error getting ingredient"
     const val INGR_DOWNLOAD_ERROR_DOWNLOAD_IMAGE = "Error downloading image"
-    const val INGR_DOWNLOAD_ERROR_UPDATE_ING = "Error updating ingredient"
-    const val INGR_DOWNLOAD_ERROR_DELETE_ING = "Error deleting ingredient"
     const val INGR_DOWNLOAD_ERROR_NULL_POINTER = "Error getting URI"
 
     // OpenFoodFactsIngredientRepository
@@ -278,8 +275,6 @@ object C {
     const val UNSUPPORTED_MESSAGE = "Operation not supported"
     const val INGREDIENT_NOT_FOUND_MESSAGE = "Ingredient not found"
     const val INGREDIENT_NAME_NOT_PROVIDED = "Ingredient name is required but has not been provided"
-    const val INGREDIENT_BARCODE_NOT_PROVIDED =
-        "Ingredient barcode is required but has not been provided"
 
     // Camera Actions
     const val LOG_TAG_CAMERA_ACTIONS = "CameraActions"
@@ -351,8 +346,6 @@ object C {
 
     // UserViewModel
     object UserViewModel {
-      const val REMOVED_TOO_MANY_INGREDIENTS_ERROR =
-          "Cannot remove more ingredients than there are in the fridge."
       const val REMOVED_INGREDIENT_NOT_IN_FRIDGE_ERROR =
           "Cannot remove an ingredient that is not in the fridge."
       const val LOG_TAG = "UserViewModel"
@@ -454,23 +447,30 @@ object C {
       const val IMAGE_ROUND_CORNER = 10
       const val COUNTER_ROUND_CORNER = 25
       const val OVERVIEW_RECIPE_STAR_SIZE = 24
-      const val COUNTER_MIN_MAX_SIZE = 35
       const val OVERVIEW_TIME_DISPLAY_RATE = 1f / 12f
-      const val OVERVIEW_MIN_COUNTER_VALUE = 1
-      const val OVERVIEW_MAX_COUNTER_VALUE = 99
       const val OVERVIEW_CHECKBOX_SIZE = 15
-      const val OVERVIEW_COUNTER_TEXT_SIZE = 28
       const val OVERVIEW_RECIPE_ROUND = 5
       const val OVERVIEW_RECIPE_ROUND_ROW = 10
       const val OVERVIEW_RECIPE_CARD_SHAPE = 16
       const val OVERVIEW_RECIPE_CARD_ELEVATION = 4
-      const val OVERVIEW_RECIPE_COUNTER_PADDING = 0
       const val OVERVIEW_RECIPE_RATE = 1f / 3f
       const val OVERVIEW_INSTRUCTION_START = 25
       const val OVERVIEW_INSTRUCTION_END = 15
       const val OVERVIEW_INSTRUCTION_TOP = 10
       const val OVERVIEW_INSTRUCTION_BOTTOM = 5
       const val OVERVIEW_FONT_SIZE_MEDIUM = 20
+    }
+
+    object Counter {
+      const val MIN_VALUE = 1
+      const val MAX_VALUE = 99
+      const val COUNTER_MIN_MAX_SIZE = 35
+      const val COUNTER_TEXT_SIZE = 28
+      const val COUNTER_FONT_SIZE = 20
+      const val RECIPE_COUNTER_PADDING = 0
+      const val REMOVE = "removeServings"
+      const val NUMBER = "numberServings"
+      const val ADD = "addServings"
     }
 
     object SignInScreen {
@@ -710,9 +710,6 @@ object C {
       const val RECIPE_STAR = "recipeStar"
       const val RECIPE_RATE = "recipeRate"
       const val INGREDIENTS_VIEW = "ingredientsView"
-      const val REMOVE_SERVINGS = "removeServings"
-      const val NUMBER_SERVINGS = "numberServings"
-      const val ADD_SERVINGS = "addServings"
       const val INSTRUCTIONS_VIEW = "instructionsView"
       const val INGREDIENT_CHECKBOX = "checkboxIngredient"
       const val INGREDIENT_PREFIX = "ingredient"

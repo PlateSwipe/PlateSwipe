@@ -7,7 +7,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
-import com.android.sample.model.ingredient.networkData.FirestoreIngredientRepository
+import com.android.sample.model.ingredient.networkData.AggregatorIngredientRepository
 import com.android.sample.model.recipe.FirestoreRecipesRepository
 import com.android.sample.model.recipe.Instruction
 import com.android.sample.model.recipe.Recipe
@@ -35,7 +35,7 @@ class RecipeListTest {
   private lateinit var mockUserRepository: UserRepository
   private lateinit var mockFirebaseAuth: FirebaseAuth
   private lateinit var mockRecipeRepository: FirestoreRecipesRepository
-  private lateinit var mockIngredientRepository: FirestoreIngredientRepository
+  private lateinit var mockIngredientRepository: AggregatorIngredientRepository
 
   private lateinit var userViewModel: UserViewModel
 
@@ -108,7 +108,7 @@ class RecipeListTest {
     mockFirebaseFirestore = mock(FirebaseFirestore::class.java)
     mockUserRepository = mock(UserRepository::class.java)
     mockFirebaseAuth = mock(FirebaseAuth::class.java)
-    mockIngredientRepository = FirestoreIngredientRepository(mockFirebaseFirestore)
+    mockIngredientRepository = mock(AggregatorIngredientRepository::class.java)
     mockRecipeRepository = FirestoreRecipesRepository(mockFirebaseFirestore)
 
     userViewModel =
