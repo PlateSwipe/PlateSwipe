@@ -152,6 +152,8 @@
     <string name="date_pattern">dd/MM/yyyy</string>
     <string name="no_date">No Date</string>
     <string name="save">Save</string>
+    <string name="confirm">Confirm</string>
+    <string name="expiration_date">Expiration Date:</string>
 
 
 </resources>

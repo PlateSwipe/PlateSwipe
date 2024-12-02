@@ -473,6 +473,13 @@ object C {
       const val ADD = "addServings"
     }
 
+    object EditFridgeItemScreen {
+      const val TITLE_LINE_HEIGHT = 28
+      const val TITLE_FONT_SIZE = 24
+      const val TEXT_FONT_SIZE = 20
+      const val EPOCH_LITERAL = 86400000L
+    }
+
     object SignInScreen {
       const val SWIPE = "Swipe"
       const val ORIGINAL_ICON_SIZE = 70

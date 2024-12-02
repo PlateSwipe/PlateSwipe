@@ -39,7 +39,7 @@ import com.android.sample.ui.createRecipe.RecipeInstructionsScreen
 import com.android.sample.ui.createRecipe.RecipeListInstructionsScreen
 import com.android.sample.ui.createRecipe.TimePickerScreen
 import com.android.sample.ui.filter.FilterPage
-import com.android.sample.ui.fridge.EditFridgeItem
+import com.android.sample.ui.fridge.EditFridgeItemScreen
 import com.android.sample.ui.fridge.FridgeScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
@@ -110,7 +110,7 @@ fun PlateSwipeApp() {
               navigationActions.navigateTo(Screen.FRIDGE_EDIT)
             })
       }
-      composable(Screen.FRIDGE_EDIT) { EditFridgeItem(navigationActions, userViewModel) }
+      composable(Screen.FRIDGE_EDIT) { EditFridgeItemScreen(navigationActions, userViewModel) }
       composable(Screen.FRIDGE_SCAN_CODE_BAR) {
         CameraScanCodeBarScreen(
             navigationActions = navigationActions,
