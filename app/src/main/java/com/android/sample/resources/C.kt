@@ -542,6 +542,7 @@ object C {
       const val TOP_BAR_HEIGHT = 50
       const val TOP_BAR_TITLE_FONT_SIZE = 28
       const val BACK_ARROW_ICON_SIZE = 26
+      const val EDIT_ACCOUNT_ICON_SIZE = 26
       const val CHEF_HAT_ICON_SIZE = 35
       const val CHEF_HAT_ICON_END_PADDING = 8
       const val BOTTOM_BAR_HEIGHT = 60
@@ -675,6 +676,7 @@ object C {
       const val TOP_BAR = "topBar"
       const val TOP_BAR_TITLE = "topBarTitle"
       const val BACK_ARROW_ICON = "backArrowIcon"
+      const val EDIT_ACCOUNT_ICON = "editAccountIcon"
       const val PLATESWIPE_SCAFFOLD = "plateSwipeScaffold"
       const val CHEF_HAT_ICON = "chefHatIcon"
       const val BOTTOM_BAR = "bottomNavigationMenu"

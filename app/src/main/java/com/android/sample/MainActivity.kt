@@ -25,6 +25,7 @@ import com.android.sample.resources.C
 import com.android.sample.resources.C.Tag.SECOND_STEP_OF_THE_CREATION
 import com.android.sample.resources.C.Tag.THIRD_STEP_OF_THE_CREATION
 import com.android.sample.ui.account.AccountScreen
+import com.android.sample.ui.account.EditAccountScreen
 import com.android.sample.ui.authentication.SignInScreen
 import com.android.sample.ui.camera.CameraScanCodeBarScreen
 import com.android.sample.ui.camera.CameraTakePhotoScreen
@@ -189,6 +190,7 @@ fun PlateSwipeApp() {
       composable(Screen.OVERVIEW_RECIPE_ACCOUNT) {
         RecipeOverview(navigationActions, userViewModel)
       }
+      composable(Screen.EDIT_ACCOUNT) { EditAccountScreen(navigationActions, userViewModel) }
     }
   }
 }

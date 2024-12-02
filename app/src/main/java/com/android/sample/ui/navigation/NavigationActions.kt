@@ -42,6 +42,8 @@ object Screen {
 
   const val ACCOUNT = "Account Screen"
 
+  const val EDIT_ACCOUNT = "Edit Account Screen"
+
   const val OVERVIEW_RECIPE = "Overview Recipe Screen"
 
   const val OVERVIEW_RECIPE_ACCOUNT = "Overview Recipe Account Screen"
