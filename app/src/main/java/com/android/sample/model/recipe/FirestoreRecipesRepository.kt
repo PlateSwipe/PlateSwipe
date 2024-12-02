@@ -286,7 +286,9 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
    * Fetches a list of recipes from Firestore that match the given filter.
    *
    * @param filter The filter to apply to the search.
-   * @param nbOfElements The number of recipes to fetch.
+   * @param limit The number of recipes to fetch.
+   * @param onSuccess The callback to call if the operation is successful.
+   * @param onFailure The callback to call if the operation fails.
    */
   fun filterSearch(
       filter: Filter,
