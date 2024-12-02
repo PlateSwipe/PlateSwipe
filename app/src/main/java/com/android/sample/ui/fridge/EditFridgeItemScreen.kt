@@ -123,11 +123,12 @@ fun EditComposable(
 
         // Quantity Adjustment
         Row(
+            modifier = Modifier.fillMaxSize().weight(2f),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(PADDING_16.dp),
-            modifier = Modifier.weight(2f)) {
+            horizontalArrangement = Arrangement.spacedBy(PADDING_16.dp)) {
               Text(
                   text = "Quantity (x ${ingredient.quantity}):",
+                  modifier = Modifier.weight(1f),
                   style = MaterialTheme.typography.bodyMedium,
                   fontSize = TEXT_FONT_SIZE.sp,
                   color = MaterialTheme.colorScheme.onPrimary)
@@ -139,12 +140,13 @@ fun EditComposable(
 
         // Expiration Date Picker
         Row(
+            modifier = Modifier.fillMaxSize().weight(2f),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(PADDING_16.dp),
-            modifier = Modifier.weight(2f)) {
+            horizontalArrangement = Arrangement.spacedBy(PADDING_16.dp)) {
               Text(
                   text = stringResource(R.string.expiration_date),
                   style = MaterialTheme.typography.bodyMedium,
+                  modifier = Modifier.weight(1f),
                   fontSize = TEXT_FONT_SIZE.sp,
                   color = MaterialTheme.colorScheme.onPrimary)
               // Button to display the date picker dialog
