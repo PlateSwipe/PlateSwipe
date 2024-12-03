@@ -3,7 +3,6 @@ package com.android.sample.createRecipe
 import androidx.compose.ui.test.assertAny
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
@@ -14,10 +13,8 @@ import androidx.compose.ui.test.performScrollTo
 import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.model.recipe.FirestoreRecipesRepository
-import com.android.sample.model.recipe.Recipe
 import com.android.sample.resources.C.TestTag.Category.BUTTON_TEST_TAG
 import com.android.sample.resources.C.TestTag.Category.CATEGORY_DROPDOWN
-import com.android.sample.resources.C.TestTag.PlateSwipeDropdown.DROPDOWN
 import com.android.sample.resources.C.TestTag.PlateSwipeDropdown.DROPDOWN_TITLE
 import com.android.sample.ui.createRecipe.CategoryScreen
 import com.android.sample.ui.navigation.NavigationActions
@@ -74,15 +71,13 @@ class CategoryScreenTest {
           navigationActions = mockNavigationActions, createRecipeViewModel = createRecipeViewModel)
     }
 
-      val selectedCategory = "Vegan"
+    val selectedCategory = "Vegan"
 
     // Open dropdown menu
     composeTestRule.onNodeWithTag(CATEGORY_DROPDOWN).performClick()
 
     // Scroll to the desired category if necessary
-    composeTestRule
-        .onNodeWithText(selectedCategory, useUnmergedTree = true)
-        .performScrollTo()
+    composeTestRule.onNodeWithText(selectedCategory, useUnmergedTree = true).performScrollTo()
 
     // Wait for the UI to update
     composeTestRule.waitForIdle()
@@ -93,7 +88,10 @@ class CategoryScreenTest {
     composeTestRule.waitForIdle()
 
     // Verify dropdown button text updates to the selected category
-    composeTestRule.onAllNodesWithTag(DROPDOWN_TITLE, useUnmergedTree = true).assertCountEquals(2).assertAny(hasText(selectedCategory))
+    composeTestRule
+        .onAllNodesWithTag(DROPDOWN_TITLE, useUnmergedTree = true)
+        .assertCountEquals(2)
+        .assertAny(hasText(selectedCategory))
   }
 
   @Test

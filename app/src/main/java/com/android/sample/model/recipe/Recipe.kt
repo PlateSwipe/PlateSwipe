@@ -95,11 +95,11 @@ data class Recipe(
       return listCategories
     }
 
-      private val listDifficulties = listOf("Easy", "Medium", "Hard")
+    private val listDifficulties = listOf("Easy", "Medium", "Hard")
 
-        /** Returns the list of difficulties. */
+    /** Returns the list of difficulties. */
     fun getDifficulties(): List<String> {
-        return listDifficulties
-        }
+      return listDifficulties
+    }
   }
 }

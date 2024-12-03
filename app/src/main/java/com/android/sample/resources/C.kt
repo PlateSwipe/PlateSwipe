@@ -843,8 +843,8 @@ object C {
       const val CATEGORY_DROPDOWN = "CategoryDropdown"
 
       // Difficulty
-        const val DIFFICULTY_SUBTITLE = "DifficultySubtitle"
-        const val DIFFICULTY_DROPDOWN = "DifficultyDropdown"
+      const val DIFFICULTY_SUBTITLE = "DifficultySubtitle"
+      const val DIFFICULTY_DROPDOWN = "DifficultyDropdown"
     }
 
     object TimePicker {

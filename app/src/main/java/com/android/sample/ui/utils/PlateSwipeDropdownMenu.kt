@@ -34,67 +34,64 @@ import com.android.sample.resources.C.TestTag.PlateSwipeDropdown.DROPDOWN_TITLE
  * A dropdown menu that displays a list of items and allows the user to select one.
  *
  * @param itemList The list of items to display in the dropdown menu.
- * @param onSelected The callback to be invoked when an item is selected. With as parameters the selected item and its index.
+ * @param onSelected The callback to be invoked when an item is selected. With as parameters the
+ *   selected item and its index.
  * @param modifier The modifier to be applied to the dropdown menu.
  * @param defaultItemIndex The index of the item to be selected by default.
  */
 @Composable
-fun PlateSwipeDropdownMenu(itemList: List<String>, modifier: Modifier = Modifier, onSelected: (String,Int) -> Unit = {string,index -> }, defaultItemIndex: Int? = null) {
-    if (defaultItemIndex != null && defaultItemIndex >= itemList.size) {
-        throw IllegalArgumentException("defaultItemIndex should be less than list size")
-    }
+fun PlateSwipeDropdownMenu(
+    itemList: List<String>,
+    modifier: Modifier = Modifier,
+    onSelected: (String, Int) -> Unit = { string, index -> },
+    defaultItemIndex: Int? = null
+) {
+  if (defaultItemIndex != null && defaultItemIndex >= itemList.size) {
+    throw IllegalArgumentException("defaultItemIndex should be less than list size")
+  }
 
-    val expanded = remember { mutableStateOf(false) }
-    val selectedItem = remember { mutableStateOf(
-        if (defaultItemIndex != null) itemList[defaultItemIndex] else null
-    ) }
+  val expanded = remember { mutableStateOf(false) }
+  val selectedItem = remember {
+    mutableStateOf(if (defaultItemIndex != null) itemList[defaultItemIndex] else null)
+  }
 
-    Box(modifier = modifier) {
-        OutlinedButton(
-            onClick = { expanded.value = !expanded.value },
-            modifier = Modifier.fillMaxWidth().testTag(DROPDOWN),
-            shape = RoundedCornerShape(DROPDOWN_CORNER_RADIUS.dp),
-            colors =
+  Box(modifier = modifier) {
+    OutlinedButton(
+        onClick = { expanded.value = !expanded.value },
+        modifier = Modifier.fillMaxWidth().testTag(DROPDOWN),
+        shape = RoundedCornerShape(DROPDOWN_CORNER_RADIUS.dp),
+        colors =
             ButtonDefaults.outlinedButtonColors(
                 containerColor = MaterialTheme.colorScheme.surface,
-                contentColor = MaterialTheme.colorScheme.onSurface
-            )
-        ) {
-            Text(
-                text =
-                selectedItem.value ?: stringResource(R.string.no_item_selected),
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(vertical = PADDING_8.dp).testTag(DROPDOWN_TITLE)
-            )
+                contentColor = MaterialTheme.colorScheme.onSurface)) {
+          Text(
+              text = selectedItem.value ?: stringResource(R.string.no_item_selected),
+              style = MaterialTheme.typography.bodyMedium,
+              modifier = Modifier.padding(vertical = PADDING_8.dp).testTag(DROPDOWN_TITLE))
         }
 
-        DropdownMenu(
-            expanded = expanded.value,
-            onDismissRequest = { expanded.value = false },
-            modifier =
+    DropdownMenu(
+        expanded = expanded.value,
+        onDismissRequest = { expanded.value = false },
+        modifier =
             Modifier.padding(horizontal = PADDING_16.dp)
                 .fillMaxWidth()
                 .fillMaxHeight(DROPDOWN_HEIGHT_FRACTION)
-                .background(MaterialTheme.colorScheme.surface)
-        ) {
-            itemList.forEachIndexed { index, selectedText ->
-                DropdownMenuItem(
-                    text = {
-                        Text(text = selectedText, style = MaterialTheme.typography.bodyMedium)
-                    },
-                    onClick = {
-                        onSelected(selectedText, index)
-                        selectedItem.value = selectedText
-                        expanded.value = false
-                    },
-                    modifier = Modifier.testTag(DROPDOWN_ITEM)
-                )
-                if (index < itemList.size - 1) {
-                    HorizontalDivider(
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = DIVIDER_ALPHA)
-                    )
-                }
+                .background(MaterialTheme.colorScheme.surface)) {
+          itemList.forEachIndexed { index, selectedText ->
+            DropdownMenuItem(
+                text = { Text(text = selectedText, style = MaterialTheme.typography.bodyMedium) },
+                onClick = {
+                  onSelected(selectedText, index)
+                  selectedItem.value = selectedText
+                  expanded.value = false
+                },
+                modifier = Modifier.testTag(DROPDOWN_ITEM))
+            if (index < itemList.size - 1) {
+              HorizontalDivider(
+                  color = MaterialTheme.colorScheme.onSurface.copy(alpha = DIVIDER_ALPHA))
             }
+          }
         }
-    }
+  }
 }
