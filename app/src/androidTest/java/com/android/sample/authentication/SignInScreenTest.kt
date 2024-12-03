@@ -7,6 +7,7 @@ import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.intent.Intents
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.sample.model.user.UserViewModel
@@ -50,7 +51,9 @@ class SignInTest : TestCase() {
   @Before
   fun setUp() {
     mockNavigationActions = mock(NavigationActions::class.java)
-    mockUserViewModel = UserViewModel.Factory.create(UserViewModel::class.java)
+    mockUserViewModel =
+        UserViewModel.provideFactory(ApplicationProvider.getApplicationContext())
+            .create(UserViewModel::class.java)
     `when`(mockNavigationActions.navigateTo(Screen.SWIPE)).then {}
     Intents.init()
     composeTestRule.setContent {

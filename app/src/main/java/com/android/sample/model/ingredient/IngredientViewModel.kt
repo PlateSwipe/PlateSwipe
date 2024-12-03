@@ -12,7 +12,6 @@ import com.android.sample.model.ingredient.localData.RoomIngredientRepository
 import com.android.sample.model.ingredient.networkData.AggregatorIngredientRepository
 import com.android.sample.model.ingredient.networkData.FirestoreIngredientRepository
 import com.android.sample.model.ingredient.networkData.OpenFoodFactsIngredientRepository
-import com.android.sample.resources.C.Tag.INGREDIENT_NOT_FOUND_MESSAGE
 import com.android.sample.resources.C.Tag.INGREDIENT_VIEWMODEL_LOG_TAG
 import com.android.sample.resources.C.Tag.INGR_DOWNLOAD_ERROR_DOWNLOAD_IMAGE
 import com.android.sample.resources.C.Tag.INGR_DOWNLOAD_ERROR_GET_ING
@@ -27,7 +26,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 
@@ -76,76 +74,20 @@ class IngredientViewModel(
     if (_ingredient.value.first?.barCode == barCode) {
       return
     }
-    // Fetch ingredient from repository
-    _isFetchingByBarcode.value = true
-    repository.get(
+    fetchIngredientByBarcodeAndAddToList(
         barCode,
-        onSuccess = { ingredient ->
-          if (ingredient != null) {
-            _ingredient.value = Pair(ingredient, ingredient.quantity)
-          }
-
-          _isFetchingByBarcode.value = false
-        },
-        onFailure = {
-          Log.e(INGREDIENT_VIEWMODEL_LOG_TAG, INGREDIENT_NOT_FOUND_MESSAGE)
-          _ingredient.value = Pair(null, null)
-          _isFetchingByBarcode.value = false
-        })
+        _ingredient,
+        repository,
+        { _isFetchingByBarcode.value = true },
+        { _isFetchingByBarcode.value = false })
   }
-  /** Clear ingredient after use */
-  override fun clearIngredient() {
-    _ingredient.value = Pair(null, null)
-  }
-
-  /**
-   * Add the first integer in the two strings
-   *
-   * @param quantity1
-   * @param quantity2
-   */
-  private fun addFirstInt(quantity1: String?, quantity2: String?): String {
-    if (quantity1 == null || quantity2 == null) {
-      return quantity1 ?: quantity2 ?: ""
-    }
-
-    // Regular expression to find the first integer in the string
-    val regex = Regex("""\d+""")
-    val match1 = regex.find(quantity1)
-    val match2 = regex.find(quantity2)
-
-    // If both strings contain an integer, add them together
-    return if (match1 != null && match2 != null) {
-      val addition = match1.value.toInt() + match2.value.toInt()
-      quantity1.replaceFirst(match1.value, addition.toString())
-    } else if (match1 != null) {
-      quantity1
-    } else {
-      quantity2
-    }
-  }
-
   /**
    * Add bar code ingredient
    *
    * @param ingredient
    */
   override fun addIngredient(ingredient: Ingredient) {
-    _ingredientList.update { currentList ->
-      val existingItemIndex = currentList.indexOfFirst { it.first.barCode == ingredient.barCode }
-
-      if (existingItemIndex != -1) {
-        // Ingredient already exists; update its associated String value
-        currentList.toMutableList().apply {
-          this[existingItemIndex] =
-              this[existingItemIndex].copy(
-                  second = addFirstInt(this[existingItemIndex].second, ingredient.quantity))
-        }
-      } else {
-        // Ingredient doesn't exist; add it to the list
-        currentList + (ingredient to ingredient.quantity)
-      }
-    }
+    addIngredientToList(ingredient, _ingredientList)
   }
 
   /**
@@ -171,17 +113,12 @@ class IngredientViewModel(
    * @param name
    */
   override fun fetchIngredientByName(name: String) {
-    _isSearching.value = true
-    repository.search(
+    fetchIngredientByNameAndAddToList(
         name,
-        onSuccess = { ingredientList ->
-          _isSearching.value = false
-          _searchingIngredientList.value = ingredientList.map { Pair(it, it.quantity) }
-        },
-        onFailure = {
-          _isSearching.value = false
-          _searchingIngredientList.value = emptyList()
-        })
+        _searchingIngredientList,
+        repository,
+        { _isSearching.value = true },
+        { _isSearching.value = false })
   }
 
   /**
@@ -192,10 +129,19 @@ class IngredientViewModel(
   fun removeIngredient(ingredient: Ingredient) {
     _ingredientList.value = _ingredientList.value.filter { it.first != ingredient }
   }
+  /** Clear ingredient after use */
+  override fun clearIngredient() {
+    _ingredient.value = Pair(null, null)
+  }
 
   /** Clear search */
-  fun clearSearch() {
+  override fun clearSearchingIngredientList() {
     _searchingIngredientList.value = emptyList()
+  }
+
+  /** Clear ingredient list */
+  override fun clearIngredientList() {
+    _ingredientList.value = emptyList()
   }
 
   fun downloadIngredient(

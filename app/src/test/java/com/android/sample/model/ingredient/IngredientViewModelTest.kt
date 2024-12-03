@@ -257,7 +257,7 @@ class IngredientViewModelTest {
     assertEquals(ingredientList, ingredientViewModel.searchingIngredientList.value.map { it.first })
 
     // Clear search and verify that the searchingIngredientList is empty
-    ingredientViewModel.clearSearch()
+    ingredientViewModel.clearSearchingIngredientList()
     assertTrue(ingredientViewModel.searchingIngredientList.value.isEmpty())
   }
 
@@ -356,7 +356,7 @@ class IngredientViewModelTest {
     }
 
     ingredientViewModel.fetchIngredient(barCode)
-    ingredientViewModel.clearSearch()
+    ingredientViewModel.clearSearchingIngredientList()
     assertTrue(ingredientViewModel.searchingIngredientList.value.isEmpty())
   }
 

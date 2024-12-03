@@ -10,6 +10,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.test.core.app.ApplicationProvider
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C.TestTag.Fridge.GREEN
 import com.android.sample.resources.C.TestTag.Fridge.ORANGE
@@ -38,7 +39,9 @@ class FridgeScreenTest {
   @Before
   fun setUp() {
     navigationActions = mock(NavigationActions::class.java)
-    userViewModel = UserViewModel.Factory.create(UserViewModel::class.java)
+    userViewModel =
+        UserViewModel.provideFactory(ApplicationProvider.getApplicationContext())
+            .create(UserViewModel::class.java)
     userViewModel.changeUserName(userName)
 
     `when`(navigationActions.currentRoute()).thenReturn(Screen.FRIDGE)

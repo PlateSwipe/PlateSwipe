@@ -4,7 +4,7 @@ import android.util.Log
 import com.android.sample.model.fridge.FridgeItem
 import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.ingredient.Ingredient
-import com.android.sample.model.ingredient.networkData.AggregatorIngredientRepository
+import com.android.sample.model.ingredient.IngredientRepository
 import com.android.sample.model.recipe.FirestoreRecipesRepository
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.resources.C.Tag.UserViewModel.FAILED_TO_DELETE_IMAGE
@@ -77,7 +77,7 @@ class UserViewModelTest {
   private lateinit var mockUserRepository: UserRepository
   private lateinit var mockFirebaseAuth: FirebaseAuth
   private lateinit var mockCurrentUser: FirebaseUser
-  private lateinit var mockIngredientRepository: AggregatorIngredientRepository
+  private lateinit var mockIngredientRepository: IngredientRepository
   private lateinit var mockRecipeRepository: FirestoreRecipesRepository
   private lateinit var mockImageRepositoryFirebase: ImageRepositoryFirebase
 
@@ -108,7 +108,7 @@ class UserViewModelTest {
     mockUserRepository = mock(UserRepository::class.java)
     mockFirebaseAuth = mock(FirebaseAuth::class.java)
     mockCurrentUser = mock(FirebaseUser::class.java)
-    mockIngredientRepository = mock(AggregatorIngredientRepository::class.java)
+    mockIngredientRepository = mock(IngredientRepository::class.java)
     mockRecipeRepository = mock(FirestoreRecipesRepository::class.java)
     mockImageRepositoryFirebase = mock(ImageRepositoryFirebase::class.java)
 
@@ -119,8 +119,8 @@ class UserViewModelTest {
         UserViewModel(
             mockUserRepository,
             mockFirebaseAuth,
-            mockRecipeRepository,
             mockIngredientRepository,
+            mockRecipeRepository,
             mockImageRepositoryFirebase)
   }
 

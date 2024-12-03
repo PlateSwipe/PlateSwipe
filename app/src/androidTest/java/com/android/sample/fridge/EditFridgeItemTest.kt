@@ -4,6 +4,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.test.core.app.ApplicationProvider
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.ui.fridge.EditFridgeItemScreen
 import com.android.sample.ui.navigation.NavigationActions
@@ -29,7 +30,9 @@ class EditFridgeItemTest {
   @Before
   fun setUp() {
     navigationActions = mock(NavigationActions::class.java)
-    userViewModel = UserViewModel.Factory.create(UserViewModel::class.java)
+    userViewModel =
+        UserViewModel.provideFactory(ApplicationProvider.getApplicationContext())
+            .create(UserViewModel::class.java)
     userViewModel.changeUserName(userName)
 
     userViewModel.ingredientList

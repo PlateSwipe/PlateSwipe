@@ -1,5 +1,6 @@
 package com.android.sample.model.user
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -7,16 +8,18 @@ import com.android.sample.model.fridge.FridgeItem
 import com.android.sample.model.image.ImageDirectoryType
 import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.image.ImageUploader
+import com.android.sample.model.ingredient.DefaultIngredientRepository
 import com.android.sample.model.ingredient.Ingredient
+import com.android.sample.model.ingredient.IngredientRepository
 import com.android.sample.model.ingredient.SearchIngredientViewModel
+import com.android.sample.model.ingredient.localData.IngredientDatabase
+import com.android.sample.model.ingredient.localData.RoomIngredientRepository
 import com.android.sample.model.ingredient.networkData.AggregatorIngredientRepository
 import com.android.sample.model.ingredient.networkData.FirestoreIngredientRepository
 import com.android.sample.model.ingredient.networkData.OpenFoodFactsIngredientRepository
 import com.android.sample.model.recipe.FirestoreRecipesRepository
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.recipe.RecipeOverviewViewModel
-import com.android.sample.resources.C.Tag.INGREDIENT_NOT_FOUND_MESSAGE
-import com.android.sample.resources.C.Tag.INGREDIENT_VIEWMODEL_LOG_TAG
 import com.android.sample.resources.C.Tag.UserViewModel.FAILED_TO_DELETE_IMAGE
 import com.android.sample.resources.C.Tag.UserViewModel.FAILED_TO_DELETE_RECIPE
 import com.android.sample.resources.C.Tag.UserViewModel.FAILED_TO_FETCH_CREATED_RECIPE_FROM_DATABASE_ERROR
@@ -31,26 +34,23 @@ import com.android.sample.resources.C.Tag.UserViewModel.RECIPE_NOT_FOUND
 import com.android.sample.resources.C.Tag.UserViewModel.REMOVED_INGREDIENT_NOT_IN_FRIDGE_ERROR
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import com.google.firebase.storage.storage
 import java.time.LocalDate
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
 import okhttp3.OkHttpClient
 
 class UserViewModel(
     private val userRepository: UserRepository,
     private val firebaseAuth: FirebaseAuth = Firebase.auth,
+    private val ingredientRepository: IngredientRepository,
     private val recipesRepository: FirestoreRecipesRepository =
         FirestoreRecipesRepository(Firebase.firestore),
-    private val ingredientRepository: AggregatorIngredientRepository =
-        AggregatorIngredientRepository(
-            FirestoreIngredientRepository(Firebase.firestore),
-            OpenFoodFactsIngredientRepository(OkHttpClient()),
-            ImageRepositoryFirebase(Firebase.storage),
-            ImageUploader()),
     private val imageRepositoryFirebase: ImageRepositoryFirebase =
         ImageRepositoryFirebase(Firebase.storage)
 ) : ViewModel(), RecipeOverviewViewModel, SearchIngredientViewModel {
@@ -96,14 +96,29 @@ class UserViewModel(
     get() = _isSearching
 
   companion object {
-    val Factory: ViewModelProvider.Factory =
-        object : ViewModelProvider.Factory {
-          @Suppress("UNCHECKED_CAST")
-          override fun <T : ViewModel> create(modelClass: Class<T>): T {
+    fun provideFactory(context: Context): ViewModelProvider.Factory {
 
-            return UserViewModel(userRepository = UserRepositoryFirestore(Firebase.firestore)) as T
-          }
+      val appContext = context.applicationContext
+      return object : ViewModelProvider.Factory {
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+          val networkRepository =
+              AggregatorIngredientRepository(
+                  FirestoreIngredientRepository(com.google.firebase.Firebase.firestore),
+                  OpenFoodFactsIngredientRepository(OkHttpClient()),
+                  ImageRepositoryFirebase(com.google.firebase.Firebase.storage),
+                  ImageUploader())
+          val appDatabase = IngredientDatabase.getDatabase(appContext)
+          val ingredientDao = appDatabase.ingredientDao()
+          val localRepository = RoomIngredientRepository(ingredientDao, Dispatchers.IO)
+          val defaultRepository = DefaultIngredientRepository(localRepository, networkRepository)
+          return UserViewModel(
+              userRepository = UserRepositoryFirestore(Firebase.firestore),
+              ingredientRepository = defaultRepository)
+              as T
         }
+      }
+    }
   }
 
   /**
@@ -119,7 +134,7 @@ class UserViewModel(
         onSuccess = { user ->
           _userName.value = user.userName
           _profilePictureUrl.value = user.profilePictureUrl
-          user.fridge.forEach { fridgeItem -> fetchIngredient(fridgeItem) }
+          user.fridge.forEach { fridgeItem -> fetchIngredientInFridge(fridgeItem) }
           user.likedRecipes.forEach { uid ->
             fetchRecipe(
                 uid,
@@ -399,7 +414,7 @@ class UserViewModel(
    *
    * @param fridgeItem the fridge item that describes the ingredient that we want to retrieve
    */
-  private fun fetchIngredient(fridgeItem: FridgeItem) {
+  private fun fetchIngredientInFridge(fridgeItem: FridgeItem) {
     ingredientRepository.get(
         fridgeItem.id.toLong(),
         onSuccess = { ingredient ->
@@ -414,101 +429,48 @@ class UserViewModel(
   }
 
   override fun fetchIngredient(barCode: Long) {
-    clearIngredient()
-    clearSearchingIngredientList()
-    clearIngredientList()
     if (_ingredient.value.first?.barCode == barCode) {
       return
     }
-    // Fetch ingredient from repository
-    _isFetchingByBarcode.value = true
-    ingredientRepository.get(
+    clearIngredient()
+    clearSearchingIngredientList()
+    clearIngredientList()
+    fetchIngredientByBarcodeAndAddToList(
         barCode,
-        onSuccess = { ingredient ->
-          if (ingredient != null) {
-            _ingredient.value = Pair(ingredient, ingredient.quantity)
-          }
-
-          _isFetchingByBarcode.value = false
-        },
-        onFailure = {
-          Log.e(INGREDIENT_VIEWMODEL_LOG_TAG, INGREDIENT_NOT_FOUND_MESSAGE)
-          _ingredient.value = Pair(null, null)
-          _isFetchingByBarcode.value = false
-        })
+        _ingredient,
+        ingredientRepository,
+        { _isFetchingByBarcode.value = true },
+        { _isFetchingByBarcode.value = false })
   }
 
+  /** Clear ingredient after use */
   override fun clearIngredient() {
     _ingredient.value = Pair(null, null)
   }
 
-  fun clearSearchingIngredientList() {
+  /** Clear search */
+  override fun clearSearchingIngredientList() {
     _searchingIngredientList.value = emptyList()
   }
 
-  fun clearIngredientList() {
+  /** Clear ingredient list */
+  override fun clearIngredientList() {
     _ingredientList.value = emptyList()
   }
 
-  /**
-   * Add the first integer in the two strings
-   *
-   * @param quantity1
-   * @param quantity2
-   */
-  private fun addFirstInt(quantity1: String?, quantity2: String?): String {
-    if (quantity1 == null || quantity2 == null) {
-      return quantity1 ?: quantity2 ?: ""
-    }
-
-    // Regular expression to find the first integer in the string
-    val regex = Regex("""\d+""")
-    val match1 = regex.find(quantity1)
-    val match2 = regex.find(quantity2)
-
-    // If both strings contain an integer, add them together
-    return if (match1 != null && match2 != null) {
-      val addition = match1.value.toInt() + match2.value.toInt()
-      quantity1.replaceFirst(match1.value, addition.toString())
-    } else if (match1 != null) {
-      quantity1
-    } else {
-      quantity2
-    }
-  }
-
   override fun addIngredient(ingredient: Ingredient) {
-    _ingredientList.update { currentList ->
-      val existingItemIndex = currentList.indexOfFirst { it.first.barCode == ingredient.barCode }
-
-      if (existingItemIndex != -1) {
-        // Ingredient already exists; update its associated String value
-        currentList.toMutableList().apply {
-          this[existingItemIndex] =
-              this[existingItemIndex].copy(
-                  second = addFirstInt(this[existingItemIndex].second, ingredient.quantity))
-        }
-      } else {
-        // Ingredient doesn't exist; add it to the list
-        currentList + (ingredient to ingredient.quantity)
-      }
-    }
+    addIngredientToList(ingredient, _ingredientList)
   }
 
   override fun fetchIngredientByName(name: String) {
     clearIngredient()
     clearSearchingIngredientList()
     clearIngredientList()
-    _isSearching.value = true
-    ingredientRepository.search(
+    fetchIngredientByNameAndAddToList(
         name,
-        onSuccess = { ingredientList ->
-          _isSearching.value = false
-          _searchingIngredientList.value = ingredientList.map { Pair(it, it.quantity) }
-        },
-        onFailure = {
-          _isSearching.value = false
-          _searchingIngredientList.value = emptyList()
-        })
+        _searchingIngredientList,
+        ingredientRepository,
+        { _isSearching.value = true },
+        { _isSearching.value = false })
   }
 }

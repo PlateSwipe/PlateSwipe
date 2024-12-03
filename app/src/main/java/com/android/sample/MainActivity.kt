@@ -74,7 +74,8 @@ fun PlateSwipeApp() {
   val ingredientViewModel: IngredientViewModel =
       viewModel(factory = IngredientViewModel.provideFactory(context = context))
 
-  val userViewModel: UserViewModel = viewModel(factory = UserViewModel.Factory)
+  val userViewModel: UserViewModel =
+      viewModel(factory = UserViewModel.provideFactory(context = context))
   val createRecipeViewModel: CreateRecipeViewModel =
       viewModel(factory = CreateRecipeViewModel.Factory)
 
