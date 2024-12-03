@@ -7,6 +7,9 @@ import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.ingredient.IngredientRepository
 import com.android.sample.model.recipe.FirestoreRecipesRepository
 import com.android.sample.model.recipe.Recipe
+import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_NORMAL_URL
+import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_SMALL_URL
+import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_THUMBNAIL_URL
 import com.android.sample.resources.C.Tag.UserViewModel.FAILED_TO_DELETE_IMAGE
 import com.android.sample.resources.C.Tag.UserViewModel.FAILED_TO_DELETE_RECIPE
 import com.android.sample.resources.C.Tag.UserViewModel.FAILED_TO_FETCH_CREATED_RECIPE_FROM_DATABASE_ERROR
@@ -27,12 +30,16 @@ import com.android.sample.ui.utils.testRecipes
 import com.android.sample.ui.utils.testUsers
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import junit.framework.TestCase
+import junit.framework.TestCase.assertNotNull
+import junit.framework.TestCase.assertTrue
 import okhttp3.Call
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
 import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.mockStatic
 import org.mockito.Mockito.`when`
@@ -560,5 +567,280 @@ class UserViewModelTest {
         Log.e(eq(LOG_TAG), eq(FAILED_TO_DELETE_IMAGE), any<Exception>())
       }
     }
+  }
+
+  @Test
+  fun clearTest() {
+
+    val barCode = 123456L
+    val ingredient =
+        Ingredient(
+            barCode = barCode,
+            name = "Test Ingredient",
+            brands = null,
+            quantity = "",
+            categories = listOf(""),
+            images =
+                mutableMapOf(
+                    PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
+                    PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
+                    PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
+
+    // Mock the repository to call onSuccess with the ingredient
+    `when`(mockIngredientRepository.get(ArgumentMatchers.eq(barCode), any(), any())).thenAnswer {
+        invocation ->
+      val onSuccess: (Ingredient?) -> Unit = invocation.getArgument(1)
+      onSuccess(ingredient)
+    }
+
+    userViewModel.fetchIngredient(barCode)
+    userViewModel.clearSearchingIngredientList()
+    assertTrue(userViewModel.searchingIngredientList.value.isEmpty())
+  }
+
+  @Test
+  fun clearIngredientListTest() {
+    val ingredient =
+        Ingredient(
+            barCode = 123456L,
+            name = "Test Ingredient",
+            brands = null,
+            quantity = "",
+            categories = listOf(""),
+            images =
+                mutableMapOf(
+                    PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
+                    PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
+                    PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
+
+    userViewModel.addIngredient(ingredient)
+    userViewModel.clearIngredientList()
+    assertTrue(userViewModel.ingredientList.value.isEmpty())
+  }
+
+  @Test
+  fun addNullIngredientTest() {
+    // Create an initial ingredient
+    val ingredient =
+        Ingredient(
+            barCode = 123456L,
+            name = "Test Ingredient",
+            brands = "Brand",
+            categories = listOf("Category1"),
+            images =
+                mutableMapOf(
+                    PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
+                    PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
+                    PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
+
+    // Add the ingredient to the ingredient list
+    userViewModel.addIngredient(ingredient)
+    userViewModel.addIngredient(ingredient)
+
+    // Verify that the ingredient list contains the ingredient with the updated quantity
+    val updatedIngredient =
+        userViewModel.ingredientList.value.find { it.first.barCode == ingredient.barCode }
+    assertNotNull(updatedIngredient)
+    TestCase.assertEquals("", updatedIngredient?.second)
+  }
+
+  @Test
+  fun addACorrectIngredientAndANullIngredientTest() {
+    // Create an initial ingredient
+    val ingredientCorrect =
+        Ingredient(
+            barCode = 123456L,
+            name = "Test Ingredient",
+            brands = "Brand",
+            quantity = "100g",
+            categories = listOf("Category1"),
+            images =
+                mutableMapOf(
+                    PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
+                    PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
+                    PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
+    val ingredientNull =
+        Ingredient(
+            barCode = 123456L,
+            name = "Test Ingredient",
+            brands = "Brand",
+            categories = listOf("Category1"),
+            images =
+                mutableMapOf(
+                    PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
+                    PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
+                    PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
+
+    // Add the ingredient to the ingredient list
+    userViewModel.addIngredient(ingredientCorrect)
+    userViewModel.addIngredient(ingredientNull)
+
+    // Verify that the ingredient list contains the ingredient with the updated quantity
+    val updatedIngredient =
+        userViewModel.ingredientList.value.find { it.first.barCode == ingredientCorrect.barCode }
+    assertNotNull(updatedIngredient)
+    TestCase.assertEquals("100g", updatedIngredient?.second)
+  }
+
+  @Test
+  fun addANullIngredientAndACorrectIngredientTest() {
+    // Create an initial ingredient
+    val ingredientCorrect =
+        Ingredient(
+            barCode = 123456L,
+            name = "Test Ingredient",
+            brands = "Brand",
+            quantity = "100g",
+            categories = listOf("Category1"),
+            images =
+                mutableMapOf(
+                    PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
+                    PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
+                    PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
+    val ingredientNull =
+        Ingredient(
+            barCode = 123456L,
+            name = "Test Ingredient",
+            brands = "Brand",
+            categories = listOf("Category1"),
+            images =
+                mutableMapOf(
+                    PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
+                    PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
+                    PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
+
+    // Add the ingredient to the ingredient list
+    userViewModel.addIngredient(ingredientNull)
+
+    userViewModel.addIngredient(ingredientCorrect)
+
+    // Verify that the ingredient list contains the ingredient with the updated quantity
+    val updatedIngredient =
+        userViewModel.ingredientList.value.find { it.first.barCode == ingredientCorrect.barCode }
+    assertNotNull(updatedIngredient)
+    TestCase.assertEquals("100g", updatedIngredient?.second)
+  }
+
+  @Test
+  fun addAFalseIngredientAndACorrectIngredientTest() {
+    // Create an initial ingredient
+    val ingredientCorrect =
+        Ingredient(
+            barCode = 123456L,
+            name = "Test Ingredient",
+            brands = "Brand",
+            quantity = "100g",
+            categories = listOf("Category1"),
+            images =
+                mutableMapOf(
+                    PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
+                    PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
+                    PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
+    val ingredientFalse =
+        Ingredient(
+            barCode = 123456L,
+            name = "Test Ingredient",
+            brands = "Brand",
+            quantity = "g",
+            categories = listOf("Category1"),
+            images =
+                mutableMapOf(
+                    PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
+                    PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
+                    PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
+
+    // Add the ingredient to the ingredient list
+    userViewModel.addIngredient(ingredientFalse)
+    userViewModel.addIngredient(ingredientCorrect)
+
+    // Verify that the ingredient list contains the ingredient with the updated quantity
+    val updatedIngredient =
+        userViewModel.ingredientList.value.find { it.first.barCode == ingredientCorrect.barCode }
+    assertNotNull(updatedIngredient)
+    TestCase.assertEquals("100g", updatedIngredient?.second)
+  }
+
+  @Test
+  fun addACorrectIngredientAndAFalseIngredientTest() {
+    // Create an initial ingredient
+    val ingredientCorrect =
+        Ingredient(
+            barCode = 123456L,
+            name = "Test Ingredient",
+            brands = "Brand",
+            quantity = "100g",
+            categories = listOf("Category1"),
+            images =
+                mutableMapOf(
+                    PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
+                    PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
+                    PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
+    val ingredientFalse =
+        Ingredient(
+            barCode = 123456L,
+            name = "Test Ingredient",
+            brands = "g",
+            categories = listOf("Category1"),
+            images =
+                mutableMapOf(
+                    PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
+                    PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
+                    PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
+
+    // Add the ingredient to the ingredient list
+    userViewModel.addIngredient(ingredientCorrect)
+    userViewModel.addIngredient(ingredientFalse)
+
+    // Verify that the ingredient list contains the ingredient with the updated quantity
+    val updatedIngredient =
+        userViewModel.ingredientList.value.find { it.first.barCode == ingredientCorrect.barCode }
+    assertNotNull(updatedIngredient)
+    TestCase.assertEquals("100g", updatedIngredient?.second)
+  }
+
+  @Test
+  fun addNullRegexIngredientTest() {
+    // Create an initial ingredient
+    val ingredient =
+        Ingredient(
+            barCode = 123456L,
+            name = "Test Ingredient",
+            brands = "Brand",
+            quantity = "s",
+            categories = listOf("Category1"),
+            images =
+                mutableMapOf(
+                    PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
+                    PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
+                    PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
+
+    // Add the ingredient to the ingredient list
+    userViewModel.addIngredient(ingredient)
+    userViewModel.addIngredient(ingredient)
+
+    // Verify that the ingredient list contains the ingredient with the updated quantity
+    val updatedIngredient =
+        userViewModel.ingredientList.value.find { it.first.barCode == ingredient.barCode }
+    assertNotNull(updatedIngredient)
+    TestCase.assertEquals("s", updatedIngredient?.second)
+  }
+
+  @Test
+  fun clearIngredientTest() {
+    val barCode = 123456L
+    val ingredient = testIngredients[0].copy(barCode = barCode)
+
+    `when`(mockIngredientRepository.get(ArgumentMatchers.eq(barCode), any(), any())).thenAnswer {
+        invocation ->
+      val onSuccess: (Ingredient?) -> Unit = invocation.getArgument(1)
+      onSuccess(ingredient)
+    }
+
+    userViewModel.fetchIngredient(barCode)
+    verify(mockIngredientRepository).get(ArgumentMatchers.eq(barCode), any(), any())
+    TestCase.assertEquals(ingredient, userViewModel.ingredient.value.first)
+
+    userViewModel.clearIngredient()
+    TestCase.assertEquals(Pair(null, null), userViewModel.ingredient.value)
   }
 }

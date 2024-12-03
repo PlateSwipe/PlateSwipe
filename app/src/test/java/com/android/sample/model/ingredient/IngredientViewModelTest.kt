@@ -361,6 +361,26 @@ class IngredientViewModelTest {
   }
 
   @Test
+  fun clearIngredientListTest() {
+    val ingredient =
+        Ingredient(
+            barCode = 123456L,
+            name = "Test Ingredient",
+            brands = null,
+            quantity = "",
+            categories = listOf(""),
+            images =
+                mutableMapOf(
+                    PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
+                    PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
+                    PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
+
+    ingredientViewModel.addIngredient(ingredient)
+    ingredientViewModel.clearIngredientList()
+    assertTrue(ingredientViewModel.ingredientList.value.isEmpty())
+  }
+
+  @Test
   fun addNullIngredientTest() {
     // Create an initial ingredient
     val ingredient =
