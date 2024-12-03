@@ -103,9 +103,9 @@ fun PlateSwipeApp() {
         SearchIngredientScreen(
             navigationActions = navigationActions,
             searchIngredientViewModel = userViewModel,
-            popUpTitle = stringResource(R.string.pop_up_title),
-            popUpConfirmationText = stringResource(R.string.pop_up_description),
-            popUpConfirmationButtonText = stringResource(R.string.pop_up_confirmation),
+            popUpTitle = stringResource(R.string.pop_up_title_fridge),
+            popUpConfirmationText = stringResource(R.string.pop_up_description_fridge),
+            popUpConfirmationButtonText = stringResource(R.string.pop_up_confirmation_fridge),
             onConfirmation = {
               userViewModel.addIngredient(it)
               navigationActions.navigateTo(Screen.FRIDGE_EDIT)

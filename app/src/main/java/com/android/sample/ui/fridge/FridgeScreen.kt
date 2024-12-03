@@ -40,12 +40,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -80,7 +78,6 @@ import com.android.sample.resources.C.Dimension.FridgeScreen.MAX_PROPORTION
 import com.android.sample.resources.C.Dimension.FridgeScreen.MIN_ORANGE_DAY
 import com.android.sample.resources.C.Dimension.FridgeScreen.MIN_PROPORTION
 import com.android.sample.resources.C.Dimension.FridgeScreen.MIN_VALUE
-import com.android.sample.resources.C.Dimension.FridgeScreen.NUMBER_CARD_IN_A_ROW
 import com.android.sample.resources.C.Dimension.FridgeScreen.TITLE_FONT_SIZE
 import com.android.sample.resources.C.Dimension.PADDING_16
 import com.android.sample.resources.C.Dimension.PADDING_32
@@ -249,25 +246,19 @@ private fun FridgeContent(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center // Distribute cards evenly
                         ) {
-                          val screenWidth = LocalConfiguration.current.screenWidthDp
-                          // get the card width depending on the screen width
-                          val cardWidth =
-                              ((screenWidth - PADDING_32 * 2 - PADDING_16) / NUMBER_CARD_IN_A_ROW)
-                                  .dp
-
                           // First card in the chunk
                           chunk.getOrNull(0)?.let { card1 ->
-                            ItemCard(cardWidth, card1, userViewModel)
+                            ItemCard(Modifier.weight(1f), card1, userViewModel)
                           }
 
                           // Second card in the chunk (if present)
                           chunk.getOrNull(1)?.let { card2 ->
-                            ItemCard(cardWidth, card2, userViewModel)
+                            ItemCard(Modifier.weight(1f), card2, userViewModel)
                           }
 
                           // Add an empty spacer if only one card exists in the chunk
                           if (chunk.size == 1) {
-                            Spacer(modifier = Modifier.width(cardWidth).padding(PADDING_4.dp))
+                            Spacer(modifier = Modifier.weight(1f).padding(PADDING_16.dp))
                           }
                         }
                   }
@@ -290,14 +281,14 @@ private fun FridgeContent(
 /**
  * Item Card
  *
- * @param cardWidth
+ * @param modifier
  * @param card
  * @param userViewModel
  */
 @SuppressLint("AutoboxingStateCreation")
 @Composable
 private fun ItemCard(
-    cardWidth: Dp,
+    modifier: Modifier,
     card: Pair<FridgeItem, Ingredient>,
     userViewModel: UserViewModel
 ) {
@@ -305,7 +296,7 @@ private fun ItemCard(
   var updatedQuantity by remember { mutableIntStateOf(card.first.quantity) }
 
   Column(
-      modifier = Modifier.padding(PADDING_8.dp).width(cardWidth),
+      modifier = modifier.padding(PADDING_8.dp),
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.Center) {
         Card(
