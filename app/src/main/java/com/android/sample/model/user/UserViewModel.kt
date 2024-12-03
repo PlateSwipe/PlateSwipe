@@ -79,6 +79,7 @@ class UserViewModel(
    */
   fun getCurrentUser() {
     val userId: String = firebaseAuth.currentUser?.uid ?: return
+      val displayName: String = firebaseAuth.currentUser?.displayName ?: "User"
 
     userRepository.getUserById(
         id = userId,
@@ -108,7 +109,7 @@ class UserViewModel(
               user =
                   User(
                       uid = userId,
-                      userName = userName.value ?: userId,
+                      userName = userName.value ?: displayName,
                       profilePictureUrl = "",
                       fridge = _fridgeItems.value.map { it.first },
                       likedRecipes = _likedRecipes.value.map { it.uid },
@@ -131,7 +132,6 @@ class UserViewModel(
             fridge = _fridgeItems.value.map { it.first },
             likedRecipes = _likedRecipes.value.map { it.uid },
             createdRecipes = _createdRecipes.value.map { it.uid })
-
     userRepository.updateUser(user = savedUser, onSuccess = {}, onFailure = { e -> throw e })
   }
 

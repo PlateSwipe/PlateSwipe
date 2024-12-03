@@ -180,7 +180,7 @@ private fun ProfilePicture(profilePictureUrl: String?, modifier: Modifier = Modi
               rememberAsyncImagePainter(model = profilePictureUrl)
             },
         contentDescription = PROFILE_PICTURE_CONTENT_DESCRIPTION,
-        contentScale = ContentScale.Crop,
+        contentScale = ContentScale.FillBounds,
         modifier = Modifier.fillMaxSize().testTag(PROFILE_PICTURE_TEST_TAG))
   }
 }
