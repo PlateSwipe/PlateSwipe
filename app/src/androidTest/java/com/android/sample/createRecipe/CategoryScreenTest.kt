@@ -1,8 +1,12 @@
 package com.android.sample.createRecipe
 
+import androidx.compose.ui.test.assertAny
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -11,6 +15,10 @@ import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.model.recipe.FirestoreRecipesRepository
 import com.android.sample.model.recipe.Recipe
+import com.android.sample.resources.C.TestTag.Category.BUTTON_TEST_TAG
+import com.android.sample.resources.C.TestTag.Category.CATEGORY_DROPDOWN
+import com.android.sample.resources.C.TestTag.PlateSwipeDropdown.DROPDOWN
+import com.android.sample.resources.C.TestTag.PlateSwipeDropdown.DROPDOWN_TITLE
 import com.android.sample.ui.createRecipe.CategoryScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
@@ -48,46 +56,15 @@ class CategoryScreenTest {
           navigationActions = mockNavigationActions, createRecipeViewModel = createRecipeViewModel)
     }
 
-    composeTestRule.onNodeWithText("Select A Category").assertExists().assertIsDisplayed()
+    composeTestRule.onNodeWithText("Select a Category").assertExists().assertIsDisplayed()
     composeTestRule
         .onNodeWithText(
-            "Selecting a category is optional, but it can help others find your recipe more easily.")
+            "Giving this information is optional, but it can make it easier for others to find your recipe.")
         .assertExists()
         .assertIsDisplayed()
-    composeTestRule.onNodeWithTag("DropdownMenuButton").assertExists().assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CATEGORY_DROPDOWN).assertIsDisplayed()
     composeTestRule.onNodeWithTag("NextStepButton").assertExists().assertIsDisplayed()
-    composeTestRule.onNodeWithTag("progressBar").assertExists().assertIsDisplayed()
-  }
-
-  @Test
-  fun testDropdownMenuOpensAndDisplaysCategories() {
-    composeTestRule.setContent {
-      CategoryScreen(
-          navigationActions = mockNavigationActions, createRecipeViewModel = createRecipeViewModel)
-    }
-
-    // Verify dropdown button is displayed with placeholder text
-    composeTestRule
-        .onNodeWithTag("DropdownMenuButton")
-        .assertExists()
-        .assertIsDisplayed()
-        .assertTextEquals("No category selected")
-
-    // Click dropdown button to open menu
-    composeTestRule.onNodeWithTag("DropdownMenuButton").performClick()
-
-    // Verify that at least one category is displayed
-    composeTestRule
-        .onNodeWithTag("DropdownMenuItem_${Recipe.getCategories().first()}")
-        .assertExists()
-        .assertIsDisplayed()
-
-    // Scroll through the list and verify all categories exist
-    Recipe.getCategories().forEach { category ->
-      composeTestRule
-          .onNodeWithTag("DropdownMenuItem_$category", useUnmergedTree = true)
-          .assertExists()
-    }
+    composeTestRule.onNodeWithTag(BUTTON_TEST_TAG).assertExists().assertIsDisplayed()
   }
 
   @Test
@@ -97,22 +74,26 @@ class CategoryScreenTest {
           navigationActions = mockNavigationActions, createRecipeViewModel = createRecipeViewModel)
     }
 
+      val selectedCategory = "Vegan"
+
     // Open dropdown menu
-    composeTestRule.onNodeWithTag("DropdownMenuButton").performClick()
+    composeTestRule.onNodeWithTag(CATEGORY_DROPDOWN).performClick()
 
     // Scroll to the desired category if necessary
     composeTestRule
-        .onNodeWithTag("DropdownMenuItem_Vegan", useUnmergedTree = true)
+        .onNodeWithText(selectedCategory, useUnmergedTree = true)
         .performScrollTo()
 
     // Wait for the UI to update
     composeTestRule.waitForIdle()
 
     // Select the category
-    composeTestRule.onNodeWithTag("DropdownMenuItem_Vegan").performClick()
+    composeTestRule.onNodeWithText(selectedCategory).performClick()
+
+    composeTestRule.waitForIdle()
 
     // Verify dropdown button text updates to the selected category
-    composeTestRule.onNodeWithTag("DropdownMenuButton").assertExists().assertTextEquals("Vegan")
+    composeTestRule.onAllNodesWithTag(DROPDOWN_TITLE, useUnmergedTree = true).assertCountEquals(2).assertAny(hasText(selectedCategory))
   }
 
   @Test

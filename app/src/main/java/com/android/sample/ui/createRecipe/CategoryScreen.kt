@@ -22,12 +22,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.rememberNavController
 import com.android.sample.R
 import com.android.sample.model.recipe.CreateRecipeViewModel
+import com.android.sample.model.recipe.FirestoreRecipesRepository
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.resources.C.Dimension.CategoryScreen.DIVIDER_ALPHA
 import com.android.sample.resources.C.Dimension.CategoryScreen.DROPDOWN_HEIGHT_FRACTION
@@ -36,16 +41,21 @@ import com.android.sample.resources.C.Dimension.PADDING_32
 import com.android.sample.resources.C.Dimension.PADDING_8
 import com.android.sample.resources.C.Tag.INITIAL_RECIPE_STEP
 import com.android.sample.resources.C.TestTag.Category.BUTTON_TEST_TAG
+import com.android.sample.resources.C.TestTag.Category.CATEGORY_DROPDOWN
 import com.android.sample.resources.C.TestTag.Category.CATEGORY_SUBTITLE
-import com.android.sample.resources.C.TestTag.Category.CATEGORY_TITLE
+import com.android.sample.resources.C.TestTag.Category.DIFFICULTY_DROPDOWN
+import com.android.sample.resources.C.TestTag.Category.DIFFICULTY_SUBTITLE
 import com.android.sample.resources.C.TestTag.Category.DROPDOWN_CORNER_RADIUS
-import com.android.sample.resources.C.TestTag.Category.DROPDOWN_TEST_TAG
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.Typography
+import com.android.sample.ui.theme.greenSwipe
+import com.android.sample.ui.theme.jungleGreen
 import com.android.sample.ui.utils.PlateSwipeButton
+import com.android.sample.ui.utils.PlateSwipeDropdownMenu
 import com.android.sample.ui.utils.PlateSwipeScaffold
+import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
 fun CategoryScreen(
@@ -80,98 +90,106 @@ fun CategoryContent(
     navigationActions: NavigationActions,
     createRecipeViewModel: CreateRecipeViewModel
 ) {
-  val noCategoryString = stringResource(R.string.no_category)
-  val categories = listOf(noCategoryString) + Recipe.getCategories()
-  val selectedCategory = remember { mutableStateOf(createRecipeViewModel.getRecipeCategory()) }
-  val expanded = remember { mutableStateOf(false) }
+    val noCategoryString = stringResource(R.string.no_category)
+    val categories = listOf(noCategoryString) + Recipe.getCategories()
+    val selectedCategory = remember { mutableStateOf(createRecipeViewModel.getRecipeCategory()) }
 
-  Box(modifier = modifier.padding(PADDING_8.dp), contentAlignment = Alignment.TopCenter) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top) {
-          // Display the progress bar for the current step
-          RecipeProgressBar(currentStep = currentStep)
+    val noDifficultyString = stringResource(R.string.no_difficulty)
+    val difficulties = listOf(noDifficultyString) + Recipe.getDifficulties()
+    val selectedDifficulty = remember { mutableStateOf(createRecipeViewModel.getRecipeDifficulty()) }
 
-          Spacer(modifier = Modifier.weight(1f))
+    Box(modifier = modifier.padding(PADDING_8.dp), contentAlignment = Alignment.TopCenter) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
+        ) {
+            // Display the progress bar for the current step
+            RecipeProgressBar(currentStep = currentStep)
 
-          // Title
-          Text(
-              text = stringResource(R.string.select_category),
-              style = Typography.displayLarge,
-              color = MaterialTheme.colorScheme.onPrimary,
-              modifier =
-                  Modifier.fillMaxWidth()
-                      .padding(horizontal = PADDING_16.dp)
-                      .testTag(CATEGORY_TITLE),
-              textAlign = TextAlign.Center)
+            Spacer(modifier = Modifier.weight(1f))
 
-          Spacer(modifier = Modifier.weight(1f))
-
-          // Subtitle
-          Text(
-              text = stringResource(R.string.select_category_description_optional),
-              style = MaterialTheme.typography.bodyMedium,
-              color = MaterialTheme.colorScheme.onPrimary,
-              modifier = Modifier.padding(horizontal = PADDING_32.dp).testTag(CATEGORY_SUBTITLE),
-              textAlign = TextAlign.Center)
-
-          Spacer(modifier = Modifier.weight(2f))
-
-          // Dropdown menu for selecting category
-          Box(modifier = Modifier.fillMaxWidth().padding(horizontal = PADDING_16.dp)) {
-            OutlinedButton(
-                onClick = { expanded.value = !expanded.value },
-                modifier = Modifier.fillMaxWidth().testTag(DROPDOWN_TEST_TAG),
-                shape = RoundedCornerShape(DROPDOWN_CORNER_RADIUS.dp),
-                colors =
-                    ButtonDefaults.outlinedButtonColors(
-                        containerColor = MaterialTheme.colorScheme.surface,
-                        contentColor = MaterialTheme.colorScheme.onSurface)) {
-                  Text(
-                      text =
-                          selectedCategory.value ?: stringResource(R.string.no_category_selected),
-                      style = MaterialTheme.typography.bodyMedium,
-                      modifier = Modifier.padding(vertical = PADDING_8.dp))
-                }
-
-            DropdownMenu(
-                expanded = expanded.value,
-                onDismissRequest = { expanded.value = false },
+            // Title
+            Text(
+                text = stringResource(R.string.optional_information),
+                style = Typography.displayLarge,
+                color = MaterialTheme.colorScheme.onPrimary,
                 modifier =
-                    Modifier.padding(horizontal = PADDING_16.dp)
-                        .fillMaxWidth()
-                        .fillMaxHeight(DROPDOWN_HEIGHT_FRACTION)
-                        .background(MaterialTheme.colorScheme.surface)) {
-                  categories.forEachIndexed { index, category ->
-                    DropdownMenuItem(
-                        text = {
-                          Text(text = category, style = MaterialTheme.typography.bodyMedium)
-                        },
-                        onClick = {
-                          selectedCategory.value =
-                              if (category == noCategoryString) null else category
-                          expanded.value = false
-                        },
-                        modifier = Modifier.testTag("DropdownMenuItem_$category"))
-                    if (index < categories.size - 1) {
-                      HorizontalDivider(
-                          color = MaterialTheme.colorScheme.onSurface.copy(alpha = DIVIDER_ALPHA))
-                    }
-                  }
-                }
-          }
+                Modifier.fillMaxWidth()
+                    .padding(horizontal = PADDING_16.dp),
+                textAlign = TextAlign.Center
+            )
 
-          Spacer(modifier = Modifier.weight(8f))
+            Spacer(modifier = Modifier.weight(1f))
+
+            // Subtitle
+            Text(
+                text = stringResource(R.string.select_information_description_optional),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.padding(horizontal = PADDING_32.dp),
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            // Subtitle Category
+            Text(
+                text = stringResource(R.string.select_category),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.padding(horizontal = PADDING_32.dp).testTag(CATEGORY_SUBTITLE),
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.weight(.5f))
+
+            // Dropdown Category
+            PlateSwipeDropdownMenu(
+                categories,
+                onSelected = { selectedText, _ ->
+                    selectedCategory.value = if (selectedText == noCategoryString) null else selectedText
+                },
+                modifier = Modifier.fillMaxWidth().padding(horizontal = PADDING_16.dp).testTag(
+                    CATEGORY_DROPDOWN),
+                defaultItemIndex = selectedCategory.value?.let { categories.indexOf(it) }
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            // Subtitle Difficulty
+            Text(
+                text = stringResource(R.string.select_difficulty),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.padding(horizontal = PADDING_32.dp).testTag(DIFFICULTY_SUBTITLE),
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.weight(.5f))
+
+            // Dropdown Difficulty
+            PlateSwipeDropdownMenu(
+                difficulties,
+                onSelected = { selectedText, _ ->
+                    selectedDifficulty.value = if (selectedText == noDifficultyString) null else selectedText
+                },
+                modifier = Modifier.fillMaxWidth().padding(horizontal = PADDING_16.dp).testTag(
+                    DIFFICULTY_DROPDOWN),
+                defaultItemIndex = selectedDifficulty.value?.let { difficulties.indexOf(it) }
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            // Next Step Button
+            PlateSwipeButton(
+                text = stringResource(R.string.next_step),
+                modifier = Modifier.testTag(BUTTON_TEST_TAG),
+                onClick = {
+                    createRecipeViewModel.updateRecipeCategory(selectedCategory.value)
+                    createRecipeViewModel.updateRecipeDifficulty(selectedDifficulty.value)
+                    navigationActions.navigateTo(Screen.CREATE_RECIPE_INGREDIENTS)
+                })
         }
-
-    // Next Step Button
-    PlateSwipeButton(
-        text = stringResource(R.string.next_step),
-        modifier = Modifier.align(Alignment.BottomCenter).testTag(BUTTON_TEST_TAG),
-        onClick = {
-          createRecipeViewModel.updateRecipeCategory(selectedCategory.value)
-          navigationActions.navigateTo(Screen.CREATE_RECIPE_INGREDIENTS)
-        })
-  }
+    }
 }
