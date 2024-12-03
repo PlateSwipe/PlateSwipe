@@ -94,5 +94,12 @@ data class Recipe(
     fun getCategories(): List<String> {
       return listCategories
     }
+
+      private val listDifficulties = listOf("Easy", "Medium", "Hard")
+
+        /** Returns the list of difficulties. */
+    fun getDifficulties(): List<String> {
+        return listDifficulties
+        }
   }
 }
