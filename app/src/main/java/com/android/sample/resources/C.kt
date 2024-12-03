@@ -837,10 +837,14 @@ object C {
     object Category {
       const val DROPDOWN_CORNER_RADIUS = 8
       const val BUTTON_TEST_TAG = "NextStepButton"
-      const val DROPDOWN_TEST_TAG = "DropdownMenuButton"
-      const val CATEGORY_TITLE = "CategoryTitle"
-      // CategorySubtitle
+
+      // Category
       const val CATEGORY_SUBTITLE = "CategorySubtitle"
+      const val CATEGORY_DROPDOWN = "CategoryDropdown"
+
+      // Difficulty
+        const val DIFFICULTY_SUBTITLE = "DifficultySubtitle"
+        const val DIFFICULTY_DROPDOWN = "DifficultyDropdown"
     }
 
     object TimePicker {
@@ -851,6 +855,12 @@ object C {
       const val NEXT_BUTTON = "NextButton"
       const val HOURS_LABEL = "HoursLabel"
       const val MINUTES_LABEL = "MinutesLabel"
+    }
+
+    object PlateSwipeDropdown {
+      const val DROPDOWN = "PlateSwipeDropdown"
+      const val DROPDOWN_ITEM = "PlateSwipeDropdownItem"
+      const val DROPDOWN_TITLE = "PlateSwipeDropdownTitle"
     }
   }
 }

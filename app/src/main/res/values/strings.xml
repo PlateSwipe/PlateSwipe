@@ -121,6 +121,9 @@
     <string name="add">Add</string>
     <string name="close">Close</string>
 
+    //PlateSwipeDropdownMenu
+    <string name="no_item_selected">None selected</string>
+
     //RemoveRecipePopUp
     <string name="message_pop_up_delete_created">Are you sure that you want to delete this recipe?</string>
     <string name="message_pop_up_remove_liked">Are you sure that you want to remove this recipe from your liked recipes?</string>
@@ -128,11 +131,12 @@
     <string name="pop_up_confirm_cancel_removal_liked_recipe">No</string>
 
     //CategoryScreen
-    <string name="select_category">Select A Category</string>
-    <string name="select_category_description_optional">Selecting a category is optional, but it can help others find your recipe more easily.</string>
-    <string name="no_category_selected">No category selected</string>
+    <string name="optional_information">Optional Information</string>
+    <string name="select_information_description_optional">Giving this information is optional, but it can make it easier for others to find your recipe.</string>
+    <string name="select_category">Select a Category</string>
+    <string name="select_difficulty">Select a Difficulty</string>
     <string name="no_category">No category</string>
-
+    <string name="no_difficulty">No difficulty</string>
 
 
     //AddInstructionStepScreen
