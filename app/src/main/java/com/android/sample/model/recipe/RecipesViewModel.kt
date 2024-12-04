@@ -409,7 +409,7 @@ class RecipesViewModel(
     recipes.forEach {
       downloadRecipe(
           it,
-          { recipe -> Log.d(LOG_TAG_RECIPE_VIEWMODEL, RECIPE_DOWNLOAD_SUCCESS) },
+          { Log.d(LOG_TAG_RECIPE_VIEWMODEL, RECIPE_DOWNLOAD_SUCCESS) },
           { e -> Log.e(LOG_TAG_RECIPE_VIEWMODEL, "Exception:${e.message}") },
           context)
     }
