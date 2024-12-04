@@ -163,7 +163,7 @@ class CreateRecipeViewModel(
    *
    * @param difficulty The new difficulty level of the recipe.
    */
-  fun updateRecipeDifficulty(difficulty: String) {
+  fun updateRecipeDifficulty(difficulty: String?) {
     recipeBuilder.setDifficulty(difficulty)
   }
 
