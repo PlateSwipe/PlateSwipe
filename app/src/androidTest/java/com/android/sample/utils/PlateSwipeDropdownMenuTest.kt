@@ -15,6 +15,7 @@ import com.android.sample.resources.C.TestTag.PlateSwipeDropdown.DROPDOWN_ITEM
 import com.android.sample.resources.C.TestTag.PlateSwipeDropdown.DROPDOWN_TITLE
 import com.android.sample.ui.utils.PlateSwipeDropdownMenu
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -102,4 +103,14 @@ class PlateSwipeDropdownMenuTest {
         .assertIsDisplayed()
         .assertTextEquals(exampleList[0])
   }
+
+    @Test
+    fun testThrowsExceptionIfDefaultItemIndexIsInvalid() {
+        val invalidIndex = exampleList.size + 1
+        assertThrows(IllegalArgumentException::class.java) {
+            composeTestRule.setContent {
+                PlateSwipeDropdownMenu(exampleList, defaultItemIndex = invalidIndex)
+            }
+        }
+    }
 }
