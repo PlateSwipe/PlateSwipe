@@ -1,6 +1,7 @@
 package com.android.sample.ui.swipePage
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.animateFloatAsState
@@ -430,6 +431,20 @@ fun RecipeDisplay(
               }
             }
       }
+}
+
+fun checkIfFilterUsed(
+    time: Boolean,
+    difficulty: Boolean,
+    category: Boolean,
+    recipesViewModel: RecipesViewModel
+): Boolean {
+  Log.d("SwipePage", "checkIfFilterUsed $time $difficulty $category")
+  if ((!time) && (!difficulty) && (!category)) {
+    recipesViewModel.resetFilters()
+    return false
+  }
+  return true
 }
 
 /**
