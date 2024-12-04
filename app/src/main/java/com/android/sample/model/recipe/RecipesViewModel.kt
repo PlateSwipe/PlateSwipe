@@ -20,6 +20,7 @@ import com.android.sample.resources.C.Tag.Filter.UNINITIALIZED_BORN_VALUE
 import com.android.sample.resources.C.Tag.LOG_TAG_RECIPE_VIEWMODEL
 import com.android.sample.resources.C.Tag.MINIMUM_RECIPES_BEFORE_FETCH
 import com.android.sample.resources.C.Tag.NUMBER_RECIPES_TO_FETCH
+import com.android.sample.resources.C.Tag.RECIPE_DOWNLOAD_SUCCESS
 import com.android.sample.resources.C.Tag.SUCCESS_DELETE_DOWNLOAD_ALL
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
@@ -49,13 +50,9 @@ class RecipesViewModel(
   val recipes: StateFlow<List<Recipe>>
     get() = _recipes
 
-  private val _recipesTs = MutableStateFlow<List<Recipe>>(emptyList())
-  val recipesTs: StateFlow<List<Recipe>>
-    get() = _recipesTs
-
-  private val _recipesDl = MutableStateFlow<List<Recipe>>(emptyList())
-  val recipesDl: StateFlow<List<Recipe>>
-    get() = _recipesDl
+  private val _recipesDownload = MutableStateFlow<List<Recipe>>(emptyList())
+  val recipesDownload: StateFlow<List<Recipe>>
+    get() = _recipesDownload
 
   // StateFlow for loading/error states
   private val _loading = MutableStateFlow(false)
@@ -337,12 +334,11 @@ class RecipesViewModel(
         Dispatchers.IO,
         onSuccess = { uri ->
           val newRecipe = recipe.copy(url = uri)
-          repository.addDownload(newRecipe)
-          onSuccess(newRecipe)
+          repository.addDownload(
+              newRecipe, onSuccess = { onSuccess(newRecipe) }, onFailure = { e -> onFailure(e) })
         },
         onFailure = { e -> onFailure(e) })
   }
-
   /**
    * Downloads an image from a URL and saves it locally.
    *
@@ -387,7 +383,7 @@ class RecipesViewModel(
   fun getAllDownloads(onSuccess: (List<Recipe>) -> Unit, onFailure: (Exception) -> Unit) {
     repository.getAllDownload(
         onSuccess = { recipes ->
-          _recipesDl.value = recipes
+          _recipesDownload.value = recipes
           onSuccess(recipes)
         },
         onFailure = { exception -> onFailure(exception) })
@@ -407,6 +403,16 @@ class RecipesViewModel(
     repository.deleteAllDownloads(
         onSuccess = { Log.d(LOG_TAG_RECIPE_VIEWMODEL, SUCCESS_DELETE_DOWNLOAD_ALL) },
         onFailure = { Log.d(LOG_TAG_RECIPE_VIEWMODEL, ERROR_DELETE_DOWNLOAD) })
+  }
+
+  fun downloadAll(recipes: List<Recipe>, context: Context) {
+    recipes.forEach {
+      downloadRecipe(
+          it,
+          { recipe -> Log.d(LOG_TAG_RECIPE_VIEWMODEL, RECIPE_DOWNLOAD_SUCCESS) },
+          { e -> Log.e(LOG_TAG_RECIPE_VIEWMODEL, "Exception:${e.message}") },
+          context)
+    }
   }
 
   companion object {

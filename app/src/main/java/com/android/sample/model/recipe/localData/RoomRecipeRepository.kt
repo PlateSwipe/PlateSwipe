@@ -23,8 +23,15 @@ class RoomRecipeRepository(
    *
    * @param recipe The recipe to add.
    */
-  override fun add(recipe: Recipe) {
-    CoroutineScope(dispatcher).launch { recipeDAO.insert(recipe.toEntity()) }
+  override fun add(recipe: Recipe, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+    CoroutineScope(dispatcher).launch {
+      try {
+        recipeDAO.insert(recipe.toEntity())
+        onSuccess()
+      } catch (e: Exception) {
+        onFailure(e)
+      }
+    }
   }
 
   /**

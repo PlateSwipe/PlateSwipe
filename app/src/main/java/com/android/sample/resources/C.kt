@@ -134,6 +134,7 @@ object C {
     const val SUCCESS_DELETE_DOWNLOAD_ALL = "All downloads deleted"
     const val ERROR_DOWNLOAD_IMG = "Error downloading image"
     const val ERROR_RECIPE_WITH_NO_IMG = "Recipe does not have an image"
+    const val RECIPE_DOWNLOAD_SUCCESS = "Recipe downloaded successfully"
 
     // ImageRepositoryFirebase
     const val USER_IMAGE_DIR = "images/user/"

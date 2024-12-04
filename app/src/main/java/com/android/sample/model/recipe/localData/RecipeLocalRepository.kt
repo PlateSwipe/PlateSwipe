@@ -10,7 +10,7 @@ interface RecipeLocalRepository {
    *
    * @param recipe The recipe to add.
    */
-  fun add(recipe: Recipe)
+  fun add(recipe: Recipe, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
 
   /**
    * Updates an existing recipe in the local repository.

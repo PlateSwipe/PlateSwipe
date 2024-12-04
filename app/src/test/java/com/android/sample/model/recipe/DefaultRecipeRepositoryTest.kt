@@ -86,8 +86,8 @@ class DefaultRecipeRepositoryTest {
 
   @Test
   fun addDownloadCallLocalRepository() {
-    defaultRecipeRepository.addDownload(recipe)
-    verify(mockLocalRepository).add(recipe)
+    defaultRecipeRepository.addDownload(recipe, onSuccess, onFailure)
+    verify(mockLocalRepository).add(recipe, onSuccess, onFailure)
   }
 
   @Test

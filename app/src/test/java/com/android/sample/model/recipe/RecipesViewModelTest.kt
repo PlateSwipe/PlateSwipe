@@ -47,7 +47,6 @@ class RecipesViewModelTest {
   @Before
   fun setUp() {
     // Set the main dispatcher for tests
-    val testDispatcher = StandardTestDispatcher()
     Dispatchers.setMain(testDispatcher)
     imageDownload = mock(ImageDownload::class.java)
 
@@ -540,7 +539,7 @@ class RecipesViewModelTest {
       onSuc(testRecipes)
     }
     recipesViewModel.getAllDownloads(onSuccess = onSuccess, onFailure = onFailure)
-    assert(recipesViewModel.recipesDl.value == testRecipes)
+    assert(recipesViewModel.recipesDownload.value == testRecipes)
   }
 
   @Test
@@ -553,7 +552,7 @@ class RecipesViewModelTest {
       onFail(Exception("Error"))
     }
     recipesViewModel.getAllDownloads(onSuccess = onSuccess, onFailure = onFailure)
-    assert(recipesViewModel.recipesDl.value == emptyList<Recipe>())
+    assert(recipesViewModel.recipesDownload.value == emptyList<Recipe>())
   }
 
   @OptIn(ExperimentalCoroutinesApi::class)

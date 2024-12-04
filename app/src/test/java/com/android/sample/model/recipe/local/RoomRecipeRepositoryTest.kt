@@ -47,7 +47,7 @@ class RoomRecipeRepositoryTest {
   @Test
   fun addCallRecipeDAO() =
       runTest(testDispatcher) {
-        roomRecipeRepository.add(recipe)
+        roomRecipeRepository.add(recipe, {}, { fail("Fail") })
         testScheduler.advanceUntilIdle()
         verify(mockRecipeDAO).insert(recipe.toEntity())
       }

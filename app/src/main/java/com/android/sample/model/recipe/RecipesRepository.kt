@@ -78,7 +78,7 @@ interface RecipesRepository {
    *
    * @param recipe The recipe to add to downloads.
    */
-  fun addDownload(recipe: Recipe)
+  fun addDownload(recipe: Recipe, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
 
   /**
    * Updates a recipe in the list of downloads.
