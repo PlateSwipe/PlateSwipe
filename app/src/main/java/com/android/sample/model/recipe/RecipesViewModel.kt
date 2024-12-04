@@ -150,6 +150,7 @@ class RecipesViewModel(private val repository: RecipesRepository) :
    */
   override fun updateCategory(category: String?) {
     _tmpFilter.value.category = category
+    isFilterUsed.value = true
   }
 
   /**

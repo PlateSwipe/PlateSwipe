@@ -174,6 +174,22 @@ fun FilterBox(
 }
 
 /**
+ * Composable function to reformat the time.
+ *
+ * @param time The time to reformat in minutes.
+ */
+fun reformatTime(time: Float): String {
+  val timeInt = time.toInt()
+  if (timeInt > 60) {
+    val hours = timeInt / 60
+    val minutes = timeInt % 60
+    return "$hours h $minutes min"
+  } else {
+    return "$timeInt min"
+  }
+}
+
+/**
  * Composable function to display a range slider.
  *
  * @param name The name of the slider.
@@ -215,11 +231,11 @@ fun ValueRangeSlider(
         // Display selected min and max values
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
           Text(
-              "${rangeSlider.value.start.toInt()} " + unit,
+              reformatTime(rangeSlider.value.start),
               style = MaterialTheme.typography.bodyMedium,
               color = MaterialTheme.colorScheme.onPrimary)
           Text(
-              "${rangeSlider.value.endInclusive.toInt()} " + unit,
+              reformatTime(rangeSlider.value.endInclusive),
               style = MaterialTheme.typography.bodyMedium,
               color = MaterialTheme.colorScheme.onPrimary)
         }
