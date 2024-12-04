@@ -66,9 +66,9 @@ import com.android.sample.ui.account.AccountScreen
 import com.android.sample.ui.camera.CameraScanCodeBarScreen
 import com.android.sample.ui.camera.CameraTakePhotoScreen
 import com.android.sample.ui.createRecipe.AddInstructionStepScreen
-import com.android.sample.ui.createRecipe.OptionalInformationScreen
 import com.android.sample.ui.createRecipe.CreateRecipeScreen
 import com.android.sample.ui.createRecipe.IngredientListScreen
+import com.android.sample.ui.createRecipe.OptionalInformationScreen
 import com.android.sample.ui.createRecipe.PublishRecipeScreen
 import com.android.sample.ui.createRecipe.RecipeAddImageScreen
 import com.android.sample.ui.createRecipe.RecipeIngredientsScreen

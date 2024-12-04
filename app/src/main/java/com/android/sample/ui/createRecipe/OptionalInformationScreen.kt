@@ -47,7 +47,8 @@ fun OptionalInformationScreen(
       navigationActions = navigationActions,
       selectedItem = Route.CREATE_RECIPE,
       showBackArrow = true,
-      content = { paddingValues ->OptionalInformationContent(
+      content = { paddingValues ->
+        OptionalInformationContent(
             currentStep = INITIAL_RECIPE_STEP,
             navigationActions = navigationActions,
             createRecipeViewModel = createRecipeViewModel,
