@@ -55,21 +55,10 @@ fun RecipeNameScreen(
 ) {
   var isInitialized by remember { mutableStateOf(false) }
 
-  LaunchedEffect(isEditing) {
-    if (!isEditing) {
-      createRecipeViewModel.startNewRecipe()
-    }
-    isInitialized = true // Mark as initialized after starting new recipe or editing
-  }
+  InitializeRecipe(isEditing, createRecipeViewModel) { initialized -> isInitialized = initialized }
 
-  if (!isInitialized) {
-    Box(
-        modifier = Modifier.fillMaxSize().testTag(LOADING_COOK_TEST_TAG),
-        contentAlignment = Alignment.Center) {
-          LoadingCook()
-        }
-    return
-  }
+  DisplayLoadingScreen(isInitialized)
+  if (!isInitialized) return
 
   val configuration = LocalConfiguration.current
   val screenWidthDp = configuration.screenWidthDp
@@ -77,9 +66,7 @@ fun RecipeNameScreen(
 
   var recipeName by
       rememberSaveable(stateSaver = TextFieldValue.Saver) {
-        mutableStateOf(
-            if (isEditing) TextFieldValue(createRecipeViewModel.getRecipeName())
-            else TextFieldValue(""))
+        mutableStateOf(initializeRecipeName(isEditing, createRecipeViewModel))
       }
 
   var showError by remember { mutableStateOf(false) }
@@ -98,8 +85,8 @@ fun RecipeNameScreen(
               // Display the title text
               Text(
                   text =
-                      if (isEditing) stringResource(R.string.edit_your_recipe)
-                      else stringResource(R.string.create_your_recipe),
+                      getConditionalStringResource(
+                          isEditing, R.string.edit_your_recipe, R.string.create_your_recipe),
                   style = Typography.displayLarge,
                   color = MaterialTheme.colorScheme.onPrimary,
                   modifier =
@@ -113,8 +100,10 @@ fun RecipeNameScreen(
               // Display the description text
               Text(
                   text =
-                      if (isEditing) stringResource(R.string.edit_recipe_description)
-                      else stringResource(R.string.create_recipe_description),
+                      getConditionalStringResource(
+                          isEditing,
+                          R.string.edit_recipe_description,
+                          R.string.create_recipe_description),
                   style = MaterialTheme.typography.bodyMedium,
                   color = MaterialTheme.colorScheme.onPrimary,
                   modifier =
@@ -190,13 +179,7 @@ fun RecipeNameScreen(
                   recipeName = recipeName,
                   onShowErrorChange = { showError = it },
                   onUpdateRecipeName = { createRecipeViewModel.updateRecipeName(it) },
-                  onNavigateToNextScreen = {
-                    if (isEditing) {
-                      navigationActions.navigateTo(Screen.EDIT_CATEGORY_SCREEN)
-                    } else {
-                      navigationActions.navigateTo(Screen.CREATE_CATEGORY_SCREEN)
-                    }
-                  })
+                  onNavigateToNextScreen = { navigateToNextScreen(isEditing, navigationActions) })
             })
       }
 }
@@ -286,5 +269,95 @@ fun handleOnClick(
   } else {
     onUpdateRecipeName(recipeName.text)
     onNavigateToNextScreen()
+  }
+}
+
+/**
+ * Helper function to initialize the recipe creation process.
+ *
+ * @param isEditing Boolean indicating whether the recipe is being edited.
+ * @param createRecipeViewModel ViewModel for managing the recipe creation process.
+ * @param onInitialized Callback to be invoked when the initialization is complete.
+ */
+@Composable
+fun InitializeRecipe(
+    isEditing: Boolean,
+    createRecipeViewModel: CreateRecipeViewModel,
+    onInitialized: (Boolean) -> Unit
+) {
+  LaunchedEffect(isEditing) {
+    if (!isEditing) {
+      createRecipeViewModel.startNewRecipe()
+    }
+    onInitialized(true) // Mark as initialized after starting new recipe or editing
+  }
+}
+
+/**
+ * Helper function to display the loading screen.
+ *
+ * @param isInitialized Boolean indicating whether the initialization is complete.
+ */
+@Composable
+fun DisplayLoadingScreen(isInitialized: Boolean) {
+  if (!isInitialized) {
+    Box(
+        modifier = Modifier.fillMaxSize().testTag(LOADING_COOK_TEST_TAG),
+        contentAlignment = Alignment.Center) {
+          LoadingCook()
+        }
+  }
+}
+
+/**
+ * Helper function to initialize the recipe name.
+ *
+ * @param isEditing Boolean indicating whether the recipe is being edited.
+ * @param createRecipeViewModel ViewModel for managing the recipe creation process.
+ * @return The initialized TextFieldValue for the recipe name.
+ */
+fun initializeRecipeName(
+    isEditing: Boolean,
+    createRecipeViewModel: CreateRecipeViewModel
+): TextFieldValue {
+  return if (isEditing) {
+    TextFieldValue(createRecipeViewModel.getRecipeName())
+  } else {
+    TextFieldValue("")
+  }
+}
+
+/**
+ * Helper function to get the appropriate string resource based on the isEditing flag.
+ *
+ * @param isEditing Boolean indicating whether the recipe is being edited.
+ * @param editStringRes The string resource to use when editing.
+ * @param createStringRes The string resource to use when creating.
+ * @return The appropriate string resource.
+ */
+@Composable
+fun getConditionalStringResource(
+    isEditing: Boolean,
+    editStringRes: Int,
+    createStringRes: Int
+): String {
+  return if (isEditing) {
+    stringResource(editStringRes)
+  } else {
+    stringResource(createStringRes)
+  }
+}
+
+/**
+ * Helper function to navigate to the next screen based on the isEditing flag.
+ *
+ * @param isEditing Boolean indicating whether the recipe is being edited.
+ * @param navigationActions Actions for navigating between screens.
+ */
+fun navigateToNextScreen(isEditing: Boolean, navigationActions: NavigationActions) {
+  if (isEditing) {
+    navigationActions.navigateTo(Screen.EDIT_CATEGORY_SCREEN)
+  } else {
+    navigationActions.navigateTo(Screen.CREATE_CATEGORY_SCREEN)
   }
 }
