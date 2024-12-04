@@ -515,7 +515,9 @@ class EndToEndTest {
       ) {
         composable(Screen.CREATE_RECIPE) {
           CreateRecipeScreen(
-              navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
+              navigationActions = navigationActions,
+              createRecipeViewModel = createRecipeViewModel,
+              isEditing = false)
         }
         composable(Screen.CREATE_CATEGORY_SCREEN) {
           CategoryScreen(
@@ -584,7 +586,9 @@ class EndToEndTest {
           startDestination = Screen.ACCOUNT,
           route = Route.ACCOUNT,
       ) {
-        composable(Screen.ACCOUNT) { AccountScreen(navigationActions, userViewModel) }
+        composable(Screen.ACCOUNT) {
+          AccountScreen(navigationActions, userViewModel, createRecipeViewModel)
+        }
         composable(Screen.OVERVIEW_RECIPE_ACCOUNT) {
           RecipeOverview(navigationActions, userViewModel)
         }

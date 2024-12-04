@@ -145,4 +145,15 @@
     <string name="select_time_description">Selecting the total time is optional, but it helps others understand how long your recipe will take.</string>
     <string name="minutes">Minutes</string>
     <string name="hours">Hours</string>
+
+    // RecipeList utils
+    <string name="edit_recipe_icon_description">Edit Recipe</string>
+
+    // EditRecipeNameScreen
+    <string name="edit_your_recipe">Edit your recipe</string>
+    <string name="edit_recipe_description">Make changes to your recipe details below.</string>
+
+    //EditCategoryScreen
+    <string name="edit_category">Edit Recipe Category</string>
+    <string name="edit_category_description_optional">You can update the category for your recipe to make it more discoverable.</string>
 </resources>

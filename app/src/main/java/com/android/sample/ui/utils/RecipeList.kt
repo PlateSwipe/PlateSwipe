@@ -230,6 +230,24 @@ private fun RecipeTitle(recipe: Recipe, modifier: Modifier) {
 }
 
 /**
+ * A button that when pressed, it will allow the user to edit the specific recipe.
+ *
+ * @param recipe the recipe to edit.
+ * @param onEditClicked the callback to invoke when the edit button is clicked.
+ */
+@Composable
+fun TopCornerEditButton(recipe: Recipe, onEditClicked: (Recipe) -> Unit) {
+  Icon(
+      painter = painterResource(id = R.drawable.pencil),
+      contentDescription = stringResource(R.string.edit_recipe_icon_description),
+      modifier =
+          Modifier.padding(4.dp).size(24.dp).testTag(RECIPE_FAVORITE_ICON_TEST_TAG).clickable {
+            onEditClicked(recipe)
+          },
+      tint = MaterialTheme.colorScheme.onPrimary)
+}
+
+/**
  * A like button that when pressed, it will remove a liked recipe from the users list of liked
  * recipes
  *

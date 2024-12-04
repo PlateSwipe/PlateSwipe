@@ -755,6 +755,7 @@ object C {
       const val LIKED_RECIPES_BUTTON_TEST_TAG = "likedRecipesButton"
       const val CREATED_RECIPES_BUTTON_TEST_TAG = "createdRecipesButton"
       const val PROFILE_PICTURE_TEST_TAG = "profilePicture"
+      const val RECIPE_EDIT_ICON_TEST_TAG = "recipeEditIcon"
     }
 
     object CreateRecipeListInstructionsScreen {
@@ -851,6 +852,10 @@ object C {
       const val NEXT_BUTTON = "NextButton"
       const val HOURS_LABEL = "HoursLabel"
       const val MINUTES_LABEL = "MinutesLabel"
+    }
+
+    object RecipeNameScreen {
+      const val LOADING_COOK_TEST_TAG = "LoadingCook"
     }
   }
 }

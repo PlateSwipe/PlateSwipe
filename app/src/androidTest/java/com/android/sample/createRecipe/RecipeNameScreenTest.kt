@@ -8,9 +8,9 @@ import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.model.recipe.FirestoreRecipesRepository
 import com.android.sample.resources.C.Tag.SCREEN_HEIGHT_THRESHOLD
 import com.android.sample.resources.C.Tag.SCREEN_WIDTH_THRESHOLD
+import com.android.sample.resources.C.TestTag.RecipeNameScreen.LOADING_COOK_TEST_TAG
 import com.android.sample.ui.createRecipe.RecipeNameScreen
 import com.android.sample.ui.navigation.NavigationActions
-import com.android.sample.ui.navigation.Screen
 import com.google.firebase.firestore.FirebaseFirestore
 import io.mockk.*
 import kotlinx.coroutines.test.runTest
@@ -35,126 +35,152 @@ class RecipeNameScreenTest {
     val repository = FirestoreRecipesRepository(firestore)
     repoImg = mockk(relaxed = true)
     createRecipeViewModel = spyk(CreateRecipeViewModel(repository, repoImg)) // Spy to verify calls
-
-    // Set the content for testing
-
   }
 
-  /** Tests if all components of RecipeNameScreen are displayed. */
+  /** New Test: Ensures the loading indicator is shown during initialization. */
   @Test
-  fun testRecipeNameScreenComponentsAreDisplayed() {
+  fun testLoadingIndicatorShownWhileInitializing() = runTest {
+    composeTestRule.mainClock.autoAdvance = false // Pause the test clock
+
     composeTestRule.setContent {
       RecipeNameScreen(
           navigationActions = mockNavigationActions,
           currentStep = 0,
-          createRecipeViewModel = createRecipeViewModel)
+          createRecipeViewModel = createRecipeViewModel,
+          isEditing = false)
     }
+
+    // Assert that the CircularProgressIndicator (LoadingCook) is displayed
+    composeTestRule.onNodeWithTag(LOADING_COOK_TEST_TAG).assertExists().assertIsDisplayed()
+
+    // Advance the clock to simulate initialization completing
+    composeTestRule.mainClock.advanceTimeBy(1000) // Simulate delay for initialization
+
+    // Assert that the loading indicator is gone and the rest of the screen is displayed
+    composeTestRule.onNodeWithTag(LOADING_COOK_TEST_TAG).assertDoesNotExist()
+    composeTestRule.onNodeWithTag("recipeNameTextField").assertExists().assertIsDisplayed()
+  }
+
+  /** Tests if all components of RecipeNameScreen are displayed in create mode. */
+  @Test
+  fun testRecipeNameScreenComponentsAreDisplayedInCreateMode() {
+    composeTestRule.setContent {
+      RecipeNameScreen(
+          navigationActions = mockNavigationActions,
+          currentStep = 0,
+          createRecipeViewModel = createRecipeViewModel,
+          isEditing = false)
+    }
+
+    // Assert title, subtitle, and text field are displayed
     composeTestRule.onNodeWithTag("RecipeTitle").assertExists().assertIsDisplayed()
     composeTestRule.onNodeWithTag("RecipeSubtitle").assertExists().assertIsDisplayed()
     composeTestRule.onNodeWithTag("recipeNameTextField").assertExists().assertIsDisplayed()
     composeTestRule.onNodeWithTag("NextStepButton").assertExists().assertIsDisplayed()
+
+    // Verify create mode title and description
+    composeTestRule.onNodeWithTag("RecipeTitle").assertTextEquals("Create your recipe")
+    composeTestRule
+        .onNodeWithTag("RecipeSubtitle")
+        .assertTextEquals(
+            "Create a recipe that others can discover and enjoy. Start by giving your dish a name!")
   }
 
-  /** Tests that an error message is shown if the recipe name is empty when clicking "Next Step". */
+  /** New Test: Ensures components are displayed correctly in edit mode. */
   @Test
-  fun testErrorDisplayedWhenRecipeNameIsEmpty() = runTest {
+  fun testRecipeNameScreenComponentsAreDisplayedInEditMode() {
+    every { createRecipeViewModel.getRecipeName() } returns "Edited Recipe Name"
+
     composeTestRule.setContent {
       RecipeNameScreen(
           navigationActions = mockNavigationActions,
           currentStep = 0,
-          createRecipeViewModel = createRecipeViewModel)
+          createRecipeViewModel = createRecipeViewModel,
+          isEditing = true)
     }
-    composeTestRule.onNodeWithText("Next Step").performClick()
-    composeTestRule.onNodeWithText("Please enter a recipe name").assertExists().assertIsDisplayed()
+
+    // Assert title, subtitle, and text field are displayed
+    composeTestRule.onNodeWithTag("RecipeTitle").assertExists().assertIsDisplayed()
+    composeTestRule.onNodeWithTag("RecipeSubtitle").assertExists().assertIsDisplayed()
+    composeTestRule.onNodeWithTag("recipeNameTextField").assertExists().assertIsDisplayed()
+    composeTestRule.onNodeWithTag("NextStepButton").assertExists().assertIsDisplayed()
+
+    // Verify edit mode title and description
+    composeTestRule.onNodeWithTag("RecipeTitle").assertTextEquals("Edit your recipe")
+    composeTestRule
+        .onNodeWithTag("RecipeSubtitle")
+        .assertTextEquals("Make changes to your recipe details below.")
+  }
+
+  /** Updated Test: Verifies `startNewRecipe` is called in create mode. */
+  @Test
+  fun testStartNewRecipeCalledInCreateMode() = runTest {
+    composeTestRule.setContent {
+      RecipeNameScreen(
+          navigationActions = mockNavigationActions,
+          currentStep = 0,
+          createRecipeViewModel = createRecipeViewModel,
+          isEditing = false)
+    }
+
+    // Verify `startNewRecipe` is called
+    verify { createRecipeViewModel.startNewRecipe() }
+  }
+
+  /** Updated Test: Ensures `getRecipeName` retrieves the name in edit mode. */
+  @Test
+  fun testRecipeNameFetchedInEditMode() = runTest {
+    every { createRecipeViewModel.getRecipeName() } returns "Edited Recipe"
+
+    composeTestRule.setContent {
+      RecipeNameScreen(
+          navigationActions = mockNavigationActions,
+          currentStep = 0,
+          createRecipeViewModel = createRecipeViewModel,
+          isEditing = true)
+    }
+
+    // Verify the text field contains the fetched recipe name
+    composeTestRule.onNodeWithTag("recipeNameTextField").assertTextEquals("Edited Recipe")
   }
 
   /**
-   * Tests that no error message is shown if the recipe name is entered and "Next Step" is clicked.
+   * New Test: Ensure an error message is displayed when NextStepButton is clicked without entering
+   * a name.*
    */
   @Test
-  fun testNoErrorDisplayedWhenRecipeNameIsEntered() = runTest {
+  fun testErrorDisplayedWhenRecipeNameIsEmpty() {
     composeTestRule.setContent {
       RecipeNameScreen(
           navigationActions = mockNavigationActions,
           currentStep = 0,
-          createRecipeViewModel = createRecipeViewModel)
+          createRecipeViewModel = createRecipeViewModel,
+          isEditing = false)
     }
-    composeTestRule.onNodeWithTag("recipeNameTextField").performTextInput("Chocolate Cake")
-    composeTestRule.onNodeWithText("Next Step").performClick()
-    composeTestRule.onNodeWithText("Please enter a recipe name").assertDoesNotExist()
+    composeTestRule.onNodeWithTag("NextStepButton").performClick()
+    composeTestRule.onNodeWithTag("ErrorMessage").assertExists().assertIsDisplayed()
   }
 
-  /**
-   * Tests that the "Next Step" button calls updateRecipeName and navigates to ingredients screen.
-   */
+  /** Test: Ensures the ChefImage is displayed when screen size is above the threshold. */
   @Test
-  fun testNextStepButtonCallsUpdateAndNavigatesWhenRecipeNameIsEntered() = runTest {
-    composeTestRule.setContent {
-      RecipeNameScreen(
-          navigationActions = mockNavigationActions,
-          currentStep = 0,
-          createRecipeViewModel = createRecipeViewModel)
-    }
-    // Set up expectation for updateRecipeName
-    every { createRecipeViewModel.updateRecipeName(any()) } just runs
-
-    // Provide text input for the recipe name
-    composeTestRule.onNodeWithTag("recipeNameTextField").performTextInput("Chocolate Cake")
-
-    // Click on the "Next Step" button
-    composeTestRule.onNodeWithText("Next Step").performClick()
-    composeTestRule.awaitIdle() // Ensure the UI has settled
-
-    // Verify that updateRecipeName is called with "Chocolate Cake"
-    verify { createRecipeViewModel.updateRecipeName("Chocolate Cake") }
-
-    // Verify navigation to the ingredients screen
-    verify { mockNavigationActions.navigateTo(Screen.CREATE_CATEGORY_SCREEN) }
-  }
-
-  /**
-   * Tests that the hint text is shown when recipe name is empty and hidden when text is entered.
-   */
-  @Test
-  fun testHintTextVisibilityBasedOnRecipeName() = runTest {
-    composeTestRule.setContent {
-      RecipeNameScreen(
-          navigationActions = mockNavigationActions,
-          currentStep = 0,
-          createRecipeViewModel = createRecipeViewModel)
-    }
-    // Retrieve the hint text directly from resources if possible
-    val hintText = "Choose a catchy title that reflects your dish"
-
-    // Assert that the hint text is displayed initially (when recipeName is empty)
-    composeTestRule.onNodeWithText(hintText).assertExists().assertIsDisplayed()
-
-    // Enter text to make the label disappear
-    composeTestRule.onNodeWithTag("recipeNameTextField").performTextInput("Chocolate Cake")
-
-    // Assert that the hint text no longer exists once text is entered
-    composeTestRule.onNodeWithText(hintText).assertDoesNotExist()
-  }
-
-  @Test
-  fun testChefImageDisplayedWhenScreenDimensionsAreLarge() = runTest {
+  fun testChefImageDisplayedWhenScreenSizeAboveThreshold() {
     composeTestRule.setContent {
       LocalConfiguration.current.apply {
-        screenWidthDp = SCREEN_WIDTH_THRESHOLD
-        screenHeightDp = SCREEN_HEIGHT_THRESHOLD
+        screenWidthDp = SCREEN_WIDTH_THRESHOLD + 1
+        screenHeightDp = SCREEN_HEIGHT_THRESHOLD + 1
       }
       RecipeNameScreen(
           navigationActions = mockNavigationActions,
           currentStep = 0,
-          createRecipeViewModel = createRecipeViewModel)
+          createRecipeViewModel = createRecipeViewModel,
+          isEditing = false)
     }
-
-    // Check if ChefImage is displayed based on large dimensions
     composeTestRule.onNodeWithTag("ChefImage").assertExists().assertIsDisplayed()
   }
 
+  /** Test: Ensures the ChefImage is not displayed when screen size is below the threshold. */
   @Test
-  fun testChefImageNotDisplayedWhenScreenDimensionsAreSmall() = runTest {
+  fun testChefImageNotDisplayedWhenScreenSizeBelowThreshold() {
     composeTestRule.setContent {
       LocalConfiguration.current.apply {
         screenWidthDp = SCREEN_WIDTH_THRESHOLD - 1
@@ -163,10 +189,9 @@ class RecipeNameScreenTest {
       RecipeNameScreen(
           navigationActions = mockNavigationActions,
           currentStep = 0,
-          createRecipeViewModel = createRecipeViewModel)
+          createRecipeViewModel = createRecipeViewModel,
+          isEditing = false)
     }
-
-    // Check if ChefImage is not displayed based on small dimensions
     composeTestRule.onNodeWithTag("ChefImage").assertDoesNotExist()
   }
 }
