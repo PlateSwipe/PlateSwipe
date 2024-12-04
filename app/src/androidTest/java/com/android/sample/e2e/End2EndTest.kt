@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.test.assertAny
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.hasText
@@ -41,6 +42,9 @@ import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_NORMAL_URL
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_SMALL_URL
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_THUMBNAIL_URL
 import com.android.sample.resources.C.Tag.SAVE_BUTTON_TAG
+import com.android.sample.resources.C.TestTag.Category.BUTTON_TEST_TAG
+import com.android.sample.resources.C.TestTag.Category.CATEGORY_DROPDOWN
+import com.android.sample.resources.C.TestTag.Category.DIFFICULTY_DROPDOWN
 import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen
 import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.INSTRUCTION_LIST_ITEM
 import com.android.sample.resources.C.TestTag.IngredientListScreen.ADD_INGREDIENT_ICON
@@ -48,6 +52,7 @@ import com.android.sample.resources.C.TestTag.IngredientListScreen.NEXT_STEP_BUT
 import com.android.sample.resources.C.TestTag.IngredientSearchScreen.CANCEL_BUTTON
 import com.android.sample.resources.C.TestTag.IngredientSearchScreen.CONFIRMATION_BUTTON
 import com.android.sample.resources.C.TestTag.IngredientSearchScreen.SCANNER_ICON
+import com.android.sample.resources.C.TestTag.PlateSwipeDropdown.DROPDOWN_TITLE
 import com.android.sample.resources.C.TestTag.RecipeAddImageScreen.CAMERA_BUTTON
 import com.android.sample.resources.C.TestTag.RecipeAddImageScreen.DISPLAY_IMAGE_DEFAULT
 import com.android.sample.resources.C.TestTag.RecipeAddImageScreen.GALLERY_BUTTON
@@ -350,28 +355,37 @@ class EndToEndTest {
     composeTestRule.onNodeWithTag("NextStepButton").performClick()
     composeTestRule.waitForIdle()
 
-    // category -------------------------------------------------------
+    // optional information -------------------------------------------------------
 
-    // Verify the category screen is displayed by checking the title
-    composeTestRule.onNodeWithText("Select A Category").assertExists()
+      val selectedCategory = "Beef"
 
-    // Open the dropdown menu
-    composeTestRule.onNodeWithTag("DropdownMenuButton").performClick()
-    composeTestRule.waitForIdle()
+      // Choose a category
+      composeTestRule.onNodeWithTag(CATEGORY_DROPDOWN).performClick()
+      composeTestRule.onNodeWithText(selectedCategory, useUnmergedTree = true).performScrollTo()
+      composeTestRule.waitForIdle()
+      composeTestRule.onNodeWithText(selectedCategory).performClick()
+      composeTestRule.waitForIdle()
+      composeTestRule
+          .onAllNodesWithTag(DROPDOWN_TITLE, useUnmergedTree = true)
+          .assertCountEquals(2)
+          .assertAny(hasText(selectedCategory))
 
-    // Scroll to the desired category if necessary
-    composeTestRule
-        .onNodeWithTag("DropdownMenuItem_Vegan", useUnmergedTree = true)
-        .performScrollTo()
+      val selectedDifficulty = Recipe.getDifficulties()[0]
 
-    // Select a category from the dropdown menu
-    composeTestRule.onNodeWithTag("DropdownMenuItem_Vegan").performClick()
+      // choose a difficulty
+      composeTestRule.onNodeWithTag(DIFFICULTY_DROPDOWN).performClick()
+      composeTestRule.onNodeWithText(selectedDifficulty, useUnmergedTree = true).performScrollTo()
+      composeTestRule.waitForIdle()
+      composeTestRule.onNodeWithText(selectedDifficulty).performClick()
+      composeTestRule.waitForIdle()
+      composeTestRule
+          .onAllNodesWithTag(DROPDOWN_TITLE, useUnmergedTree = true)
+          .assertCountEquals(2)
+          .assertAny(hasText(selectedDifficulty))
 
-    // Verify the selected category is displayed in the dropdown button
-    composeTestRule.onNodeWithTag("DropdownMenuButton").assertTextEquals("Vegan")
-
-    composeTestRule.onNodeWithTag("NextStepButton").performClick()
-    composeTestRule.waitForIdle()
+      // get to ingredients step page
+      composeTestRule.onNodeWithTag(BUTTON_TEST_TAG).performClick()
+      composeTestRule.waitForIdle()
 
     // ingredients -------------------------------------------------------
 
@@ -380,7 +394,7 @@ class EndToEndTest {
     composeTestRule.waitForIdle()
 
     // change the recipe ingredients list
-    composeTestRule.onNodeWithTag(ADD_INGREDIENT_ICON).assertIsDisplayed().performClick()
+    composeTestRule.onNodeWithTag(ADD_INGREDIENT_ICON, useUnmergedTree = true).assertIsDisplayed().performClick()
     composeTestRule.waitForIdle()
     composeTestRule.onNodeWithTag(SCANNER_ICON).assertIsDisplayed()
     composeTestRule.onNodeWithTag("searchBar").assertIsDisplayed().performTextInput("ingredient")
