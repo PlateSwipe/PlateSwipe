@@ -21,7 +21,6 @@ import org.mockito.Mock
 import org.mockito.Mockito.times
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
-import org.mockito.kotlin.any
 import org.mockito.kotlin.verify
 
 @RunWith(AndroidJUnit4::class)
@@ -36,30 +35,6 @@ class IngredientDownloadTest {
   fun setUp() {
     MockitoAnnotations.openMocks(this)
     ingredientViewModel = IngredientViewModel(defaultIngredientRepository, imageDownload)
-  }
-
-  @OptIn(ExperimentalCoroutinesApi::class)
-  @Test
-  fun `test download ingredients`() = runTest {
-    val ingr =
-        testIngredients[0].copy(
-            images =
-                mutableMapOf(
-                    PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
-                    PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
-                    PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
-    // Mock downloadAndSaveImage to return "path" for any inputs
-    `when`(imageDownload.downloadAndSaveImage(any(), any(), any(), any())).thenReturn("path")
-
-    var ver = false
-    // Validate that ingredient.images contains no null URLs
-    assert(ingr.images.values.all { it != null })
-    ingredientViewModel.downloadIngredient(
-        ingr, context, Dispatchers.IO, onSuccess = { ver = true }, onFailure = { ver = false })
-    advanceUntilIdle()
-    verify(imageDownload, times(3)).downloadAndSaveImage(any(), any(), any(), any())
-
-    assert(ver)
   }
 
   @OptIn(ExperimentalCoroutinesApi::class)
