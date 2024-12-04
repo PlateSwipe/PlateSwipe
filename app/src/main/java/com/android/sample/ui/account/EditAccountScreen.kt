@@ -8,22 +8,33 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerState
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
@@ -35,12 +46,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
 import com.android.sample.R
 import com.android.sample.feature.camera.openGallery
 import com.android.sample.feature.camera.uriToBitmap
@@ -51,12 +68,16 @@ import com.android.sample.resources.C.Tag.AccountScreen.PROFILE_PICTURE_CONTENT_
 import com.android.sample.resources.C.Tag.UserViewModel.IMAGE_NAME
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.TopLevelDestinations
+import com.android.sample.ui.utils.PlateSwipeButton
 import com.android.sample.ui.utils.PlateSwipeScaffold
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.runBlocking
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun EditAccountScreen(navigationActions: NavigationActions,
@@ -72,11 +93,11 @@ fun EditAccountScreen(navigationActions: NavigationActions,
       showBackArrow = true,
       content = { padding ->
           val userUid = firebaseAuth.currentUser!!.uid
+
           val userName = userViewModel.userName.collectAsState()
           var newUserName by remember { mutableStateOf(userName.value!!) }
 
           val profilePictureUrl = userViewModel.profilePictureUrl.collectAsState()
-
           var newProfilePictureImageBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
           LaunchedEffect(Unit) {
               if (!profilePictureUrl.value.isNullOrEmpty()) {
@@ -89,7 +110,6 @@ fun EditAccountScreen(navigationActions: NavigationActions,
                   )
               }
           }
-
           val photoPickerLauncher =
               rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia()) { uri
                   ->
@@ -102,6 +122,9 @@ fun EditAccountScreen(navigationActions: NavigationActions,
                   }
               }
 
+          val dateOfBirth = userViewModel.dateOfBirth.collectAsState()
+          var newDateOfBirth by remember { mutableStateOf(dateOfBirth.value) }
+
           Column (
               modifier = Modifier
                   .fillMaxSize()
@@ -110,125 +133,277 @@ fun EditAccountScreen(navigationActions: NavigationActions,
               verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.Top),
               horizontalAlignment = Alignment.CenterHorizontally
           ) {
-              Spacer(modifier = Modifier.height(16.dp))
+              Spacer(modifier = Modifier.weight(.1f))
 
               ProfilePicture(
                   newProfilePictureImageBitmap,
-                  modifier = Modifier.weight(.4f),
+                  modifier = Modifier.weight(.7f),
                   photoPickerLauncher
               )
 
-              ListChangeableInformation(newUserName, Modifier.weight(.8f), firebaseAuth) {newUserName = it}
+              Spacer(modifier = Modifier.weight(.1f))
 
-              SaveButton(
-                  userViewModel,
-                  navigationActions,
-                  imageRepositoryFirebase,
-                  userUid,
-                  userName,
+              ListChangeableInformation(
                   newUserName,
-                  newProfilePictureImageBitmap
+                  newDateOfBirth,
+                  Modifier.weight(.8f),
+                  firebaseAuth,
+                  {newUserName = it},
+                  {newDateOfBirth = it})
+
+              Spacer(modifier = Modifier.weight(.2f))
+
+              PlateSwipeButton(
+                  "Save changes",
+                  Modifier.testTag("SaveChangesButton"),
+                  onClick = {
+                      saveButtonLogic(
+                          userViewModel,
+                          navigationActions,
+                          imageRepositoryFirebase,
+                          userUid,
+                          userName,
+                          newUserName,
+                          newProfilePictureImageBitmap,
+                          dateOfBirth,
+                          newDateOfBirth
+                      )
+                  }
               )
 
+              Spacer(modifier = Modifier.weight(.025f))
           }
-
       })
 }
 
+/**
+ * Function that creates the composable for the profile picture and the edit button
+ *
+ * @param newProfilePictureImageBitmap the [ImageBitmap] of the profile picture which will be displayed if it exists; if it does not, a default image will be displayed
+ * @param modifier the modifier which will be passed to the box containing the image of the profile picture and the button to change the picture
+ * @param photoPickerLauncher the launch activity when we choose a photo from the gallery to be used as the profile picture
+ */
 @Composable
-private fun ProfilePicture(profilePictureUrl: ImageBitmap?, modifier: Modifier = Modifier, photoPickerLauncher: ManagedActivityResultLauncher<PickVisualMediaRequest, Uri?>) {
+private fun ProfilePicture(newProfilePictureImageBitmap: ImageBitmap?, modifier: Modifier = Modifier, photoPickerLauncher: ManagedActivityResultLauncher<PickVisualMediaRequest, Uri?>) {
         Box (modifier = modifier
-            .aspectRatio(1f)
-            .clip(CircleShape), contentAlignment = Alignment.Center) {
-            IconButton(
-                onClick = {
-                    runBlocking { openGallery(photoPickerLauncher) }
-                },
-                modifier = Modifier.fillMaxSize()
-            ) {
-                if (profilePictureUrl == null){
+            .aspectRatio(1f), contentAlignment = Alignment.Center) {
+                if (newProfilePictureImageBitmap == null){
                     Image(
                         painter = painterResource(id = R.drawable.account),
                         contentDescription = PROFILE_PICTURE_CONTENT_DESCRIPTION,
                         contentScale = ContentScale.FillBounds,
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(CircleShape)
+                            .border(2.dp, Color.Black, shape = CircleShape)
                     )
                 } else {
                     Image(
-                        bitmap = profilePictureUrl,
+                        bitmap = newProfilePictureImageBitmap,
                         contentDescription = PROFILE_PICTURE_CONTENT_DESCRIPTION,
                         contentScale = ContentScale.FillBounds,
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(CircleShape)
+                            .border(2.dp, Color.Black, shape = CircleShape)
                     )
                 }
+            Box (
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .size(50.dp)
+                    .offset(x = (-7.5).dp, y = (-7.5).dp)
+                    .background(MaterialTheme.colorScheme.background, shape = CircleShape)
+                    .border(1.dp, Color.Black, CircleShape)
+                    .clickable {
+                        runBlocking { openGallery(photoPickerLauncher) }
+                    }
+            ){
+                Icon(
+                    imageVector = Icons.Default.CameraAlt,
+                    contentDescription = "",
+                    modifier = Modifier.fillMaxSize().padding(5.dp),
+                    tint = Color.Black
+                )
             }
         }
 }
 
+/**
+ * Function that creates an input text field composable for a given field
+ *
+ * @param boxName the name given to the text field, which will be displayed above the value inside it
+ * @param boxValue the value which will be contained in the text field
+ * @param readOnly [Boolean] indicating if the field is read only or not
+ * @param onValueChange action to be performed when the value of the field changes
+ */
 @Composable
 private fun InputTextBox(boxName: String, boxValue: String, readOnly: Boolean, onValueChange: (String) -> Unit){
     OutlinedTextField(
         value = boxValue,
         onValueChange = onValueChange,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.width(350.dp),
+        textStyle = TextStyle(fontSize = 16.sp),
         label = { Text(boxName) },
         readOnly = readOnly,
         singleLine = true
     )
 }
 
+/**
+ * Function that creates the composable which contains the date picker
+ *
+ * @param newDateOfBirth the date of birth which will be displayed and stored in the future
+ * @param onValueChange action to be performed when the value of date of birth changes
+ */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ListChangeableInformation(newUserName: String, modifier: Modifier, firebaseAuth: FirebaseAuth, onValueChangeUserName: (String) -> Unit){
+private fun DateOfBirthBox(newDateOfBirth: String?, onValueChange: (String) -> Unit){
+    var showDatePicker by remember { mutableStateOf(false) }
+    val datePickerState = rememberDatePickerState()
+    var displayedDate by remember { mutableStateOf(newDateOfBirth!!) }
+    val selectedDate = datePickerState.selectedDateMillis?.let {
+        val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        formatter.format(Date(it))
+    } ?: " "
+
+    OutlinedTextField(
+        value = displayedDate,
+        onValueChange = { },
+        textStyle = TextStyle(fontSize = 16.sp),
+        label = { Text("Date of birth") },
+        readOnly = true,
+        trailingIcon = {
+            IconButton( onClick = { showDatePicker = !showDatePicker} ) {
+                Icon(
+                    imageVector = Icons.Default.DateRange,
+                    contentDescription = "Selected Date"
+                )
+            }
+        },
+        modifier = Modifier.width(350.dp)
+    )
+
+    DateOfBirthPopUpLogic(showDatePicker, datePickerState, {
+        showDatePicker = false
+        displayedDate = selectedDate
+        onValueChange(selectedDate)
+    })
+}
+
+/**
+ * The logic of the date of birth picker pop up where we select the date
+ *
+ * @param showDatePicker boolean which indicates if we want to show the date picker or not
+ * @param datePickerState [DatePickerState] which transforms the selected date into a string
+ * @param onDismissRequest action to be performed when we dismiss the pop up
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DateOfBirthPopUpLogic(showDatePicker: Boolean, datePickerState: DatePickerState, onDismissRequest: () -> Unit) {
+    if (showDatePicker){
+        Popup(
+            onDismissRequest = onDismissRequest,
+            alignment = Alignment.TopStart
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .offset(y = 0.dp)
+                    .shadow(elevation = 4.dp)
+                    .background(MaterialTheme.colorScheme.surface)
+                    .padding(16.dp)
+            ) {
+                DatePicker(
+                    state = datePickerState,
+                    showModeToggle = false
+                )
+            }
+        }
+    }
+}
+
+
+/**
+ * Method that creates the different fields of the user that can be read or modified
+ *
+ * @param newUserName the user name that will be displayed in the field as well as modified
+ * @param newDateOfBirth the date of birth that will be displayed in the field as well as modified
+ * @param modifier the modifier that will be applied on the column containing the different fields
+ * @param firebaseAuth the firebase authentication used to retrieve the users email address
+ * @param onValueChangeUserName the function which will be called when the user name is modified
+ * @param onValueChangeDateOfBirth the function which will be called when the date of birth is modified
+ */
+@Composable
+private fun ListChangeableInformation(
+    newUserName: String,
+    newDateOfBirth: String?,
+    modifier: Modifier,
+    firebaseAuth: FirebaseAuth,
+    onValueChangeUserName: (String) -> Unit,
+    onValueChangeDateOfBirth: (String) -> Unit){
     Column (
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         InputTextBox("Username", newUserName, false, onValueChangeUserName)
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.weight(.3f))
 
         InputTextBox("Email", firebaseAuth.currentUser!!.email!!, true) {}
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.weight(.3f))
+
+        DateOfBirthBox(newDateOfBirth, onValueChangeDateOfBirth)
     }
 }
 
-@Composable
-private fun SaveButton(
+
+/**
+ * The logic behind the save button which uploads the image, gets its url from the database and
+ * updates the fields that were modified
+ *
+ * @param userViewModel the view model used for the user
+ * @param navigationActions the [NavigationActions] used in the app
+ * @param imageRepositoryFirebase the
+ * @param userUid the uid of the user
+ * @param userName the old username of the user that was in the database
+ * @param newUserName the new username of the user to be stored in the database
+ * @param newProfilePictureImageBitmap the new profile picture of the user in the form of a
+ * [ImageBitmap]
+ * @param dateOfBirth the old date of birth that was in the database
+ * @param newDateOfBirth the new date of birth to be stored in the database
+ */
+private fun saveButtonLogic(
     userViewModel: UserViewModel,
     navigationActions: NavigationActions,
     imageRepositoryFirebase: ImageRepositoryFirebase,
     userUid: String,
     userName: State<String?>,
     newUserName: String,
-    newProfilePictureImageBitmap: ImageBitmap?){
-    Row (modifier = Modifier.width(221.dp)){
-        Button(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = {
-                if (userName.value != newUserName) {
-                    userViewModel.changeUserName(newUserName)
-                }
-                if (newProfilePictureImageBitmap != null) {
-                    imageRepositoryFirebase.uploadImage(
-                        userUid,
-                        IMAGE_NAME,
-                        ImageDirectoryType.USER,
-                        newProfilePictureImageBitmap, {
-                            imageRepositoryFirebase.getImageUrl(userUid,
-                                IMAGE_NAME,
-                                ImageDirectoryType.USER,
-                                { userViewModel.changeProfilePictureUrl(it.toString()) },
-                                { Log.e("EditAccountScreen", it.message!!) })
-                        },
-                        { Log.e("EditAccountScreen", it.message!!) }
-                    )
-                }
-
-                navigationActions.goBack()
-            }
-        ) {
-            Text("Save changes")
-        }
+    newProfilePictureImageBitmap: ImageBitmap?,
+    dateOfBirth: State<String?>,
+    newDateOfBirth: String?){
+    if (userName.value != newUserName) {
+        userViewModel.changeUserName(newUserName)
     }
+    if (newProfilePictureImageBitmap != null) {
+        imageRepositoryFirebase.uploadImage(
+            userUid,
+            IMAGE_NAME,
+            ImageDirectoryType.USER,
+            newProfilePictureImageBitmap, {
+                imageRepositoryFirebase.getImageUrl(userUid,
+                    IMAGE_NAME,
+                    ImageDirectoryType.USER,
+                    { userViewModel.changeProfilePictureUrl(it.toString()) },
+                    { Log.e("EditAccountScreen", it.message!!) })
+            },
+            { Log.e("EditAccountScreen", it.message!!) }
+        )
+    }
+    if (newDateOfBirth != dateOfBirth.value){
+        userViewModel.changeDateOfBirth(newDateOfBirth!!)
+    }
+    navigationActions.goBack()
 }

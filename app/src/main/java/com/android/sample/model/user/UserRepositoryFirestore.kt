@@ -75,8 +75,9 @@ class UserRepositoryFirestore(private val db: FirebaseFirestore) : UserRepositor
           }
       val likedRecipes = snapshot["likedRecipes"] as List<String>
       val createdRecipes = snapshot["createdRecipes"] as List<String>
+      val dateOfBirth = snapshot["dateOfBirth"] as String
 
-      User(uid, userName, profilePictureUrl, fridge, likedRecipes, createdRecipes)
+      User(uid, userName, profilePictureUrl, fridge, likedRecipes, createdRecipes, dateOfBirth)
     } catch (e: Exception) {
       Log.e("UserRepositoryFirestore", "Error converting snapshot to user", e)
       null

@@ -173,6 +173,7 @@ val testUsers: List<User> =
             "",
             listOf(testFridgeItem[0]),
             listOf(testRecipes[0].uid),
-            listOf(testRecipes[1].uid)),
-        User("002", "Ion Popescu", "", emptyList(), emptyList(), emptyList()),
+            listOf(testRecipes[1].uid),
+            "25/01/2002"),
+        User("002", "Ion Popescu", "", emptyList(), emptyList(), emptyList(), ""),
     )
