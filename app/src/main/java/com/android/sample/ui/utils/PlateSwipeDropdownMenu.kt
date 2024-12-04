@@ -46,7 +46,7 @@ fun PlateSwipeDropdownMenu(
     onSelected: (String, Int) -> Unit = { _, _ -> },
     defaultItemIndex: Int? = null
 ) {
-  require(defaultItemIndex == null || defaultItemIndex >= itemList.size) {
+  require(defaultItemIndex == null || defaultItemIndex <= itemList.size) {
     "defaultItemIndex should be less than list size"
   }
 
