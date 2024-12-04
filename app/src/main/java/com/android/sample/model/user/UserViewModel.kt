@@ -58,8 +58,8 @@ class UserViewModel(
   private val _createdRecipes: MutableStateFlow<List<Recipe>> = MutableStateFlow(emptyList())
   val createdRecipes: StateFlow<List<Recipe>> = _createdRecipes
 
-    private val _dateOfBirth: MutableStateFlow<String?> = MutableStateFlow(null)
-    val dateOfBirth: StateFlow<String?> = _dateOfBirth
+  private val _dateOfBirth: MutableStateFlow<String?> = MutableStateFlow(null)
+  val dateOfBirth: StateFlow<String?> = _dateOfBirth
 
   private val _currentRecipe = MutableStateFlow<Recipe?>(null)
   override val currentRecipe: StateFlow<Recipe?>
@@ -82,7 +82,7 @@ class UserViewModel(
    */
   fun getCurrentUser() {
     val userId: String = firebaseAuth.currentUser?.uid ?: return
-      val displayName: String = firebaseAuth.currentUser?.displayName ?: "User"
+    val displayName: String = firebaseAuth.currentUser?.displayName ?: "User"
 
     userRepository.getUserById(
         id = userId,
@@ -106,7 +106,7 @@ class UserViewModel(
                 { recipe -> removeRecipeFromUserCreatedRecipes(recipe) },
                 FAILED_TO_FETCH_CREATED_RECIPE_FROM_DATABASE_ERROR)
           }
-            _dateOfBirth.value = user.dateOfBirth
+          _dateOfBirth.value = user.dateOfBirth
         },
         onFailure = {
           userRepository.addUser(
@@ -161,15 +161,15 @@ class UserViewModel(
     updateCurrentUser()
   }
 
-    /**
-     * Updates the user's date of birth in the viewmodel as well as in the database
-     *
-     * @param dateOfBirth the new date of birth of the user
-     */
-    fun changeDateOfBirth(dateOfBirth: String){
-        _dateOfBirth.value = dateOfBirth
-        updateCurrentUser()
-    }
+  /**
+   * Updates the user's date of birth in the viewmodel as well as in the database
+   *
+   * @param dateOfBirth the new date of birth of the user
+   */
+  fun changeDateOfBirth(dateOfBirth: String) {
+    _dateOfBirth.value = dateOfBirth
+    updateCurrentUser()
+  }
 
   /**
    * Updates the list of items by adding or removing an item. If the item is already in the list and

@@ -15,7 +15,6 @@ class UserTest {
   private lateinit var createdRecipes: List<String>
   private lateinit var dateOfBirth: String
 
-
   @Before
   fun setUp() {
     uid = testUsers[0].uid
@@ -29,7 +28,8 @@ class UserTest {
 
   @Test
   fun createUserTest() {
-    val user = User(uid, userName, profilePictureUrl, fridge, likedRecipes, createdRecipes, dateOfBirth)
+    val user =
+        User(uid, userName, profilePictureUrl, fridge, likedRecipes, createdRecipes, dateOfBirth)
 
     assert(user.uid == testUsers[0].uid)
     assert(user.userName == testUsers[0].userName)

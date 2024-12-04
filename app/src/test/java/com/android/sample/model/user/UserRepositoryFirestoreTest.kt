@@ -188,7 +188,7 @@ class UserRepositoryFirestoreTest {
                                 fridgeItemExample.expirationDate.dayOfMonth.toLong()))))
     `when`(mockSnapshot.get("createdRecipes")).thenReturn(user.createdRecipes)
     `when`(mockSnapshot.get("likedRecipes")).thenReturn(user.likedRecipes)
-      `when`(mockSnapshot.get("dateOfBirth")).thenReturn(user.dateOfBirth)
+    `when`(mockSnapshot.get("dateOfBirth")).thenReturn(user.dateOfBirth)
 
     try {
       convertSnapshotMethod.isAccessible = true
