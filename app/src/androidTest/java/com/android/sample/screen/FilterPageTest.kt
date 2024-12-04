@@ -100,7 +100,6 @@ class FilterPageTest {
 
     composeTestRule.onNodeWithTag("timeRangeSlider", useUnmergedTree = true).assertIsDisplayed()
 
-    composeTestRule.onNodeWithTag("priceRangeSlider", useUnmergedTree = true).performScrollTo()
     composeTestRule.waitForIdle()
 
     composeTestRule
@@ -459,26 +458,16 @@ class FilterPageTest {
         .performScrollTo()
         .performClick()
 
-    composeTestRule.onNodeWithTag("priceRangeSlider", useUnmergedTree = true).performScrollTo()
     composeTestRule.waitForIdle()
 
     // Find the RangeSlider node and calculate its bounds
-    var sliderNode = composeTestRule.onNodeWithTag("priceRangeSlider", useUnmergedTree = true)
-    var sliderBounds = sliderNode.fetchSemanticsNode().boundsInRoot
-
-    // Swipe from start to end on the RangeSlider's horizontal bounds
-    sliderNode.performTouchInput {
-      swipe(
-          start = Offset(sliderBounds.right, sliderBounds.height),
-          end = Offset(sliderBounds.left, sliderBounds.height))
-    }
 
     composeTestRule.onNodeWithTag("timeRangeSlider", useUnmergedTree = true).performScrollTo()
     composeTestRule.waitForIdle()
 
     // Find the RangeSlider node and calculate its bounds
-    sliderNode = composeTestRule.onNodeWithTag("timeRangeSlider", useUnmergedTree = true)
-    sliderBounds = sliderNode.fetchSemanticsNode().boundsInRoot
+    val sliderNode = composeTestRule.onNodeWithTag("timeRangeSlider", useUnmergedTree = true)
+    val sliderBounds = sliderNode.fetchSemanticsNode().boundsInRoot
 
     // Swipe from start to end on the RangeSlider's horizontal bounds
     sliderNode.performTouchInput {
