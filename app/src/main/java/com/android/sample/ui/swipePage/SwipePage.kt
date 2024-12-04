@@ -291,9 +291,7 @@ fun RecipeDisplay(
                     var displayTimeRange by remember {
                       mutableStateOf(!filter.timeRange.isLimited())
                     }
-                    var displayPriceRange by remember {
-                      mutableStateOf(!filter.priceRange.isLimited())
-                    }
+
                     var displayDifficulty by remember {
                       mutableStateOf(filter.difficulty != Difficulty.Undefined)
                     }
