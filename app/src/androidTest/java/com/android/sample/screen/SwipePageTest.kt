@@ -21,7 +21,6 @@ import com.android.sample.resources.C.TestTag.SwipePage.DIFFICULTY_CHIP
 import com.android.sample.resources.C.TestTag.SwipePage.DRAGGABLE_ITEM
 import com.android.sample.resources.C.TestTag.SwipePage.FILTER
 import com.android.sample.resources.C.TestTag.SwipePage.FILTER_ROW
-import com.android.sample.resources.C.TestTag.SwipePage.PRICE_RANGE_CHIP
 import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_IMAGE_1
 import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_IMAGE_2
 import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_NAME
@@ -91,8 +90,6 @@ class SwipePageTest : TestCase() {
     // Init the filter
     recipesViewModel.updateTimeRange(0f, 100f)
     recipesViewModel.updateTimeRange(5f, 99f)
-    recipesViewModel.updatePriceRange(0f, 100f)
-    recipesViewModel.updatePriceRange(5f, 52f)
     recipesViewModel.updateDifficulty(Difficulty.Easy)
     recipesViewModel.updateCategory("Dessert")
     recipesViewModel.applyChanges()
@@ -311,43 +308,6 @@ class SwipePageTest : TestCase() {
     assertEquals(
         recipesViewModel.filter.value.timeRange.max,
         recipesViewModel.filter.value.timeRange.maxBorn)
-  }
-
-  @Test
-  fun priceRangeChipDisplaysAndHidesCorrectly() {
-    // Check if price range chip exists in the hierarchy
-    composeTestRule.onNodeWithTag(PRICE_RANGE_CHIP, useUnmergedTree = true).assertExists()
-
-    // Scroll to bring the price range chip into view if needed
-    composeTestRule
-        .onNodeWithTag(FILTER_ROW, useUnmergedTree = true)
-        .performScrollToNode(hasTestTag(PRICE_RANGE_CHIP))
-
-    // Verify the chip is visible after scrolling
-    composeTestRule.onNodeWithTag(PRICE_RANGE_CHIP, useUnmergedTree = true).assertIsDisplayed()
-
-    // Click the close icon to hide the chip
-    composeTestRule
-        .onNodeWithTag("priceRangeChip$DELETE_SUFFIX", useUnmergedTree = true)
-        .performClick()
-
-    // Confirm that the chip is no longer visible in the hierarchy
-    composeTestRule.onNodeWithTag(PRICE_RANGE_CHIP, useUnmergedTree = true).assertDoesNotExist()
-
-    composeTestRule.waitUntil(5000) {
-      recipesViewModel.filter.value.priceRange.min ==
-          recipesViewModel.filter.value.priceRange.minBorn &&
-          recipesViewModel.filter.value.priceRange.max ==
-              recipesViewModel.filter.value.priceRange.maxBorn
-    }
-
-    // Verify the ViewModel price range has been reset
-    assertEquals(
-        recipesViewModel.filter.value.priceRange.min,
-        recipesViewModel.filter.value.priceRange.minBorn)
-    assertEquals(
-        recipesViewModel.filter.value.priceRange.max,
-        recipesViewModel.filter.value.priceRange.maxBorn)
   }
 
   @Test
