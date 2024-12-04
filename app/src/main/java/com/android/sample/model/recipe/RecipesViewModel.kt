@@ -59,6 +59,8 @@ class RecipesViewModel(private val repository: RecipesRepository) :
   override val categories: StateFlow<List<String>>
     get() = _categories
 
+  private val isFilterUsed = MutableStateFlow(false)
+
   override val timeRangeState: StateFlow<FloatRange> =
       _tmpFilter
           .map { it.timeRange }
@@ -98,6 +100,7 @@ class RecipesViewModel(private val repository: RecipesRepository) :
    */
   override fun updateDifficulty(difficulty: Difficulty) {
     _tmpFilter.value.difficulty = difficulty
+    isFilterUsed.value = true
   }
 
   /**
@@ -108,6 +111,7 @@ class RecipesViewModel(private val repository: RecipesRepository) :
    */
   override fun updateTimeRange(min: Float, max: Float) {
     _tmpFilter.value.timeRange.update(min, max)
+    isFilterUsed.value = true
   }
 
   /** Applies the changes made to the filters. */
@@ -117,6 +121,7 @@ class RecipesViewModel(private val repository: RecipesRepository) :
       _recipes.value = emptyList()
       _currentRecipe.value = null
       _nextRecipe.value = null
+      isFilterUsed.value = true
       fetchRandomRecipes(NUMBER_RECIPES_TO_FETCH)
       _loading.collect { isLoading ->
         if (!isLoading) {
@@ -129,6 +134,7 @@ class RecipesViewModel(private val repository: RecipesRepository) :
 
   /** Resets all filters to their default values. */
   override fun resetFilters() {
+    isFilterUsed.value = false
     _tmpFilter.value = Filter()
   }
 
@@ -162,9 +168,9 @@ class RecipesViewModel(private val repository: RecipesRepository) :
     require(numberOfRecipes >= 1) { "Number of fetched recipes must be at least 1" }
     _loading.value = true // Set loading to true while fetching
     // uncomment when backend is ready. Tested with hardcoded mealDB data
-    if (_filter.value.category != null) {
-      repository.searchByCategory(
-          _filter.value.category!!,
+    if (isFilterUsed.value) {
+      repository.filterSearch(
+          filter = _filter.value,
           onSuccess = { recipes ->
             _recipes.value += recipes
             _loading.value = false
