@@ -67,7 +67,6 @@ class FirestoreRecipesRepositoryTest {
   private val filterWithTimeAndPrice =
       Filter(
           timeRange = FloatRange(0f, 100f, 0f, 100f),
-          priceRange = FloatRange(0f, 100f, 0f, 100f),
           difficulty = Difficulty.Undefined,
           category = null,
       )
@@ -75,7 +74,6 @@ class FirestoreRecipesRepositoryTest {
   private val filterWithCategory =
       Filter(
           timeRange = FloatRange(0f, 100f, 0f, 100f),
-          priceRange = FloatRange(0f, 100f, 0f, 100f),
           difficulty = Difficulty.Undefined,
           category = "Beef",
       )
@@ -83,7 +81,6 @@ class FirestoreRecipesRepositoryTest {
   private val filterWithDifficultyAndTimeAndPrice =
       Filter(
           timeRange = FloatRange(0f, 100f, 0f, 100f),
-          priceRange = FloatRange(0f, 100f, 0f, 100f),
           difficulty = Difficulty.Easy,
           category = null,
       )
@@ -91,12 +88,6 @@ class FirestoreRecipesRepositoryTest {
   private val filterWithDifficulty =
       Filter(
           timeRange =
-              FloatRange(
-                  UNINITIALIZED_BORN_VALUE,
-                  UNINITIALIZED_BORN_VALUE,
-                  UNINITIALIZED_BORN_VALUE,
-                  UNINITIALIZED_BORN_VALUE),
-          priceRange =
               FloatRange(
                   UNINITIALIZED_BORN_VALUE,
                   UNINITIALIZED_BORN_VALUE,
@@ -722,8 +713,7 @@ class FirestoreRecipesRepositoryTest {
     verify(mockCollectionReference, times(0)).whereEqualTo(any<String>(), any())
     verify(mockCollectionReference, times(1)).whereGreaterThan(any<String>(), any())
 
-    verify(mockQuery, times(1)).whereGreaterThan(any<String>(), any())
-    verify(mockQuery, times(2)).whereLessThan(any<String>(), any())
+    verify(mockQuery, times(1)).whereLessThan(any<String>(), any())
 
     verify(mockQuery, times(0)).whereEqualTo(any<String>(), any())
 
@@ -781,8 +771,8 @@ class FirestoreRecipesRepositoryTest {
     */
     verify(mockCollectionReference, times(1)).whereEqualTo(any<String>(), any())
 
-    verify(mockQuery, times(2)).whereGreaterThan(any<String>(), any())
-    verify(mockQuery, times(2)).whereLessThan(any<String>(), any())
+    verify(mockQuery, times(1)).whereGreaterThan(any<String>(), any())
+    verify(mockQuery, times(1)).whereLessThan(any<String>(), any())
 
     verify(mockQuery, times(0)).whereEqualTo(any<String>(), any())
 
@@ -841,8 +831,7 @@ class FirestoreRecipesRepositoryTest {
     verify(mockCollectionReference, times(0)).whereEqualTo(any<String>(), any())
     verify(mockCollectionReference, times(1)).whereGreaterThan(any<String>(), any())
 
-    verify(mockQuery, times(1)).whereGreaterThan(any<String>(), any())
-    verify(mockQuery, times(2)).whereLessThan(any<String>(), any())
+    verify(mockQuery, times(1)).whereLessThan(any<String>(), any())
 
     verify(mockQuery, times(1)).whereEqualTo(any<String>(), any())
 

@@ -331,23 +331,6 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
         }
 
     /*
-     * Price filter
-     */
-    finalQuery =
-        if (filter.priceRange.min != UNINITIALIZED_BORN_VALUE) {
-          finalQuery.whereGreaterThan(FIRESTORE_RECIPE_PRICE, filter.priceRange.min.toString())
-        } else {
-          finalQuery
-        }
-
-    finalQuery =
-        if (filter.priceRange.max != UNINITIALIZED_BORN_VALUE) {
-          finalQuery.whereLessThan(FIRESTORE_RECIPE_PRICE, filter.priceRange.max.toString())
-        } else {
-          finalQuery
-        }
-
-    /*
      * Difficulty filter
      */
     finalQuery =
