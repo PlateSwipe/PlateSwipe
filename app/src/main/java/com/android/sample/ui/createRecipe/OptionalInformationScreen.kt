@@ -39,7 +39,7 @@ import com.android.sample.ui.utils.PlateSwipeDropdownMenu
 import com.android.sample.ui.utils.PlateSwipeScaffold
 
 @Composable
-fun CategoryScreen(
+fun OptionalInformationScreen(
     navigationActions: NavigationActions,
     createRecipeViewModel: CreateRecipeViewModel,
 ) {
@@ -47,8 +47,7 @@ fun CategoryScreen(
       navigationActions = navigationActions,
       selectedItem = Route.CREATE_RECIPE,
       showBackArrow = true,
-      content = { paddingValues ->
-        CategoryContent(
+      content = { paddingValues ->OptionalInformationContent(
             currentStep = INITIAL_RECIPE_STEP,
             navigationActions = navigationActions,
             createRecipeViewModel = createRecipeViewModel,
@@ -57,7 +56,7 @@ fun CategoryScreen(
 }
 
 /**
- * Composable function to optionally select a category for a recipe.
+ * The content of the optional information screen. Including the category and difficulty dropdowns.
  *
  * @param modifier Modifier to be applied to the screen.
  * @param currentStep The current step in the recipe creation process.
@@ -65,7 +64,7 @@ fun CategoryScreen(
  * @param createRecipeViewModel ViewModel for managing the recipe creation process.
  */
 @Composable
-fun CategoryContent(
+fun OptionalInformationContent(
     modifier: Modifier = Modifier,
     currentStep: Int,
     navigationActions: NavigationActions,

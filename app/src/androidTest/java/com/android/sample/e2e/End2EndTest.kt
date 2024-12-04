@@ -66,7 +66,7 @@ import com.android.sample.ui.account.AccountScreen
 import com.android.sample.ui.camera.CameraScanCodeBarScreen
 import com.android.sample.ui.camera.CameraTakePhotoScreen
 import com.android.sample.ui.createRecipe.AddInstructionStepScreen
-import com.android.sample.ui.createRecipe.CategoryScreen
+import com.android.sample.ui.createRecipe.OptionalInformationScreen
 import com.android.sample.ui.createRecipe.CreateRecipeScreen
 import com.android.sample.ui.createRecipe.IngredientListScreen
 import com.android.sample.ui.createRecipe.PublishRecipeScreen
@@ -518,7 +518,7 @@ class EndToEndTest {
               navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
         }
         composable(Screen.CREATE_CATEGORY_SCREEN) {
-          CategoryScreen(
+          OptionalInformationScreen(
               navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
         }
         composable(Screen.CREATE_RECIPE_INGREDIENTS) {

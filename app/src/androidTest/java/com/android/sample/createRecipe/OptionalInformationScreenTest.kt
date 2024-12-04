@@ -16,7 +16,7 @@ import com.android.sample.model.recipe.FirestoreRecipesRepository
 import com.android.sample.resources.C.TestTag.Category.BUTTON_TEST_TAG
 import com.android.sample.resources.C.TestTag.Category.CATEGORY_DROPDOWN
 import com.android.sample.resources.C.TestTag.PlateSwipeDropdown.DROPDOWN_TITLE
-import com.android.sample.ui.createRecipe.CategoryScreen
+import com.android.sample.ui.createRecipe.OptionalInformationScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.google.firebase.firestore.FirebaseFirestore
@@ -28,7 +28,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
-class CategoryScreenTest {
+class OptionalInformationScreenTest {
 
   @get:Rule val composeTestRule = createComposeRule()
 
@@ -49,7 +49,7 @@ class CategoryScreenTest {
   @Test
   fun testCategoryScreenComponentsAreDisplayed() {
     composeTestRule.setContent {
-      CategoryScreen(
+      OptionalInformationScreen(
           navigationActions = mockNavigationActions, createRecipeViewModel = createRecipeViewModel)
     }
 
@@ -67,7 +67,7 @@ class CategoryScreenTest {
   @Test
   fun testSelectingCategoryUpdatesButtonText() {
     composeTestRule.setContent {
-      CategoryScreen(
+      OptionalInformationScreen(
           navigationActions = mockNavigationActions, createRecipeViewModel = createRecipeViewModel)
     }
 
@@ -97,7 +97,7 @@ class CategoryScreenTest {
   @Test
   fun testNextStepButtonNavigatesToNextScreen() {
     composeTestRule.setContent {
-      CategoryScreen(
+      OptionalInformationScreen(
           navigationActions = mockNavigationActions, createRecipeViewModel = createRecipeViewModel)
     }
 

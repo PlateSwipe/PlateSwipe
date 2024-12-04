@@ -43,7 +43,7 @@ import com.android.sample.resources.C.TestTag.PlateSwipeDropdown.DROPDOWN_TITLE
 fun PlateSwipeDropdownMenu(
     itemList: List<String>,
     modifier: Modifier = Modifier,
-    onSelected: (String, Int) -> Unit = { string, index -> },
+    onSelected: (String, Int) -> Unit = { _, _ -> },
     defaultItemIndex: Int? = null
 ) {
   if (defaultItemIndex != null && defaultItemIndex >= itemList.size) {
