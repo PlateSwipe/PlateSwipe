@@ -100,7 +100,7 @@ class OptionalInformationScreenTest {
   fun testSelectingDifficultyUpdatesButtonText() {
     composeTestRule.setContent {
       OptionalInformationScreen(
-        navigationActions = mockNavigationActions, createRecipeViewModel = createRecipeViewModel)
+          navigationActions = mockNavigationActions, createRecipeViewModel = createRecipeViewModel)
     }
 
     val selectedDifficulty = Recipe.getDifficulties()[1]
@@ -120,9 +120,9 @@ class OptionalInformationScreenTest {
 
     // Verify dropdown button text updates to the selected category
     composeTestRule
-      .onAllNodesWithTag(DROPDOWN_TITLE, useUnmergedTree = true)
-      .assertCountEquals(2)
-      .assertAny(hasText(selectedDifficulty))
+        .onAllNodesWithTag(DROPDOWN_TITLE, useUnmergedTree = true)
+        .assertCountEquals(2)
+        .assertAny(hasText(selectedDifficulty))
   }
 
   @Test

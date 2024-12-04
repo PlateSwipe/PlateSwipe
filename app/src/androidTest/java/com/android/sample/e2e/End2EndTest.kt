@@ -357,35 +357,35 @@ class EndToEndTest {
 
     // optional information -------------------------------------------------------
 
-      val selectedCategory = "Beef"
+    val selectedCategory = "Beef"
 
-      // Choose a category
-      composeTestRule.onNodeWithTag(CATEGORY_DROPDOWN).performClick()
-      composeTestRule.onNodeWithText(selectedCategory, useUnmergedTree = true).performScrollTo()
-      composeTestRule.waitForIdle()
-      composeTestRule.onNodeWithText(selectedCategory).performClick()
-      composeTestRule.waitForIdle()
-      composeTestRule
-          .onAllNodesWithTag(DROPDOWN_TITLE, useUnmergedTree = true)
-          .assertCountEquals(2)
-          .assertAny(hasText(selectedCategory))
+    // Choose a category
+    composeTestRule.onNodeWithTag(CATEGORY_DROPDOWN).performClick()
+    composeTestRule.onNodeWithText(selectedCategory, useUnmergedTree = true).performScrollTo()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithText(selectedCategory).performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule
+        .onAllNodesWithTag(DROPDOWN_TITLE, useUnmergedTree = true)
+        .assertCountEquals(2)
+        .assertAny(hasText(selectedCategory))
 
-      val selectedDifficulty = Recipe.getDifficulties()[0]
+    val selectedDifficulty = Recipe.getDifficulties()[0]
 
-      // choose a difficulty
-      composeTestRule.onNodeWithTag(DIFFICULTY_DROPDOWN).performClick()
-      composeTestRule.onNodeWithText(selectedDifficulty, useUnmergedTree = true).performScrollTo()
-      composeTestRule.waitForIdle()
-      composeTestRule.onNodeWithText(selectedDifficulty).performClick()
-      composeTestRule.waitForIdle()
-      composeTestRule
-          .onAllNodesWithTag(DROPDOWN_TITLE, useUnmergedTree = true)
-          .assertCountEquals(2)
-          .assertAny(hasText(selectedDifficulty))
+    // choose a difficulty
+    composeTestRule.onNodeWithTag(DIFFICULTY_DROPDOWN).performClick()
+    composeTestRule.onNodeWithText(selectedDifficulty, useUnmergedTree = true).performScrollTo()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithText(selectedDifficulty).performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule
+        .onAllNodesWithTag(DROPDOWN_TITLE, useUnmergedTree = true)
+        .assertCountEquals(2)
+        .assertAny(hasText(selectedDifficulty))
 
-      // get to ingredients step page
-      composeTestRule.onNodeWithTag(BUTTON_TEST_TAG).performClick()
-      composeTestRule.waitForIdle()
+    // get to ingredients step page
+    composeTestRule.onNodeWithTag(BUTTON_TEST_TAG).performClick()
+    composeTestRule.waitForIdle()
 
     // ingredients -------------------------------------------------------
 
@@ -394,7 +394,10 @@ class EndToEndTest {
     composeTestRule.waitForIdle()
 
     // change the recipe ingredients list
-    composeTestRule.onNodeWithTag(ADD_INGREDIENT_ICON, useUnmergedTree = true).assertIsDisplayed().performClick()
+    composeTestRule
+        .onNodeWithTag(ADD_INGREDIENT_ICON, useUnmergedTree = true)
+        .assertIsDisplayed()
+        .performClick()
     composeTestRule.waitForIdle()
     composeTestRule.onNodeWithTag(SCANNER_ICON).assertIsDisplayed()
     composeTestRule.onNodeWithTag("searchBar").assertIsDisplayed().performTextInput("ingredient")
