@@ -77,7 +77,6 @@ import com.google.firebase.storage.FirebaseStorage
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import kotlinx.coroutines.runBlocking
 
 @Composable
 fun EditAccountScreen(
@@ -88,13 +87,13 @@ fun EditAccountScreen(
         ImageRepositoryFirebase(FirebaseStorage.getInstance())
 ) {
   val context = LocalContext.current
+    val userUid = firebaseAuth.currentUser?.uid ?: return
 
   PlateSwipeScaffold(
       navigationActions,
       TopLevelDestinations.ACCOUNT.route,
       showBackArrow = true,
       content = { padding ->
-        val userUid = firebaseAuth.currentUser!!.uid
 
         val userName = userViewModel.userName.collectAsState()
         var newUserName by remember { mutableStateOf(userName.value!!) }
@@ -153,18 +152,12 @@ fun EditAccountScreen(
 
               PlateSwipeButton(
                   "Save changes",
-                  Modifier.testTag("SaveChangesButton"),
+                  Modifier.testTag("Save Changes Button"),
                   onClick = {
-                    saveButtonLogic(
-                        userViewModel,
-                        navigationActions,
-                        imageRepositoryFirebase,
-                        userUid,
-                        userName,
-                        newUserName,
-                        newProfilePictureImageBitmap,
-                        dateOfBirth,
-                        newDateOfBirth)
+                      saveChangesUsername(userViewModel, userName, newUserName)
+                      saveChangesProfilePicture(userViewModel, imageRepositoryFirebase, userUid, newProfilePictureImageBitmap)
+                      saveChangesDateOfBirth(userViewModel, dateOfBirth, newDateOfBirth)
+                      navigationActions.goBack()
                   })
 
               Spacer(modifier = Modifier.weight(.025f))
@@ -197,7 +190,8 @@ private fun ProfilePicture(
           modifier =
               Modifier.fillMaxSize()
                   .clip(CircleShape)
-                  .border(2.dp, Color.Black, shape = CircleShape))
+                  .border(2.dp, Color.Black, shape = CircleShape)
+                  .testTag("Profile Picture"))
     } else {
       Image(
           bitmap = newProfilePictureImageBitmap,
@@ -206,7 +200,8 @@ private fun ProfilePicture(
           modifier =
               Modifier.fillMaxSize()
                   .clip(CircleShape)
-                  .border(2.dp, Color.Black, shape = CircleShape))
+                  .border(2.dp, Color.Black, shape = CircleShape)
+                  .testTag("Profile Picture"))
     }
     Box(
         modifier =
@@ -215,11 +210,11 @@ private fun ProfilePicture(
                 .offset(x = (-7.5).dp, y = (-7.5).dp)
                 .background(MaterialTheme.colorScheme.background, shape = CircleShape)
                 .border(1.dp, Color.Black, CircleShape)
-                .clickable { runBlocking { openGallery(photoPickerLauncher) } }) {
+                .clickable { openGallery(photoPickerLauncher) }) {
           Icon(
               imageVector = Icons.Default.CameraAlt,
               contentDescription = "",
-              modifier = Modifier.fillMaxSize().padding(5.dp),
+              modifier = Modifier.fillMaxSize().padding(5.dp).testTag("Change profile picture button"),
               tint = Color.Black)
         }
   }
@@ -244,7 +239,7 @@ private fun InputTextBox(
   OutlinedTextField(
       value = boxValue,
       onValueChange = onValueChange,
-      modifier = Modifier.width(350.dp),
+      modifier = Modifier.width(350.dp).testTag("$boxName text field"),
       textStyle = TextStyle(fontSize = 16.sp),
       label = { Text(boxName) },
       readOnly = readOnly,
@@ -280,16 +275,16 @@ private fun DateOfBirthBox(newDateOfBirth: String?, onValueChange: (String) -> U
           Icon(imageVector = Icons.Default.DateRange, contentDescription = "Selected Date")
         }
       },
-      modifier = Modifier.width(350.dp))
+      modifier = Modifier.width(350.dp).testTag("Date of birth text field"))
 
   DateOfBirthPopUpLogic(
       showDatePicker,
       datePickerState,
-      {
-        showDatePicker = false
-        displayedDate = selectedDate
-        onValueChange(selectedDate)
-      })
+      ) {
+          showDatePicker = false
+          displayedDate = selectedDate
+          onValueChange(selectedDate)
+        }
 }
 
 /**
@@ -314,7 +309,8 @@ private fun DateOfBirthPopUpLogic(
                   .offset(y = 0.dp)
                   .shadow(elevation = 4.dp)
                   .background(MaterialTheme.colorScheme.surface)
-                  .padding(16.dp)) {
+                  .padding(16.dp)
+                  .testTag("Date picker pop up")) {
             DatePicker(state = datePickerState, showModeToggle = false)
           }
     }
@@ -355,52 +351,59 @@ private fun ListChangeableInformation(
 }
 
 /**
- * The logic behind the save button which uploads the image, gets its url from the database and
- * updates the fields that were modified
+ * Function that changes the new user name in the viewmodel as well as in the database
  *
- * @param userViewModel the view model used for the user
- * @param navigationActions the [NavigationActions] used in the app
- * @param imageRepositoryFirebase the
- * @param userUid the uid of the user
- * @param userName the old username of the user that was in the database
- * @param newUserName the new username of the user to be stored in the database
- * @param newProfilePictureImageBitmap the new profile picture of the user in the form of a
- *   [ImageBitmap]
- * @param dateOfBirth the old date of birth that was in the database
- * @param newDateOfBirth the new date of birth to be stored in the database
+ * @param userViewModel the view model of the user
+ * @param userName the old user name
+ * @param newUserName the new user name
  */
-private fun saveButtonLogic(
-    userViewModel: UserViewModel,
-    navigationActions: NavigationActions,
-    imageRepositoryFirebase: ImageRepositoryFirebase,
-    userUid: String,
-    userName: State<String?>,
-    newUserName: String,
-    newProfilePictureImageBitmap: ImageBitmap?,
-    dateOfBirth: State<String?>,
-    newDateOfBirth: String?
-) {
-  if (userName.value != newUserName) {
-    userViewModel.changeUserName(newUserName)
-  }
-  if (newProfilePictureImageBitmap != null) {
-    imageRepositoryFirebase.uploadImage(
-        userUid,
-        IMAGE_NAME,
-        ImageDirectoryType.USER,
-        newProfilePictureImageBitmap,
-        {
-          imageRepositoryFirebase.getImageUrl(
-              userUid,
-              IMAGE_NAME,
-              ImageDirectoryType.USER,
-              { userViewModel.changeProfilePictureUrl(it.toString()) },
-              { Log.e("EditAccountScreen", it.message!!) })
-        },
-        { Log.e("EditAccountScreen", it.message!!) })
-  }
-  if (newDateOfBirth != dateOfBirth.value) {
-    userViewModel.changeDateOfBirth(newDateOfBirth!!)
-  }
-  navigationActions.goBack()
+private fun saveChangesUsername(userViewModel: UserViewModel, userName: State<String?>,
+                                newUserName: String){
+    if (userName.value != newUserName) {
+        userViewModel.changeUserName(newUserName)
+    }
+}
+
+/**
+ * Function that changes the new profile picture in the viewmodel as well as in the database
+ *
+ * @param userViewModel the view model of the user
+ * @param imageRepositoryFirebase the firebase repository of the images
+ * @param userUid the uid of the user
+ * @param newProfilePictureImageBitmap the new profile picture of the user
+ */
+private fun saveChangesProfilePicture(userViewModel: UserViewModel,
+                                      imageRepositoryFirebase: ImageRepositoryFirebase,
+                                      userUid: String,
+                                      newProfilePictureImageBitmap: ImageBitmap?) {
+    if (newProfilePictureImageBitmap != null) {
+        imageRepositoryFirebase.uploadImage(
+            userUid,
+            IMAGE_NAME,
+            ImageDirectoryType.USER,
+            newProfilePictureImageBitmap,
+            {
+                imageRepositoryFirebase.getImageUrl(
+                    userUid,
+                    IMAGE_NAME,
+                    ImageDirectoryType.USER,
+                    { userViewModel.changeProfilePictureUrl(it.toString()) },
+                    { Log.e("EditAccountScreen", it.message!!) })
+            },
+            { Log.e("EditAccountScreen", it.message!!) })
+    }
+}
+
+/**
+ * Function that changes the new date of birth in the viewmodel as well as in the database
+ *
+ * @param userViewModel the view model of the user
+ * @param dateOfBirth old date of birth of the user
+ * @param newDateOfBirth new date of birth of the user
+ */
+private fun saveChangesDateOfBirth(userViewModel: UserViewModel, dateOfBirth: State<String?>,
+                                   newDateOfBirth: String?){
+    if (newDateOfBirth != dateOfBirth.value) {
+        userViewModel.changeDateOfBirth(newDateOfBirth!!)
+    }
 }
