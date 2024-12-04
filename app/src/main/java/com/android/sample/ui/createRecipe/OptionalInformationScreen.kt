@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -109,53 +110,32 @@ fun OptionalInformationContent(
 
           Spacer(modifier = Modifier.weight(1f))
 
-          // Subtitle Category
-          Text(
-              text = stringResource(R.string.select_category),
-              style = MaterialTheme.typography.bodyMedium,
-              color = MaterialTheme.colorScheme.onPrimary,
-              modifier = Modifier.padding(horizontal = PADDING_32.dp).testTag(CATEGORY_SUBTITLE),
-              textAlign = TextAlign.Center)
-
-          Spacer(modifier = Modifier.weight(.5f))
-
-          // Dropdown Category
-          PlateSwipeDropdownMenu(
-              categories,
-              onSelected = { selectedText, _ ->
-                selectedCategory.value =
-                    if (selectedText == noCategoryString) null else selectedText
-              },
-              modifier =
-                  Modifier.fillMaxWidth()
-                      .padding(horizontal = PADDING_16.dp)
-                      .testTag(CATEGORY_DROPDOWN),
-              defaultItemIndex = selectedCategory.value?.let { categories.indexOf(it) })
+            // Category Dropdown
+            SubtitleWithDropDown(
+                subtitle = stringResource(R.string.select_category),
+                subtitleTestTag = CATEGORY_SUBTITLE,
+                dropdownTestTag = CATEGORY_DROPDOWN,
+                itemList = categories,
+                onSelected = { selectedText, _ ->
+                  selectedCategory.value =
+                      if (selectedText == noCategoryString) null else selectedText
+                },
+                defaultItemIndex = selectedCategory.value?.let { categories.indexOf(it) })
 
           Spacer(modifier = Modifier.weight(1f))
 
-          // Subtitle Difficulty
-          Text(
-              text = stringResource(R.string.select_difficulty),
-              style = MaterialTheme.typography.bodyMedium,
-              color = MaterialTheme.colorScheme.onPrimary,
-              modifier = Modifier.padding(horizontal = PADDING_32.dp).testTag(DIFFICULTY_SUBTITLE),
-              textAlign = TextAlign.Center)
+            SubtitleWithDropDown(
+                subtitle = stringResource(R.string.select_difficulty),
+                subtitleTestTag = DIFFICULTY_SUBTITLE,
+                dropdownTestTag = DIFFICULTY_DROPDOWN,
+                itemList = difficulties,
+                onSelected = { selectedText, _ ->
+                  selectedDifficulty.value =
+                      if (selectedText == noDifficultyString) null else selectedText
+                },
+                defaultItemIndex = selectedDifficulty.value?.let { difficulties.indexOf(it) }
+            )
 
-          Spacer(modifier = Modifier.weight(.5f))
-
-          // Dropdown Difficulty
-          PlateSwipeDropdownMenu(
-              difficulties,
-              onSelected = { selectedText, _ ->
-                selectedDifficulty.value =
-                    if (selectedText == noDifficultyString) null else selectedText
-              },
-              modifier =
-                  Modifier.fillMaxWidth()
-                      .padding(horizontal = PADDING_16.dp)
-                      .testTag(DIFFICULTY_DROPDOWN),
-              defaultItemIndex = selectedDifficulty.value?.let { difficulties.indexOf(it) })
 
           Spacer(modifier = Modifier.weight(1f))
 
@@ -170,4 +150,32 @@ fun OptionalInformationContent(
               })
         }
   }
+}
+
+@Composable
+private fun SubtitleWithDropDown(
+    subtitle: String,
+    subtitleTestTag: String,
+    dropdownTestTag: String,
+    itemList: List<String>,
+    onSelected: (String, Int) -> Unit = { _, _ -> },
+    defaultItemIndex: Int? = null
+){
+        Text(
+            text = subtitle,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onPrimary,
+            modifier = Modifier.padding(horizontal = PADDING_32.dp).testTag(subtitleTestTag),
+            textAlign = TextAlign.Center)
+
+        Spacer(modifier = Modifier.fillMaxWidth().height(PADDING_8.dp))
+
+        PlateSwipeDropdownMenu(
+            itemList,
+            onSelected = onSelected,
+            modifier =
+            Modifier.fillMaxWidth()
+                .padding(horizontal = PADDING_16.dp)
+                .testTag(dropdownTestTag),
+            defaultItemIndex = defaultItemIndex)
 }
