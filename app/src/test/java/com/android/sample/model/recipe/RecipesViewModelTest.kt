@@ -108,8 +108,7 @@ class RecipesViewModelTest {
   @Test
   fun fetchByCategoriesRecipesHandlesFailure() {
     // Simulate the failure of the repository
-    `when`(mockRecipeRepository.searchByCategory(any(), any(), any(), any())).thenAnswer {
-        invocation ->
+    `when`(mockRecipeRepository.filterSearch(any(), any(), any(), any())).thenAnswer { invocation ->
       val onFailure = invocation.getArgument<(Throwable) -> Unit>(2)
       onFailure(Exception("Network error")) // Simulate a failure
       null
