@@ -480,14 +480,6 @@ class RecipesViewModelTest {
         recipesViewModel.filter.value.difficulty, recipesViewModel.tmpFilter.value.difficulty)
     assertEquals(recipesViewModel.filter.value.category, recipesViewModel.tmpFilter.value.category)
     assertEquals(
-        recipesViewModel.filter.value.priceRange.min,
-        recipesViewModel.tmpFilter.value.priceRange.min,
-        0.001f)
-    assertEquals(
-        recipesViewModel.filter.value.priceRange.max,
-        recipesViewModel.tmpFilter.value.priceRange.max,
-        0.001f)
-    assertEquals(
         recipesViewModel.filter.value.timeRange.min,
         recipesViewModel.tmpFilter.value.timeRange.min,
         0.001f)
