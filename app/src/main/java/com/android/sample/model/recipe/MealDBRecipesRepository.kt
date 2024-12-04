@@ -1,5 +1,6 @@
 package com.android.sample.model.recipe
 
+import com.android.sample.model.filter.Filter
 import com.android.sample.resources.C.Tag.MAXIMUM_RECIPES_TO_FETCH_MEAL_DB
 import com.android.sample.resources.C.Tag.MAX_NB_OF_INGREDIENTS_IN_A_RECIPE_MEAL_DB
 import com.android.sample.resources.C.Tag.MEAL_DB_ARRAY_NAME
@@ -207,6 +208,15 @@ class MealDBRecipesRepository(private val client: OkHttpClient) : RecipesReposit
                 }
               }
             })
+  }
+
+  override fun filterSearch(
+      filter: Filter,
+      onSuccess: (List<Recipe>) -> Unit,
+      onFailure: (Exception) -> Unit,
+      limit: Int
+  ) {
+    throw UnsupportedOperationException(UNSUPPORTED_MESSAGE)
   }
 
   fun listCategories(onSuccess: (List<String>) -> Unit, onFailure: (Exception) -> Unit) {

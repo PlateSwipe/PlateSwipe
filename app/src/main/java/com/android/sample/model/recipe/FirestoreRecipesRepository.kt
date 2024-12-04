@@ -290,11 +290,11 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
    * @param onSuccess The callback to call if the operation is successful.
    * @param onFailure The callback to call if the operation fails.
    */
-  fun filterSearch(
+  override fun filterSearch(
       filter: Filter,
-      limit: Int,
       onSuccess: (List<Recipe>) -> Unit,
-      onFailure: (Exception) -> Unit
+      onFailure: (Exception) -> Unit,
+      limit: Int,
   ) {
     require(limit > 0) { LIMIT_MUST_BE_POSITIVE_MESSAGE }
     val recipes = mutableListOf<Recipe>()

@@ -1,5 +1,7 @@
 package com.android.sample.model.recipe
 
+import com.android.sample.model.filter.Filter
+
 /** Interface for retrieving recipe data. */
 interface RecipesRepository {
 
@@ -65,6 +67,21 @@ interface RecipesRepository {
    */
   fun searchByCategory(
       category: String,
+      onSuccess: (List<Recipe>) -> Unit,
+      onFailure: (Exception) -> Unit,
+      limit: Int = 5
+  )
+
+  /**
+   * Fetches a list of recipes by Filter.
+   *
+   * @param filter The filter to apply to the search.
+   * @param onSuccess Callback that returns the list of fetched recipes.
+   * @param onFailure Callback that is called when an error occurs.
+   * @param limit The maximum number of recipes to fetch.
+   */
+  fun filterSearch(
+      filter: Filter,
       onSuccess: (List<Recipe>) -> Unit,
       onFailure: (Exception) -> Unit,
       limit: Int = 5
