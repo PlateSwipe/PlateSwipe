@@ -104,13 +104,13 @@ class PlateSwipeDropdownMenuTest {
         .assertTextEquals(exampleList[0])
   }
 
-    @Test
-    fun testThrowsExceptionIfDefaultItemIndexIsInvalid() {
-        val invalidIndex = exampleList.size + 1
-        assertThrows(IllegalArgumentException::class.java) {
-            composeTestRule.setContent {
-                PlateSwipeDropdownMenu(exampleList, defaultItemIndex = invalidIndex)
-            }
-        }
+  @Test
+  fun testThrowsExceptionIfDefaultItemIndexIsInvalid() {
+    val invalidIndex = exampleList.size + 1
+    assertThrows(IllegalArgumentException::class.java) {
+      composeTestRule.setContent {
+        PlateSwipeDropdownMenu(exampleList, defaultItemIndex = invalidIndex)
+      }
     }
+  }
 }
