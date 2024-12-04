@@ -110,32 +110,30 @@ fun OptionalInformationContent(
 
           Spacer(modifier = Modifier.weight(1f))
 
-            // Category Dropdown
-            SubtitleWithDropDown(
-                subtitle = stringResource(R.string.select_category),
-                subtitleTestTag = CATEGORY_SUBTITLE,
-                dropdownTestTag = CATEGORY_DROPDOWN,
-                itemList = categories,
-                onSelected = { selectedText, _ ->
-                  selectedCategory.value =
-                      if (selectedText == noCategoryString) null else selectedText
-                },
-                defaultItemIndex = selectedCategory.value?.let { categories.indexOf(it) })
+          // Category Dropdown
+          SubtitleWithDropDown(
+              subtitle = stringResource(R.string.select_category),
+              subtitleTestTag = CATEGORY_SUBTITLE,
+              dropdownTestTag = CATEGORY_DROPDOWN,
+              itemList = categories,
+              onSelected = { selectedText, _ ->
+                selectedCategory.value =
+                    if (selectedText == noCategoryString) null else selectedText
+              },
+              defaultItemIndex = selectedCategory.value?.let { categories.indexOf(it) })
 
           Spacer(modifier = Modifier.weight(1f))
 
-            SubtitleWithDropDown(
-                subtitle = stringResource(R.string.select_difficulty),
-                subtitleTestTag = DIFFICULTY_SUBTITLE,
-                dropdownTestTag = DIFFICULTY_DROPDOWN,
-                itemList = difficulties,
-                onSelected = { selectedText, _ ->
-                  selectedDifficulty.value =
-                      if (selectedText == noDifficultyString) null else selectedText
-                },
-                defaultItemIndex = selectedDifficulty.value?.let { difficulties.indexOf(it) }
-            )
-
+          SubtitleWithDropDown(
+              subtitle = stringResource(R.string.select_difficulty),
+              subtitleTestTag = DIFFICULTY_SUBTITLE,
+              dropdownTestTag = DIFFICULTY_DROPDOWN,
+              itemList = difficulties,
+              onSelected = { selectedText, _ ->
+                selectedDifficulty.value =
+                    if (selectedText == noDifficultyString) null else selectedText
+              },
+              defaultItemIndex = selectedDifficulty.value?.let { difficulties.indexOf(it) })
 
           Spacer(modifier = Modifier.weight(1f))
 
@@ -160,22 +158,20 @@ private fun SubtitleWithDropDown(
     itemList: List<String>,
     onSelected: (String, Int) -> Unit = { _, _ -> },
     defaultItemIndex: Int? = null
-){
-        Text(
-            text = subtitle,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onPrimary,
-            modifier = Modifier.padding(horizontal = PADDING_32.dp).testTag(subtitleTestTag),
-            textAlign = TextAlign.Center)
+) {
+  Text(
+      text = subtitle,
+      style = MaterialTheme.typography.bodyMedium,
+      color = MaterialTheme.colorScheme.onPrimary,
+      modifier = Modifier.padding(horizontal = PADDING_32.dp).testTag(subtitleTestTag),
+      textAlign = TextAlign.Center)
 
-        Spacer(modifier = Modifier.fillMaxWidth().height(PADDING_8.dp))
+  Spacer(modifier = Modifier.fillMaxWidth().height(PADDING_8.dp))
 
-        PlateSwipeDropdownMenu(
-            itemList,
-            onSelected = onSelected,
-            modifier =
-            Modifier.fillMaxWidth()
-                .padding(horizontal = PADDING_16.dp)
-                .testTag(dropdownTestTag),
-            defaultItemIndex = defaultItemIndex)
+  PlateSwipeDropdownMenu(
+      itemList,
+      onSelected = onSelected,
+      modifier =
+          Modifier.fillMaxWidth().padding(horizontal = PADDING_16.dp).testTag(dropdownTestTag),
+      defaultItemIndex = defaultItemIndex)
 }
