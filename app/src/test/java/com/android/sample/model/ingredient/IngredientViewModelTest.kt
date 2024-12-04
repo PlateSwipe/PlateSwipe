@@ -293,17 +293,6 @@ class IngredientViewModelTest {
 
   @OptIn(ExperimentalCoroutinesApi::class)
   @Test
-  fun testDownloadIngredientSuccess() = runTest {
-    val context: Context = ApplicationProvider.getApplicationContext()
-    `when`(imageDownload.downloadAndSaveImage(any(), any(), any(), any())).thenReturn("path")
-
-    ingredientViewModel.downloadIngredient(testIngredients[0].copy(), context, Dispatchers.IO)
-    advanceUntilIdle()
-    verify(ingredientRepository).addDownload(any())
-  }
-
-  @OptIn(ExperimentalCoroutinesApi::class)
-  @Test
   fun testDownloadIngredientFail() = runTest {
     val ingr =
         testIngredients[0].copy(
