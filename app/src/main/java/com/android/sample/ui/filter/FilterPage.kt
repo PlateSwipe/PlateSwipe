@@ -45,15 +45,12 @@ import com.android.sample.resources.C.Dimension.PADDING_8
 import com.android.sample.resources.C.Dimension.SwipePage.BUTTON_ELEVATION
 import com.android.sample.resources.C.Dimension.SwipePage.BUTTON_RADIUS
 import com.android.sample.resources.C.Tag.FilterPage.MAX_ITEM_IN_ROW
-import com.android.sample.resources.C.Tag.FilterPage.PRICE_RANGE_MAX
-import com.android.sample.resources.C.Tag.FilterPage.PRICE_RANGE_MIN
 import com.android.sample.resources.C.Tag.FilterPage.SLIDER_COLOR_ACTIVE
 import com.android.sample.resources.C.Tag.FilterPage.SLIDER_COLOR_INACTIVE
 import com.android.sample.resources.C.Tag.FilterPage.TIME_RANGE_MAX
 import com.android.sample.resources.C.Tag.FilterPage.TIME_RANGE_MIN
 import com.android.sample.resources.C.TestTag.FilterPage.TEST_TAG_CATEGORY
 import com.android.sample.resources.C.TestTag.FilterPage.TEST_TAG_DIFFICULTY
-import com.android.sample.resources.C.TestTag.FilterPage.TEST_TAG_PRICE_RANGE_SLIDER
 import com.android.sample.resources.C.TestTag.FilterPage.TEST_TAG_TIME_RANGE_SLIDER
 import com.android.sample.resources.C.TestTag.SwipePage.VIEW_RECIPE_BUTTON
 import com.android.sample.ui.navigation.NavigationActions
@@ -104,14 +101,6 @@ fun FilterBox(
             unit = stringResource(id = R.string.time_unit),
             range = filterViewModel.timeRangeState,
             updateRange = { newMin, newMax -> filterViewModel.updateTimeRange(newMin, newMax) })
-        ValueRangeSlider(
-            modifier = Modifier.testTag(TEST_TAG_PRICE_RANGE_SLIDER),
-            name = stringResource(id = R.string.price_range_name),
-            min = PRICE_RANGE_MIN,
-            max = PRICE_RANGE_MAX,
-            unit = stringResource(id = R.string.price_unit),
-            range = filterViewModel.priceRangeState,
-            updateRange = { newMin, newMax -> filterViewModel.updatePriceRange(newMin, newMax) })
 
         val difficultyLevels = listOf(Difficulty.Easy, Difficulty.Medium, Difficulty.Hard)
         val selectedDifficulty = filter.difficulty

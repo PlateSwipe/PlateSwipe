@@ -129,7 +129,6 @@ import com.android.sample.resources.C.TestTag.SwipePage.DIFFICULTY_CHIP
 import com.android.sample.resources.C.TestTag.SwipePage.DRAGGABLE_ITEM
 import com.android.sample.resources.C.TestTag.SwipePage.FILTER
 import com.android.sample.resources.C.TestTag.SwipePage.FILTER_ROW
-import com.android.sample.resources.C.TestTag.SwipePage.PRICE_RANGE_CHIP
 import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_IMAGE_1
 import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_IMAGE_2
 import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_NAME
@@ -313,20 +312,6 @@ fun RecipeDisplay(
                             "${filter.timeRange.min.toInt()} - ${filter.timeRange.max.toInt()} min",
                         testTag = TIME_RANGE_CHIP,
                         contentDescription = stringResource(R.string.time_range_name))
-
-                    FilterChip(
-                        displayState = displayPriceRange,
-                        onDelete = {
-                          displayPriceRange = false
-                          recipesViewModel.updatePriceRange(
-                              recipesViewModel.filter.value.priceRange.minBorn,
-                              recipesViewModel.filter.value.priceRange.maxBorn)
-                          recipesViewModel.applyChanges()
-                        },
-                        label =
-                            "${filter.priceRange.min.toInt()} - ${filter.priceRange.max.toInt()} $",
-                        testTag = PRICE_RANGE_CHIP,
-                        contentDescription = stringResource(R.string.price_range_name))
 
                     FilterChip(
                         displayState = displayDifficulty,

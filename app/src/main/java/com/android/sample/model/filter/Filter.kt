@@ -20,12 +20,6 @@ open class Filter(
             UNINITIALIZED_BORN_VALUE,
             UNINITIALIZED_BORN_VALUE,
             UNINITIALIZED_BORN_VALUE),
-    var priceRange: FloatRange =
-        FloatRange(
-            UNINITIALIZED_BORN_VALUE,
-            UNINITIALIZED_BORN_VALUE,
-            UNINITIALIZED_BORN_VALUE,
-            UNINITIALIZED_BORN_VALUE),
     var difficulty: Difficulty = Difficulty.Undefined,
     var category: String? = null,
 )

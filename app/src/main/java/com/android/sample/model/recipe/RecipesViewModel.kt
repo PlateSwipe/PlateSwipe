@@ -72,19 +72,6 @@ class RecipesViewModel(private val repository: RecipesRepository) :
                       UNINITIALIZED_BORN_VALUE,
                       UNINITIALIZED_BORN_VALUE))
 
-  override val priceRangeState: StateFlow<FloatRange> =
-      _tmpFilter
-          .map { it.priceRange }
-          .stateIn(
-              viewModelScope,
-              SharingStarted.WhileSubscribed(),
-              initialValue =
-                  FloatRange(
-                      UNINITIALIZED_BORN_VALUE,
-                      UNINITIALIZED_BORN_VALUE,
-                      UNINITIALIZED_BORN_VALUE,
-                      UNINITIALIZED_BORN_VALUE))
-
   init {
     viewModelScope.launch {
       getCategoryList()
@@ -111,16 +98,6 @@ class RecipesViewModel(private val repository: RecipesRepository) :
    */
   override fun updateDifficulty(difficulty: Difficulty) {
     _tmpFilter.value.difficulty = difficulty
-  }
-
-  /**
-   * Updates the price range filter.
-   *
-   * @param min The minimum price.
-   * @param max The maximum price.
-   */
-  override fun updatePriceRange(min: Float, max: Float) {
-    _tmpFilter.value.priceRange.update(min, max)
   }
 
   /**

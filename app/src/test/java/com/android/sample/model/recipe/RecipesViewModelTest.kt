@@ -452,17 +452,6 @@ class RecipesViewModelTest {
     assertEquals(newDifficulty, recipesViewModel.tmpFilter.value.difficulty)
   }
 
-  /** Tests for the filter price range functionality. */
-  @Test
-  fun `test updatePriceRange updates the price range correctly`() {
-    val newMin = 10f
-    val newMax = 50f
-    recipesViewModel.updatePriceRange(newMin, newMax)
-
-    assertEquals(newMin, recipesViewModel.tmpFilter.value.priceRange.min, 0.001f)
-    assertEquals(newMax, recipesViewModel.tmpFilter.value.priceRange.max, 0.001f)
-  }
-
   /** Tests for the filter time range functionality. */
   @Test
   fun `test updateTimeRange updates the time range correctly`() {

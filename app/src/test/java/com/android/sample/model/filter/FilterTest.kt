@@ -8,9 +8,9 @@ import org.junit.Test
 class FilterTest {
   @Test
   fun `test default Filter values`() {
-    val filter = Filter(FloatRange(-1f, -1f, -1f, -1f), FloatRange(-1f, -1f, -1f, -1f))
+    val filter = Filter(FloatRange(-1f, -1f, -1f, -1f))
     assertTrue(filter.timeRange.isLimited())
-    assertTrue(filter.priceRange.isLimited())
+
     assertEquals(Difficulty.Undefined, filter.difficulty)
     assertEquals(null, filter.category)
   }
@@ -26,14 +26,9 @@ class FilterTest {
             50f,
         )
     val filter =
-        Filter(
-            timeRange = customTimeRange,
-            priceRange = customPriceRange,
-            difficulty = Difficulty.Medium,
-            category = "dessert")
+        Filter(timeRange = customTimeRange, difficulty = Difficulty.Medium, category = "dessert")
 
     assertEquals(customTimeRange, filter.timeRange)
-    assertEquals(customPriceRange, filter.priceRange)
     assertEquals(Difficulty.Medium, filter.difficulty)
     assertEquals("dessert", filter.category)
   }
@@ -75,11 +70,14 @@ class FilterTest {
   fun `test Filter update time range`() {
 
     val customTimeRange = FloatRange(0f, 100f, 0f, 100f)
-    val filter = Filter(FloatRange(-1f, -1f, -1f, -1f), FloatRange(-1f, -1f, -1f, -1f))
+    val filter =
+        Filter(
+            FloatRange(-1f, -1f, -1f, -1f),
+        )
 
     filter.timeRange.update(0f, 100f)
     assertEquals(customTimeRange, filter.timeRange)
-    assertTrue(filter.priceRange.isLimited())
+
     assertEquals(Difficulty.Undefined, filter.difficulty)
     assertEquals(null, filter.category)
   }
@@ -88,11 +86,13 @@ class FilterTest {
   fun `test Filter update price range`() {
 
     val customPriceRange = FloatRange(0f, 200f, 0f, 200f)
-    val filter = Filter(FloatRange(-1f, -1f, -1f, -1f), FloatRange(-1f, -1f, -1f, -1f))
-    filter.priceRange.update(0f, 200f)
+    val filter =
+        Filter(
+            FloatRange(-1f, -1f, -1f, -1f),
+        )
 
     assertTrue(filter.timeRange.isLimited())
-    assertEquals(customPriceRange, filter.priceRange)
+
     assertEquals(Difficulty.Undefined, filter.difficulty)
     assertEquals(null, filter.category)
   }
@@ -101,12 +101,14 @@ class FilterTest {
   fun `test Filter update both ranges`() {
     val customTimeRange = FloatRange(0f, 100f, 0f, 100f)
     val customPriceRange = FloatRange(0f, 200f, 0f, 200f)
-    val filter = Filter(FloatRange(-1f, -1f, -1f, -1f), FloatRange(-1f, -1f, -1f, -1f))
+    val filter =
+        Filter(
+            FloatRange(-1f, -1f, -1f, -1f),
+        )
     filter.timeRange.update(0f, 100f)
-    filter.priceRange.update(0f, 200f)
 
     assertEquals(customTimeRange, filter.timeRange)
-    assertEquals(customPriceRange, filter.priceRange)
+
     assertEquals(Difficulty.Undefined, filter.difficulty)
     assertEquals(null, filter.category)
   }
@@ -115,15 +117,16 @@ class FilterTest {
   fun `test Filter double update both ranges`() {
     val customTimeRange = FloatRange(5f, 99f, 0f, 100f)
     val customPriceRange = FloatRange(5f, 199f, 0f, 200f)
-    val filter = Filter(FloatRange(-1f, -1f, -1f, -1f), FloatRange(-1f, -1f, -1f, -1f))
+    val filter =
+        Filter(
+            FloatRange(-1f, -1f, -1f, -1f),
+        )
     filter.timeRange.update(0f, 100f)
-    filter.priceRange.update(0f, 200f)
 
     filter.timeRange.update(5f, 99f)
-    filter.priceRange.update(5f, 199f)
 
     assertEquals(customTimeRange, filter.timeRange)
-    assertEquals(customPriceRange, filter.priceRange)
+
     assertEquals(Difficulty.Undefined, filter.difficulty)
     assertEquals(null, filter.category)
   }
