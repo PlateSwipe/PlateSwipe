@@ -135,10 +135,6 @@ class RecipesViewModel(private val repository: RecipesRepository) :
   /** Initializes the filter. */
   override fun initFilter() {
 
-    if (_filter.value.priceRange.min != UNINITIALIZED_BORN_VALUE &&
-        _filter.value.priceRange.max != UNINITIALIZED_BORN_VALUE) {
-      _tmpFilter.value.priceRange.update(_filter.value.priceRange.min, _filter.value.priceRange.max)
-    }
     if (_filter.value.timeRange.min != UNINITIALIZED_BORN_VALUE &&
         _filter.value.timeRange.max != UNINITIALIZED_BORN_VALUE) {
       _tmpFilter.value.timeRange.update(_filter.value.timeRange.min, _filter.value.timeRange.max)
