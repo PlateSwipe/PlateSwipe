@@ -46,8 +46,8 @@ fun PlateSwipeDropdownMenu(
     onSelected: (String, Int) -> Unit = { _, _ -> },
     defaultItemIndex: Int? = null
 ) {
-  if (defaultItemIndex != null && defaultItemIndex >= itemList.size) {
-    throw IllegalArgumentException("defaultItemIndex should be less than list size")
+  require(defaultItemIndex == null || defaultItemIndex >= itemList.size) {
+    "defaultItemIndex should be less than list size"
   }
 
   val expanded = remember { mutableStateOf(false) }
