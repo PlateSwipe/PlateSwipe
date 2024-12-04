@@ -59,6 +59,8 @@ object Screen {
   const val EDIT_RECIPE = "Edit Recipe Screen"
 
   const val EDIT_CATEGORY_SCREEN = "Edit Category Screen"
+
+  const val EDIT_RECIPE_LIST_INGREDIENTS = "Edit List Ingredients Screen"
 }
 
 data class TopLevelDestination(val route: String, val iconId: Int, val textId: String)

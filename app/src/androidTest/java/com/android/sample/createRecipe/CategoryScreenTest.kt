@@ -11,10 +11,13 @@ import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.model.recipe.FirestoreRecipesRepository
 import com.android.sample.model.recipe.Recipe
+import com.android.sample.resources.C.TestTag.Category.CATEGORY_SUBTITLE
+import com.android.sample.resources.C.TestTag.Category.CATEGORY_TITLE
 import com.android.sample.ui.createRecipe.CategoryScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.google.firebase.firestore.FirebaseFirestore
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
@@ -45,7 +48,9 @@ class CategoryScreenTest {
   fun testCategoryScreenComponentsAreDisplayed() {
     composeTestRule.setContent {
       CategoryScreen(
-          navigationActions = mockNavigationActions, createRecipeViewModel = createRecipeViewModel)
+          navigationActions = mockNavigationActions,
+          createRecipeViewModel = createRecipeViewModel,
+          isEditing = false)
     }
 
     composeTestRule.onNodeWithText("Select A Category").assertExists().assertIsDisplayed()
@@ -63,7 +68,9 @@ class CategoryScreenTest {
   fun testDropdownMenuOpensAndDisplaysCategories() {
     composeTestRule.setContent {
       CategoryScreen(
-          navigationActions = mockNavigationActions, createRecipeViewModel = createRecipeViewModel)
+          navigationActions = mockNavigationActions,
+          createRecipeViewModel = createRecipeViewModel,
+          isEditing = false)
     }
 
     // Verify dropdown button is displayed with placeholder text
@@ -94,7 +101,9 @@ class CategoryScreenTest {
   fun testSelectingCategoryUpdatesButtonText() {
     composeTestRule.setContent {
       CategoryScreen(
-          navigationActions = mockNavigationActions, createRecipeViewModel = createRecipeViewModel)
+          navigationActions = mockNavigationActions,
+          createRecipeViewModel = createRecipeViewModel,
+          isEditing = false)
     }
 
     // Open dropdown menu
@@ -119,7 +128,9 @@ class CategoryScreenTest {
   fun testNextStepButtonNavigatesToNextScreen() {
     composeTestRule.setContent {
       CategoryScreen(
-          navigationActions = mockNavigationActions, createRecipeViewModel = createRecipeViewModel)
+          navigationActions = mockNavigationActions,
+          createRecipeViewModel = createRecipeViewModel,
+          isEditing = false)
     }
 
     // Click the "Next Step" button
@@ -127,5 +138,43 @@ class CategoryScreenTest {
 
     // Verify navigation to the next screen
     verify { mockNavigationActions.navigateTo(Screen.CREATE_RECIPE_INGREDIENTS) }
+  }
+
+  @Test
+  fun testCategoryScreenComponentsInEditMode() {
+    every { createRecipeViewModel.getRecipeCategory() } returns "Vegan"
+
+    composeTestRule.setContent {
+      CategoryScreen(
+          navigationActions = mockNavigationActions,
+          createRecipeViewModel = createRecipeViewModel,
+          isEditing = true)
+    }
+
+    // Assert title and subtitle for edit mode
+    composeTestRule.onNodeWithTag(CATEGORY_TITLE).assertTextEquals("Edit Recipe Category")
+    composeTestRule
+        .onNodeWithTag(CATEGORY_SUBTITLE)
+        .assertTextEquals(
+            "You can update the category for your recipe to make it more discoverable.")
+
+    // Assert the dropdown displays the pre-selected category
+    composeTestRule.onNodeWithTag("DropdownMenuButton").assertTextEquals("Vegan")
+  }
+
+  @Test
+  fun testNextStepButtonNavigatesToEditScreen() {
+    composeTestRule.setContent {
+      CategoryScreen(
+          navigationActions = mockNavigationActions,
+          createRecipeViewModel = createRecipeViewModel,
+          isEditing = true)
+    }
+
+    // Click the "Next Step" button
+    composeTestRule.onNodeWithTag("NextStepButton").performClick()
+
+    // Verify navigation to the edit ingredients screen
+    verify { mockNavigationActions.navigateTo(Screen.EDIT_RECIPE_LIST_INGREDIENTS) }
   }
 }

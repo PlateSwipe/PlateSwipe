@@ -122,7 +122,7 @@ fun PlateSwipeApp() {
       }
 
       composable(Screen.CREATE_CATEGORY_SCREEN) {
-        CategoryScreen(navigationActions, createRecipeViewModel)
+        CategoryScreen(navigationActions, createRecipeViewModel, isEditing = false)
       }
       composable(Screen.CREATE_RECIPE_INGREDIENTS) {
         RecipeIngredientsScreen(
@@ -200,7 +200,14 @@ fun PlateSwipeApp() {
             isEditing = true)
       }
       composable(Screen.EDIT_CATEGORY_SCREEN) {
-        CategoryScreen(navigationActions, createRecipeViewModel)
+        CategoryScreen(navigationActions, createRecipeViewModel, isEditing = true)
+      }
+      composable(Screen.EDIT_RECIPE_LIST_INGREDIENTS) {
+        RecipeIngredientsScreen(
+            navigationActions = navigationActions,
+            currentStep = SECOND_STEP_OF_THE_CREATION,
+            ingredientViewModel = ingredientViewModel,
+            isEditing = true)
       }
     }
   }

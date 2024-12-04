@@ -51,17 +51,19 @@ import com.android.sample.ui.utils.PlateSwipeScaffold
 fun CategoryScreen(
     navigationActions: NavigationActions,
     createRecipeViewModel: CreateRecipeViewModel,
+    isEditing: Boolean
 ) {
   PlateSwipeScaffold(
       navigationActions = navigationActions,
-      selectedItem = Route.CREATE_RECIPE,
+      selectedItem = if (isEditing) Route.ACCOUNT else Route.CREATE_RECIPE,
       showBackArrow = true,
       content = { paddingValues ->
         CategoryContent(
             currentStep = INITIAL_RECIPE_STEP,
             navigationActions = navigationActions,
             createRecipeViewModel = createRecipeViewModel,
-            modifier = Modifier.fillMaxSize().padding(paddingValues))
+            modifier = Modifier.fillMaxSize().padding(paddingValues),
+            isEditing = isEditing)
       })
 }
 
@@ -78,7 +80,8 @@ fun CategoryContent(
     modifier: Modifier = Modifier,
     currentStep: Int,
     navigationActions: NavigationActions,
-    createRecipeViewModel: CreateRecipeViewModel
+    createRecipeViewModel: CreateRecipeViewModel,
+    isEditing: Boolean
 ) {
   val noCategoryString = stringResource(R.string.no_category)
   val categories = listOf(noCategoryString) + Recipe.getCategories()
@@ -97,7 +100,9 @@ fun CategoryContent(
 
           // Title
           Text(
-              text = stringResource(R.string.select_category),
+              text =
+                  getConditionalStringResource(
+                      isEditing, R.string.edit_category, R.string.select_category),
               style = Typography.displayLarge,
               color = MaterialTheme.colorScheme.onPrimary,
               modifier =
@@ -110,7 +115,11 @@ fun CategoryContent(
 
           // Subtitle
           Text(
-              text = stringResource(R.string.select_category_description_optional),
+              text =
+                  getConditionalStringResource(
+                      isEditing,
+                      R.string.edit_category_description_optional,
+                      R.string.select_category_description_optional),
               style = MaterialTheme.typography.bodyMedium,
               color = MaterialTheme.colorScheme.onPrimary,
               modifier = Modifier.padding(horizontal = PADDING_32.dp).testTag(CATEGORY_SUBTITLE),
@@ -171,7 +180,21 @@ fun CategoryContent(
         modifier = Modifier.align(Alignment.BottomCenter).testTag(BUTTON_TEST_TAG),
         onClick = {
           createRecipeViewModel.updateRecipeCategory(selectedCategory.value)
-          navigationActions.navigateTo(Screen.CREATE_RECIPE_INGREDIENTS)
+          fromCategoryNavigateToNextScreen(isEditing, navigationActions)
         })
+  }
+}
+
+/**
+ * Helper function to navigate to the next screen based on the isEditing flag.
+ *
+ * @param isEditing Boolean indicating whether the recipe is being edited.
+ * @param navigationActions Actions for navigating between screens.
+ */
+fun fromCategoryNavigateToNextScreen(isEditing: Boolean, navigationActions: NavigationActions) {
+  if (isEditing) {
+    navigationActions.navigateTo(Screen.EDIT_RECIPE_LIST_INGREDIENTS)
+  } else {
+    navigationActions.navigateTo(Screen.CREATE_RECIPE_INGREDIENTS)
   }
 }

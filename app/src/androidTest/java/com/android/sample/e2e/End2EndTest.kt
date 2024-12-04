@@ -521,7 +521,9 @@ class EndToEndTest {
         }
         composable(Screen.CREATE_CATEGORY_SCREEN) {
           CategoryScreen(
-              navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
+              navigationActions = navigationActions,
+              createRecipeViewModel = createRecipeViewModel,
+              isEditing = false)
         }
         composable(Screen.CREATE_RECIPE_INGREDIENTS) {
           RecipeIngredientsScreen(
