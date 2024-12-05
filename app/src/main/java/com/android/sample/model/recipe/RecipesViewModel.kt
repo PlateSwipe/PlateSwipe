@@ -100,7 +100,7 @@ class RecipesViewModel(private val repository: RecipesRepository) :
    */
   override fun updateDifficulty(difficulty: Difficulty) {
     _tmpFilter.value.difficulty = difficulty
-    isFilterUsed.value = true
+    isFilterUsed.value = checkIfFilterUsed()
   }
 
   /**
@@ -111,7 +111,7 @@ class RecipesViewModel(private val repository: RecipesRepository) :
    */
   override fun updateTimeRange(min: Float, max: Float) {
     _tmpFilter.value.timeRange.update(min, max)
-    isFilterUsed.value = true
+    isFilterUsed.value = checkIfFilterUsed()
   }
 
   /** Applies the changes made to the filters. */
@@ -121,7 +121,7 @@ class RecipesViewModel(private val repository: RecipesRepository) :
       _recipes.value = emptyList()
       _currentRecipe.value = null
       _nextRecipe.value = null
-      isFilterUsed.value = true
+      isFilterUsed.value = checkIfFilterUsed()
       fetchRandomRecipes(NUMBER_RECIPES_TO_FETCH)
       _loading.collect { isLoading ->
         if (!isLoading) {
@@ -132,10 +132,19 @@ class RecipesViewModel(private val repository: RecipesRepository) :
     }
   }
 
+  /** Checks if the filter is used. */
+  private fun checkIfFilterUsed(): Boolean {
+    return _filter.value.difficulty != Difficulty.Undefined ||
+        _filter.value.category != null ||
+        _filter.value.timeRange.min != UNINITIALIZED_BORN_VALUE ||
+        _filter.value.timeRange.max != UNINITIALIZED_BORN_VALUE
+  }
+
   /** Resets all filters to their default values. */
   override fun resetFilters() {
     isFilterUsed.value = false
     _tmpFilter.value = Filter()
+    _filter.value = Filter()
   }
 
   /** Initializes the filter. */
@@ -143,7 +152,8 @@ class RecipesViewModel(private val repository: RecipesRepository) :
 
     if (_filter.value.timeRange.min != UNINITIALIZED_BORN_VALUE &&
         _filter.value.timeRange.max != UNINITIALIZED_BORN_VALUE) {
-      _tmpFilter.value.timeRange.update(_filter.value.timeRange.min, _filter.value.timeRange.max)
+      _tmpFilter.value.timeRange.update(UNINITIALIZED_BORN_VALUE, UNINITIALIZED_BORN_VALUE)
+      _filter.value.timeRange.update(UNINITIALIZED_BORN_VALUE, UNINITIALIZED_BORN_VALUE)
     }
     _tmpFilter.value.difficulty = _filter.value.difficulty
     _tmpFilter.value.category = _filter.value.category
@@ -156,7 +166,7 @@ class RecipesViewModel(private val repository: RecipesRepository) :
    */
   override fun updateCategory(category: String?) {
     _tmpFilter.value.category = category
-    isFilterUsed.value = true
+    isFilterUsed.value = checkIfFilterUsed()
   }
 
   /**
@@ -171,8 +181,8 @@ class RecipesViewModel(private val repository: RecipesRepository) :
     if (isFilterUsed.value) {
       repository.filterSearch(
           filter = _filter.value,
-          onSuccess = { recipes ->
-            _recipes.value += recipes
+          onSuccess = { categoryRecipes ->
+            _recipes.value += categoryRecipes
             _loading.value = false
           },
           onFailure = { exception ->
