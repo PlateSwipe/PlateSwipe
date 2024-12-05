@@ -7,6 +7,7 @@ import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.click
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextClearance
@@ -15,6 +16,7 @@ import androidx.compose.ui.test.performTouchInput
 import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.user.User
 import com.android.sample.model.user.UserViewModel
+import com.android.sample.resources.C.Tag.EditAccountScreen.DATE_OF_BIRTH_FIELD_DESCRIPTION
 import com.android.sample.resources.C.TestTag.EditAccountScreen.CHANGE_PROFILE_PICTURE_BUTTON_TAG
 import com.android.sample.resources.C.TestTag.EditAccountScreen.DATE_OF_BIRTH_CHANGE_BUTTON_TAG
 import com.android.sample.resources.C.TestTag.EditAccountScreen.DATE_OF_BIRTH_TEXT_FIELD_TAG
@@ -33,6 +35,7 @@ import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.SampleAppTheme
 import com.android.sample.ui.utils.testUsers
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.storage.FileDownloadTask
@@ -42,6 +45,8 @@ import java.io.File
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.ArgumentCaptor
+import org.mockito.Captor
 import org.mockito.Mock
 import org.mockito.Mockito.any
 import org.mockito.Mockito.mock
@@ -50,6 +55,10 @@ import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.verify
 
 class EditAccountScreenTest {
+  @Captor
+  private lateinit var onCompleteFileDownloadTaskListenerCaptor:
+      ArgumentCaptor<OnCompleteListener<FileDownloadTask.TaskSnapshot>>
+
   @Mock private lateinit var mockFirebaseStorage: FirebaseStorage
   @Mock private lateinit var mockStorageRef: StorageReference
   @Mock private lateinit var mockImageRef: StorageReference
@@ -127,6 +136,9 @@ class EditAccountScreenTest {
     composeTestRule.onNodeWithTag("Email text field", useUnmergedTree = true).assertIsDisplayed()
     composeTestRule
         .onNodeWithTag(DATE_OF_BIRTH_CHANGE_BUTTON_TAG, useUnmergedTree = true)
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithContentDescription(DATE_OF_BIRTH_FIELD_DESCRIPTION, useUnmergedTree = true)
         .assertIsDisplayed()
 
     composeTestRule
@@ -342,5 +354,29 @@ class EditAccountScreenTest {
         .assert(!hasText(testUser.dateOfBirth))
 
     composeTestRule.onNodeWithTag(SAVE_CHANGES_BUTTON_TAG, useUnmergedTree = true).performClick()
+  }
+
+  @Test
+  fun failedToFetchUserProfilePictureFromFirebaseTest() {
+    `when`(mockImageRef.getFile(any(File::class.java))).thenReturn(mockDownload)
+    `when`(mockDownload.isSuccessful).thenReturn(true)
+
+    userViewModel.changeProfilePictureUrl(
+        "app/src/androidTest/res/drawable/scoobygourmand_normal.jpg")
+
+    `when`(mockImageRef.getFile(any(File::class.java))).thenReturn(mockDownload)
+    `when`(mockDownload.isSuccessful).thenReturn(false)
+    `when`(mockDownload.exception).thenReturn(Exception("Failed to fetch user profile picture"))
+
+    composeTestRule.setContent {
+      SampleAppTheme {
+        EditAccountScreen(
+            mockNavigationActions, userViewModel, mockFirebaseAuth, imageRepositoryFirebase)
+      }
+    }
+
+    verify(mockDownload).addOnCompleteListener(onCompleteFileDownloadTaskListenerCaptor.capture())
+
+    onCompleteFileDownloadTaskListenerCaptor.value.onComplete(mockDownload)
   }
 }
