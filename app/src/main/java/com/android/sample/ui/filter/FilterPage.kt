@@ -193,12 +193,12 @@ fun FilterBox(
  */
 fun reformatTime(time: Float): String {
   val timeInt = time.toInt()
-  if (timeInt > 60) {
+  return if (timeInt > 60) {
     val hours = timeInt / 60
     val minutes = timeInt % 60
-    return "$hours h $minutes min"
+    "$hours h $minutes min"
   } else {
-    return "$timeInt min"
+    "$timeInt min"
   }
 }
 
