@@ -156,8 +156,4 @@
     // EditRecipeNameScreen
     <string name="edit_your_recipe">Edit your recipe</string>
     <string name="edit_recipe_description">Make changes to your recipe details below.</string>
-
-    //EditCategoryScreen
-    <string name="edit_category">Edit Recipe Category</string>
-    <string name="edit_category_description_optional">You can update the category for your recipe to make it more discoverable.</string>
 </resources>

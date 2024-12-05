@@ -35,12 +35,11 @@ fun RecipeStepScreen(
     onButtonClick: () -> Unit,
     navigationActions: NavigationActions,
     currentStep: Int,
-    modifier: Modifier = Modifier,
-    isEditing: Boolean = false
+    modifier: Modifier = Modifier
 ) {
   PlateSwipeScaffold(
       navigationActions = navigationActions,
-      selectedItem = if (isEditing) Route.ACCOUNT else Route.CREATE_RECIPE,
+      selectedItem = Route.CREATE_RECIPE,
       showBackArrow = true,
       content = { paddingValues ->
         Box(modifier = modifier.fillMaxSize().padding(paddingValues).padding(BASE_PADDING)) {
