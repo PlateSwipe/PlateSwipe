@@ -54,6 +54,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -162,8 +163,10 @@ import kotlinx.coroutines.launch
 @Composable
 fun SwipePage(
     navigationActions: NavigationActions,
-    recipesViewModel: RecipesViewModel = viewModel(factory = RecipesViewModel.Factory),
-    userViewModel: UserViewModel = viewModel(factory = UserViewModel.Factory)
+    recipesViewModel: RecipesViewModel =
+        viewModel(factory = RecipesViewModel.provideFactory(LocalContext.current)),
+    userViewModel: UserViewModel =
+        viewModel(factory = UserViewModel.provideFactory(context = LocalContext.current))
 ) {
   val selectedItem = navigationActions.currentRoute()
 
@@ -186,7 +189,7 @@ fun SwipePage(
 fun RecipeDisplay(
     navigationActions: NavigationActions,
     paddingValues: PaddingValues,
-    recipesViewModel: RecipesViewModel = viewModel(factory = RecipesViewModel.Factory),
+    recipesViewModel: RecipesViewModel,
     userViewModel: UserViewModel
 ) {
   var retrieveNextRecipe by remember { mutableStateOf(INITIAL_RETRIEVE_NEXT_RECIPE) }

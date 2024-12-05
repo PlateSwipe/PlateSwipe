@@ -4,10 +4,11 @@ import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.sample.model.image.ImageRepositoryFirebase
+import com.android.sample.model.ingredient.IngredientRepository
 import com.android.sample.model.recipe.CreateRecipeViewModel
-import com.android.sample.model.recipe.FirestoreRecipesRepository
 import com.android.sample.model.recipe.Instruction
 import com.android.sample.model.recipe.Recipe
+import com.android.sample.model.recipe.networkData.FirestoreRecipesRepository
 import com.android.sample.model.user.UserRepository
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.ui.createRecipe.PublishRecipeScreen
@@ -16,6 +17,7 @@ import com.android.sample.ui.navigation.Screen
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import io.mockk.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import okhttp3.Call
@@ -39,6 +41,7 @@ class PublishRecipeScreenTest {
   private lateinit var mockUserRepository: UserRepository
   private lateinit var mockFirebaseAuth: FirebaseAuth
   private lateinit var mockCurrentUser: FirebaseUser
+  private lateinit var mockIngredientRepository: IngredientRepository
 
   private lateinit var mockCall: Call
 
@@ -57,12 +60,13 @@ class PublishRecipeScreenTest {
     mockUserRepository = mock(UserRepository::class.java)
     mockFirebaseAuth = mock(FirebaseAuth::class.java)
     mockCurrentUser = mock(FirebaseUser::class.java)
+    mockIngredientRepository = mock(IngredientRepository::class.java)
 
     `when`(mockFirebaseAuth.currentUser).thenReturn(mockCurrentUser)
     `when`(mockCurrentUser.uid).thenReturn("001")
 
     // Initialize UserViewModel with mocked dependencies
-    userViewModel = UserViewModel(mockUserRepository, mockFirebaseAuth)
+    userViewModel = UserViewModel(mockUserRepository, mockFirebaseAuth, mockIngredientRepository)
 
     every { repository.getNewUid() } returns "valid-id"
   }
@@ -86,6 +90,7 @@ class PublishRecipeScreenTest {
    * Verifies that clicking the publish button invokes recipe publishing and navigates to the next
    * screen.
    */
+  @OptIn(ExperimentalCoroutinesApi::class)
   @Test
   fun publishRecipeScreen_publishButtonTriggersPublishAndNavigation() = runTest {
     // Set up required fields in the CreateRecipeViewModel

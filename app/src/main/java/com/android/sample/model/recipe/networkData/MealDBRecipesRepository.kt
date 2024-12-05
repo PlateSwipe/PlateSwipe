@@ -1,5 +1,7 @@
-package com.android.sample.model.recipe
+package com.android.sample.model.recipe.networkData
 
+import com.android.sample.model.recipe.Instruction
+import com.android.sample.model.recipe.Recipe
 import com.android.sample.resources.C.Tag.MAXIMUM_RECIPES_TO_FETCH_MEAL_DB
 import com.android.sample.resources.C.Tag.MAX_NB_OF_INGREDIENTS_IN_A_RECIPE_MEAL_DB
 import com.android.sample.resources.C.Tag.MEAL_DB_ARRAY_NAME
@@ -30,7 +32,7 @@ import org.json.JSONObject
  *
  * @property client The OkHttpClient used to make network requests.
  */
-class MealDBRecipesRepository(private val client: OkHttpClient) : RecipesRepository {
+class MealDBRecipesRepository(private val client: OkHttpClient) : RecipeNetworkRepository {
 
   /** These API calls are not supported by the MealDB database. */
   override fun getNewUid(): String {

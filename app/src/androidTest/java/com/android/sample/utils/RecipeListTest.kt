@@ -7,10 +7,10 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
-import com.android.sample.model.ingredient.networkData.FirestoreIngredientRepository
-import com.android.sample.model.recipe.FirestoreRecipesRepository
+import com.android.sample.model.ingredient.IngredientRepository
 import com.android.sample.model.recipe.Instruction
 import com.android.sample.model.recipe.Recipe
+import com.android.sample.model.recipe.networkData.FirestoreRecipesRepository
 import com.android.sample.model.user.UserRepository
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_CARD_TEST_TAG
@@ -35,7 +35,7 @@ class RecipeListTest {
   private lateinit var mockUserRepository: UserRepository
   private lateinit var mockFirebaseAuth: FirebaseAuth
   private lateinit var mockRecipeRepository: FirestoreRecipesRepository
-  private lateinit var mockIngredientRepository: FirestoreIngredientRepository
+  private lateinit var mockIngredientRepository: IngredientRepository
 
   private lateinit var userViewModel: UserViewModel
 
@@ -108,12 +108,12 @@ class RecipeListTest {
     mockFirebaseFirestore = mock(FirebaseFirestore::class.java)
     mockUserRepository = mock(UserRepository::class.java)
     mockFirebaseAuth = mock(FirebaseAuth::class.java)
-    mockIngredientRepository = FirestoreIngredientRepository(mockFirebaseFirestore)
+    mockIngredientRepository = mock(IngredientRepository::class.java)
     mockRecipeRepository = FirestoreRecipesRepository(mockFirebaseFirestore)
 
     userViewModel =
         UserViewModel(
-            mockUserRepository, mockFirebaseAuth, mockRecipeRepository, mockIngredientRepository)
+            mockUserRepository, mockFirebaseAuth, mockIngredientRepository, mockRecipeRepository)
 
     `when`(mockNavigationActions.currentRoute()).thenReturn(Screen.ACCOUNT)
   }

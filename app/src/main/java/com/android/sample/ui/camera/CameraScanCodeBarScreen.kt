@@ -51,7 +51,6 @@ import com.android.sample.resources.C.Dimension.PADDING_8
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_SMALL_URL
 import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_IMAGE_1
 import com.android.sample.ui.navigation.NavigationActions
-import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
@@ -60,7 +59,8 @@ import com.google.accompanist.permissions.rememberPermissionState
 @Composable
 fun CameraScanCodeBarScreen(
     navigationActions: NavigationActions,
-    searchIngredientViewModel: SearchIngredientViewModel
+    searchIngredientViewModel: SearchIngredientViewModel,
+    navigateToNextPage: () -> Unit = {}
 ) {
   val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
 
@@ -72,7 +72,7 @@ fun CameraScanCodeBarScreen(
             contentAlignment = Alignment.Center,
         ) {
           CameraSection(searchIngredientViewModel)
-          IngredientOverlay(searchIngredientViewModel, navigationActions)
+          IngredientOverlay(searchIngredientViewModel, navigationActions, navigateToNextPage)
         }
       })
 }
@@ -132,6 +132,7 @@ fun BarCodeFrame() {
 fun IngredientOverlay(
     searchIngredientViewModel: SearchIngredientViewModel,
     navigationActions: NavigationActions,
+    navigateToNextPage: () -> Unit = {}
 ) {
   val ingredient by searchIngredientViewModel.ingredient.collectAsState()
 
@@ -168,7 +169,11 @@ fun IngredientOverlay(
               IngredientNotFoundDisplay()
             } else {
               ingredient.first?.let {
-                IngredientDisplay(ingredient = it, searchIngredientViewModel, navigationActions)
+                IngredientDisplay(
+                    ingredient = it,
+                    searchIngredientViewModel,
+                    navigationActions,
+                    navigateToNextPage)
               }
             }
           }
@@ -185,7 +190,8 @@ fun IngredientOverlay(
 fun IngredientDisplay(
     ingredient: Ingredient,
     searchIngredientViewModel: SearchIngredientViewModel,
-    navigationActions: NavigationActions
+    navigationActions: NavigationActions,
+    navigateToNextPage: () -> Unit = {}
 ) {
   Row(
       modifier =
@@ -210,7 +216,8 @@ fun IngredientDisplay(
                 .padding(C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_TEXT_PADDING.dp),
         verticalArrangement = Arrangement.Center) {
           IngredientNameAndBrand(ingredient)
-          IngredientSelectButton(ingredient, searchIngredientViewModel, navigationActions)
+          IngredientSelectButton(
+              ingredient, searchIngredientViewModel, navigationActions, navigateToNextPage)
         }
   }
 }
@@ -267,13 +274,14 @@ private fun IngredientNameAndBrand(ingredient: Ingredient) {
 private fun IngredientSelectButton(
     ingredient: Ingredient,
     searchIngredientViewModel: SearchIngredientViewModel,
-    navigationActions: NavigationActions
+    navigationActions: NavigationActions,
+    navigateToNextPage: () -> Unit = {}
 ) {
   Button(
       onClick = {
         searchIngredientViewModel.addIngredient(ingredient)
         searchIngredientViewModel.clearIngredient()
-        navigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
+        navigateToNextPage()
       },
       modifier =
           Modifier.padding(
@@ -284,7 +292,7 @@ private fun IngredientSelectButton(
                       .dp)) {
         Text(
             text =
-                if (navigationActions.currentRoute() == Route.FRIDGE)
+                if (navigationActions.currentRoute() == Screen.FRIDGE_SCAN_CODE_BAR)
                     stringResource(R.string.add_to_fridge)
                 else stringResource(R.string.add_to_recipe),
             style = MaterialTheme.typography.bodySmall,

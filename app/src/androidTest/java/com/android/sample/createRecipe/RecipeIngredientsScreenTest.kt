@@ -34,7 +34,7 @@ class RecipeIngredientsScreenTest {
 
   private val titleText = "No Ingredients"
   private val subtitleText = "List the ingredients needed for your recipe. Add as many as you need."
-  private val buttonText = "Add Ingredients"
+  private val buttonText = "Add Ingredient"
   private val mockIngredients = testIngredients
 
   @Before

@@ -30,9 +30,9 @@ import com.android.sample.ui.authentication.SignInScreen
 import com.android.sample.ui.camera.CameraScanCodeBarScreen
 import com.android.sample.ui.camera.CameraTakePhotoScreen
 import com.android.sample.ui.createRecipe.AddInstructionStepScreen
-import com.android.sample.ui.createRecipe.CategoryScreen
 import com.android.sample.ui.createRecipe.CreateRecipeScreen
 import com.android.sample.ui.createRecipe.IngredientListScreen
+import com.android.sample.ui.createRecipe.OptionalInformationScreen
 import com.android.sample.ui.createRecipe.PublishRecipeScreen
 import com.android.sample.ui.createRecipe.RecipeAddImageScreen
 import com.android.sample.ui.createRecipe.RecipeIngredientsScreen
@@ -40,6 +40,7 @@ import com.android.sample.ui.createRecipe.RecipeInstructionsScreen
 import com.android.sample.ui.createRecipe.RecipeListInstructionsScreen
 import com.android.sample.ui.createRecipe.TimePickerScreen
 import com.android.sample.ui.filter.FilterPage
+import com.android.sample.ui.fridge.EditFridgeItemScreen
 import com.android.sample.ui.fridge.FridgeScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
@@ -70,11 +71,13 @@ fun PlateSwipeApp() {
   val context = LocalContext.current
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
-  val recipesViewModel: RecipesViewModel = viewModel(factory = RecipesViewModel.Factory)
+  val recipesViewModel: RecipesViewModel =
+      viewModel(factory = RecipesViewModel.provideFactory(context = context))
   val ingredientViewModel: IngredientViewModel =
       viewModel(factory = IngredientViewModel.provideFactory(context = context))
 
-  val userViewModel: UserViewModel = viewModel(factory = UserViewModel.Factory)
+  val userViewModel: UserViewModel =
+      viewModel(factory = UserViewModel.provideFactory(context = context))
   val createRecipeViewModel: CreateRecipeViewModel =
       viewModel(factory = CreateRecipeViewModel.Factory)
 
@@ -97,12 +100,26 @@ fun PlateSwipeApp() {
         startDestination = Screen.FRIDGE,
         route = Route.FRIDGE,
     ) {
-      composable(Screen.FRIDGE) { FridgeScreen(navigationActions) }
-      composable(Screen.CAMERA_SCAN_CODE_BAR) {
-        CameraScanCodeBarScreen(navigationActions, ingredientViewModel)
+      composable(Screen.FRIDGE) { FridgeScreen(navigationActions, userViewModel) }
+      composable(Screen.FRIDGE_SEARCH_ITEM) {
+        SearchIngredientScreen(
+            navigationActions = navigationActions,
+            searchIngredientViewModel = userViewModel,
+            popUpTitle = stringResource(R.string.pop_up_title_fridge),
+            popUpConfirmationText = stringResource(R.string.pop_up_description_fridge),
+            popUpConfirmationButtonText = stringResource(R.string.pop_up_confirmation_fridge),
+            onConfirmation = {
+              userViewModel.addIngredient(it)
+              navigationActions.navigateTo(Screen.FRIDGE_EDIT)
+            },
+            onSearchFinished = { navigationActions.navigateTo(Screen.FRIDGE_SCAN_CODE_BAR) })
       }
-      composable(Screen.CAMERA_TAKE_PHOTO) {
-        CameraTakePhotoScreen(navigationActions, createRecipeViewModel)
+      composable(Screen.FRIDGE_EDIT) { EditFridgeItemScreen(navigationActions, userViewModel) }
+      composable(Screen.FRIDGE_SCAN_CODE_BAR) {
+        CameraScanCodeBarScreen(
+            navigationActions = navigationActions,
+            searchIngredientViewModel = userViewModel,
+            navigateToNextPage = { navigationActions.navigateTo(Screen.FRIDGE_EDIT) })
       }
     }
     navigation(
@@ -121,7 +138,7 @@ fun PlateSwipeApp() {
       }
 
       composable(Screen.CREATE_CATEGORY_SCREEN) {
-        CategoryScreen(navigationActions, createRecipeViewModel)
+        OptionalInformationScreen(navigationActions, createRecipeViewModel)
       }
       composable(Screen.CREATE_RECIPE_INGREDIENTS) {
         RecipeIngredientsScreen(
@@ -168,7 +185,8 @@ fun PlateSwipeApp() {
             onConfirmation = {
               ingredientViewModel.addIngredient(it)
               navigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
-            })
+            },
+            onSearchFinished = { navigationActions.navigateTo(Screen.CAMERA_SCAN_CODE_BAR) })
       }
 
       composable(Screen.CREATE_RECIPE_LIST_INGREDIENTS) {
@@ -179,7 +197,11 @@ fun PlateSwipeApp() {
       }
       composable(Screen.CAMERA_SCAN_CODE_BAR) {
         CameraScanCodeBarScreen(
-            navigationActions = navigationActions, searchIngredientViewModel = ingredientViewModel)
+            navigationActions = navigationActions,
+            searchIngredientViewModel = ingredientViewModel,
+            navigateToNextPage = {
+              navigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
+            })
       }
     }
     navigation(

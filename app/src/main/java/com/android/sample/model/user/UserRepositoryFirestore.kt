@@ -93,7 +93,7 @@ class UserRepositoryFirestore(private val db: FirebaseFirestore) : UserRepositor
   @Suppress("UNCHECKED_CAST")
   private fun fridgeItemExtraction(mapping: Map<String, Any>): FridgeItem {
     val id = mapping[FRIDGE_FIELD_ID] as String
-    val quantity = mapping[FRIDGE_FIELD_QUANTITY] as Int
+    val quantity = (mapping[FRIDGE_FIELD_QUANTITY] as Long).toInt()
     val dateMap = mapping[FRIDGE_FIELD_EXPIRATION_DATE] as Map<String, Any>
     val date =
         LocalDate.of(
