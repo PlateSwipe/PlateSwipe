@@ -1,13 +1,17 @@
 package com.android.sample.account
 
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.click
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.performTouchInput
 import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.user.User
 import com.android.sample.model.user.UserViewModel
@@ -31,19 +35,28 @@ import com.android.sample.ui.theme.SampleAppTheme
 import com.android.sample.ui.utils.testUsers
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.storage.FileDownloadTask
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import java.io.File
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.Mock
+import org.mockito.Mockito.any
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
+import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.verify
 
 class EditAccountScreenTest {
+  @Mock private lateinit var mockFirebaseStorage: FirebaseStorage
+  @Mock private lateinit var mockStorageRef: StorageReference
+  @Mock private lateinit var mockImageRef: StorageReference
+  @Mock private lateinit var mockDownload: FileDownloadTask
+
   private lateinit var mockNavigationActions: NavigationActions
   private lateinit var mockFirebaseAuth: FirebaseAuth
-  private lateinit var mockFirebaseStorage: FirebaseStorage
   private lateinit var mockFirebaseUser: FirebaseUser
   private lateinit var mockFirebaseStorageReference: StorageReference
 
@@ -56,8 +69,9 @@ class EditAccountScreenTest {
 
   @Before
   fun setUp() {
+    MockitoAnnotations.openMocks(this)
+
     mockNavigationActions = mock(NavigationActions::class.java)
-    mockFirebaseStorage = mock(FirebaseStorage::class.java)
     mockFirebaseAuth = mock(FirebaseAuth::class.java)
     mockFirebaseUser = mock(FirebaseUser::class.java)
     mockFirebaseStorageReference = mock(StorageReference::class.java)
@@ -66,7 +80,8 @@ class EditAccountScreenTest {
     `when`(mockFirebaseUser.email).thenReturn("example@mail.ch")
     `when`(mockFirebaseUser.uid).thenReturn(testUser.uid)
 
-    `when`(mockFirebaseStorage.reference).thenReturn(mockFirebaseStorageReference)
+    `when`(mockFirebaseStorage.reference).thenReturn(mockStorageRef)
+    `when`(mockStorageRef.child(any())).thenReturn(mockImageRef)
 
     `when`(mockNavigationActions.currentRoute()).thenReturn(Screen.ACCOUNT)
 
@@ -280,5 +295,52 @@ class EditAccountScreenTest {
     composeTestRule
         .onNodeWithTag(DATE_OF_BIRTH_TEXT_FIELD_TAG, useUnmergedTree = true)
         .assertTextEquals(" ")
+  }
+
+  @Test
+  fun modifyProfilePictureAndSaveTest() {
+    `when`(mockImageRef.getFile(any(File::class.java))).thenReturn(mockDownload)
+    `when`(mockDownload.isSuccessful).thenReturn(true)
+
+    userViewModel.changeProfilePictureUrl(
+        "app/src/androidTest/res/drawable/scoobygourmand_normal.jpg")
+
+    composeTestRule.setContent {
+      SampleAppTheme {
+        EditAccountScreen(
+            mockNavigationActions, userViewModel, mockFirebaseAuth, imageRepositoryFirebase)
+      }
+    }
+
+    composeTestRule.onNodeWithTag(SAVE_CHANGES_BUTTON_TAG, useUnmergedTree = true).performClick()
+  }
+
+  @Test
+  fun modifyDateOfBirthAndSaveTest() {
+    composeTestRule.setContent {
+      SampleAppTheme {
+        EditAccountScreen(
+            mockNavigationActions, userViewModel, mockFirebaseAuth, imageRepositoryFirebase)
+      }
+    }
+
+    composeTestRule
+        .onNodeWithTag(DATE_OF_BIRTH_CHANGE_BUTTON_TAG, useUnmergedTree = true)
+        .performClick()
+    composeTestRule.waitForIdle()
+
+    composeTestRule
+        .onNodeWithTag(DATE_PICKER_POP_UP_TAG, useUnmergedTree = true)
+        .performTouchInput { click(center) }
+
+    composeTestRule
+        .onNodeWithTag(DATE_PICKER_POP_UP_CONFIRM_TAG, useUnmergedTree = true)
+        .performClick()
+
+    composeTestRule
+        .onNodeWithTag(DATE_OF_BIRTH_TEXT_FIELD_TAG, useUnmergedTree = true)
+        .assert(!hasText(testUser.dateOfBirth))
+
+    composeTestRule.onNodeWithTag(SAVE_CHANGES_BUTTON_TAG, useUnmergedTree = true).performClick()
   }
 }
