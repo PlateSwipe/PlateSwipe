@@ -342,6 +342,7 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
      * Fetch the recipes
      */
     finalQuery
+        .orderBy(FIRESTORE_RECIPE_URL)
         .limit(limit.toLong() * FILTER_RANDOM_FACTOR)
         .get()
         .addOnSuccessListener { result ->
