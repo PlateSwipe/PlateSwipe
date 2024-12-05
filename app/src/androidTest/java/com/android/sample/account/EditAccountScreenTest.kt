@@ -15,6 +15,7 @@ import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTouchInput
 import androidx.test.core.app.ApplicationProvider
 import com.android.sample.model.image.ImageRepositoryFirebase
+import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.model.user.User
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C.Tag.EditAccountScreen.DATE_OF_BIRTH_FIELD_DESCRIPTION
@@ -44,6 +45,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.storage.FileDownloadTask
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import io.mockk.mockk
 import java.io.File
 import org.junit.Before
 import org.junit.Rule
@@ -73,6 +75,7 @@ class EditAccountScreenTest {
   private lateinit var mockFirebaseStorageReference: StorageReference
 
   private lateinit var userViewModel: UserViewModel
+  private lateinit var createRecipeViewModel: CreateRecipeViewModel
   private lateinit var imageRepositoryFirebase: ImageRepositoryFirebase
 
   @get:Rule val composeTestRule = createComposeRule()
@@ -100,6 +103,7 @@ class EditAccountScreenTest {
     userViewModel =
         UserViewModel.provideFactory(ApplicationProvider.getApplicationContext())
             .create(UserViewModel::class.java)
+    createRecipeViewModel = mockk<CreateRecipeViewModel>(relaxed = true)
     imageRepositoryFirebase = ImageRepositoryFirebase(mockFirebaseStorage)
 
     userViewModel.changeUserName(testUser.userName)
@@ -110,7 +114,7 @@ class EditAccountScreenTest {
   @Test
   fun editAccountIsAccessibleTest() {
     composeTestRule.setContent {
-      SampleAppTheme { AccountScreen(mockNavigationActions, userViewModel) }
+      SampleAppTheme { AccountScreen(mockNavigationActions, userViewModel, createRecipeViewModel) }
     }
 
     composeTestRule.onNodeWithTag(EDIT_ACCOUNT_ICON).assertIsDisplayed()
