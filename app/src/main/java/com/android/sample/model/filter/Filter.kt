@@ -32,6 +32,7 @@ data class FloatRange(var min: Float, var max: Float, var minBorn: Float, var ma
   }
 
   fun update(newMin: Float, newMax: Float) {
+    require(newMin <= newMax) { MIN_SHOULD_NOT_BE_GREATER_THAN_MAX }
     min = newMin
     max = newMax
   }
