@@ -61,6 +61,29 @@ class RecipeNameScreenTest {
     composeTestRule.onNodeWithTag("recipeNameTextField").assertExists().assertIsDisplayed()
   }
 
+  @Test
+  fun testLoadingIndicatorShownWhileInitializingInEditMode() = runTest {
+    composeTestRule.mainClock.autoAdvance = false // Pause the test clock
+
+    composeTestRule.setContent {
+      RecipeNameScreen(
+          navigationActions = mockNavigationActions,
+          currentStep = 0,
+          createRecipeViewModel = createRecipeViewModel,
+          isEditing = true)
+    }
+
+    // Assert that the CircularProgressIndicator (LoadingCook) is displayed
+    composeTestRule.onNodeWithTag(LOADING_COOK_TEST_TAG).assertExists().assertIsDisplayed()
+
+    // Advance the clock to simulate initialization completing
+    composeTestRule.mainClock.advanceTimeBy(1000) // Simulate delay for initialization
+
+    // Assert that the loading indicator is gone and the rest of the screen is displayed
+    composeTestRule.onNodeWithTag(LOADING_COOK_TEST_TAG).assertDoesNotExist()
+    composeTestRule.onNodeWithTag("recipeNameTextField").assertExists().assertIsDisplayed()
+  }
+
   /** Tests if all components of RecipeNameScreen are displayed in create mode. */
   @Test
   fun testRecipeNameScreenComponentsAreDisplayedInCreateMode() {
@@ -161,6 +184,19 @@ class RecipeNameScreenTest {
     composeTestRule.onNodeWithTag("ErrorMessage").assertExists().assertIsDisplayed()
   }
 
+  @Test
+  fun testErrorDisplayedWhenRecipeNameIsEmptyInEditMode() {
+    composeTestRule.setContent {
+      RecipeNameScreen(
+          navigationActions = mockNavigationActions,
+          currentStep = 0,
+          createRecipeViewModel = createRecipeViewModel,
+          isEditing = true)
+    }
+    composeTestRule.onNodeWithTag("NextStepButton").performClick()
+    composeTestRule.onNodeWithTag("ErrorMessage").assertExists().assertIsDisplayed()
+  }
+
   /** Test: Ensures the ChefImage is displayed when screen size is above the threshold. */
   @Test
   fun testChefImageDisplayedWhenScreenSizeAboveThreshold() {
@@ -191,6 +227,38 @@ class RecipeNameScreenTest {
           currentStep = 0,
           createRecipeViewModel = createRecipeViewModel,
           isEditing = false)
+    }
+    composeTestRule.onNodeWithTag("ChefImage").assertDoesNotExist()
+  }
+
+  @Test
+  fun testChefImageDisplayedWhenScreenSizeAboveThresholdInEditMode() {
+    composeTestRule.setContent {
+      LocalConfiguration.current.apply {
+        screenWidthDp = SCREEN_WIDTH_THRESHOLD + 1
+        screenHeightDp = SCREEN_HEIGHT_THRESHOLD + 1
+      }
+      RecipeNameScreen(
+          navigationActions = mockNavigationActions,
+          currentStep = 0,
+          createRecipeViewModel = createRecipeViewModel,
+          isEditing = true)
+    }
+    composeTestRule.onNodeWithTag("ChefImage").assertExists().assertIsDisplayed()
+  }
+
+  @Test
+  fun testChefImageNotDisplayedWhenScreenSizeBelowThresholdInEditMode() {
+    composeTestRule.setContent {
+      LocalConfiguration.current.apply {
+        screenWidthDp = SCREEN_WIDTH_THRESHOLD - 1
+        screenHeightDp = SCREEN_HEIGHT_THRESHOLD - 1
+      }
+      RecipeNameScreen(
+          navigationActions = mockNavigationActions,
+          currentStep = 0,
+          createRecipeViewModel = createRecipeViewModel,
+          isEditing = true)
     }
     composeTestRule.onNodeWithTag("ChefImage").assertDoesNotExist()
   }

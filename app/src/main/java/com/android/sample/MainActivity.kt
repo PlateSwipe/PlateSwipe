@@ -29,9 +29,9 @@ import com.android.sample.ui.authentication.SignInScreen
 import com.android.sample.ui.camera.CameraScanCodeBarScreen
 import com.android.sample.ui.camera.CameraTakePhotoScreen
 import com.android.sample.ui.createRecipe.AddInstructionStepScreen
-import com.android.sample.ui.createRecipe.CategoryScreen
 import com.android.sample.ui.createRecipe.CreateRecipeScreen
 import com.android.sample.ui.createRecipe.IngredientListScreen
+import com.android.sample.ui.createRecipe.OptionalInformationScreen
 import com.android.sample.ui.createRecipe.PublishRecipeScreen
 import com.android.sample.ui.createRecipe.RecipeAddImageScreen
 import com.android.sample.ui.createRecipe.RecipeIngredientsScreen
@@ -122,7 +122,7 @@ fun PlateSwipeApp() {
       }
 
       composable(Screen.CREATE_CATEGORY_SCREEN) {
-        CategoryScreen(navigationActions, createRecipeViewModel, isEditing = false)
+        OptionalInformationScreen(navigationActions, createRecipeViewModel)
       }
       composable(Screen.CREATE_RECIPE_INGREDIENTS) {
         RecipeIngredientsScreen(
@@ -200,14 +200,13 @@ fun PlateSwipeApp() {
             isEditing = true)
       }
       composable(Screen.EDIT_CATEGORY_SCREEN) {
-        CategoryScreen(navigationActions, createRecipeViewModel, isEditing = true)
+        OptionalInformationScreen(navigationActions, createRecipeViewModel, isEditing = true)
       }
       composable(Screen.EDIT_RECIPE_LIST_INGREDIENTS) {
-        RecipeIngredientsScreen(
+        IngredientListScreen(
             navigationActions = navigationActions,
-            currentStep = SECOND_STEP_OF_THE_CREATION,
             ingredientViewModel = ingredientViewModel,
-            isEditing = true)
+            createRecipeViewModel = createRecipeViewModel)
       }
     }
   }
