@@ -21,6 +21,24 @@ class RecipeBuilder {
   private var url: String? = null
 
   /**
+   * Initializes the RecipeBuilder with data from an existing Recipe.
+   *
+   * @param recipe The Recipe instance to populate the builder with.
+   */
+  fun initializeFromRecipe(recipe: Recipe) {
+    this.uid = recipe.uid
+    this.name = recipe.name
+    this.category = recipe.category
+    this.instructions = recipe.instructions.toMutableList()
+    this.strMealThumbUrl = recipe.strMealThumbUrl
+    this.ingredientsAndMeasurements.clear()
+    this.ingredientsAndMeasurements.addAll(recipe.ingredientsAndMeasurements)
+    this.time = recipe.time
+    this.difficulty = recipe.difficulty
+    this.url = recipe.url
+  }
+
+  /**
    * Sets the ID of the recipe.
    *
    * @param uid The ID of the recipe.

@@ -652,6 +652,7 @@ object C {
       const val POP_UP_ELEVATION = 4
       const val POP_UP_CLIP = true
       const val POP_UP_DESCRIPTION_FONT_SIZE = 16
+      const val EDIT_ICON_SIZE = 24
     }
 
     object AccountScreen {
@@ -792,6 +793,7 @@ object C {
       const val LIKED_RECIPES_BUTTON_TEST_TAG = "likedRecipesButton"
       const val CREATED_RECIPES_BUTTON_TEST_TAG = "createdRecipesButton"
       const val PROFILE_PICTURE_TEST_TAG = "profilePicture"
+      const val RECIPE_EDIT_ICON_TEST_TAG = "recipeEditIcon"
     }
 
     object CreateRecipeListInstructionsScreen {
@@ -904,6 +906,10 @@ object C {
       const val DROPDOWN = "PlateSwipeDropdown"
       const val DROPDOWN_ITEM = "PlateSwipeDropdownItem"
       const val DROPDOWN_TITLE = "PlateSwipeDropdownTitle"
+    }
+
+    object RecipeNameScreen {
+      const val LOADING_COOK_TEST_TAG = "LoadingCook"
     }
   }
 }

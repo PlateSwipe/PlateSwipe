@@ -252,4 +252,72 @@ class RecipeBuilderTest {
     builder.setCategory(null)
     assertNull(builder.getCategory())
   }
+
+  @Test
+  fun `test initializeFromRecipe populates builder correctly`() {
+    val recipe =
+        Recipe(
+            uid = "123",
+            name = "Pasta",
+            category = "Main Course",
+            instructions = listOf(Instruction("Boil water"), Instruction("Cook pasta")),
+            strMealThumbUrl = "http://example.com/image.jpg",
+            ingredientsAndMeasurements = listOf("Pasta" to "200g", "Salt" to "1 tsp"),
+            time = "15 minutes",
+            difficulty = "Easy",
+            url = "http://example.com")
+
+    builder.initializeFromRecipe(recipe)
+
+    // Assertions to verify the builder was populated correctly
+    assertEquals(recipe.uid, builder.getId())
+    assertEquals(recipe.name, builder.getName())
+    assertEquals(recipe.category, builder.getCategory())
+    assertEquals(recipe.instructions, builder.getInstructions())
+    assertEquals(recipe.strMealThumbUrl, builder.getPictureID())
+    assertEquals(recipe.ingredientsAndMeasurements, builder.getIngredientsAndMeasurements())
+    assertEquals(recipe.time, builder.getTime())
+    assertEquals(recipe.difficulty, builder.getDifficulty())
+    assertEquals(recipe.url, builder.getUrl())
+  }
+
+  @Test
+  fun `test initializeFromRecipe clears previous data in builder`() {
+    // Add some initial data to the builder
+    builder.apply {
+      setId("999")
+      setName("Old Recipe")
+      addInstruction(Instruction("Old instruction"))
+      addIngredientAndMeasurement("Old Ingredient", "100g")
+      setCategory("Old Category")
+      setTime("30 minutes")
+      setDifficulty("Hard")
+      setUrl("http://old-example.com")
+    }
+
+    val recipe =
+        Recipe(
+            uid = "123",
+            name = "New Recipe",
+            category = "New Category",
+            instructions = listOf(Instruction("Step 1"), Instruction("Step 2")),
+            strMealThumbUrl = "http://example.com/image.jpg",
+            ingredientsAndMeasurements = listOf("New Ingredient" to "200g"),
+            time = "20 minutes",
+            difficulty = "Medium",
+            url = "http://new-example.com")
+
+    builder.initializeFromRecipe(recipe)
+
+    // Assertions to verify the builder contains the new data
+    assertEquals(recipe.uid, builder.getId())
+    assertEquals(recipe.name, builder.getName())
+    assertEquals(recipe.category, builder.getCategory())
+    assertEquals(recipe.instructions, builder.getInstructions())
+    assertEquals(recipe.strMealThumbUrl, builder.getPictureID())
+    assertEquals(recipe.ingredientsAndMeasurements, builder.getIngredientsAndMeasurements())
+    assertEquals(recipe.time, builder.getTime())
+    assertEquals(recipe.difficulty, builder.getDifficulty())
+    assertEquals(recipe.url, builder.getUrl())
+  }
 }

@@ -43,17 +43,19 @@ import com.android.sample.ui.utils.PlateSwipeScaffold
 fun OptionalInformationScreen(
     navigationActions: NavigationActions,
     createRecipeViewModel: CreateRecipeViewModel,
+    isEditing: Boolean = false
 ) {
   PlateSwipeScaffold(
       navigationActions = navigationActions,
-      selectedItem = Route.CREATE_RECIPE,
+      selectedItem = if (isEditing) Route.ACCOUNT else Route.CREATE_RECIPE,
       showBackArrow = true,
       content = { paddingValues ->
         OptionalInformationContent(
             currentStep = INITIAL_RECIPE_STEP,
             navigationActions = navigationActions,
             createRecipeViewModel = createRecipeViewModel,
-            modifier = Modifier.fillMaxSize().padding(paddingValues))
+            modifier = Modifier.fillMaxSize().padding(paddingValues),
+            isEditing = isEditing)
       })
 }
 
@@ -70,7 +72,8 @@ fun OptionalInformationContent(
     modifier: Modifier = Modifier,
     currentStep: Int,
     navigationActions: NavigationActions,
-    createRecipeViewModel: CreateRecipeViewModel
+    createRecipeViewModel: CreateRecipeViewModel,
+    isEditing: Boolean
 ) {
   val noCategoryString = stringResource(R.string.no_category)
   val categories = listOf(noCategoryString) + Recipe.getCategories()
@@ -144,7 +147,7 @@ fun OptionalInformationContent(
               onClick = {
                 createRecipeViewModel.updateRecipeCategory(selectedCategory.value)
                 createRecipeViewModel.updateRecipeDifficulty(selectedDifficulty.value)
-                navigationActions.navigateTo(Screen.CREATE_RECIPE_INGREDIENTS)
+                fromOptionalInformationScreenNavigateToNextScreen(isEditing, navigationActions)
               })
         }
   }
@@ -174,4 +177,21 @@ private fun SubtitleWithDropDown(
       modifier =
           Modifier.fillMaxWidth().padding(horizontal = PADDING_16.dp).testTag(dropdownTestTag),
       defaultItemIndex = defaultItemIndex)
+}
+
+/**
+ * Helper function to navigate to the next screen based on the isEditing flag.
+ *
+ * @param isEditing Boolean indicating whether the recipe is being edited.
+ * @param navigationActions Actions for navigating between screens.
+ */
+fun fromOptionalInformationScreenNavigateToNextScreen(
+    isEditing: Boolean,
+    navigationActions: NavigationActions
+) {
+  if (isEditing) {
+    navigationActions.navigateTo(Screen.EDIT_RECIPE_LIST_INGREDIENTS)
+  } else {
+    navigationActions.navigateTo(Screen.CREATE_RECIPE_INGREDIENTS)
+  }
 }

@@ -160,4 +160,11 @@
     <string name="pop_up_confirmation_fridge">Add to fridge</string>
 
 
+
+    // RecipeList utils
+    <string name="edit_recipe_icon_description">Edit Recipe</string>
+
+    // EditRecipeNameScreen
+    <string name="edit_your_recipe">Edit your recipe</string>
+    <string name="edit_recipe_description">Make changes to your recipe details below.</string>
 </resources>
