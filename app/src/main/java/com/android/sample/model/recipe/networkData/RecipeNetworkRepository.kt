@@ -1,5 +1,6 @@
 package com.android.sample.model.recipe.networkData
 
+import com.android.sample.model.filter.Filter
 import com.android.sample.model.recipe.Recipe
 
 interface RecipeNetworkRepository {
@@ -70,6 +71,18 @@ interface RecipeNetworkRepository {
       limit: Int = 5
   )
 
-  /** Lists all the categories in the API. */
-  fun listCategories(onSuccess: (List<String>) -> Unit, onFailure: (Exception) -> Unit)
+  /**
+   * Filters the recipes by a specified filter.
+   *
+   * @param filter The filter to apply.
+   * @param onSuccess Callback that returns the list of filtered recipes.
+   * @param onFailure Callback that is called when an error occurs.
+   * @param limit The maximum number of recipes to fetch.
+   */
+  fun filterSearch(
+      filter: Filter,
+      onSuccess: (List<Recipe>) -> Unit,
+      onFailure: (Exception) -> Unit,
+      limit: Int = 5
+  )
 }
