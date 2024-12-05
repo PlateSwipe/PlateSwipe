@@ -9,8 +9,6 @@
     <string name="plate_swipe_title">Plate Swipe</string>
 
     <string name="search_bar_place_holder">Search</string>
-    <string name="fridge_screen">Fridge Screen</string>
-    <string name="fridge_screen_description">Work in progress…stay tuned!</string>
     <string name="add_to_recipe">Add to Recipe</string>
     <string name="add_to_fridge">Add to Fridge</string>
 
@@ -84,7 +82,7 @@
 
     //RecipeIngredientScreen
     <string name="list_ingredients">List the ingredients needed for your recipe. Add as many as you need.</string>
-    <string name="add_ingredient">Add Ingredients</string>
+    <string name="add_ingredient">Add Ingredient</string>
     <string name="no_ingredients">No Ingredients</string>
 
     //RecipeInstructionsScreen
@@ -149,4 +147,17 @@
     <string name="select_time_description">Selecting the total time is optional, but it helps others understand how long your recipe will take.</string>
     <string name="minutes">Minutes</string>
     <string name="hours">Hours</string>
+    //Fridge
+    <string name="fridge_title">Fridge</string>
+    <string name="empty_fridge_title">Empty Fridge</string>
+    <string name="empty_fridge_description">Your fridge is currently empty, click below to add ingredient</string>
+    <string name="date_pattern">dd/MM/yyyy</string>
+    <string name="save">Save</string>
+    <string name="confirm">Confirm</string>
+    <string name="expiration_date">Expiration Date:</string>
+    <string name="pop_up_title_fridge">Add to fridge?</string>
+    <string name="pop_up_description_fridge">Do you want to add this ingredient to your fridge?</string>
+    <string name="pop_up_confirmation_fridge">Add to fridge</string>
+
+
 </resources>

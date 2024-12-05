@@ -68,12 +68,14 @@ class SearchIngredientScreenTest {
       SearchIngredientScreen(
           navigationActions = mockNavigationActions,
           searchIngredientViewModel = searchIngredientViewModel,
-          "Title",
-          "Description",
-          "Confirm") {
+          popUpTitle = "Title",
+          popUpConfirmationText = "Description",
+          popUpConfirmationButtonText = "Confirm",
+          onConfirmation = {
             mockNavigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
             searchIngredientViewModel.addIngredient(it)
-          }
+          },
+          onSearchFinished = { mockNavigationActions.navigateTo(Screen.CAMERA_SCAN_CODE_BAR) })
     }
   }
 
@@ -86,12 +88,14 @@ class SearchIngredientScreenTest {
 
   @Test
   fun testScannerIconNavigatesToCameraScreen() {
+    `when`(mockNavigationActions.currentRoute()).thenReturn(Screen.CREATE_RECIPE_SEARCH_INGREDIENTS)
     // Click on the scanner icon
     composeTestRule.onNodeWithTag(SEARCH_BAR, useUnmergedTree = true).assertIsDisplayed()
 
     composeTestRule.onNodeWithTag(SCANNER_ICON, useUnmergedTree = true).performClick()
 
     // Verify that the navigation action was triggered
+
     verify(mockNavigationActions).navigateTo(Screen.CAMERA_SCAN_CODE_BAR)
   }
 

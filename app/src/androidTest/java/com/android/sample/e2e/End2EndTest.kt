@@ -30,6 +30,7 @@ import com.android.sample.model.image.ImageDownload
 import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.ingredient.DefaultIngredientRepository
 import com.android.sample.model.ingredient.Ingredient
+import com.android.sample.model.ingredient.IngredientRepository
 import com.android.sample.model.ingredient.IngredientViewModel
 import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.model.recipe.Recipe
@@ -132,6 +133,7 @@ class EndToEndTest {
   private lateinit var mockImageRepo: ImageRepositoryFirebase
   private lateinit var recipesViewModel: RecipesViewModel
   private lateinit var ingredientViewModel: IngredientViewModel
+  private lateinit var mockIngredientRepository: IngredientRepository
 
   @get:Rule val composeTestRule = createComposeRule()
 
@@ -142,6 +144,7 @@ class EndToEndTest {
     mockFirebaseAuth = mock(FirebaseAuth::class.java)
     mockImageRepo = mockk<ImageRepositoryFirebase>(relaxed = true)
     mockRepository = mock(RecipesRepository::class.java)
+    mockIngredientRepository = mock(IngredientRepository::class.java)
     aggregatorIngredientRepository = mock(DefaultIngredientRepository::class.java)
 
     `when`(aggregatorIngredientRepository.search(any(), any(), any(), any())).thenAnswer {
@@ -164,7 +167,7 @@ class EndToEndTest {
       null
     }
 
-    userViewModel = UserViewModel(mockUserRepository, mockFirebaseAuth)
+    userViewModel = UserViewModel(mockUserRepository, mockFirebaseAuth, mockIngredientRepository)
 
     val firestore = mockk<FirebaseFirestore>(relaxed = true)
     val repository = FirestoreRecipesRepository(firestore)
@@ -231,7 +234,7 @@ class EndToEndTest {
     composeTestRule.onNodeWithTag("RecipeTitle").assertExists()
 
     composeTestRule.onNodeWithTag("tabFridge").assertExists().performClick()
-    composeTestRule.onNodeWithText("Fridge Screen").assertExists()
+    composeTestRule.onNodeWithText("Empty Fridge").assertExists()
   }
 
   /** Test the filter feature */
@@ -521,7 +524,7 @@ class EndToEndTest {
           startDestination = Screen.FRIDGE,
           route = Route.FRIDGE,
       ) {
-        composable(Screen.FRIDGE) { FridgeScreen(navigationActions) }
+        composable(Screen.FRIDGE) { FridgeScreen(navigationActions, userViewModel) }
       }
       navigation(
           startDestination = Screen.SEARCH,
@@ -585,7 +588,8 @@ class EndToEndTest {
               onConfirmation = {
                 ingredientViewModel.addIngredient(it)
                 navigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
-              })
+              },
+              onSearchFinished = { navigationActions.navigateTo(Screen.CAMERA_SCAN_CODE_BAR) })
         }
 
         composable(Screen.CREATE_RECIPE_LIST_INGREDIENTS) {

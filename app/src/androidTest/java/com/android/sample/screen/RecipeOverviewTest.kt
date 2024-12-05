@@ -19,19 +19,19 @@ import com.android.sample.model.image.ImageDownload
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.recipe.RecipesRepository
 import com.android.sample.model.recipe.RecipesViewModel
-import com.android.sample.resources.C.TestTag.RecipeOverview.ADD_SERVINGS
+import com.android.sample.resources.C.Dimension.Counter.ADD
+import com.android.sample.resources.C.Dimension.Counter.NUMBER
+import com.android.sample.resources.C.Dimension.Counter.REMOVE
 import com.android.sample.resources.C.TestTag.RecipeOverview.COOK_TIME_TEXT
 import com.android.sample.resources.C.TestTag.RecipeOverview.DRAGGABLE_ITEM
 import com.android.sample.resources.C.TestTag.RecipeOverview.INGREDIENTS_VIEW
 import com.android.sample.resources.C.TestTag.RecipeOverview.INGREDIENT_CHECKBOX
 import com.android.sample.resources.C.TestTag.RecipeOverview.INSTRUCTIONS_VIEW
-import com.android.sample.resources.C.TestTag.RecipeOverview.NUMBER_SERVINGS
 import com.android.sample.resources.C.TestTag.RecipeOverview.PREP_TIME_TEXT
 import com.android.sample.resources.C.TestTag.RecipeOverview.RECIPE_IMAGE
 import com.android.sample.resources.C.TestTag.RecipeOverview.RECIPE_RATE
 import com.android.sample.resources.C.TestTag.RecipeOverview.RECIPE_STAR
 import com.android.sample.resources.C.TestTag.RecipeOverview.RECIPE_TITLE
-import com.android.sample.resources.C.TestTag.RecipeOverview.REMOVE_SERVINGS
 import com.android.sample.resources.C.TestTag.RecipeOverview.SLIDING_BUTTON_INGREDIENTS
 import com.android.sample.resources.C.TestTag.RecipeOverview.SLIDING_BUTTON_INSTRUCTIONS
 import com.android.sample.resources.C.TestTag.RecipeOverview.TOTAL_TIME_TEXT
@@ -160,17 +160,17 @@ class RecipeOverviewTest {
     // Check initial servings count
     composeTestRule
         .onNodeWithTag(DRAGGABLE_ITEM, useUnmergedTree = true)
-        .performScrollToNode(hasTestTag(NUMBER_SERVINGS))
+        .performScrollToNode(hasTestTag(NUMBER))
 
-    composeTestRule.onNodeWithTag(NUMBER_SERVINGS, useUnmergedTree = true).assertTextEquals("1")
+    composeTestRule.onNodeWithTag(NUMBER, useUnmergedTree = true).assertTextEquals("1")
 
     // Click the add button and verify if the count increases
-    composeTestRule.onNodeWithTag(ADD_SERVINGS, useUnmergedTree = true).performClick()
-    composeTestRule.onNodeWithTag(NUMBER_SERVINGS, useUnmergedTree = true).assertTextEquals("2")
+    composeTestRule.onNodeWithTag(ADD, useUnmergedTree = true).performClick()
+    composeTestRule.onNodeWithTag(NUMBER, useUnmergedTree = true).assertTextEquals("2")
 
     // Click the remove button and verify if the count decreases
-    composeTestRule.onNodeWithTag(REMOVE_SERVINGS, useUnmergedTree = true).performClick()
-    composeTestRule.onNodeWithTag(NUMBER_SERVINGS, useUnmergedTree = true).assertTextEquals("1")
+    composeTestRule.onNodeWithTag(REMOVE, useUnmergedTree = true).performClick()
+    composeTestRule.onNodeWithTag(NUMBER, useUnmergedTree = true).assertTextEquals("1")
   }
 
   @Test
@@ -289,7 +289,7 @@ class RecipeOverviewTest {
         .assertTextContains("Ingredient 1: Ingredient 1x")
 
     // Increase servings and verify ingredient quantities are updated
-    composeTestRule.onNodeWithTag(ADD_SERVINGS, useUnmergedTree = true).performClick()
+    composeTestRule.onNodeWithTag(ADD, useUnmergedTree = true).performClick()
 
     composeTestRule
         .onNodeWithTag("ingredientIngredient 1", useUnmergedTree = true)
