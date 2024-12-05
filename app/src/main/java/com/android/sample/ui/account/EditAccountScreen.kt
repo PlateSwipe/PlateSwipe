@@ -114,8 +114,8 @@ fun EditAccountScreen(
         var newProfilePictureImageBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
 
         // The LaunchedEffect is used here because we want to retrieve the existing profile picture
-        // if there is one only ones. Without it, the composable will always refresh and this
-        // picture will be always displayed
+        // of the user only once if it exists. Without it, the composable will refresh in a loop,
+        // thus not letting us update the existing profile picture
         LaunchedEffect(Unit) {
           if (!profilePictureUrl.value.isNullOrEmpty()) {
             imageRepositoryFirebase.getImage(
