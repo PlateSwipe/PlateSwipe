@@ -1,6 +1,7 @@
 package com.android.sample.account
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -10,6 +11,14 @@ import androidx.compose.ui.test.performTextInput
 import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.user.User
 import com.android.sample.model.user.UserViewModel
+import com.android.sample.resources.C.TestTag.EditAccountScreen.CHANGE_PROFILE_PICTURE_BUTTON_TAG
+import com.android.sample.resources.C.TestTag.EditAccountScreen.DATE_OF_BIRTH_CHANGE_BUTTON_TAG
+import com.android.sample.resources.C.TestTag.EditAccountScreen.DATE_OF_BIRTH_TEXT_FIELD_TAG
+import com.android.sample.resources.C.TestTag.EditAccountScreen.DATE_PICKER_POP_UP_CANCEL_TAG
+import com.android.sample.resources.C.TestTag.EditAccountScreen.DATE_PICKER_POP_UP_CONFIRM_TAG
+import com.android.sample.resources.C.TestTag.EditAccountScreen.DATE_PICKER_POP_UP_TAG
+import com.android.sample.resources.C.TestTag.EditAccountScreen.PROFILE_PICTURE_TAG
+import com.android.sample.resources.C.TestTag.EditAccountScreen.SAVE_CHANGES_BUTTON_TAG
 import com.android.sample.resources.C.TestTag.Utils.BACK_ARROW_ICON
 import com.android.sample.resources.C.TestTag.Utils.BOTTOM_BAR
 import com.android.sample.resources.C.TestTag.Utils.EDIT_ACCOUNT_ICON
@@ -94,18 +103,20 @@ class EditAccountScreenTest {
     composeTestRule.onNodeWithTag(BACK_ARROW_ICON, useUnmergedTree = true).assertIsDisplayed()
     composeTestRule.onNodeWithTag(BOTTOM_BAR, useUnmergedTree = true).assertIsDisplayed()
 
-    composeTestRule.onNodeWithTag("Profile Picture", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(PROFILE_PICTURE_TAG, useUnmergedTree = true).assertIsDisplayed()
     composeTestRule
-        .onNodeWithTag("Change profile picture button", useUnmergedTree = true)
+        .onNodeWithTag(CHANGE_PROFILE_PICTURE_BUTTON_TAG, useUnmergedTree = true)
         .assertIsDisplayed()
 
     composeTestRule.onNodeWithTag("Username text field", useUnmergedTree = true).assertIsDisplayed()
     composeTestRule.onNodeWithTag("Email text field", useUnmergedTree = true).assertIsDisplayed()
     composeTestRule
-        .onNodeWithTag("Date of birth text field", useUnmergedTree = true)
+        .onNodeWithTag(DATE_OF_BIRTH_CHANGE_BUTTON_TAG, useUnmergedTree = true)
         .assertIsDisplayed()
 
-    composeTestRule.onNodeWithTag("Save Changes Button", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(SAVE_CHANGES_BUTTON_TAG, useUnmergedTree = true)
+        .assertIsDisplayed()
   }
 
   @Test
@@ -132,8 +143,10 @@ class EditAccountScreenTest {
       }
     }
 
-    composeTestRule.onNodeWithTag("Save Changes Button", useUnmergedTree = true).assertIsDisplayed()
-    composeTestRule.onNodeWithTag("Save Changes Button", useUnmergedTree = true).performClick()
+    composeTestRule
+        .onNodeWithTag(SAVE_CHANGES_BUTTON_TAG, useUnmergedTree = true)
+        .assertIsDisplayed()
+    composeTestRule.onNodeWithTag(SAVE_CHANGES_BUTTON_TAG, useUnmergedTree = true).performClick()
 
     verify(mockNavigationActions).goBack()
     assert(userViewModel.userName.value == testUser.userName)
@@ -158,8 +171,10 @@ class EditAccountScreenTest {
         .onNodeWithTag("Username text field", useUnmergedTree = true)
         .performTextInput("Trump")
 
-    composeTestRule.onNodeWithTag("Save Changes Button", useUnmergedTree = true).assertIsDisplayed()
-    composeTestRule.onNodeWithTag("Save Changes Button", useUnmergedTree = true).performClick()
+    composeTestRule
+        .onNodeWithTag(SAVE_CHANGES_BUTTON_TAG, useUnmergedTree = true)
+        .assertIsDisplayed()
+    composeTestRule.onNodeWithTag(SAVE_CHANGES_BUTTON_TAG, useUnmergedTree = true).performClick()
 
     verify(mockNavigationActions).goBack()
     assert(userViewModel.userName.value == "Trump")
@@ -184,5 +199,86 @@ class EditAccountScreenTest {
     composeTestRule
         .onNodeWithTag("Email text field", useUnmergedTree = true)
         .assertTextEquals("example@mail.ch")
+  }
+
+  @Test
+  fun datePickerPopUpIsDisplayedTest() {
+    composeTestRule.setContent {
+      SampleAppTheme {
+        EditAccountScreen(
+            mockNavigationActions, userViewModel, mockFirebaseAuth, imageRepositoryFirebase)
+      }
+    }
+
+    composeTestRule
+        .onNodeWithTag(DATE_OF_BIRTH_CHANGE_BUTTON_TAG, useUnmergedTree = true)
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(DATE_OF_BIRTH_CHANGE_BUTTON_TAG, useUnmergedTree = true)
+        .performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule
+        .onNodeWithTag(DATE_PICKER_POP_UP_TAG, useUnmergedTree = true)
+        .assertIsDisplayed()
+  }
+
+  @Test
+  fun datePickerPopUpCancelTest() {
+    userViewModel.changeDateOfBirth("12/12/2024")
+    composeTestRule.setContent {
+      SampleAppTheme {
+        EditAccountScreen(
+            mockNavigationActions, userViewModel, mockFirebaseAuth, imageRepositoryFirebase)
+      }
+    }
+
+    composeTestRule
+        .onNodeWithTag(DATE_OF_BIRTH_CHANGE_BUTTON_TAG, useUnmergedTree = true)
+        .performClick()
+    composeTestRule.waitForIdle()
+
+    composeTestRule
+        .onNodeWithTag(DATE_PICKER_POP_UP_CANCEL_TAG, useUnmergedTree = true)
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(DATE_PICKER_POP_UP_CANCEL_TAG, useUnmergedTree = true)
+        .performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule
+        .onNodeWithTag(DATE_PICKER_POP_UP_TAG, useUnmergedTree = true)
+        .assertIsNotDisplayed()
+    composeTestRule
+        .onNodeWithTag(DATE_OF_BIRTH_TEXT_FIELD_TAG, useUnmergedTree = true)
+        .assertTextEquals("12/12/2024")
+  }
+
+  @Test
+  fun datePickerPopUpConfirmNoDateSelectedTest() {
+    userViewModel.changeDateOfBirth("12/12/2024")
+    composeTestRule.setContent {
+      SampleAppTheme {
+        EditAccountScreen(
+            mockNavigationActions, userViewModel, mockFirebaseAuth, imageRepositoryFirebase)
+      }
+    }
+
+    composeTestRule
+        .onNodeWithTag(DATE_OF_BIRTH_CHANGE_BUTTON_TAG, useUnmergedTree = true)
+        .performClick()
+    composeTestRule.waitForIdle()
+
+    composeTestRule
+        .onNodeWithTag(DATE_PICKER_POP_UP_CONFIRM_TAG, useUnmergedTree = true)
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(DATE_PICKER_POP_UP_CONFIRM_TAG, useUnmergedTree = true)
+        .performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule
+        .onNodeWithTag(DATE_PICKER_POP_UP_TAG, useUnmergedTree = true)
+        .assertIsNotDisplayed()
+    composeTestRule
+        .onNodeWithTag(DATE_OF_BIRTH_TEXT_FIELD_TAG, useUnmergedTree = true)
+        .assertTextEquals(" ")
   }
 }
