@@ -68,7 +68,7 @@ class IngredientViewModel(
   /**
    * Fetch ingredient
    *
-   * @param barCode
+   * @param barCode: the barcode of the ingredient to search for
    */
   override fun fetchIngredient(barCode: Long) {
     if (_ingredient.value.first?.barCode == barCode) {
@@ -84,7 +84,7 @@ class IngredientViewModel(
   /**
    * Add bar code ingredient
    *
-   * @param ingredient
+   * @param ingredient: the ingredient to add
    */
   override fun addIngredient(ingredient: Ingredient) {
     addIngredientToList(ingredient, _ingredientList)
@@ -93,8 +93,8 @@ class IngredientViewModel(
   /**
    * Update quantity
    *
-   * @param ingredient
-   * @param quantity
+   * @param ingredient: the ingredient to update
+   * @param quantity: the quantity to update
    */
   fun updateQuantity(ingredient: Ingredient, quantity: String) {
     _ingredientList.value =
@@ -110,7 +110,7 @@ class IngredientViewModel(
   /**
    * Fetch ingredient by name
    *
-   * @param name
+   * @param name: the name of the ingredient to search for
    */
   override fun fetchIngredientByName(name: String) {
     fetchIngredientByNameAndAddToList(
@@ -144,6 +144,13 @@ class IngredientViewModel(
     _ingredientList.value = emptyList()
   }
 
+  /**
+   * Downloads and saves the images of an ingredient.
+   *
+   * @param ingredient: The ingredient whose images are to be downloaded.
+   * @param context: The context used to access resources.
+   * @param dispatcher: The coroutine dispatcher to use for the download operations.
+   */
   fun downloadIngredient(
       ingredient: Ingredient,
       context: Context,

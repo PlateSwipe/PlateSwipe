@@ -428,6 +428,11 @@ class UserViewModel(
         onFailure = { e -> Log.e(LOG_TAG, FAILED_TO_FETCH_INGREDIENT_FROM_DATABASE_ERROR, e) })
   }
 
+  /**
+   * Fetch ingredient by barcode
+   *
+   * @param barCode: the barcode of the ingredient to search for
+   */
   override fun fetchIngredient(barCode: Long) {
     if (_ingredient.value.first?.barCode == barCode) {
       return
@@ -458,10 +463,20 @@ class UserViewModel(
     _ingredientList.value = emptyList()
   }
 
+  /**
+   * Add ingredient to the list
+   *
+   * @param ingredient: the ingredient to add
+   */
   override fun addIngredient(ingredient: Ingredient) {
     addIngredientToList(ingredient, _ingredientList)
   }
 
+  /**
+   * Fetch ingredient by name
+   *
+   * @param name: the name of the ingredient to search for
+   */
   override fun fetchIngredientByName(name: String) {
     clearIngredient()
     clearSearchingIngredientList()

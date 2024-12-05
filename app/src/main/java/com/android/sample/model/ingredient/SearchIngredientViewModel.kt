@@ -33,28 +33,31 @@ interface SearchIngredientViewModel {
   /** Clear ingredient after use when search the barcode */
   fun clearIngredient()
 
+  /** Clear searching ingredient list */
   fun clearSearchingIngredientList()
 
+  /** Clear ingredient list */
   fun clearIngredientList()
+
   /**
    * Add ingredient to the ingredient list
    *
-   * @param ingredient
+   * @param ingredient: the ingredient to add
    */
   fun addIngredient(ingredient: Ingredient)
 
   /**
    * Fetch ingredient by name
    *
-   * @param name
+   * @param name: the name of the ingredient to search for
    */
   fun fetchIngredientByName(name: String)
 
   /**
    * Add the first integer in the two strings
    *
-   * @param quantity1
-   * @param quantity2
+   * @param quantity1: the first string quantity to add
+   * @param quantity2: the second string quantity to add
    */
   private fun addFirstInt(quantity1: String?, quantity2: String?): String {
     if (quantity1 == null || quantity2 == null) {
@@ -77,6 +80,12 @@ interface SearchIngredientViewModel {
     }
   }
 
+  /**
+   * Add ingredient to the list
+   *
+   * @param ingredient: new ingredient to add
+   * @param ingredientList: the list of ingredients to add to
+   */
   fun addIngredientToList(
       ingredient: Ingredient,
       ingredientList: MutableStateFlow<List<Pair<Ingredient, String?>>>
@@ -98,6 +107,15 @@ interface SearchIngredientViewModel {
     }
   }
 
+  /**
+   * Fetch ingredient by name and add to the list
+   *
+   * @param name: the name of the ingredient to search for
+   * @param searchingIngredientList: the list of ingredients to add to
+   * @param ingredientRepository: the repository to fetch the ingredient from
+   * @param onStart: the function to call when the search starts
+   * @param onFinished: the function to call when the search finishes
+   */
   fun fetchIngredientByNameAndAddToList(
       name: String,
       searchingIngredientList: MutableStateFlow<List<Pair<Ingredient, String?>>>,
@@ -118,6 +136,15 @@ interface SearchIngredientViewModel {
         })
   }
 
+  /**
+   * Fetch ingredient by barcode and add to the list
+   *
+   * @param barCode: the barcode of the ingredient to search for
+   * @param fetchedIngredient: the ingredient to add to
+   * @param ingredientRepository: the repository to fetch the ingredient from
+   * @param onStart: the function to call when the search starts
+   * @param onFinished: the function to call when the search finishes
+   */
   fun fetchIngredientByBarcodeAndAddToList(
       barCode: Long,
       fetchedIngredient: MutableStateFlow<Pair<Ingredient?, String?>>,

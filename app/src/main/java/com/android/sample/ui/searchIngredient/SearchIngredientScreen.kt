@@ -65,6 +65,10 @@ import com.android.sample.ui.utils.SearchBar
  *
  * @param navigationActions the navigation actions.
  * @param searchIngredientViewModel the view model for the ingredient.
+ * @param popUpTitle the title of the confirmation pop-up.
+ * @param popUpConfirmationText the confirmation text of the confirmation pop-up.
+ * @param popUpConfirmationButtonText the confirmation button text of the confirmation pop-up.
+ * @param onConfirmation the callback to invoke when the user confirms the selection.
  */
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
@@ -123,6 +127,13 @@ fun SearchIngredientScreen(
       })
 }
 
+/**
+ * A composable that displays the list of ingredients.
+ *
+ * @param isSearching the state of searching.
+ * @param listIngredient the list of ingredients to display.
+ * @param onClick the callback to invoke when an ingredient item is clicked.
+ */
 @Composable
 private fun DisplayListIngredients(
     isSearching: State<Boolean>,

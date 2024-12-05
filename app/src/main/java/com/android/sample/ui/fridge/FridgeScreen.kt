@@ -107,14 +107,15 @@ import kotlin.math.max
 /**
  * Fridge Screen
  *
- * @param navigationActions
+ * @param navigationActions: NavigationActions object
+ * @param userViewModel: UserViewModel object
  * @return Unit
  *
  * Function to display the Fridge Screen
  *
- * @see FridgeScreen
- * @see NavigationActions
- * @see IngredientViewModel
+ * @see FridgeScreen: Composable function to display the Fridge Screen
+ * @see NavigationActions: Class to handle navigation actions
+ * @see IngredientViewModel: Class to handle ingredient view model
  */
 @Composable
 fun FridgeScreen(navigationActions: NavigationActions, userViewModel: UserViewModel) {
@@ -136,12 +137,12 @@ fun FridgeScreen(navigationActions: NavigationActions, userViewModel: UserViewMo
 /**
  * Empty Fridge
  *
- * @param paddingValues
- * @param navigationActions
- * @param userViewModel
+ * @param paddingValues: padding values to be applied to the composable
+ * @param navigationActions: navigation actions to be applied to the composable
+ * @param userViewModel: user view model to be applied to the composable
  */
 @Composable
-fun EmptyFridge(
+private fun EmptyFridge(
     paddingValues: PaddingValues,
     navigationActions: NavigationActions,
     userViewModel: UserViewModel
@@ -196,10 +197,10 @@ fun EmptyFridge(
 /**
  * Fridge Content when not empty
  *
- * @param navigationActions
- * @param paddingValues
- * @param userViewModel
- * @param listFridgeItem
+ * @param navigationActions: NavigationActions object to handle navigation actions
+ * @param paddingValues: PaddingValues object to apply padding to the composable
+ * @param userViewModel: UserViewModel object to handle user view model
+ * @param listFridgeItem: List<Pair<FridgeItem, Ingredient>> object to hold the list of fridge items
  */
 @Composable
 private fun FridgeContent(
@@ -281,9 +282,9 @@ private fun FridgeContent(
 /**
  * Item Card
  *
- * @param modifier
- * @param card
- * @param userViewModel
+ * @param modifier: Modifier object to apply to the composable
+ * @param card: Pair<FridgeItem, Ingredient> object to hold the fridge item and ingredient
+ * @param userViewModel: UserViewModel object to handle user view model
  */
 @SuppressLint("AutoboxingStateCreation")
 @Composable
@@ -305,7 +306,7 @@ private fun ItemCard(
             shape = RoundedCornerShape(CARD_BORDER_ROUND.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = CARD_ELEVATION.dp)) {
               Box(modifier = Modifier.fillMaxSize()) {
-                // Pencil Icon - Positioned at Top Left
+                // Pencil Icon - Positioned at Top Right
                 IconButton(
                     onClick = { showEditDialog = true },
                     modifier =
@@ -320,6 +321,7 @@ private fun ItemCard(
                   )
                 }
 
+                // Column to display the image, quantity, and expiration bar
                 Column(
                     modifier = Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally) {
@@ -339,6 +341,7 @@ private fun ItemCard(
                                           INGREDIENT_DISPLAY_IMAGE_BORDER_RADIUS.dp)),
                           contentScale = ContentScale.Fit)
 
+                      // Row to display the quantity tag
                       Row(
                           modifier =
                               Modifier.padding(
@@ -395,6 +398,16 @@ private fun ItemCard(
       }
 }
 
+/**
+ * Update Quantity Dialog
+ *
+ * @param fridgeIngredientPair: Pair<FridgeItem, Ingredient> object to hold the fridge item and
+ *   ingredient
+ * @param updatedQuantity: Int object to hold the updated quantity
+ * @param hiddeEditDialog: Function to hide the edit dialog
+ * @param setUpdatedQuantity: Function to set the updated quantity
+ * @param userViewModel: UserViewModel object to handle user view model
+ */
 @Composable
 private fun UpdateQuantityDialog(
     fridgeIngredientPair: Pair<FridgeItem, Ingredient>,
@@ -412,6 +425,7 @@ private fun UpdateQuantityDialog(
           Column(
               modifier = Modifier.padding(PADDING_16.dp),
               horizontalAlignment = Alignment.CenterHorizontally) {
+                // Dialog Title with the ingredient name and quantity
                 Text(
                     text =
                         "Update Quantity: ${fridgeIngredientPair.second.name} (${fridgeIngredientPair.second.quantity})",
@@ -434,7 +448,7 @@ private fun UpdateQuantityDialog(
 
                 Spacer(modifier = Modifier.height(PADDING_16.dp))
 
-                // Save Button
+                // Cancel Button
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
                   TextButton(
                       onClick = {
@@ -447,7 +461,10 @@ private fun UpdateQuantityDialog(
                             color = MaterialTheme.colorScheme.onSecondaryContainer,
                         )
                       }
+
                   Spacer(modifier = Modifier.width(PADDING_8.dp))
+
+                  // Save Button
                   Button(
                       onClick = {
                         userViewModel.updateIngredientFromFridge(
@@ -475,8 +492,8 @@ private fun UpdateQuantityDialog(
 /**
  * Expiration Bar of an ingredient
  *
- * @param expirationDate
- * @param testTag
+ * @param expirationDate: LocalDate object to hold the expiration date
+ * @param testTag: String object to hold the test tag
  */
 @Composable
 private fun ExpirationBar(expirationDate: LocalDate?, testTag: String) {
@@ -490,6 +507,7 @@ private fun ExpirationBar(expirationDate: LocalDate?, testTag: String) {
         daysLeft in MIN_ORANGE_DAY..MAX_ORANGE_DAY -> orangeExpirationBar to ORANGE
         else -> firebrickRed to RED
       }
+  // Calculate the width of the bar based on the days left
   val widthFraction =
       when {
         daysLeft >= (MAX_PROPORTION - MIN_PROPORTION * MAX_PROPORTION) -> MIN_PROPORTION
@@ -503,13 +521,14 @@ private fun ExpirationBar(expirationDate: LocalDate?, testTag: String) {
                 .fillMaxWidth()
                 .padding(horizontal = PADDING_16.dp, vertical = PADDING_8.dp),
         horizontalArrangement = Arrangement.Start) {
+          // Background Bar
           Box(
               modifier =
                   Modifier.fillMaxWidth()
-                      .height(BAR_HEIGHT.dp) // Set a consistent height for the bar
-                      .clip(RoundedCornerShape(BAR_ROUND_CORNER.dp)) // Add rounded corners
-                      .background(Color.LightGray) // Light cream color
-              ) {
+                      .height(BAR_HEIGHT.dp)
+                      .clip(RoundedCornerShape(BAR_ROUND_CORNER.dp))
+                      .background(Color.LightGray)) {
+                // Expiration Bar
                 Box(
                     modifier =
                         Modifier.fillMaxWidth(fraction = widthFraction)
