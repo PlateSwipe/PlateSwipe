@@ -1,5 +1,8 @@
-package com.android.sample.model.recipe
+package com.android.sample.model.recipe.network
 
+import com.android.sample.model.recipe.Instruction
+import com.android.sample.model.recipe.Recipe
+import com.android.sample.model.recipe.networkData.MealDBRecipesRepository
 import com.android.sample.resources.C.Tag.MAXIMUM_RECIPES_TO_FETCH_MEAL_DB
 import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertNull

@@ -12,9 +12,11 @@ import androidx.compose.ui.test.swipeLeft
 import androidx.compose.ui.test.swipeRight
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.sample.model.filter.Difficulty
+import com.android.sample.model.image.ImageDownload
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.recipe.RecipesRepository
 import com.android.sample.model.recipe.RecipesViewModel
+import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C.TestTag.SwipePage.CATEGORY_CHIP
 import com.android.sample.resources.C.TestTag.SwipePage.DELETE_SUFFIX
 import com.android.sample.resources.C.TestTag.SwipePage.DIFFICULTY_CHIP
@@ -57,6 +59,7 @@ class SwipePageTest : TestCase() {
   private lateinit var mockNavigationActions: NavigationActions
   private lateinit var mockRepository: RecipesRepository
   private lateinit var recipesViewModel: RecipesViewModel
+  private lateinit var userViewModel: UserViewModel
 
   private val mockedRecipesList = testRecipes
 
@@ -82,7 +85,7 @@ class SwipePageTest : TestCase() {
       null
     }
 
-    recipesViewModel = RecipesViewModel(mockRepository)
+    recipesViewModel = RecipesViewModel(mockRepository, ImageDownload())
     advanceUntilIdle()
 
     `when`(mockNavigationActions.currentRoute()).thenReturn(Route.SWIPE)

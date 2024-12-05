@@ -1,6 +1,10 @@
 package com.android.sample.model.recipe
 
+import android.content.Context
+import androidx.test.core.app.ApplicationProvider
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.sample.model.filter.Difficulty
+import com.android.sample.model.image.ImageDownload
 import com.android.sample.resources.C.Tag.NUMBER_RECIPES_TO_FETCH
 import com.android.sample.ui.utils.testRecipes
 import kotlinx.coroutines.Dispatchers
@@ -19,6 +23,7 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers.eq
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.spy
@@ -28,9 +33,12 @@ import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
 
 /** Unit tests for RecipesViewModel. */
+@RunWith(AndroidJUnit4::class)
 class RecipesViewModelTest {
   private lateinit var mockRecipeRepository: RecipesRepository
   private lateinit var recipesViewModel: RecipesViewModel
+  private lateinit var imageDownload: ImageDownload
+  private val testDispatcher = StandardTestDispatcher()
 
   // Dummy recipes for testing
   private val dummyRecipes: List<Recipe> = testRecipes
@@ -39,13 +47,13 @@ class RecipesViewModelTest {
   @Before
   fun setUp() {
     // Set the main dispatcher for tests
-    val testDispatcher = StandardTestDispatcher()
     Dispatchers.setMain(testDispatcher)
+    imageDownload = mock(ImageDownload::class.java)
 
     // Mock the RecipeRepository
     mockRecipeRepository = mock(RecipesRepository::class.java)
     // Initialize the RecipesViewModel with the mocked repository
-    recipesViewModel = RecipesViewModel(mockRecipeRepository)
+    recipesViewModel = RecipesViewModel(mockRecipeRepository, imageDownload)
   }
 
   @OptIn(ExperimentalCoroutinesApi::class)
@@ -74,7 +82,7 @@ class RecipesViewModelTest {
       null
     }
     // Act: Initialize the ViewModel
-    recipesViewModel = RecipesViewModel(mockRecipeRepository)
+    recipesViewModel = RecipesViewModel(mockRecipeRepository, ImageDownload())
 
     // Wait for the coroutine to complete
     advanceUntilIdle()
@@ -252,7 +260,7 @@ class RecipesViewModelTest {
     }
 
     // Act: Initialize the ViewModel and fetch recipes
-    recipesViewModel = RecipesViewModel(mockRecipeRepository)
+    recipesViewModel = RecipesViewModel(mockRecipeRepository, ImageDownload())
     advanceUntilIdle()
 
     // Assert: Verify that the next recipe is set correctly
@@ -273,7 +281,7 @@ class RecipesViewModelTest {
     }
 
     // Act: Initialize the ViewModel and fetch recipes
-    recipesViewModel = RecipesViewModel(mockRecipeRepository)
+    recipesViewModel = RecipesViewModel(mockRecipeRepository, ImageDownload())
     advanceUntilIdle()
 
     // Act: Update the current recipe
@@ -309,7 +317,7 @@ class RecipesViewModelTest {
     }
 
     // Act: Initialize the ViewModel and fetch recipes
-    recipesViewModel = RecipesViewModel(mockRecipeRepository)
+    recipesViewModel = RecipesViewModel(mockRecipeRepository, ImageDownload())
     advanceUntilIdle()
 
     // Print the list of recipes
@@ -341,7 +349,7 @@ class RecipesViewModelTest {
     }
 
     // Spy on the RecipesViewModel
-    val spyViewModel = spy(RecipesViewModel(mockRecipeRepository))
+    val spyViewModel = spy(RecipesViewModel(mockRecipeRepository, ImageDownload()))
 
     // Set the first recipe as the current recipe
     spyViewModel.updateCurrentRecipe(dummyRecipes[0])
@@ -391,7 +399,7 @@ class RecipesViewModelTest {
     }
 
     // Spy on the RecipesViewModel
-    val spyViewModel = spy(RecipesViewModel(mockRecipeRepository))
+    val spyViewModel = spy(RecipesViewModel(mockRecipeRepository, ImageDownload()))
 
     // Set the first recipe as the current recipe
     spyViewModel.updateCurrentRecipe(extendedDummyRecipes[0])
@@ -507,4 +515,73 @@ class RecipesViewModelTest {
         recipesViewModel.tmpFilter.value.timeRange.max,
         0.001f)
   }
+
+  @Test
+  fun testDeleteDownload() {
+    val recipe = testRecipes[0]
+    recipesViewModel.deleteDownload(recipe)
+    verify(mockRecipeRepository).deleteDownload(recipe)
+  }
+
+  @Test
+  fun testAddDownload() {
+    recipesViewModel.deleteAllDownloads()
+    verify(mockRecipeRepository).deleteAllDownloads(any(), any())
+  }
+
+  @Test
+  fun testgetAllDownload() {
+    val onSuccess: (List<Recipe>) -> Unit = {}
+    val onFailure: (Exception) -> Unit = {}
+
+    `when`(mockRecipeRepository.getAllDownload(any(), any())).thenAnswer { invocation ->
+      val onSuc = invocation.getArgument<(List<Recipe>) -> Unit>(0)
+      onSuc(testRecipes)
+    }
+    recipesViewModel.getAllDownloads(onSuccess = onSuccess, onFailure = onFailure)
+    assert(recipesViewModel.recipesDownload.value == testRecipes)
+  }
+
+  @Test
+  fun testgetAllDownloadFail() {
+    val onSuccess: (List<Recipe>) -> Unit = {}
+    val onFailure: (Exception) -> Unit = { e -> assert(e.message == "Error") }
+
+    `when`(mockRecipeRepository.getAllDownload(any(), any())).thenAnswer { invocation ->
+      val onFail = invocation.getArgument<(Exception) -> Unit>(1)
+      onFail(Exception("Error"))
+    }
+    recipesViewModel.getAllDownloads(onSuccess = onSuccess, onFailure = onFailure)
+    assert(recipesViewModel.recipesDownload.value == emptyList<Recipe>())
+  }
+
+  @OptIn(ExperimentalCoroutinesApi::class)
+  @Test
+  fun downloadRecipe() =
+      runTest(testDispatcher) {
+        val context: Context = ApplicationProvider.getApplicationContext()
+        `when`(imageDownload.downloadAndSaveImage(any(), any(), any(), any())).thenReturn("path")
+        recipesViewModel.downloadRecipe(
+            testRecipes[0].copy(url = "url"),
+            onSuccess = { recipe -> assert(recipe.url == "path") },
+            onFailure = {},
+            context)
+        advanceUntilIdle()
+      }
+
+  @OptIn(ExperimentalCoroutinesApi::class)
+  @Test
+  fun downloadRecipeUrlNull() =
+      runTest(testDispatcher) {
+        var onFailCall = false
+        val context: Context = ApplicationProvider.getApplicationContext()
+        `when`(imageDownload.downloadAndSaveImage(any(), any(), any(), any())).thenReturn("path")
+        recipesViewModel.downloadRecipe(
+            testRecipes[0].copy(url = null),
+            onSuccess = {},
+            onFailure = { onFailCall = true },
+            context)
+        advanceUntilIdle()
+        assert(onFailCall)
+      }
 }
