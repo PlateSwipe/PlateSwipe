@@ -109,6 +109,7 @@ import com.android.sample.resources.C.Dimension.SwipePage.STAR_SIZE
 import com.android.sample.resources.C.Dimension.SwipePage.STAR_WEIGHT
 import com.android.sample.resources.C.Dimension.SwipePage.SWIPE_THRESHOLD
 import com.android.sample.resources.C.Dimension.SwipePage.THRESHOLD_INTENSITY
+import com.android.sample.resources.C.Tag.Filter.UNINITIALIZED_BORN_VALUE
 import com.android.sample.resources.C.Tag.LOADING
 import com.android.sample.resources.C.Tag.PADDING
 import com.android.sample.resources.C.Tag.SMALL_PADDING
