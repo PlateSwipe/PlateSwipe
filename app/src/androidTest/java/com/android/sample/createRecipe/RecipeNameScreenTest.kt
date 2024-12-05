@@ -5,7 +5,7 @@ import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.recipe.CreateRecipeViewModel
-import com.android.sample.model.recipe.FirestoreRecipesRepository
+import com.android.sample.model.recipe.networkData.FirestoreRecipesRepository
 import com.android.sample.resources.C.Tag.SCREEN_HEIGHT_THRESHOLD
 import com.android.sample.resources.C.Tag.SCREEN_WIDTH_THRESHOLD
 import com.android.sample.ui.createRecipe.RecipeNameScreen
