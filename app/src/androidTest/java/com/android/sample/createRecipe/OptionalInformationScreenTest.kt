@@ -138,4 +138,103 @@ class OptionalInformationScreenTest {
     // Verify navigation to the next screen
     verify { mockNavigationActions.navigateTo(Screen.CREATE_RECIPE_INGREDIENTS) }
   }
+
+  @Test
+  fun testCategoryScreenComponentsAreDisplayedInEditMode() {
+    composeTestRule.setContent {
+      OptionalInformationScreen(
+          navigationActions = mockNavigationActions,
+          createRecipeViewModel = createRecipeViewModel,
+          isEditing = true)
+    }
+
+    composeTestRule.onNodeWithText("Select a Category").assertExists().assertIsDisplayed()
+    composeTestRule
+        .onNodeWithText(
+            "Giving this information is optional, but it can make it easier for others to find your recipe.")
+        .assertExists()
+        .assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CATEGORY_DROPDOWN).assertIsDisplayed()
+    composeTestRule.onNodeWithTag("NextStepButton").assertExists().assertIsDisplayed()
+    composeTestRule.onNodeWithTag(BUTTON_TEST_TAG).assertExists().assertIsDisplayed()
+  }
+
+  @Test
+  fun testSelectingCategoryUpdatesButtonTextInEditMode() {
+    composeTestRule.setContent {
+      OptionalInformationScreen(
+          navigationActions = mockNavigationActions,
+          createRecipeViewModel = createRecipeViewModel,
+          isEditing = true)
+    }
+
+    val selectedCategory = "Vegan"
+
+    // Open dropdown menu
+    composeTestRule.onNodeWithTag(CATEGORY_DROPDOWN).performClick()
+
+    // Scroll to the desired category if necessary
+    composeTestRule.onNodeWithText(selectedCategory, useUnmergedTree = true).performScrollTo()
+
+    // Wait for the UI to update
+    composeTestRule.waitForIdle()
+
+    // Select the category
+    composeTestRule.onNodeWithText(selectedCategory).performClick()
+
+    composeTestRule.waitForIdle()
+
+    // Verify dropdown button text updates to the selected category
+    composeTestRule
+        .onAllNodesWithTag(DROPDOWN_TITLE, useUnmergedTree = true)
+        .assertCountEquals(2)
+        .assertAny(hasText(selectedCategory))
+  }
+
+  @Test
+  fun testSelectingDifficultyUpdatesButtonTextInEditMode() {
+    composeTestRule.setContent {
+      OptionalInformationScreen(
+          navigationActions = mockNavigationActions,
+          createRecipeViewModel = createRecipeViewModel,
+          isEditing = true)
+    }
+
+    val selectedDifficulty = Recipe.getDifficulties()[1]
+
+    // Open dropdown menu
+    composeTestRule.onNodeWithTag(DIFFICULTY_DROPDOWN).performClick()
+
+    composeTestRule.onNodeWithText(selectedDifficulty, useUnmergedTree = true).performScrollTo()
+
+    // Wait for the UI to update
+    composeTestRule.waitForIdle()
+
+    // Select the category
+    composeTestRule.onNodeWithText(selectedDifficulty).performClick()
+
+    composeTestRule.waitForIdle()
+
+    // Verify dropdown button text updates to the selected category
+    composeTestRule
+        .onAllNodesWithTag(DROPDOWN_TITLE, useUnmergedTree = true)
+        .assertCountEquals(2)
+        .assertAny(hasText(selectedDifficulty))
+  }
+
+  @Test
+  fun testNextStepButtonNavigatesToNextScreenInEditMode() {
+    composeTestRule.setContent {
+      OptionalInformationScreen(
+          navigationActions = mockNavigationActions,
+          createRecipeViewModel = createRecipeViewModel,
+          isEditing = true)
+    }
+
+    // Click the "Next Step" button
+    composeTestRule.onNodeWithTag("NextStepButton").assertExists().performClick()
+
+    // Verify navigation to the next screen
+    verify { mockNavigationActions.navigateTo(Screen.EDIT_RECIPE_LIST_INGREDIENTS) }
+  }
 }

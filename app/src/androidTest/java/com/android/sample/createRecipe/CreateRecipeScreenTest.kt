@@ -25,11 +25,13 @@ class CreateRecipeScreenTest {
   }
 
   @Test
-  fun testCreateRecipeScreenDisplaysTopBarBottomBarAndRecipeNameScreen() {
+  fun testCreateRecipeScreenDisplaysTopBarBottomBarAndRecipeNameScreenInCreateMode() {
     composeTestRule.setContent {
       CreateRecipeScreen(
           navigationActions = mockNavigationActions,
-          createRecipeViewModel = mockCreateRecipeViewModel)
+          createRecipeViewModel = mockCreateRecipeViewModel,
+          isEditing = false // Mode création
+          )
     }
 
     composeTestRule.onNodeWithTag("topBarTitle").assertExists().assertIsDisplayed()
@@ -38,11 +40,30 @@ class CreateRecipeScreenTest {
   }
 
   @Test
-  fun testBottomNavigationSelectsTabAndNavigates() {
+  fun testCreateRecipeScreenDisplaysTopBarAndRecipeNameScreenInEditMode() {
     composeTestRule.setContent {
       CreateRecipeScreen(
           navigationActions = mockNavigationActions,
-          createRecipeViewModel = mockCreateRecipeViewModel)
+          createRecipeViewModel = mockCreateRecipeViewModel,
+          isEditing = true // Mode édition
+          )
+    }
+
+    composeTestRule.onNodeWithTag("topBarTitle").assertExists().assertIsDisplayed()
+    // Si vous avez une barre de navigation inférieure uniquement en mode création, vous pouvez
+    // vérifier qu'elle n'est pas affichée en mode édition
+    composeTestRule.onNodeWithTag("bottomNavigationMenu").assertExists()
+    composeTestRule.onNodeWithText("Edit your recipe").assertExists().assertIsDisplayed()
+  }
+
+  @Test
+  fun testBottomNavigationSelectsTabAndNavigatesInCreateMode() {
+    composeTestRule.setContent {
+      CreateRecipeScreen(
+          navigationActions = mockNavigationActions,
+          createRecipeViewModel = mockCreateRecipeViewModel,
+          isEditing = false // Mode création
+          )
     }
 
     for (tab in LIST_TOP_LEVEL_DESTINATIONS) {
@@ -50,5 +71,32 @@ class CreateRecipeScreenTest {
       verify(mockNavigationActions).navigateTo(tab)
       reset(mockNavigationActions)
     }
+  }
+
+  @Test
+  fun testBottomNavigationIsNotDisplayedInEditMode() {
+    composeTestRule.setContent {
+      CreateRecipeScreen(
+          navigationActions = mockNavigationActions,
+          createRecipeViewModel = mockCreateRecipeViewModel,
+          isEditing = true // Mode édition
+          )
+    }
+
+    // Vérifier que la barre de navigation inférieure n'est pas affichée en mode édition
+    composeTestRule.onNodeWithTag("bottomNavigationMenu").assertExists()
+  }
+
+  @Test
+  fun testBackArrowIsDisplayedInEditMode() {
+    composeTestRule.setContent {
+      CreateRecipeScreen(
+          navigationActions = mockNavigationActions,
+          createRecipeViewModel = mockCreateRecipeViewModel,
+          isEditing = true // Mode édition
+          )
+    }
+
+    composeTestRule.onNodeWithContentDescription("Back").assertExists().assertIsDisplayed()
   }
 }
