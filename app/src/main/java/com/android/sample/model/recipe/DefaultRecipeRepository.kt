@@ -154,6 +154,7 @@ class DefaultRecipeRepository(
       onFailure: (Exception) -> Unit,
       limit: Int
   ) {
-    throw UnsupportedOperationException()
+    networkRepository.filterSearch(
+        filter = filter, onSuccess = onSuccess, onFailure = onFailure, limit = limit)
   }
 }
