@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.test.assertAny
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.hasText
@@ -31,16 +32,19 @@ import com.android.sample.model.ingredient.DefaultIngredientRepository
 import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.ingredient.IngredientViewModel
 import com.android.sample.model.recipe.CreateRecipeViewModel
-import com.android.sample.model.recipe.FirestoreRecipesRepository
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.recipe.RecipesRepository
 import com.android.sample.model.recipe.RecipesViewModel
+import com.android.sample.model.recipe.networkData.FirestoreRecipesRepository
 import com.android.sample.model.user.UserRepository
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_NORMAL_URL
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_SMALL_URL
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_THUMBNAIL_URL
 import com.android.sample.resources.C.Tag.SAVE_BUTTON_TAG
+import com.android.sample.resources.C.TestTag.Category.BUTTON_TEST_TAG
+import com.android.sample.resources.C.TestTag.Category.CATEGORY_DROPDOWN
+import com.android.sample.resources.C.TestTag.Category.DIFFICULTY_DROPDOWN
 import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen
 import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.INSTRUCTION_LIST_ITEM
 import com.android.sample.resources.C.TestTag.IngredientListScreen.ADD_INGREDIENT_ICON
@@ -48,6 +52,7 @@ import com.android.sample.resources.C.TestTag.IngredientListScreen.NEXT_STEP_BUT
 import com.android.sample.resources.C.TestTag.IngredientSearchScreen.CANCEL_BUTTON
 import com.android.sample.resources.C.TestTag.IngredientSearchScreen.CONFIRMATION_BUTTON
 import com.android.sample.resources.C.TestTag.IngredientSearchScreen.SCANNER_ICON
+import com.android.sample.resources.C.TestTag.PlateSwipeDropdown.DROPDOWN_TITLE
 import com.android.sample.resources.C.TestTag.RecipeAddImageScreen.CAMERA_BUTTON
 import com.android.sample.resources.C.TestTag.RecipeAddImageScreen.DISPLAY_IMAGE_DEFAULT
 import com.android.sample.resources.C.TestTag.RecipeAddImageScreen.GALLERY_BUTTON
@@ -66,9 +71,9 @@ import com.android.sample.ui.account.AccountScreen
 import com.android.sample.ui.camera.CameraScanCodeBarScreen
 import com.android.sample.ui.camera.CameraTakePhotoScreen
 import com.android.sample.ui.createRecipe.AddInstructionStepScreen
-import com.android.sample.ui.createRecipe.CategoryScreen
 import com.android.sample.ui.createRecipe.CreateRecipeScreen
 import com.android.sample.ui.createRecipe.IngredientListScreen
+import com.android.sample.ui.createRecipe.OptionalInformationScreen
 import com.android.sample.ui.createRecipe.PublishRecipeScreen
 import com.android.sample.ui.createRecipe.RecipeAddImageScreen
 import com.android.sample.ui.createRecipe.RecipeIngredientsScreen
@@ -164,7 +169,7 @@ class EndToEndTest {
     val firestore = mockk<FirebaseFirestore>(relaxed = true)
     val repository = FirestoreRecipesRepository(firestore)
     createRecipeViewModel = CreateRecipeViewModel(repository, mockImageRepo)
-    recipesViewModel = RecipesViewModel(mockRepository)
+    recipesViewModel = RecipesViewModel(mockRepository, ImageDownload())
 
     ingredientViewModel = IngredientViewModel(aggregatorIngredientRepository, ImageDownload())
 
@@ -182,7 +187,10 @@ class EndToEndTest {
     `when`(navigationActions.currentRoute()).thenReturn(Screen.SWIPE)
     // Set the initial content to the MainScreen
     composeTestRule.setContent {
-      SwipePage(navigationActions = navigationActions, recipesViewModel = recipesViewModel)
+      SwipePage(
+          navigationActions = navigationActions,
+          recipesViewModel = recipesViewModel,
+          userViewModel = userViewModel)
     }
 
     // Click on Create Recipe Icon
@@ -350,27 +358,36 @@ class EndToEndTest {
     composeTestRule.onNodeWithTag("NextStepButton").performClick()
     composeTestRule.waitForIdle()
 
-    // category -------------------------------------------------------
+    // optional information -------------------------------------------------------
 
-    // Verify the category screen is displayed by checking the title
-    composeTestRule.onNodeWithText("Select A Category").assertExists()
+    val selectedCategory = "Beef"
 
-    // Open the dropdown menu
-    composeTestRule.onNodeWithTag("DropdownMenuButton").performClick()
+    // Choose a category
+    composeTestRule.onNodeWithTag(CATEGORY_DROPDOWN).performClick()
+    composeTestRule.onNodeWithText(selectedCategory, useUnmergedTree = true).performScrollTo()
     composeTestRule.waitForIdle()
-
-    // Scroll to the desired category if necessary
+    composeTestRule.onNodeWithText(selectedCategory).performClick()
+    composeTestRule.waitForIdle()
     composeTestRule
-        .onNodeWithTag("DropdownMenuItem_Vegan", useUnmergedTree = true)
-        .performScrollTo()
+        .onAllNodesWithTag(DROPDOWN_TITLE, useUnmergedTree = true)
+        .assertCountEquals(2)
+        .assertAny(hasText(selectedCategory))
 
-    // Select a category from the dropdown menu
-    composeTestRule.onNodeWithTag("DropdownMenuItem_Vegan").performClick()
+    val selectedDifficulty = Recipe.getDifficulties()[0]
 
-    // Verify the selected category is displayed in the dropdown button
-    composeTestRule.onNodeWithTag("DropdownMenuButton").assertTextEquals("Vegan")
+    // choose a difficulty
+    composeTestRule.onNodeWithTag(DIFFICULTY_DROPDOWN).performClick()
+    composeTestRule.onNodeWithText(selectedDifficulty, useUnmergedTree = true).performScrollTo()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithText(selectedDifficulty).performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule
+        .onAllNodesWithTag(DROPDOWN_TITLE, useUnmergedTree = true)
+        .assertCountEquals(2)
+        .assertAny(hasText(selectedDifficulty))
 
-    composeTestRule.onNodeWithTag("NextStepButton").performClick()
+    // get to ingredients step page
+    composeTestRule.onNodeWithTag(BUTTON_TEST_TAG).performClick()
     composeTestRule.waitForIdle()
 
     // ingredients -------------------------------------------------------
@@ -380,7 +397,10 @@ class EndToEndTest {
     composeTestRule.waitForIdle()
 
     // change the recipe ingredients list
-    composeTestRule.onNodeWithTag(ADD_INGREDIENT_ICON).assertIsDisplayed().performClick()
+    composeTestRule
+        .onNodeWithTag(ADD_INGREDIENT_ICON, useUnmergedTree = true)
+        .assertIsDisplayed()
+        .performClick()
     composeTestRule.waitForIdle()
     composeTestRule.onNodeWithTag(SCANNER_ICON).assertIsDisplayed()
     composeTestRule.onNodeWithTag("searchBar").assertIsDisplayed().performTextInput("ingredient")
@@ -518,7 +538,7 @@ class EndToEndTest {
               navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
         }
         composable(Screen.CREATE_CATEGORY_SCREEN) {
-          CategoryScreen(
+          OptionalInformationScreen(
               navigationActions = navigationActions, createRecipeViewModel = createRecipeViewModel)
         }
         composable(Screen.CREATE_RECIPE_INGREDIENTS) {

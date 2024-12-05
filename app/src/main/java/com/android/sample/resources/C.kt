@@ -19,6 +19,7 @@ object C {
     const val SMALL_PADDING = 8
     const val IMG_COMPRESS_SIZE = 100
     const val INGREDIENT_DATABASE_NAME = "ingredient_database"
+    const val RECIPE_DATABASE_NAME = "recipe_database"
     // Error
     const val ERROR_NULL_IMAGE = "Image is null"
     const val ERROR_STR_MEAL_BLANK = "Recipe name is required and cannot be blank."
@@ -126,6 +127,12 @@ object C {
     // RecipesViewModel
     const val MINIMUM_RECIPES_BEFORE_FETCH = 5
     const val NUMBER_RECIPES_TO_FETCH = 15
+    const val LOG_TAG_RECIPE_VIEWMODEL = "RecipesViewModel"
+    const val ERROR_DELETE_DOWNLOAD = "Error deleting downloaded image"
+    const val SUCCESS_DELETE_DOWNLOAD_ALL = "All downloads deleted"
+    const val ERROR_DOWNLOAD_IMG = "Error downloading image"
+    const val ERROR_RECIPE_WITH_NO_IMG = "Recipe does not have an image"
+    const val RECIPE_DOWNLOAD_SUCCESS = "Recipe downloaded successfully"
 
     // ImageRepositoryFirebase
     const val USER_IMAGE_DIR = "images/user/"
@@ -836,10 +843,14 @@ object C {
     object Category {
       const val DROPDOWN_CORNER_RADIUS = 8
       const val BUTTON_TEST_TAG = "NextStepButton"
-      const val DROPDOWN_TEST_TAG = "DropdownMenuButton"
-      const val CATEGORY_TITLE = "CategoryTitle"
-      // CategorySubtitle
+
+      // Category
       const val CATEGORY_SUBTITLE = "CategorySubtitle"
+      const val CATEGORY_DROPDOWN = "CategoryDropdown"
+
+      // Difficulty
+      const val DIFFICULTY_SUBTITLE = "DifficultySubtitle"
+      const val DIFFICULTY_DROPDOWN = "DifficultyDropdown"
     }
 
     object TimePicker {
@@ -850,6 +861,12 @@ object C {
       const val NEXT_BUTTON = "NextButton"
       const val HOURS_LABEL = "HoursLabel"
       const val MINUTES_LABEL = "MinutesLabel"
+    }
+
+    object PlateSwipeDropdown {
+      const val DROPDOWN = "PlateSwipeDropdown"
+      const val DROPDOWN_ITEM = "PlateSwipeDropdownItem"
+      const val DROPDOWN_TITLE = "PlateSwipeDropdownTitle"
     }
   }
 }

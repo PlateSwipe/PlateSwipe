@@ -1,10 +1,8 @@
-package com.android.sample.model.recipe
+package com.android.sample.model.recipe.networkData
 
-import com.android.sample.model.filter.Filter
+import com.android.sample.model.recipe.Recipe
 
-/** Interface for retrieving recipe data. */
-interface RecipesRepository {
-
+interface RecipeNetworkRepository {
   /**
    * Generates a new unique identifier for a recipe.
    *
@@ -72,57 +70,6 @@ interface RecipesRepository {
       limit: Int = 5
   )
 
-  /**
-   * Fetches a list of recipes by Filter.
-   *
-   * @param filter The filter to apply to the search.
-   * @param onSuccess Callback that returns the list of fetched recipes.
-   * @param onFailure Callback that is called when an error occurs.
-   * @param limit The maximum number of recipes to fetch.
-   */
-  fun filterSearch(
-      filter: Filter,
-      onSuccess: (List<Recipe>) -> Unit,
-      onFailure: (Exception) -> Unit,
-      limit: Int = 5
-  )
   /** Lists all the categories in the API. */
   fun listCategories(onSuccess: (List<String>) -> Unit, onFailure: (Exception) -> Unit)
-
-  /**
-   * Adds a recipe to the list of downloads.
-   *
-   * @param recipe The recipe to add to downloads.
-   */
-  fun addDownload(recipe: Recipe, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
-
-  /**
-   * Updates a recipe in the list of downloads.
-   *
-   * @param recipe The recipe to update in downloads.
-   */
-  fun updateDownload(recipe: Recipe)
-
-  /**
-   * Deletes a recipe from the list of downloads.
-   *
-   * @param recipe The recipe to delete from downloads.
-   */
-  fun deleteDownload(recipe: Recipe)
-
-  /**
-   * Retrieves all downloaded recipes.
-   *
-   * @param onSuccess Callback that returns the list of downloaded recipes.
-   * @param onFailure Callback that is called when an error occurs.
-   */
-  fun getAllDownload(onSuccess: (List<Recipe>) -> Unit, onFailure: (Exception) -> Unit)
-
-  /**
-   * Deletes all downloaded recipes.
-   *
-   * @param onSuccess Callback that is called when all downloads are deleted.
-   * @param onFailure Callback that is called when an error occurs.
-   */
-  fun deleteAllDownloads(onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
 }

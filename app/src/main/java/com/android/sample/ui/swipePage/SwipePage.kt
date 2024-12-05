@@ -163,7 +163,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun SwipePage(
     navigationActions: NavigationActions,
-    recipesViewModel: RecipesViewModel = viewModel(factory = RecipesViewModel.Factory),
+    recipesViewModel: RecipesViewModel,
     userViewModel: UserViewModel = viewModel(factory = UserViewModel.Factory)
 ) {
   val selectedItem = navigationActions.currentRoute()
@@ -187,7 +187,7 @@ fun SwipePage(
 fun RecipeDisplay(
     navigationActions: NavigationActions,
     paddingValues: PaddingValues,
-    recipesViewModel: RecipesViewModel = viewModel(factory = RecipesViewModel.Factory),
+    recipesViewModel: RecipesViewModel,
     userViewModel: UserViewModel
 ) {
   var retrieveNextRecipe by remember { mutableStateOf(INITIAL_RETRIEVE_NEXT_RECIPE) }

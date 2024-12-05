@@ -15,6 +15,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performScrollToNode
 import com.android.sample.model.filter.Difficulty
+import com.android.sample.model.image.ImageDownload
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.recipe.RecipesRepository
 import com.android.sample.model.recipe.RecipesViewModel
@@ -86,7 +87,7 @@ class RecipeOverviewTest {
       null
     }
 
-    recipesViewModel = RecipesViewModel(mockRepository)
+    recipesViewModel = RecipesViewModel(mockRepository, ImageDownload())
     advanceUntilIdle()
 
     `when`(mockNavigationActions.currentRoute()).thenReturn(Route.SWIPE)
@@ -117,7 +118,7 @@ class RecipeOverviewTest {
       onSuccess(listOf())
       null
     }
-    recipesViewModel = RecipesViewModel(mockRepository)
+    recipesViewModel = RecipesViewModel(mockRepository, ImageDownload())
 
     composeTestRule.setContent {
       RecipeOverview(mockNavigationActions, recipesViewModel) // Set up the SignInScreen directly

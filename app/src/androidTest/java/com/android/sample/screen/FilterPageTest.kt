@@ -14,6 +14,7 @@ import androidx.compose.ui.test.swipe
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.sample.model.filter.Difficulty
 import com.android.sample.model.filter.Filter
+import com.android.sample.model.image.ImageDownload
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.recipe.RecipesRepository
 import com.android.sample.model.recipe.RecipesViewModel
@@ -72,7 +73,7 @@ class FilterPageTest {
       null
     }
 
-    recipesViewModel = RecipesViewModel(mockRepository)
+    recipesViewModel = RecipesViewModel(mockRepository, ImageDownload())
     advanceUntilIdle()
 
     `when`(mockNavigationActions.currentRoute()).thenReturn(Route.SWIPE)

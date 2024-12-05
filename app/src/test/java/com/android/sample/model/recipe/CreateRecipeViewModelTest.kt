@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.sample.feature.camera.rotateBitmap
 import com.android.sample.model.image.ImageRepositoryFirebase
+import com.android.sample.model.recipe.networkData.FirestoreRecipesRepository
 import com.android.sample.ui.utils.testRecipes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
