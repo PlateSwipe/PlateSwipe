@@ -376,6 +376,13 @@ object C {
       const val PROFILE_PICTURE_CONTENT_DESCRIPTION = "profilePicture"
     }
 
+    // EditAccountScreen
+    object EditAccountScreen {
+      const val LOG_MESSAGE_TAG = "EditAccountScreen"
+      const val CHANGE_PROFILE_PICTURE_BUTTON_DESCRIPTION = "Change Profile Picture button"
+      const val DATE_OF_BIRTH_FIELD_DESCRIPTION = "Selected Date"
+    }
+
     // Create Recipe Add Image
     const val ADD_IMAGE_STEP = 4
 
@@ -757,6 +764,17 @@ object C {
       const val LIKED_RECIPES_BUTTON_TEST_TAG = "likedRecipesButton"
       const val CREATED_RECIPES_BUTTON_TEST_TAG = "createdRecipesButton"
       const val PROFILE_PICTURE_TEST_TAG = "profilePicture"
+    }
+
+    object EditAccountScreen {
+      const val SAVE_CHANGES_BUTTON_TAG = "saveChangesButton"
+      const val PROFILE_PICTURE_TAG = "profilePicture"
+      const val CHANGE_PROFILE_PICTURE_BUTTON_TAG = "changeProfilePictureButton"
+      const val DATE_OF_BIRTH_TEXT_FIELD_TAG = "dateOfBirthTextField"
+      const val DATE_OF_BIRTH_CHANGE_BUTTON_TAG = "dateOfBirthChangeButton"
+      const val DATE_PICKER_POP_UP_TAG = "datePickerPopUp"
+      const val DATE_PICKER_POP_UP_CONFIRM_TAG = "confirmationButtonPopUp"
+      const val DATE_PICKER_POP_UP_CANCEL_TAG = "dismissButtonPopUp"
     }
 
     object CreateRecipeListInstructionsScreen {
