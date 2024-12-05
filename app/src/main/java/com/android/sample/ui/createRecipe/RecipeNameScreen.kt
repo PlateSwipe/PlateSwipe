@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -64,10 +63,9 @@ fun RecipeNameScreen(
   val screenWidthDp = configuration.screenWidthDp
   val screenHeightDp = configuration.screenHeightDp
 
-  var recipeName by
-      rememberSaveable(stateSaver = TextFieldValue.Saver) {
-        mutableStateOf(initializeRecipeName(isEditing, createRecipeViewModel))
-      }
+  var recipeName by remember {
+    mutableStateOf(initializeRecipeName(isEditing, createRecipeViewModel))
+  }
 
   var showError by remember { mutableStateOf(false) }
   Box(
@@ -191,7 +189,7 @@ fun RecipeNameScreen(
  * @param onRecipeNameChange Callback to update the recipe name.
  * @param onShowErrorChange Callback to update the error state.
  */
-fun handleRecipeNameChange(
+private fun handleRecipeNameChange(
     newName: TextFieldValue,
     onRecipeNameChange: (TextFieldValue) -> Unit,
     onShowErrorChange: (Boolean) -> Unit
@@ -208,7 +206,7 @@ fun handleRecipeNameChange(
  * @param recipeName The current value of the recipe name.
  * @return A composable function that displays the label text.
  */
-fun getLabelText(recipeName: TextFieldValue): @Composable () -> Unit {
+private fun getLabelText(recipeName: TextFieldValue): @Composable () -> Unit {
   return {
     if (recipeName.text.isEmpty()) {
       Text(
@@ -227,7 +225,7 @@ fun getLabelText(recipeName: TextFieldValue): @Composable () -> Unit {
  * @param showError Boolean indicating whether to show the error message.
  * @return A composable function that displays the error message.
  */
-fun getErrorMessage(showError: Boolean): @Composable () -> Unit {
+private fun getErrorMessage(showError: Boolean): @Composable () -> Unit {
   return {
     if (showError) {
       Text(
@@ -258,7 +256,7 @@ fun shouldDisplayChefImage(screenWidthDp: Int, screenHeightDp: Int): Boolean {
  * @param onUpdateRecipeName Callback to update the recipe name.
  * @param onNavigateToNextScreen Callback to navigate to the next screen.
  */
-fun handleOnClick(
+private fun handleOnClick(
     recipeName: TextFieldValue,
     onShowErrorChange: (Boolean) -> Unit,
     onUpdateRecipeName: (String) -> Unit,
@@ -280,7 +278,7 @@ fun handleOnClick(
  * @param onInitialized Callback to be invoked when the initialization is complete.
  */
 @Composable
-fun InitializeRecipe(
+private fun InitializeRecipe(
     isEditing: Boolean,
     createRecipeViewModel: CreateRecipeViewModel,
     onInitialized: (Boolean) -> Unit
@@ -299,7 +297,7 @@ fun InitializeRecipe(
  * @param isInitialized Boolean indicating whether the initialization is complete.
  */
 @Composable
-fun DisplayLoadingScreen(isInitialized: Boolean) {
+private fun DisplayLoadingScreen(isInitialized: Boolean) {
   if (!isInitialized) {
     Box(
         modifier = Modifier.fillMaxSize().testTag(LOADING_COOK_TEST_TAG),
@@ -316,15 +314,11 @@ fun DisplayLoadingScreen(isInitialized: Boolean) {
  * @param createRecipeViewModel ViewModel for managing the recipe creation process.
  * @return The initialized TextFieldValue for the recipe name.
  */
-fun initializeRecipeName(
+private fun initializeRecipeName(
     isEditing: Boolean,
     createRecipeViewModel: CreateRecipeViewModel
 ): TextFieldValue {
-  return if (isEditing) {
-    TextFieldValue(createRecipeViewModel.getRecipeName())
-  } else {
-    TextFieldValue("")
-  }
+  return TextFieldValue(if (isEditing) createRecipeViewModel.getRecipeName() else "")
 }
 
 /**
@@ -336,16 +330,12 @@ fun initializeRecipeName(
  * @return The appropriate string resource.
  */
 @Composable
-fun getConditionalStringResource(
+private fun getConditionalStringResource(
     isEditing: Boolean,
     editStringRes: Int,
     createStringRes: Int
 ): String {
-  return if (isEditing) {
-    stringResource(editStringRes)
-  } else {
-    stringResource(createStringRes)
-  }
+  return stringResource(if (isEditing) editStringRes else createStringRes)
 }
 
 /**
@@ -354,7 +344,7 @@ fun getConditionalStringResource(
  * @param isEditing Boolean indicating whether the recipe is being edited.
  * @param navigationActions Actions for navigating between screens.
  */
-fun navigateToNextScreen(isEditing: Boolean, navigationActions: NavigationActions) {
+private fun navigateToNextScreen(isEditing: Boolean, navigationActions: NavigationActions) {
   if (isEditing) {
     navigationActions.navigateTo(Screen.EDIT_CATEGORY_SCREEN)
   } else {

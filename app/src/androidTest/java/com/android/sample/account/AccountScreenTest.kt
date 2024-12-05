@@ -12,8 +12,8 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import com.android.sample.model.recipe.CreateRecipeViewModel
 import androidx.test.core.app.ApplicationProvider
+import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C.Tag.RECIPE_FAVORITE_ICON_CONTENT_DESCRIPTION

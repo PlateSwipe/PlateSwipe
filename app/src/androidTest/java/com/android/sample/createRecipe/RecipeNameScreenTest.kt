@@ -11,6 +11,7 @@ import com.android.sample.resources.C.Tag.SCREEN_WIDTH_THRESHOLD
 import com.android.sample.resources.C.TestTag.RecipeNameScreen.LOADING_COOK_TEST_TAG
 import com.android.sample.ui.createRecipe.RecipeNameScreen
 import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.navigation.Screen
 import com.google.firebase.firestore.FirebaseFirestore
 import io.mockk.*
 import kotlinx.coroutines.test.runTest
@@ -261,5 +262,47 @@ class RecipeNameScreenTest {
           isEditing = true)
     }
     composeTestRule.onNodeWithTag("ChefImage").assertDoesNotExist()
+  }
+
+  @Test
+  fun testNextStepButtonNavigatesToCategoryScreenInCreateMode() = runTest {
+    composeTestRule.setContent {
+      RecipeNameScreen(
+          navigationActions = mockNavigationActions,
+          currentStep = 0,
+          createRecipeViewModel = createRecipeViewModel,
+          isEditing = false)
+    }
+
+    // Provide text input for the recipe name
+    composeTestRule.onNodeWithTag("recipeNameTextField").performTextInput("New Recipe")
+
+    // Click the "Next Step" button
+    composeTestRule.onNodeWithTag("NextStepButton").assertExists().performClick()
+
+    // Verify navigation to the category screen in create mode
+    verify { mockNavigationActions.navigateTo(Screen.CREATE_CATEGORY_SCREEN) }
+  }
+
+  @Test
+  fun testNextStepButtonNavigatesToCategoryScreenInEditMode() = runTest {
+    every { createRecipeViewModel.getRecipeName() } returns "Edited Recipe"
+
+    composeTestRule.setContent {
+      RecipeNameScreen(
+          navigationActions = mockNavigationActions,
+          currentStep = 0,
+          createRecipeViewModel = createRecipeViewModel,
+          isEditing = true)
+    }
+
+    // Ensure the text field contains the pre-filled recipe name
+    composeTestRule.onNodeWithTag("recipeNameTextField").assertTextEquals("Edited Recipe")
+
+    // Click the "Next Step" button
+    composeTestRule.onNodeWithTag("NextStepButton").assertExists().performClick()
+
+    // Verify navigation to the category screen in edit mode
+    verify { mockNavigationActions.navigateTo(Screen.EDIT_CATEGORY_SCREEN) }
   }
 }

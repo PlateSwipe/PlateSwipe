@@ -45,7 +45,6 @@ class CreateRecipeViewModel(
    * @param recipe The recipe to initialize.
    */
   fun initializeRecipeForEditing(recipe: Recipe) {
-    recipeBuilder.clear()
     recipeBuilder.initializeFromRecipe(recipe)
     isRecipeInitialized = true // Mark as initialized
   }
