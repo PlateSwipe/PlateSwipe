@@ -51,6 +51,7 @@ import com.android.sample.R
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C.Dimension.PADDING_4
+import com.android.sample.resources.C.Dimension.RecipeList.EDIT_ICON_SIZE
 import com.android.sample.resources.C.Dimension.RecipeList.POP_UP_CLIP
 import com.android.sample.resources.C.Dimension.RecipeList.POP_UP_DESCRIPTION_FONT_SIZE
 import com.android.sample.resources.C.Dimension.RecipeList.POP_UP_ELEVATION
@@ -243,7 +244,7 @@ fun TopCornerEditButton(recipe: Recipe, onEditClicked: (Recipe) -> Unit) {
       contentDescription = stringResource(R.string.edit_recipe_icon_description),
       modifier =
           Modifier.padding(PADDING_4.dp)
-              .size(24.dp)
+              .size(EDIT_ICON_SIZE.dp)
               .testTag(RECIPE_FAVORITE_ICON_TEST_TAG)
               .clickable { onEditClicked(recipe) },
       tint = MaterialTheme.colorScheme.onPrimary)

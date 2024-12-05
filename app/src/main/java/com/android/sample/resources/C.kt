@@ -652,6 +652,7 @@ object C {
       const val POP_UP_ELEVATION = 4
       const val POP_UP_CLIP = true
       const val POP_UP_DESCRIPTION_FONT_SIZE = 16
+      const val EDIT_ICON_SIZE = 24
     }
 
     object AccountScreen {
