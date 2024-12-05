@@ -13,6 +13,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTouchInput
+import androidx.test.core.app.ApplicationProvider
 import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.user.User
 import com.android.sample.model.user.UserViewModel
@@ -94,7 +95,9 @@ class EditAccountScreenTest {
 
     `when`(mockNavigationActions.currentRoute()).thenReturn(Screen.ACCOUNT)
 
-    userViewModel = UserViewModel.Factory.create(UserViewModel::class.java)
+    userViewModel =
+        UserViewModel.provideFactory(ApplicationProvider.getApplicationContext())
+            .create(UserViewModel::class.java)
     imageRepositoryFirebase = ImageRepositoryFirebase(mockFirebaseStorage)
 
     userViewModel.changeUserName(testUser.userName)
