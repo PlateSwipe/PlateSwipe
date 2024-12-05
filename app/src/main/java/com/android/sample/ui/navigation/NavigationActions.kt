@@ -22,6 +22,12 @@ object Screen {
 
   const val FRIDGE = "Fridge Screen"
 
+  const val FRIDGE_EDIT = "Edit Fridge Item Screen"
+
+  const val FRIDGE_SEARCH_ITEM = "Search Fridge Screen"
+
+  const val FRIDGE_SCAN_CODE_BAR = "Scan Code Bar Screen"
+
   const val SEARCH = "Search Screen"
 
   const val CREATE_RECIPE = "AddRecipe Screen"

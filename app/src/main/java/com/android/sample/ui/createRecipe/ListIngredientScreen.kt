@@ -138,7 +138,7 @@ fun IngredientListScreen(
                           tint = MaterialTheme.colorScheme.onPrimaryContainer,
                           modifier =
                               Modifier.testTag(ADD_INGREDIENT_ICON).clickable {
-                                ingredientViewModel.clearSearch()
+                                ingredientViewModel.clearSearchingIngredientList()
                                 navigationActions.navigateTo(
                                     Screen.CREATE_RECIPE_SEARCH_INGREDIENTS)
                               })

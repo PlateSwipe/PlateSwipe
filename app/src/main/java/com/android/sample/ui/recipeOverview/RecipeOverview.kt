@@ -6,7 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,15 +13,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
@@ -63,21 +59,15 @@ import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScre
 import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScreen.MEDIUM_PADDING
 import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScreen.REALLY_SMALL_PADDING
 import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScreen.ROW_SIZE
-import com.android.sample.resources.C.Dimension.RecipeOverview.COUNTER_MIN_MAX_SIZE
-import com.android.sample.resources.C.Dimension.RecipeOverview.COUNTER_ROUND_CORNER
 import com.android.sample.resources.C.Dimension.RecipeOverview.IMAGE_ROUND_CORNER
 import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_CHECKBOX_SIZE
-import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_COUNTER_TEXT_SIZE
 import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_FONT_SIZE_MEDIUM
 import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_INSTRUCTION_BOTTOM
 import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_INSTRUCTION_END
 import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_INSTRUCTION_START
 import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_INSTRUCTION_TOP
-import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_MAX_COUNTER_VALUE
-import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_MIN_COUNTER_VALUE
 import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_RECIPE_CARD_ELEVATION
 import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_RECIPE_CARD_SHAPE
-import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_RECIPE_COUNTER_PADDING
 import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_RECIPE_RATE
 import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_RECIPE_ROUND
 import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_RECIPE_ROUND_ROW
@@ -86,27 +76,25 @@ import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_TIME_DIS
 import com.android.sample.resources.C.Tag.PADDING
 import com.android.sample.resources.C.Tag.SMALL_PADDING
 import com.android.sample.resources.C.Tag.SwipePage.RATE_VALUE
-import com.android.sample.resources.C.TestTag.RecipeOverview.ADD_SERVINGS
 import com.android.sample.resources.C.TestTag.RecipeOverview.COOK_TIME_TEXT
 import com.android.sample.resources.C.TestTag.RecipeOverview.DRAGGABLE_ITEM
 import com.android.sample.resources.C.TestTag.RecipeOverview.INGREDIENTS_VIEW
 import com.android.sample.resources.C.TestTag.RecipeOverview.INGREDIENT_CHECKBOX
 import com.android.sample.resources.C.TestTag.RecipeOverview.INGREDIENT_PREFIX
 import com.android.sample.resources.C.TestTag.RecipeOverview.INSTRUCTIONS_VIEW
-import com.android.sample.resources.C.TestTag.RecipeOverview.NUMBER_SERVINGS
 import com.android.sample.resources.C.TestTag.RecipeOverview.PREP_TIME_TEXT
 import com.android.sample.resources.C.TestTag.RecipeOverview.RATING_ICON
 import com.android.sample.resources.C.TestTag.RecipeOverview.RECIPE_IMAGE
 import com.android.sample.resources.C.TestTag.RecipeOverview.RECIPE_RATE
 import com.android.sample.resources.C.TestTag.RecipeOverview.RECIPE_STAR
 import com.android.sample.resources.C.TestTag.RecipeOverview.RECIPE_TITLE
-import com.android.sample.resources.C.TestTag.RecipeOverview.REMOVE_SERVINGS
 import com.android.sample.resources.C.TestTag.RecipeOverview.SLIDING_BUTTON_INGREDIENTS
 import com.android.sample.resources.C.TestTag.RecipeOverview.SLIDING_BUTTON_INSTRUCTIONS
 import com.android.sample.resources.C.TestTag.RecipeOverview.TOTAL_TIME_TEXT
 import com.android.sample.resources.C.Values.RecipeOverview.INITIAL_NUMBER_PERSON_PER_RECIPE
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.theme.starColor
+import com.android.sample.ui.utils.Counter
 import com.android.sample.ui.utils.PlateSwipeScaffold
 import com.android.sample.ui.utils.Tag
 
@@ -395,71 +383,11 @@ private fun IngredientView(
         )
 
         // Button row on the right
-        Counter(servingsCount) { newCounter -> servingsCount = newCounter }
+        Counter(
+            count = servingsCount, onCounterChange = { newCounter -> servingsCount = newCounter })
       }
 
   IngredientsList(currentRecipe, servingsCount)
-}
-
-/**
- * Display of the counter to change the number of servings
- *
- * @param servingsCount: The current number of servings
- * @param onCounterChange: The function to change the number of servings
- */
-@Composable
-private fun Counter(servingsCount: Int, onCounterChange: (Int) -> Unit) {
-  Row(
-      modifier =
-          Modifier.background(
-                  MaterialTheme.colorScheme.onSecondaryContainer,
-                  shape = RoundedCornerShape(COUNTER_ROUND_CORNER.dp))
-              .padding(horizontal = SMALL_PADDING.dp, vertical = (PADDING / 4).dp),
-      verticalAlignment = Alignment.CenterVertically,
-      horizontalArrangement = Arrangement.spacedBy(SMALL_PADDING.dp)) {
-        // - button
-        Button(
-            onClick = {
-              if (servingsCount > OVERVIEW_MIN_COUNTER_VALUE) onCounterChange(servingsCount - 1)
-            },
-            colors =
-                ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                    contentColor = MaterialTheme.colorScheme.background),
-            modifier = Modifier.size(COUNTER_MIN_MAX_SIZE.dp).testTag(REMOVE_SERVINGS),
-            contentPadding = PaddingValues(OVERVIEW_RECIPE_COUNTER_PADDING.dp)) {
-              Text(
-                  stringResource(R.string.counter_min),
-                  style = MaterialTheme.typography.titleMedium,
-                  color = MaterialTheme.colorScheme.background)
-            }
-
-        // Display the count
-        Text(
-            text = servingsCount.toString(),
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.background,
-            textAlign = TextAlign.Center,
-            fontSize = OVERVIEW_FONT_SIZE_MEDIUM.sp,
-            modifier = Modifier.testTag(NUMBER_SERVINGS).width(OVERVIEW_COUNTER_TEXT_SIZE.dp))
-
-        // + button
-        Button(
-            onClick = {
-              if (servingsCount < OVERVIEW_MAX_COUNTER_VALUE) onCounterChange(servingsCount + 1)
-            },
-            colors =
-                ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                    contentColor = MaterialTheme.colorScheme.background),
-            modifier = Modifier.size(COUNTER_MIN_MAX_SIZE.dp).testTag(ADD_SERVINGS),
-            contentPadding = PaddingValues(OVERVIEW_RECIPE_COUNTER_PADDING.dp)) {
-              Text(
-                  stringResource(R.string.counter_max),
-                  style = MaterialTheme.typography.titleMedium,
-                  color = MaterialTheme.colorScheme.background)
-            }
-      }
 }
 
 /**

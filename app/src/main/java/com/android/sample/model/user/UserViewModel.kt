@@ -1,13 +1,22 @@
 package com.android.sample.model.user
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.android.sample.model.fridge.FridgeItem
 import com.android.sample.model.image.ImageDirectoryType
 import com.android.sample.model.image.ImageRepositoryFirebase
+import com.android.sample.model.image.ImageUploader
+import com.android.sample.model.ingredient.DefaultIngredientRepository
 import com.android.sample.model.ingredient.Ingredient
+import com.android.sample.model.ingredient.IngredientRepository
+import com.android.sample.model.ingredient.SearchIngredientViewModel
+import com.android.sample.model.ingredient.localData.IngredientDatabase
+import com.android.sample.model.ingredient.localData.RoomIngredientRepository
+import com.android.sample.model.ingredient.networkData.AggregatorIngredientRepository
 import com.android.sample.model.ingredient.networkData.FirestoreIngredientRepository
+import com.android.sample.model.ingredient.networkData.OpenFoodFactsIngredientRepository
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.recipe.RecipeOverviewViewModel
 import com.android.sample.model.recipe.networkData.FirestoreRecipesRepository
@@ -25,23 +34,26 @@ import com.android.sample.resources.C.Tag.UserViewModel.RECIPE_NOT_FOUND
 import com.android.sample.resources.C.Tag.UserViewModel.REMOVED_INGREDIENT_NOT_IN_FRIDGE_ERROR
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import com.google.firebase.storage.storage
 import java.time.LocalDate
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import okhttp3.OkHttpClient
 
 class UserViewModel(
     private val userRepository: UserRepository,
     private val firebaseAuth: FirebaseAuth = Firebase.auth,
+    private val ingredientRepository: IngredientRepository,
     private val recipesRepository: FirestoreRecipesRepository =
         FirestoreRecipesRepository(Firebase.firestore),
-    private val ingredientRepository: FirestoreIngredientRepository =
-        FirestoreIngredientRepository(Firebase.firestore),
     private val imageRepositoryFirebase: ImageRepositoryFirebase =
         ImageRepositoryFirebase(Firebase.storage)
-) : ViewModel(), RecipeOverviewViewModel {
+) : ViewModel(), RecipeOverviewViewModel, SearchIngredientViewModel {
 
   private val _userName: MutableStateFlow<String?> = MutableStateFlow(null)
   val userName: StateFlow<String?> = _userName
@@ -62,14 +74,51 @@ class UserViewModel(
   override val currentRecipe: StateFlow<Recipe?>
     get() = _currentRecipe
 
+  private val _ingredient = MutableStateFlow<Pair<Ingredient?, String?>>(Pair(null, null))
+  override val ingredient: StateFlow<Pair<Ingredient?, String?>>
+    get() = _ingredient
+
+  private val _isFetchingByBarcode = MutableStateFlow(false)
+  override val isFetchingByBarcode: StateFlow<Boolean>
+    get() = _isFetchingByBarcode
+
+  private val _ingredientList = MutableStateFlow<List<Pair<Ingredient, String?>>>(emptyList())
+  override val ingredientList: StateFlow<List<Pair<Ingredient, String?>>>
+    get() = _ingredientList
+
+  private val _searchingIngredientList =
+      MutableStateFlow<List<Pair<Ingredient, String?>>>(emptyList())
+  override val searchingIngredientList: StateFlow<List<Pair<Ingredient, String?>>>
+    get() = _searchingIngredientList
+
+  private val _isSearching = MutableStateFlow(false)
+  override val isFetchingByName: StateFlow<Boolean>
+    get() = _isSearching
+
   companion object {
-    val Factory: ViewModelProvider.Factory =
-        object : ViewModelProvider.Factory {
-          @Suppress("UNCHECKED_CAST")
-          override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return UserViewModel(userRepository = UserRepositoryFirestore(Firebase.firestore)) as T
-          }
+    fun provideFactory(context: Context): ViewModelProvider.Factory {
+
+      val appContext = context.applicationContext
+      return object : ViewModelProvider.Factory {
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+          val networkRepository =
+              AggregatorIngredientRepository(
+                  FirestoreIngredientRepository(com.google.firebase.Firebase.firestore),
+                  OpenFoodFactsIngredientRepository(OkHttpClient()),
+                  ImageRepositoryFirebase(com.google.firebase.Firebase.storage),
+                  ImageUploader())
+          val appDatabase = IngredientDatabase.getDatabase(appContext)
+          val ingredientDao = appDatabase.ingredientDao()
+          val localRepository = RoomIngredientRepository(ingredientDao, Dispatchers.IO)
+          val defaultRepository = DefaultIngredientRepository(localRepository, networkRepository)
+          return UserViewModel(
+              userRepository = UserRepositoryFirestore(Firebase.firestore),
+              ingredientRepository = defaultRepository)
+              as T
         }
+      }
+    }
   }
 
   /**
@@ -85,7 +134,7 @@ class UserViewModel(
         onSuccess = { user ->
           _userName.value = user.userName
           _profilePictureUrl.value = user.profilePictureUrl
-          user.fridge.forEach { fridgeItem -> fetchIngredient(fridgeItem) }
+          user.fridge.forEach { fridgeItem -> fetchIngredientInFridge(fridgeItem) }
           user.likedRecipes.forEach { uid ->
             fetchRecipe(
                 uid,
@@ -365,7 +414,7 @@ class UserViewModel(
    *
    * @param fridgeItem the fridge item that describes the ingredient that we want to retrieve
    */
-  private fun fetchIngredient(fridgeItem: FridgeItem) {
+  private fun fetchIngredientInFridge(fridgeItem: FridgeItem) {
     ingredientRepository.get(
         fridgeItem.id.toLong(),
         onSuccess = { ingredient ->
@@ -377,5 +426,66 @@ class UserViewModel(
           }
         },
         onFailure = { e -> Log.e(LOG_TAG, FAILED_TO_FETCH_INGREDIENT_FROM_DATABASE_ERROR, e) })
+  }
+
+  /**
+   * Fetch ingredient by barcode
+   *
+   * @param barCode: the barcode of the ingredient to search for
+   */
+  override fun fetchIngredient(barCode: Long) {
+    if (_ingredient.value.first?.barCode == barCode) {
+      return
+    }
+    clearIngredient()
+    clearSearchingIngredientList()
+    clearIngredientList()
+    fetchIngredientByBarcodeAndAddToList(
+        barCode,
+        _ingredient,
+        ingredientRepository,
+        { _isFetchingByBarcode.value = true },
+        { _isFetchingByBarcode.value = false })
+  }
+
+  /** Clear ingredient after use */
+  override fun clearIngredient() {
+    _ingredient.value = Pair(null, null)
+  }
+
+  /** Clear search */
+  override fun clearSearchingIngredientList() {
+    _searchingIngredientList.value = emptyList()
+  }
+
+  /** Clear ingredient list */
+  override fun clearIngredientList() {
+    _ingredientList.value = emptyList()
+  }
+
+  /**
+   * Add ingredient to the list
+   *
+   * @param ingredient: the ingredient to add
+   */
+  override fun addIngredient(ingredient: Ingredient) {
+    addIngredientToList(ingredient, _ingredientList)
+  }
+
+  /**
+   * Fetch ingredient by name
+   *
+   * @param name: the name of the ingredient to search for
+   */
+  override fun fetchIngredientByName(name: String) {
+    clearIngredient()
+    clearSearchingIngredientList()
+    clearIngredientList()
+    fetchIngredientByNameAndAddToList(
+        name,
+        _searchingIngredientList,
+        ingredientRepository,
+        { _isSearching.value = true },
+        { _isSearching.value = false })
   }
 }

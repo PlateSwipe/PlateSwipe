@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.android.sample.resources.C
 import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScreen.ROUNDED_CORNER_SHAPE
+import com.android.sample.resources.C.Dimension.SwipePage.BUTTON_ELEVATION
 
 /**
  * Composable function that displays a button for the PlateSwipe app. This button is used for any
@@ -37,6 +38,7 @@ fun PlateSwipeButton(
 ) {
   Button(
       onClick = { onClick() },
+      elevation = ButtonDefaults.buttonElevation(BUTTON_ELEVATION.dp),
       modifier =
           modifier
               .width(width)
