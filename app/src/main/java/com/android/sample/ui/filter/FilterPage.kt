@@ -99,7 +99,6 @@ fun FilterBox(
             name = stringResource(id = R.string.time_range_name),
             min = TIME_RANGE_MIN,
             max = TIME_RANGE_MAX,
-            unit = stringResource(id = R.string.time_unit),
             range = filterViewModel.timeRangeState,
             updateRange = { newMin, newMax ->
               // only update when time range is changed
@@ -191,14 +190,15 @@ fun FilterBox(
  *
  * @param time The time to reformat in minutes.
  */
+@Composable
 fun reformatTime(time: Float): String {
   val timeInt = time.toInt()
   return if (timeInt > 60) {
     val hours = timeInt / 60
     val minutes = timeInt % 60
-    "$hours h $minutes min"
+    "$hours h $minutes ${stringResource(id = R.string.time_unit)}"
   } else {
-    "$timeInt min"
+    "$timeInt ${stringResource(id = R.string.time_unit)}"
   }
 }
 
@@ -219,7 +219,6 @@ fun ValueRangeSlider(
     name: String,
     min: Float,
     max: Float,
-    unit: String,
     range: StateFlow<FloatRange>,
     updateRange: (Float, Float) -> Unit,
 ) {
