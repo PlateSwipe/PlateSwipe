@@ -44,6 +44,7 @@ import com.android.sample.resources.C.Dimension.PADDING_4
 import com.android.sample.resources.C.Dimension.PADDING_8
 import com.android.sample.resources.C.Dimension.SwipePage.BUTTON_ELEVATION
 import com.android.sample.resources.C.Dimension.SwipePage.BUTTON_RADIUS
+import com.android.sample.resources.C.Tag.Filter.UNINITIALIZED_BORN_VALUE
 import com.android.sample.resources.C.Tag.FilterPage.MAX_ITEM_IN_ROW
 import com.android.sample.resources.C.Tag.FilterPage.SLIDER_COLOR_ACTIVE
 import com.android.sample.resources.C.Tag.FilterPage.SLIDER_COLOR_INACTIVE
@@ -100,7 +101,15 @@ fun FilterBox(
             max = TIME_RANGE_MAX,
             unit = stringResource(id = R.string.time_unit),
             range = filterViewModel.timeRangeState,
-            updateRange = { newMin, newMax -> filterViewModel.updateTimeRange(newMin, newMax) })
+            updateRange = { newMin, newMax ->
+              // only update when time range is changed
+              if (newMin.toInt() > TIME_RANGE_MIN.toInt() ||
+                  newMax.toInt() < TIME_RANGE_MAX.toInt()) {
+                filterViewModel.updateTimeRange(newMin, newMax)
+              } else {
+                filterViewModel.updateTimeRange(UNINITIALIZED_BORN_VALUE, UNINITIALIZED_BORN_VALUE)
+              }
+            })
 
         val difficultyLevels = listOf(Difficulty.Easy, Difficulty.Medium, Difficulty.Hard)
         val selectedDifficulty = filter.difficulty
