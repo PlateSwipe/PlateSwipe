@@ -302,9 +302,14 @@ fun RecipeDisplay(
                         displayState = displayTimeRange,
                         onDelete = {
                           displayTimeRange = false
-                          recipesViewModel.updateTimeRange(
-                              recipesViewModel.filter.value.timeRange.minBorn,
-                              recipesViewModel.filter.value.timeRange.maxBorn)
+                          if (checkIfFilterUsed(
+                              displayTimeRange,
+                              displayDifficulty,
+                              displayCategory,
+                              recipesViewModel)) {
+                            recipesViewModel.updateTimeRange(
+                                UNINITIALIZED_BORN_VALUE, UNINITIALIZED_BORN_VALUE)
+                          }
                           recipesViewModel.applyChanges()
                         },
                         label =
@@ -316,7 +321,13 @@ fun RecipeDisplay(
                         displayState = displayDifficulty,
                         onDelete = {
                           displayDifficulty = false
-                          recipesViewModel.updateDifficulty(Difficulty.Undefined)
+                          if (checkIfFilterUsed(
+                              displayTimeRange,
+                              displayDifficulty,
+                              displayCategory,
+                              recipesViewModel)) {
+                            recipesViewModel.updateDifficulty(Difficulty.Undefined)
+                          }
                           recipesViewModel.applyChanges()
                         },
                         label = filter.difficulty.toString(),
@@ -327,7 +338,13 @@ fun RecipeDisplay(
                         displayState = displayCategory,
                         onDelete = {
                           displayCategory = false
-                          recipesViewModel.updateCategory(null)
+                          if (checkIfFilterUsed(
+                              displayTimeRange,
+                              displayDifficulty,
+                              displayCategory,
+                              recipesViewModel)) {
+                            recipesViewModel.updateCategory(null)
+                          }
                           recipesViewModel.applyChanges()
                         },
                         label = filter.category.orEmpty(),
