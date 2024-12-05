@@ -501,9 +501,9 @@ private fun UpdateQuantityDialog(
  * @param testTag: String object to hold the test tag
  */
 @Composable
-private fun ExpirationBar(expirationDate: LocalDate?, testTag: String) {
+private fun ExpirationBar(expirationDate: LocalDate, testTag: String) {
   val today = LocalDate.now()
-  val daysLeft = expirationDate?.let { ChronoUnit.DAYS.between(today, it).toInt() } ?: 0
+  val daysLeft = expirationDate.let { ChronoUnit.DAYS.between(today, it).toInt() }
 
   // Define bar properties based on the days left
   val (barColor, tagColor) =
