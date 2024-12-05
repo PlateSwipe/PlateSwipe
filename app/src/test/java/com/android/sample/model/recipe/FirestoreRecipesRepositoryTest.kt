@@ -627,6 +627,8 @@ class FirestoreRecipesRepositoryTest {
 
     `when`(mockCollectionReference.whereEqualTo(any<String>(), any())).thenReturn(mockQuery)
     `when`(mockCollectionReference.whereGreaterThan(any<String>(), any())).thenReturn(mockQuery)
+    `when`(mockCollectionReference.whereLessThan(any<String>(), any())).thenReturn(mockQuery)
+
     `when`(mockQuery.whereGreaterThan(any<String>(), any())).thenReturn(mockQuery)
     `when`(mockQuery.whereLessThan(any<String>(), any())).thenReturn(mockQuery)
     `when`(mockQuery.whereEqualTo(any<String>(), any())).thenReturn(mockQuery)
@@ -650,9 +652,13 @@ class FirestoreRecipesRepositoryTest {
         .thenReturn(listOf("Measurement1", "Measurement2"))
 
     // Mock Firestore query to return the mock QuerySnapshot
+    `when`(mockQuery.orderBy(any<String>())).thenReturn(mockCollectionReference)
+    `when`(mockQuery.limit(any())).thenReturn(mockQuery)
+    `when`(mockQuery.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
     `when`(mockCollectionReference.whereEqualTo(FIRESTORE_RECIPE_CATEGORY, "Category"))
         .thenReturn(mockCollectionReference)
-    `when`(mockCollectionReference.limit(10)).thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.orderBy(any<String>())).thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.limit(any())).thenReturn(mockCollectionReference)
     `when`(mockCollectionReference.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
 
     val fetchedRecipes = mutableListOf<Recipe>()
@@ -667,13 +673,15 @@ class FirestoreRecipesRepositoryTest {
   }
 
   @Test
-  fun `test filterSearch function correctly passes through filter ifs filterWithTimeAndPrice`() {
+  fun `test filterSearch function correctly passes through filter ifs filterWithTime`() {
     val mockQuerySnapshot = mock(QuerySnapshot::class.java)
     val mockDocumentSnapshot = mock(DocumentSnapshot::class.java)
     val mockQuery = mock(Query::class.java)
 
     `when`(mockCollectionReference.whereEqualTo(any<String>(), any())).thenReturn(mockQuery)
     `when`(mockCollectionReference.whereGreaterThan(any<String>(), any())).thenReturn(mockQuery)
+    `when`(mockCollectionReference.whereLessThan(any<String>(), any())).thenReturn(mockQuery)
+
     `when`(mockQuery.whereGreaterThan(any<String>(), any())).thenReturn(mockQuery)
     `when`(mockQuery.whereLessThan(any<String>(), any())).thenReturn(mockQuery)
     `when`(mockQuery.whereEqualTo(any<String>(), any())).thenReturn(mockQuery)
@@ -697,9 +705,13 @@ class FirestoreRecipesRepositoryTest {
         .thenReturn(listOf("Measurement1", "Measurement2"))
 
     // Mock Firestore query to return the mock QuerySnapshot
+    `when`(mockQuery.orderBy(any<String>())).thenReturn(mockCollectionReference)
+    `when`(mockQuery.limit(any())).thenReturn(mockQuery)
+    `when`(mockQuery.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
     `when`(mockCollectionReference.whereEqualTo(FIRESTORE_RECIPE_CATEGORY, "Category"))
         .thenReturn(mockCollectionReference)
-    `when`(mockCollectionReference.limit(10)).thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.orderBy(any<String>())).thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.limit(any())).thenReturn(mockCollectionReference)
     `when`(mockCollectionReference.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
 
     val fetchedRecipes = mutableListOf<Recipe>()
@@ -711,9 +723,9 @@ class FirestoreRecipesRepositoryTest {
 
     // check if all calls were made correctly
     verify(mockCollectionReference, times(0)).whereEqualTo(any<String>(), any())
-    verify(mockCollectionReference, times(1)).whereGreaterThan(any<String>(), any())
+    verify(mockCollectionReference, times(0)).whereGreaterThan(any<String>(), any())
 
-    verify(mockQuery, times(1)).whereLessThan(any<String>(), any())
+    verify(mockQuery, times(0)).whereLessThan(any<String>(), any())
 
     verify(mockQuery, times(0)).whereEqualTo(any<String>(), any())
 
@@ -730,6 +742,8 @@ class FirestoreRecipesRepositoryTest {
 
     `when`(mockCollectionReference.whereEqualTo(any<String>(), any())).thenReturn(mockQuery)
     `when`(mockCollectionReference.whereGreaterThan(any<String>(), any())).thenReturn(mockQuery)
+    `when`(mockCollectionReference.whereLessThan(any<String>(), any())).thenReturn(mockQuery)
+
     `when`(mockQuery.whereGreaterThan(any<String>(), any())).thenReturn(mockQuery)
     `when`(mockQuery.whereLessThan(any<String>(), any())).thenReturn(mockQuery)
     `when`(mockQuery.whereEqualTo(any<String>(), any())).thenReturn(mockQuery)
@@ -753,9 +767,13 @@ class FirestoreRecipesRepositoryTest {
         .thenReturn(listOf("Measurement1", "Measurement2"))
 
     // Mock Firestore query to return the mock QuerySnapshot
+    `when`(mockQuery.orderBy(any<String>())).thenReturn(mockCollectionReference)
+    `when`(mockQuery.limit(any())).thenReturn(mockQuery)
+    `when`(mockQuery.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
     `when`(mockCollectionReference.whereEqualTo(FIRESTORE_RECIPE_CATEGORY, "Category"))
         .thenReturn(mockCollectionReference)
-    `when`(mockCollectionReference.limit(10)).thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.orderBy(any<String>())).thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.limit(any())).thenReturn(mockCollectionReference)
     `when`(mockCollectionReference.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
 
     val fetchedRecipes = mutableListOf<Recipe>()
@@ -771,7 +789,7 @@ class FirestoreRecipesRepositoryTest {
     */
     verify(mockCollectionReference, times(1)).whereEqualTo(any<String>(), any())
 
-    verify(mockQuery, times(1)).whereGreaterThan(any<String>(), any())
+    verify(mockQuery, times(0)).whereGreaterThan(any<String>(), any())
     verify(mockQuery, times(1)).whereLessThan(any<String>(), any())
 
     verify(mockQuery, times(0)).whereEqualTo(any<String>(), any())
@@ -789,6 +807,8 @@ class FirestoreRecipesRepositoryTest {
 
     `when`(mockCollectionReference.whereEqualTo(any<String>(), any())).thenReturn(mockQuery)
     `when`(mockCollectionReference.whereGreaterThan(any<String>(), any())).thenReturn(mockQuery)
+    `when`(mockCollectionReference.whereLessThan(any<String>(), any())).thenReturn(mockQuery)
+
     `when`(mockQuery.whereGreaterThan(any<String>(), any())).thenReturn(mockQuery)
     `when`(mockQuery.whereLessThan(any<String>(), any())).thenReturn(mockQuery)
     `when`(mockQuery.whereEqualTo(any<String>(), any())).thenReturn(mockQuery)
@@ -812,9 +832,13 @@ class FirestoreRecipesRepositoryTest {
         .thenReturn(listOf("Measurement1", "Measurement2"))
 
     // Mock Firestore query to return the mock QuerySnapshot
+    `when`(mockQuery.orderBy(any<String>())).thenReturn(mockCollectionReference)
+    `when`(mockQuery.limit(any())).thenReturn(mockQuery)
+    `when`(mockQuery.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
     `when`(mockCollectionReference.whereEqualTo(FIRESTORE_RECIPE_CATEGORY, "Category"))
         .thenReturn(mockCollectionReference)
-    `when`(mockCollectionReference.limit(10)).thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.orderBy(any<String>())).thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.limit(any())).thenReturn(mockCollectionReference)
     `when`(mockCollectionReference.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
 
     val fetchedRecipes = mutableListOf<Recipe>()
@@ -829,9 +853,9 @@ class FirestoreRecipesRepositoryTest {
     filter is done with the mockCollectionReference object and then it is casted  to a mockQuery
     */
     verify(mockCollectionReference, times(0)).whereEqualTo(any<String>(), any())
-    verify(mockCollectionReference, times(1)).whereGreaterThan(any<String>(), any())
+    verify(mockCollectionReference, times(0)).whereGreaterThan(any<String>(), any())
 
-    verify(mockQuery, times(1)).whereLessThan(any<String>(), any())
+    verify(mockCollectionReference, times(1)).whereLessThan(any<String>(), any())
 
     verify(mockQuery, times(1)).whereEqualTo(any<String>(), any())
 
@@ -848,6 +872,8 @@ class FirestoreRecipesRepositoryTest {
 
     `when`(mockCollectionReference.whereEqualTo(any<String>(), any())).thenReturn(mockQuery)
     `when`(mockCollectionReference.whereGreaterThan(any<String>(), any())).thenReturn(mockQuery)
+    `when`(mockCollectionReference.whereLessThan(any<String>(), any())).thenReturn(mockQuery)
+
     `when`(mockQuery.whereGreaterThan(any<String>(), any())).thenReturn(mockQuery)
     `when`(mockQuery.whereLessThan(any<String>(), any())).thenReturn(mockQuery)
     `when`(mockQuery.whereEqualTo(any<String>(), any())).thenReturn(mockQuery)
@@ -871,9 +897,13 @@ class FirestoreRecipesRepositoryTest {
         .thenReturn(listOf("Measurement1", "Measurement2"))
 
     // Mock Firestore query to return the mock QuerySnapshot
+    `when`(mockQuery.orderBy(any<String>())).thenReturn(mockCollectionReference)
+    `when`(mockQuery.limit(any())).thenReturn(mockQuery)
+    `when`(mockQuery.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
     `when`(mockCollectionReference.whereEqualTo(FIRESTORE_RECIPE_CATEGORY, "Category"))
         .thenReturn(mockCollectionReference)
-    `when`(mockCollectionReference.limit(10)).thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.orderBy(any<String>())).thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.limit(any())).thenReturn(mockCollectionReference)
     `when`(mockCollectionReference.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
 
     val fetchedRecipes = mutableListOf<Recipe>()
