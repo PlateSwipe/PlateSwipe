@@ -14,7 +14,6 @@ import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.recipe.networkData.FirestoreRecipesRepository
-import com.android.sample.ui.createRecipe.CategoryScreen
 import com.android.sample.resources.C.TestTag.Category.BUTTON_TEST_TAG
 import com.android.sample.resources.C.TestTag.Category.CATEGORY_DROPDOWN
 import com.android.sample.resources.C.TestTag.Category.DIFFICULTY_DROPDOWN
