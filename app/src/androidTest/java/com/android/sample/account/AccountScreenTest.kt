@@ -260,4 +260,27 @@ class AccountScreenTest {
     assert(userViewModel.createdRecipes.value.isNotEmpty())
     composeTestRule.onNodeWithText(dummyRecipes[1].name).assertIsDisplayed()
   }
+
+  @Test
+  fun testEditCreatedRecipeButton() {
+    // Render the AccountScreen with the mocked dependencies
+    composeTestRule.setContent {
+      SampleAppTheme {
+        AccountScreen(mockNavigationActions, userViewModel, mockCreateRecipeViewModel)
+      }
+    }
+
+    // Switch to the "Created Recipes" tab
+    composeTestRule.onNodeWithTag(CREATED_RECIPES_BUTTON_TEST_TAG).performClick()
+
+    // Click the Edit button for the "Created Recipe"
+    composeTestRule
+        .onNode(
+            hasAnySibling(hasText(dummyRecipes[1].name))
+                .and(hasTestTag(RECIPE_FAVORITE_ICON_TEST_TAG)),
+            useUnmergedTree = true)
+        .performClick()
+    // Verify navigation action
+    verify(mockNavigationActions).navigateTo(Screen.EDIT_RECIPE)
+  }
 }

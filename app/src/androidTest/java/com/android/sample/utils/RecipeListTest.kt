@@ -3,6 +3,7 @@ package com.android.sample.utils
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
@@ -20,6 +21,7 @@ import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_TITLE_TEST_TAG
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.utils.RecipeList
+import com.android.sample.ui.utils.TopCornerEditButton
 import com.android.sample.ui.utils.TopCornerUnLikeButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -160,5 +162,32 @@ class RecipeListTest {
     composeTestRule.onNodeWithTag(RECIPE_CARD_TEST_TAG, useUnmergedTree = true).performClick()
     composeTestRule.waitForIdle()
     assert(selected)
+  }
+
+  @Test
+  fun testTopCornerEditButton() {
+    var clickedRecipe: Recipe? = null
+
+    // Define the `onEditClicked` callback to capture the clicked recipe
+    val onEditClicked: (Recipe) -> Unit = { recipe -> clickedRecipe = recipe }
+
+    // Set up the test with a sample recipe
+    composeTestRule.setContent {
+      TopCornerEditButton(recipe = testRecipe, onEditClicked = onEditClicked)
+    }
+
+    // Verify the button is displayed
+    composeTestRule
+        .onNodeWithTag(RECIPE_FAVORITE_ICON_TEST_TAG, useUnmergedTree = true)
+        .assertIsDisplayed()
+
+    // Perform click action
+    composeTestRule
+        .onNodeWithTag(RECIPE_FAVORITE_ICON_TEST_TAG, useUnmergedTree = true)
+        .performClick()
+
+    // Verify the callback was triggered with the correct recipe
+    composeTestRule.waitForIdle()
+    assert(clickedRecipe == testRecipe)
   }
 }
