@@ -255,7 +255,7 @@ fun ValueRangeSlider(
 
         Spacer(modifier = Modifier.height(PADDING_8.dp))
 
-        // Range slider with minimum 0 and maximum 120 minutes
+        // Range slider with minimum 0 and maximum 1440 minutes
         RangeSlider(
             modifier = modifier.fillMaxWidth(),
             value = rangeSlider.value,
