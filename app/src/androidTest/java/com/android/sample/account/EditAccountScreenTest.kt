@@ -24,8 +24,10 @@ import com.android.sample.resources.C.TestTag.EditAccountScreen.DATE_OF_BIRTH_TE
 import com.android.sample.resources.C.TestTag.EditAccountScreen.DATE_PICKER_POP_UP_CANCEL_TAG
 import com.android.sample.resources.C.TestTag.EditAccountScreen.DATE_PICKER_POP_UP_CONFIRM_TAG
 import com.android.sample.resources.C.TestTag.EditAccountScreen.DATE_PICKER_POP_UP_TAG
+import com.android.sample.resources.C.TestTag.EditAccountScreen.EMAIL_FIELD_TAG
 import com.android.sample.resources.C.TestTag.EditAccountScreen.PROFILE_PICTURE_TAG
 import com.android.sample.resources.C.TestTag.EditAccountScreen.SAVE_CHANGES_BUTTON_TAG
+import com.android.sample.resources.C.TestTag.EditAccountScreen.USERNAME_FIELD_TAG
 import com.android.sample.resources.C.TestTag.Utils.BACK_ARROW_ICON
 import com.android.sample.resources.C.TestTag.Utils.BOTTOM_BAR
 import com.android.sample.resources.C.TestTag.Utils.EDIT_ACCOUNT_ICON
@@ -135,8 +137,8 @@ class EditAccountScreenTest {
         .onNodeWithTag(CHANGE_PROFILE_PICTURE_BUTTON_TAG, useUnmergedTree = true)
         .assertIsDisplayed()
 
-    composeTestRule.onNodeWithTag("Username text field", useUnmergedTree = true).assertIsDisplayed()
-    composeTestRule.onNodeWithTag("Email text field", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(USERNAME_FIELD_TAG, useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(EMAIL_FIELD_TAG, useUnmergedTree = true).assertIsDisplayed()
     composeTestRule
         .onNodeWithTag(DATE_OF_BIRTH_CHANGE_BUTTON_TAG, useUnmergedTree = true)
         .assertIsDisplayed()
@@ -193,12 +195,10 @@ class EditAccountScreenTest {
       }
     }
 
-    composeTestRule.onNodeWithTag("Username text field", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(USERNAME_FIELD_TAG, useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(USERNAME_FIELD_TAG, useUnmergedTree = true).performTextClearance()
     composeTestRule
-        .onNodeWithTag("Username text field", useUnmergedTree = true)
-        .performTextClearance()
-    composeTestRule
-        .onNodeWithTag("Username text field", useUnmergedTree = true)
+        .onNodeWithTag(USERNAME_FIELD_TAG, useUnmergedTree = true)
         .performTextInput("Trump")
 
     composeTestRule
@@ -221,13 +221,13 @@ class EditAccountScreenTest {
       }
     }
 
-    composeTestRule.onNodeWithTag("Email text field", useUnmergedTree = true).assertIsDisplayed()
-    composeTestRule.onNodeWithTag("Email text field", useUnmergedTree = true).performTextClearance()
+    composeTestRule.onNodeWithTag(EMAIL_FIELD_TAG, useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(EMAIL_FIELD_TAG, useUnmergedTree = true).performTextClearance()
     composeTestRule
-        .onNodeWithTag("Email text field", useUnmergedTree = true)
+        .onNodeWithTag(EMAIL_FIELD_TAG, useUnmergedTree = true)
         .performTextInput("fail@gmail.com")
     composeTestRule
-        .onNodeWithTag("Email text field", useUnmergedTree = true)
+        .onNodeWithTag(EMAIL_FIELD_TAG, useUnmergedTree = true)
         .assertTextEquals("example@mail.ch")
   }
 

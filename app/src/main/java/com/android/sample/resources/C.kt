@@ -806,6 +806,8 @@ object C {
     object EditAccountScreen {
       const val SAVE_CHANGES_BUTTON_TAG = "saveChangesButton"
       const val PROFILE_PICTURE_TAG = "profilePicture"
+      const val USERNAME_FIELD_TAG = "usernameTextField"
+      const val EMAIL_FIELD_TAG = "emailTextField"
       const val CHANGE_PROFILE_PICTURE_BUTTON_TAG = "changeProfilePictureButton"
       const val DATE_OF_BIRTH_TEXT_FIELD_TAG = "dateOfBirthTextField"
       const val DATE_OF_BIRTH_CHANGE_BUTTON_TAG = "dateOfBirthChangeButton"

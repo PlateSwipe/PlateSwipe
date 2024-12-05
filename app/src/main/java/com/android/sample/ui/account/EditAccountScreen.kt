@@ -55,15 +55,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.android.sample.R
 import com.android.sample.feature.camera.openGallery
 import com.android.sample.feature.camera.uriToBitmap
 import com.android.sample.model.image.ImageDirectoryType
 import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.user.UserViewModel
+import com.android.sample.resources.C.Dimension.PADDING_16
+import com.android.sample.resources.C.Dimension.PADDING_8
 import com.android.sample.resources.C.Tag.AccountScreen.PROFILE_PICTURE_CONTENT_DESCRIPTION
 import com.android.sample.resources.C.Tag.EditAccountScreen.CHANGE_PROFILE_PICTURE_BUTTON_DESCRIPTION
 import com.android.sample.resources.C.Tag.EditAccountScreen.DATE_OF_BIRTH_FIELD_DESCRIPTION
@@ -75,8 +75,10 @@ import com.android.sample.resources.C.TestTag.EditAccountScreen.DATE_OF_BIRTH_TE
 import com.android.sample.resources.C.TestTag.EditAccountScreen.DATE_PICKER_POP_UP_CANCEL_TAG
 import com.android.sample.resources.C.TestTag.EditAccountScreen.DATE_PICKER_POP_UP_CONFIRM_TAG
 import com.android.sample.resources.C.TestTag.EditAccountScreen.DATE_PICKER_POP_UP_TAG
+import com.android.sample.resources.C.TestTag.EditAccountScreen.EMAIL_FIELD_TAG
 import com.android.sample.resources.C.TestTag.EditAccountScreen.PROFILE_PICTURE_TAG
 import com.android.sample.resources.C.TestTag.EditAccountScreen.SAVE_CHANGES_BUTTON_TAG
+import com.android.sample.resources.C.TestTag.EditAccountScreen.USERNAME_FIELD_TAG
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.TopLevelDestinations
 import com.android.sample.ui.utils.PlateSwipeButton
@@ -110,6 +112,10 @@ fun EditAccountScreen(
 
         val profilePictureUrl = userViewModel.profilePictureUrl.collectAsState()
         var newProfilePictureImageBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
+
+        // The LaunchedEffect is used here because we want to retrieve the existing profile picture
+        // if there is one only ones. Without it, the composable will always refresh and this
+        // picture will be always displayed
         LaunchedEffect(Unit) {
           if (!profilePictureUrl.value.isNullOrEmpty()) {
             imageRepositoryFirebase.getImage(
@@ -138,8 +144,8 @@ fun EditAccountScreen(
         var newDateOfBirth by remember { mutableStateOf(dateOfBirth.value) }
 
         Column(
-            modifier = Modifier.fillMaxSize().padding(padding).padding(8.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.Top),
+            modifier = Modifier.fillMaxSize().padding(padding).padding(PADDING_8.dp),
+            verticalArrangement = Arrangement.spacedBy(PADDING_16.dp, Alignment.Top),
             horizontalAlignment = Alignment.CenterHorizontally) {
               Spacer(modifier = Modifier.weight(.1f))
 
@@ -241,23 +247,28 @@ private fun ProfilePicture(
  * @param boxName the name given to the text field, which will be displayed above the value inside
  *   it
  * @param boxValue the value which will be contained in the text field
+ * @param testTag the tag of the component that will be used for testing
  * @param readOnly [Boolean] indicating if the field is read only or not
  * @param onValueChange action to be performed when the value of the field changes
+ * @param trailingIcon an optional icon that is present in the text field
  */
 @Composable
 private fun InputTextBox(
     boxName: String,
     boxValue: String,
+    testTag: String,
     readOnly: Boolean,
-    onValueChange: (String) -> Unit
+    onValueChange: (String) -> Unit,
+    trailingIcon: @Composable () -> Unit = {}
 ) {
   OutlinedTextField(
       value = boxValue,
       onValueChange = onValueChange,
-      modifier = Modifier.width(350.dp).testTag("$boxName text field"),
-      textStyle = TextStyle(fontSize = 16.sp),
+      modifier = Modifier.width(350.dp).testTag(testTag),
+      textStyle = MaterialTheme.typography.bodySmall,
       label = { Text(boxName) },
       readOnly = readOnly,
+      trailingIcon = trailingIcon,
       singleLine = true)
 }
 
@@ -279,13 +290,13 @@ private fun DateOfBirthBox(newDateOfBirth: String?, onValueChange: (String) -> U
         formatter.format(Date(it))
       } ?: " "
 
-  OutlinedTextField(
-      value = displayedDate,
-      onValueChange = {},
-      textStyle = TextStyle(fontSize = 16.sp),
-      label = { Text(stringResource(R.string.date_of_birth_label)) },
-      readOnly = true,
-      trailingIcon = {
+  InputTextBox(
+      stringResource(R.string.date_of_birth_label),
+      displayedDate,
+      DATE_OF_BIRTH_TEXT_FIELD_TAG,
+      true,
+      {},
+      {
         IconButton(
             modifier = Modifier.testTag(DATE_OF_BIRTH_CHANGE_BUTTON_TAG),
             onClick = { showDatePicker = !showDatePicker }) {
@@ -293,8 +304,7 @@ private fun DateOfBirthBox(newDateOfBirth: String?, onValueChange: (String) -> U
                   imageVector = Icons.Default.DateRange,
                   contentDescription = DATE_OF_BIRTH_FIELD_DESCRIPTION)
             }
-      },
-      modifier = Modifier.width(350.dp).testTag(DATE_OF_BIRTH_TEXT_FIELD_TAG))
+      })
 
   DateOfBirthPopUpLogic(
       showDatePicker,
@@ -372,11 +382,21 @@ private fun ListChangeableInformation(
     onValueChangeDateOfBirth: (String) -> Unit
 ) {
   Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-    InputTextBox(stringResource(R.string.username_label), newUserName, false, onValueChangeUserName)
+    InputTextBox(
+        stringResource(R.string.username_label),
+        newUserName,
+        USERNAME_FIELD_TAG,
+        false,
+        onValueChangeUserName)
 
     Spacer(modifier = Modifier.weight(.3f))
 
-    InputTextBox(stringResource(R.string.email_label), firebaseAuth.currentUser!!.email!!, true) {}
+    InputTextBox(
+        stringResource(R.string.email_label),
+        firebaseAuth.currentUser!!.email!!,
+        EMAIL_FIELD_TAG,
+        true,
+        {})
 
     Spacer(modifier = Modifier.weight(.3f))
 
