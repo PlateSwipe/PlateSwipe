@@ -18,6 +18,8 @@ import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_PRICE
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_TIME
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_URL
 import com.android.sample.resources.C.Tag.Filter.UNINITIALIZED_BORN_VALUE
+import com.android.sample.resources.C.Tag.FilterPage.TIME_RANGE_MAX
+import com.android.sample.resources.C.Tag.FilterPage.TIME_RANGE_MIN
 import com.android.sample.resources.C.Tag.FirestoreRecipesRepository.ERROR_GETTING_DOCUMENT
 import com.android.sample.resources.C.Tag.FirestoreRecipesRepository.FILTER_RANDOM_FACTOR
 import com.android.sample.resources.C.Tag.FirestoreRecipesRepository.FIRESTORE_COLLECTION_NAME
@@ -306,39 +308,34 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipesRep
      * Category filter
      */
     finalQuery =
-        if (filter.category != null) {
-          finalQuery.whereEqualTo(FIRESTORE_RECIPE_CATEGORY, (filter.category!!.toString()))
-        } else {
-          finalQuery
-        }
+        filter.category?.let { finalQuery.whereEqualTo(FIRESTORE_RECIPE_CATEGORY, it) }
+            ?: finalQuery
 
     /*
      * Time filter
      */
-    finalQuery =
-        if (filter.timeRange.min != UNINITIALIZED_BORN_VALUE) {
-          finalQuery.whereGreaterThan(
-              FIRESTORE_RECIPE_TIME, filter.timeRange.min.toInt().toString())
-        } else {
-          finalQuery
+    filter.timeRange.min
+        .takeIf {
+          it.toInt() != UNINITIALIZED_BORN_VALUE.toInt() && it.toInt() != TIME_RANGE_MIN.toInt()
+        }
+        ?.let {
+          finalQuery = finalQuery.whereGreaterThan(FIRESTORE_RECIPE_TIME, it.toInt().toString())
         }
 
-    finalQuery =
-        if (filter.timeRange.max != UNINITIALIZED_BORN_VALUE) {
-          finalQuery.whereLessThan(FIRESTORE_RECIPE_TIME, filter.timeRange.max.toInt().toString())
-        } else {
-          finalQuery
+    filter.timeRange.max
+        .takeIf {
+          it.toInt() != UNINITIALIZED_BORN_VALUE.toInt() && it.toInt() != TIME_RANGE_MAX.toInt()
+        }
+        ?.let {
+          finalQuery = finalQuery.whereLessThan(FIRESTORE_RECIPE_TIME, it.toInt().toString())
         }
 
     /*
      * Difficulty filter
      */
-    finalQuery =
-        if (filter.difficulty != Difficulty.Undefined) {
-          finalQuery.whereEqualTo(FIRESTORE_RECIPE_DIFFICULTY, filter.difficulty.toString())
-        } else {
-          finalQuery
-        }
+    filter.difficulty
+        .takeIf { it != Difficulty.Undefined }
+        ?.let { finalQuery = finalQuery.whereEqualTo(FIRESTORE_RECIPE_DIFFICULTY, it.toString()) }
     /** ******************* End of the filters ********************* */
 
     /*
