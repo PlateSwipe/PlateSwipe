@@ -76,7 +76,7 @@ class RecipeBuilder {
    *
    * @param difficulty The difficulty level of the recipe.
    */
-  fun setDifficulty(difficulty: String) = apply { this.difficulty = difficulty }
+  fun setDifficulty(difficulty: String?) = apply { this.difficulty = difficulty }
 
   /**
    * Sets the price of the recipe.
