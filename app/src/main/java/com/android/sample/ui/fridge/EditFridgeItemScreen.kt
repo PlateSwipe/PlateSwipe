@@ -4,11 +4,13 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -98,13 +100,15 @@ fun EditComposable(
       modifier = Modifier.fillMaxSize().padding(paddingValues).padding(PADDING_16.dp),
       verticalArrangement = Arrangement.spacedBy(PADDING_16.dp)) {
         // Ingredient Name
-        Text(
-            text = ingredient.name,
-            modifier = Modifier.padding(PADDING_16.dp),
-            style = MaterialTheme.typography.titleLarge,
-            lineHeight = TITLE_LINE_HEIGHT.sp,
-            fontSize = TITLE_FONT_SIZE.sp,
-            color = MaterialTheme.colorScheme.onPrimary)
+        Box(modifier = Modifier.fillMaxWidth().align(Alignment.CenterHorizontally)) {
+          Text(
+              text = ingredient.name,
+              modifier = Modifier.padding(PADDING_16.dp),
+              style = MaterialTheme.typography.titleLarge,
+              lineHeight = TITLE_LINE_HEIGHT.sp,
+              fontSize = TITLE_FONT_SIZE.sp,
+              color = MaterialTheme.colorScheme.onPrimary)
+        }
 
         // Ingredient Image
         Image(

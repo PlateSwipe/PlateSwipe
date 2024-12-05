@@ -109,7 +109,8 @@ fun PlateSwipeApp() {
             onConfirmation = {
               userViewModel.addIngredient(it)
               navigationActions.navigateTo(Screen.FRIDGE_EDIT)
-            })
+            },
+            onSearchFinished = { navigationActions.navigateTo(Screen.FRIDGE_SCAN_CODE_BAR) })
       }
       composable(Screen.FRIDGE_EDIT) { EditFridgeItemScreen(navigationActions, userViewModel) }
       composable(Screen.FRIDGE_SCAN_CODE_BAR) {
@@ -182,7 +183,8 @@ fun PlateSwipeApp() {
             onConfirmation = {
               ingredientViewModel.addIngredient(it)
               navigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
-            })
+            },
+            onSearchFinished = { navigationActions.navigateTo(Screen.CAMERA_SCAN_CODE_BAR) })
       }
 
       composable(Screen.CREATE_RECIPE_LIST_INGREDIENTS) {

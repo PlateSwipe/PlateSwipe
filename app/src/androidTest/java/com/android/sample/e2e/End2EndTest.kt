@@ -568,7 +568,8 @@ class EndToEndTest {
               onConfirmation = {
                 ingredientViewModel.addIngredient(it)
                 navigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
-              })
+              },
+              onSearchFinished = { navigationActions.navigateTo(Screen.CAMERA_SCAN_CODE_BAR) })
         }
 
         composable(Screen.CREATE_RECIPE_LIST_INGREDIENTS) {

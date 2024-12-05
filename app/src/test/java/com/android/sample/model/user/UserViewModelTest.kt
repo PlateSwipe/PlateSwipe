@@ -26,6 +26,7 @@ import com.android.sample.ui.utils.testFridgeItem
 import com.android.sample.ui.utils.testFridgeItemModifiedExpirationDate
 import com.android.sample.ui.utils.testFridgeItemModifiedQuantity
 import com.android.sample.ui.utils.testIngredients
+import com.android.sample.ui.utils.testIngredientsNullCategory
 import com.android.sample.ui.utils.testRecipes
 import com.android.sample.ui.utils.testUsers
 import com.google.firebase.auth.FirebaseAuth
@@ -572,153 +573,66 @@ class UserViewModelTest {
   @Test
   fun clearTest() {
 
-    val barCode = 123456L
-    val ingredient =
-        Ingredient(
-            barCode = barCode,
-            name = "Test Ingredient",
-            brands = null,
-            quantity = "",
-            categories = listOf(""),
-            images =
-                mutableMapOf(
-                    PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
-                    PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
-                    PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
-
     // Mock the repository to call onSuccess with the ingredient
-    `when`(mockIngredientRepository.get(ArgumentMatchers.eq(barCode), any(), any())).thenAnswer {
-        invocation ->
-      val onSuccess: (Ingredient?) -> Unit = invocation.getArgument(1)
-      onSuccess(ingredient)
-    }
+    `when`(
+            mockIngredientRepository.get(
+                ArgumentMatchers.eq(testIngredients[0].barCode!!), any(), any()))
+        .thenAnswer { invocation ->
+          val onSuccess: (Ingredient?) -> Unit = invocation.getArgument(1)
+          onSuccess(testIngredients[0])
+        }
 
-    userViewModel.fetchIngredient(barCode)
+    userViewModel.fetchIngredient(testIngredients[0].barCode!!)
     userViewModel.clearSearchingIngredientList()
     assertTrue(userViewModel.searchingIngredientList.value.isEmpty())
   }
 
   @Test
   fun clearIngredientListTest() {
-    val ingredient =
-        Ingredient(
-            barCode = 123456L,
-            name = "Test Ingredient",
-            brands = null,
-            quantity = "",
-            categories = listOf(""),
-            images =
-                mutableMapOf(
-                    PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
-                    PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
-                    PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
-
-    userViewModel.addIngredient(ingredient)
+    userViewModel.addIngredient(testIngredients[0])
     userViewModel.clearIngredientList()
     assertTrue(userViewModel.ingredientList.value.isEmpty())
   }
 
   @Test
   fun addNullIngredientTest() {
-    // Create an initial ingredient
-    val ingredient =
-        Ingredient(
-            barCode = 123456L,
-            name = "Test Ingredient",
-            brands = "Brand",
-            categories = listOf("Category1"),
-            images =
-                mutableMapOf(
-                    PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
-                    PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
-                    PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
-
     // Add the ingredient to the ingredient list
-    userViewModel.addIngredient(ingredient)
-    userViewModel.addIngredient(ingredient)
+    userViewModel.addIngredient(testIngredientsNullCategory[0])
+    userViewModel.addIngredient(testIngredientsNullCategory[0])
 
     // Verify that the ingredient list contains the ingredient with the updated quantity
     val updatedIngredient =
-        userViewModel.ingredientList.value.find { it.first.barCode == ingredient.barCode }
+        userViewModel.ingredientList.value.find {
+          it.first.barCode == testIngredientsNullCategory[0].barCode
+        }
     assertNotNull(updatedIngredient)
     TestCase.assertEquals("", updatedIngredient?.second)
   }
 
   @Test
   fun addACorrectIngredientAndANullIngredientTest() {
-    // Create an initial ingredient
-    val ingredientCorrect =
-        Ingredient(
-            barCode = 123456L,
-            name = "Test Ingredient",
-            brands = "Brand",
-            quantity = "100g",
-            categories = listOf("Category1"),
-            images =
-                mutableMapOf(
-                    PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
-                    PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
-                    PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
-    val ingredientNull =
-        Ingredient(
-            barCode = 123456L,
-            name = "Test Ingredient",
-            brands = "Brand",
-            categories = listOf("Category1"),
-            images =
-                mutableMapOf(
-                    PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
-                    PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
-                    PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
-
     // Add the ingredient to the ingredient list
-    userViewModel.addIngredient(ingredientCorrect)
-    userViewModel.addIngredient(ingredientNull)
+    userViewModel.addIngredient(testIngredients[0])
+    userViewModel.addIngredient(testIngredientsNullCategory[0])
 
     // Verify that the ingredient list contains the ingredient with the updated quantity
     val updatedIngredient =
-        userViewModel.ingredientList.value.find { it.first.barCode == ingredientCorrect.barCode }
+        userViewModel.ingredientList.value.find { it.first.barCode == testIngredients[0].barCode }
     assertNotNull(updatedIngredient)
-    TestCase.assertEquals("100g", updatedIngredient?.second)
+    TestCase.assertEquals(testIngredients[0].quantity, updatedIngredient?.second)
   }
 
   @Test
   fun addANullIngredientAndACorrectIngredientTest() {
-    // Create an initial ingredient
-    val ingredientCorrect =
-        Ingredient(
-            barCode = 123456L,
-            name = "Test Ingredient",
-            brands = "Brand",
-            quantity = "100g",
-            categories = listOf("Category1"),
-            images =
-                mutableMapOf(
-                    PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
-                    PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
-                    PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
-    val ingredientNull =
-        Ingredient(
-            barCode = 123456L,
-            name = "Test Ingredient",
-            brands = "Brand",
-            categories = listOf("Category1"),
-            images =
-                mutableMapOf(
-                    PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
-                    PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
-                    PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
-
     // Add the ingredient to the ingredient list
-    userViewModel.addIngredient(ingredientNull)
-
-    userViewModel.addIngredient(ingredientCorrect)
+    userViewModel.addIngredient(testIngredientsNullCategory[0])
+    userViewModel.addIngredient(testIngredients[0])
 
     // Verify that the ingredient list contains the ingredient with the updated quantity
     val updatedIngredient =
-        userViewModel.ingredientList.value.find { it.first.barCode == ingredientCorrect.barCode }
+        userViewModel.ingredientList.value.find { it.first.barCode == testIngredients[0].barCode }
     assertNotNull(updatedIngredient)
-    TestCase.assertEquals("100g", updatedIngredient?.second)
+    TestCase.assertEquals(testIngredients[0].quantity, updatedIngredient?.second)
   }
 
   @Test

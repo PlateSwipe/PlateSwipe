@@ -68,12 +68,14 @@ class SearchIngredientScreenTest {
       SearchIngredientScreen(
           navigationActions = mockNavigationActions,
           searchIngredientViewModel = searchIngredientViewModel,
-          "Title",
-          "Description",
-          "Confirm") {
+          popUpTitle = "Title",
+          popUpConfirmationText = "Description",
+          popUpConfirmationButtonText = "Confirm",
+          onConfirmation = {
             mockNavigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
             searchIngredientViewModel.addIngredient(it)
-          }
+          },
+          onSearchFinished = { mockNavigationActions.navigateTo(Screen.CAMERA_SCAN_CODE_BAR) })
     }
   }
 

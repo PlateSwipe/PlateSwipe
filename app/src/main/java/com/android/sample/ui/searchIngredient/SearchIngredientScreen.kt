@@ -55,7 +55,6 @@ import com.android.sample.resources.C.TestTag.IngredientSearchScreen.DRAGGABLE_I
 import com.android.sample.resources.C.TestTag.IngredientSearchScreen.SCANNER_ICON
 import com.android.sample.ui.createRecipe.ChefImage
 import com.android.sample.ui.navigation.NavigationActions
-import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.utils.ConfirmationPopUp
 import com.android.sample.ui.utils.PlateSwipeScaffold
 import com.android.sample.ui.utils.SearchBar
@@ -79,6 +78,7 @@ fun SearchIngredientScreen(
     popUpConfirmationText: String,
     popUpConfirmationButtonText: String,
     onConfirmation: (Ingredient) -> Unit,
+    onSearchFinished: () -> Unit
 ) {
   val listIngredient = searchIngredientViewModel.searchingIngredientList.collectAsState()
   val isSearching = searchIngredientViewModel.isFetchingByName.collectAsState()
@@ -96,7 +96,7 @@ fun SearchIngredientScreen(
             modifier = Modifier.testTag(DRAGGABLE_ITEM).fillMaxSize().padding(paddingValues)) {
               SearchDisplay(
                   searchIngredientViewModel = searchIngredientViewModel,
-                  navigationActions = navigationActions)
+                  onFinished = onSearchFinished)
 
               // Display the result text
               ResultDisplay()
@@ -173,12 +173,12 @@ private fun DisplayListIngredients(
  * A composable that displays the search bar and scanner icon.
  *
  * @param searchIngredientViewModel the view model for the ingredient.
- * @param navigationActions the navigation actions.
+ * @param onFinished the callback to invoke when the user finishes searching.
  */
 @Composable
 private fun SearchDisplay(
     searchIngredientViewModel: SearchIngredientViewModel,
-    navigationActions: NavigationActions
+    onFinished: () -> Unit
 ) {
   Row(
       modifier = Modifier.fillMaxWidth().padding(PADDING_16.dp),
@@ -199,14 +199,7 @@ private fun SearchDisplay(
                 Modifier.weight(ICON_SCANNER_WEIGHT)
                     .size(ICON_SCANNER_SIZE.dp)
                     .testTag(SCANNER_ICON)
-                    .clickable {
-                      if (navigationActions.currentRoute() == Screen.FRIDGE_SEARCH_ITEM) {
-                        navigationActions.navigateTo(Screen.FRIDGE_SCAN_CODE_BAR)
-                      } else if (navigationActions.currentRoute() ==
-                          Screen.CREATE_RECIPE_SEARCH_INGREDIENTS) {
-                        navigationActions.navigateTo(Screen.CAMERA_SCAN_CODE_BAR)
-                      }
-                    },
+                    .clickable { onFinished() },
             tint = MaterialTheme.colorScheme.onPrimary,
             contentDescription = stringResource(R.string.scanner_instruction))
       }

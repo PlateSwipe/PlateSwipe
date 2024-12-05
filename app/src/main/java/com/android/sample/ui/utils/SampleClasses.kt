@@ -136,6 +136,17 @@ val testIngredients =
           images = ingredientImages,
       )
     }
+val testIngredientsNullCategory =
+    ingredientNames.mapIndexed { index, name ->
+      Ingredient(
+          uid = (index + 1).toString(),
+          barCode = index.toLong(),
+          name = name,
+          brands = ingredientBrands[index],
+          categories = ingredientCategories[index],
+          images = ingredientImages,
+      )
+    }
 
 val ingredientExpirationDateExample: LocalDate = LocalDate.of(2024, 11, 25)
 
