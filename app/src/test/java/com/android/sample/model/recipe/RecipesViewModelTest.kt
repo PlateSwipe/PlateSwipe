@@ -105,8 +105,9 @@ class RecipesViewModelTest {
     assertThat(recipesViewModel.loading.value, `is`(false)) // Check loading is false after fetching
   }
 
+  @OptIn(ExperimentalCoroutinesApi::class)
   @Test
-  fun fetchByCategoriesRecipesHandlesFailure() {
+  fun fetchByCategoriesRecipesHandlesFailure() = runTest {
     // Simulate the failure of the repository
     `when`(mockRecipeRepository.filterSearch(any(), any(), any(), any())).thenAnswer { invocation ->
       val onFailure = invocation.getArgument<(Throwable) -> Unit>(2)
@@ -118,6 +119,8 @@ class RecipesViewModelTest {
     recipesViewModel.updateCategory("Dessert")
     recipesViewModel.applyChanges()
     recipesViewModel.fetchRandomRecipes(2)
+
+    advanceUntilIdle()
 
     // Assert
     assertThat(recipesViewModel.loading.value, `is`(false)) // Check loading is false after fetch
