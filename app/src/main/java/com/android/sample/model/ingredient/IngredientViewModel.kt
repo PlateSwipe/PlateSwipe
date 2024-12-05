@@ -154,14 +154,22 @@ class IngredientViewModel(
   fun downloadIngredient(
       ingredient: Ingredient,
       context: Context,
-      dispatcher: CoroutineDispatcher
+      dispatcher: CoroutineDispatcher,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
   ) {
     downloadIngredientImage(
         ingredient,
         context,
         dispatcher,
-        onSuccess = { repository.addDownload(ingredient) },
-        onFailure = { Log.e(INGREDIENT_VIEWMODEL_LOG_TAG, INGR_DOWNLOAD_ERROR_DOWNLOAD_IMAGE, it) })
+        onSuccess = {
+          repository.addDownload(ingredient)
+          onSuccess()
+        },
+        onFailure = {
+          Log.e(INGREDIENT_VIEWMODEL_LOG_TAG, INGR_DOWNLOAD_ERROR_DOWNLOAD_IMAGE, it)
+          onFailure(it)
+        })
   }
   /** Retrieves all downloaded ingredients from the repository. */
   fun getAllDownloadedIngredients() {
@@ -213,6 +221,7 @@ class IngredientViewModel(
                 try {
                   if (url != null) {
                     val uri = imgDownload.downloadAndSaveImage(context, fileName, url, dispatcher)
+                    println("Image downloaded successfully for format: $format, uri: $uri")
                     format to uri!!
                   } else {
                     null

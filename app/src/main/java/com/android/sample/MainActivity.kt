@@ -70,7 +70,8 @@ fun PlateSwipeApp() {
   val context = LocalContext.current
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
-  val recipesViewModel: RecipesViewModel = viewModel(factory = RecipesViewModel.Factory)
+  val recipesViewModel: RecipesViewModel =
+      viewModel(factory = RecipesViewModel.provideFactory(context = context))
   val ingredientViewModel: IngredientViewModel =
       viewModel(factory = IngredientViewModel.provideFactory(context = context))
 

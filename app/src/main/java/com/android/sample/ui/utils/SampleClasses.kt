@@ -95,7 +95,8 @@ val testRecipes =
           strMealThumbUrl = recipeStrMealThumbUrls[index],
           ingredientsAndMeasurements = recipeIngredientLists[index],
           time = recipeTimes[index],
-      )
+          url =
+              "https://firebasestorage.googleapis.com/v0/b/plateswipe.appspot.com/o/images%2Frecipe%2F0Y7fBUeqH6aq2P2gcHtA%2FMain.jpg?alt=media&token=cb99e609-a846-42a6-b71c-b9b3d160ff9b")
     }
 
 val ingredientNames =

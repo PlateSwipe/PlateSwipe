@@ -10,7 +10,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
 import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.recipe.CreateRecipeViewModel
-import com.android.sample.model.recipe.FirestoreRecipesRepository
+import com.android.sample.model.recipe.networkData.FirestoreRecipesRepository
 import com.android.sample.ui.camera.CameraTakePhotoScreen
 import com.android.sample.ui.camera.TakePhotoButton
 import com.android.sample.ui.navigation.NavigationActions

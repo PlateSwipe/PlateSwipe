@@ -9,8 +9,10 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import com.android.sample.model.ingredient.IngredientRepository
 import com.android.sample.model.recipe.FirestoreRecipesRepository
+import com.android.sample.model.ingredient.networkData.FirestoreIngredientRepository
 import com.android.sample.model.recipe.Instruction
 import com.android.sample.model.recipe.Recipe
+import com.android.sample.model.recipe.networkData.FirestoreRecipesRepository
 import com.android.sample.model.user.UserRepository
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_CARD_TEST_TAG

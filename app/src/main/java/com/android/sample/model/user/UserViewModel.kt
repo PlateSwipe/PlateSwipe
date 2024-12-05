@@ -20,6 +20,7 @@ import com.android.sample.model.ingredient.networkData.OpenFoodFactsIngredientRe
 import com.android.sample.model.recipe.FirestoreRecipesRepository
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.recipe.RecipeOverviewViewModel
+import com.android.sample.model.recipe.networkData.FirestoreRecipesRepository
 import com.android.sample.resources.C.Tag.UserViewModel.FAILED_TO_DELETE_IMAGE
 import com.android.sample.resources.C.Tag.UserViewModel.FAILED_TO_DELETE_RECIPE
 import com.android.sample.resources.C.Tag.UserViewModel.FAILED_TO_FETCH_CREATED_RECIPE_FROM_DATABASE_ERROR

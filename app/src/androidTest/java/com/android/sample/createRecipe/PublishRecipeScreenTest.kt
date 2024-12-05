@@ -6,9 +6,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.ingredient.IngredientRepository
 import com.android.sample.model.recipe.CreateRecipeViewModel
-import com.android.sample.model.recipe.FirestoreRecipesRepository
 import com.android.sample.model.recipe.Instruction
 import com.android.sample.model.recipe.Recipe
+import com.android.sample.model.recipe.networkData.FirestoreRecipesRepository
 import com.android.sample.model.user.UserRepository
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.ui.createRecipe.PublishRecipeScreen
