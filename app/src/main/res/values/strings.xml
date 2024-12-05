@@ -147,6 +147,15 @@
     <string name="select_time_description">Selecting the total time is optional, but it helps others understand how long your recipe will take.</string>
     <string name="minutes">Minutes</string>
     <string name="hours">Hours</string>
+
+    //EditAccountScreen
+    <string name="save_changes_button">Save changes</string>
+    <string name="date_of_birth_label">Date of birth</string>
+    <string name="confirm_date_of_birth_pop_up">Confirm</string>
+    <string name="cancel_date_of_birth_pop_up">Cancel</string>
+    <string name="username_label">Username</string>
+    <string name="email_label">Email</string>
+
     //Fridge
     <string name="fridge_title">Fridge</string>
     <string name="empty_fridge_title">Empty Fridge</string>

@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -13,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -33,17 +33,20 @@ import com.android.sample.R
 import com.android.sample.resources.C.Dimension.CameraScanCodeBarScreen.BACK_ARROW_ICON_SIZE
 import com.android.sample.resources.C.Dimension.CameraScanCodeBarScreen.CHEF_HAT_ICON_END_PADDING
 import com.android.sample.resources.C.Dimension.CameraScanCodeBarScreen.CHEF_HAT_ICON_SIZE
+import com.android.sample.resources.C.Dimension.CameraScanCodeBarScreen.EDIT_ACCOUNT_ICON_SIZE
 import com.android.sample.resources.C.Dimension.CameraScanCodeBarScreen.TOP_BAR_HEIGHT
 import com.android.sample.resources.C.Dimension.CameraScanCodeBarScreen.TOP_BAR_TITLE_FONT_SIZE
 import com.android.sample.resources.C.Tag.SMALL_PADDING
 import com.android.sample.resources.C.TestTag.Utils.BACK_ARROW_ICON
 import com.android.sample.resources.C.TestTag.Utils.CHEF_HAT_ICON
+import com.android.sample.resources.C.TestTag.Utils.EDIT_ACCOUNT_ICON
 import com.android.sample.resources.C.TestTag.Utils.PLATESWIPE_SCAFFOLD
 import com.android.sample.resources.C.TestTag.Utils.TOP_BAR
 import com.android.sample.resources.C.TestTag.Utils.TOP_BAR_TITLE
 import com.android.sample.ui.navigation.BottomNavigationMenu
 import com.android.sample.ui.navigation.LIST_TOP_LEVEL_DESTINATIONS
 import com.android.sample.ui.navigation.NavigationActions
+import com.android.sample.ui.navigation.Screen
 
 /**
  * PlateSwipeScaffold is a custom Scaffold that is used in the PlateSwipe app. It has a custom top
@@ -119,6 +122,18 @@ private fun PlateSwipeTopBar(navigationActions: NavigationActions, showBackArrow
         color = MaterialTheme.colorScheme.onPrimary,
     )
 
-    Spacer(modifier = Modifier.weight(1f))
+    Row(modifier = Modifier.weight(1f), horizontalArrangement = Arrangement.End) {
+      if (navigationActions.currentRoute() == Screen.ACCOUNT) {
+        IconButton(
+            onClick = { navigationActions.navigateTo(Screen.EDIT_ACCOUNT) },
+            modifier = Modifier.testTag(EDIT_ACCOUNT_ICON)) {
+              Icon(
+                  imageVector = Icons.Outlined.Settings,
+                  contentDescription = "Edit Account",
+                  modifier = Modifier.size(EDIT_ACCOUNT_ICON_SIZE.dp),
+                  tint = MaterialTheme.colorScheme.onPrimary)
+            }
+      }
+    }
   }
 }

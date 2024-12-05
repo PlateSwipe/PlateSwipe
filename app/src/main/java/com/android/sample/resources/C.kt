@@ -376,6 +376,13 @@ object C {
       const val PROFILE_PICTURE_CONTENT_DESCRIPTION = "profilePicture"
     }
 
+    // EditAccountScreen
+    object EditAccountScreen {
+      const val LOG_MESSAGE_TAG = "EditAccountScreen"
+      const val CHANGE_PROFILE_PICTURE_BUTTON_DESCRIPTION = "Change Profile Picture button"
+      const val DATE_OF_BIRTH_FIELD_DESCRIPTION = "Selected Date"
+    }
+
     // Create Recipe Add Image
     const val ADD_IMAGE_STEP = 4
 
@@ -556,6 +563,7 @@ object C {
       const val TOP_BAR_HEIGHT = 50
       const val TOP_BAR_TITLE_FONT_SIZE = 28
       const val BACK_ARROW_ICON_SIZE = 26
+      const val EDIT_ACCOUNT_ICON_SIZE = 26
       const val CHEF_HAT_ICON_SIZE = 35
       const val CHEF_HAT_ICON_END_PADDING = 8
       const val BOTTOM_BAR_HEIGHT = 60
@@ -716,6 +724,7 @@ object C {
       const val TOP_BAR = "topBar"
       const val TOP_BAR_TITLE = "topBarTitle"
       const val BACK_ARROW_ICON = "backArrowIcon"
+      const val EDIT_ACCOUNT_ICON = "editAccountIcon"
       const val PLATESWIPE_SCAFFOLD = "plateSwipeScaffold"
       const val CHEF_HAT_ICON = "chefHatIcon"
       const val BOTTOM_BAR = "bottomNavigationMenu"
@@ -794,6 +803,19 @@ object C {
       const val CREATED_RECIPES_BUTTON_TEST_TAG = "createdRecipesButton"
       const val PROFILE_PICTURE_TEST_TAG = "profilePicture"
       const val RECIPE_EDIT_ICON_TEST_TAG = "recipeEditIcon"
+    }
+
+    object EditAccountScreen {
+      const val SAVE_CHANGES_BUTTON_TAG = "saveChangesButton"
+      const val PROFILE_PICTURE_TAG = "profilePicture"
+      const val USERNAME_FIELD_TAG = "usernameTextField"
+      const val EMAIL_FIELD_TAG = "emailTextField"
+      const val CHANGE_PROFILE_PICTURE_BUTTON_TAG = "changeProfilePictureButton"
+      const val DATE_OF_BIRTH_TEXT_FIELD_TAG = "dateOfBirthTextField"
+      const val DATE_OF_BIRTH_CHANGE_BUTTON_TAG = "dateOfBirthChangeButton"
+      const val DATE_PICKER_POP_UP_TAG = "datePickerPopUp"
+      const val DATE_PICKER_POP_UP_CONFIRM_TAG = "confirmationButtonPopUp"
+      const val DATE_PICKER_POP_UP_CANCEL_TAG = "dismissButtonPopUp"
     }
 
     object CreateRecipeListInstructionsScreen {
