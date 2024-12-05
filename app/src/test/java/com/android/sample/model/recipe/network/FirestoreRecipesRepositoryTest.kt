@@ -2,12 +2,12 @@ package com.android.sample.model.recipe.network
 
 import android.os.Looper
 import androidx.test.core.app.ApplicationProvider
-import com.android.sample.model.recipe.Instruction
-import com.android.sample.model.recipe.Recipe
-import com.android.sample.model.recipe.networkData.FirestoreRecipesRepository
 import com.android.sample.model.filter.Difficulty
 import com.android.sample.model.filter.Filter
 import com.android.sample.model.filter.FloatRange
+import com.android.sample.model.recipe.Instruction
+import com.android.sample.model.recipe.Recipe
+import com.android.sample.model.recipe.networkData.FirestoreRecipesRepository
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_AREA
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_CATEGORY
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_DIFFICULTY

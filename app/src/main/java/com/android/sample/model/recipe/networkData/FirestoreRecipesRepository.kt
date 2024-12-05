@@ -1,10 +1,10 @@
 package com.android.sample.model.recipe.networkData
 
 import android.util.Log
-import com.android.sample.model.recipe.Instruction
-import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.filter.Difficulty
 import com.android.sample.model.filter.Filter
+import com.android.sample.model.recipe.Instruction
+import com.android.sample.model.recipe.Recipe
 import com.android.sample.resources.C.Tag.CHARACTERS
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_AREA
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_CATEGORY
