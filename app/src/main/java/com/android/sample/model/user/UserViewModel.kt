@@ -17,7 +17,6 @@ import com.android.sample.model.ingredient.localData.RoomIngredientRepository
 import com.android.sample.model.ingredient.networkData.AggregatorIngredientRepository
 import com.android.sample.model.ingredient.networkData.FirestoreIngredientRepository
 import com.android.sample.model.ingredient.networkData.OpenFoodFactsIngredientRepository
-import com.android.sample.model.recipe.FirestoreRecipesRepository
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.recipe.RecipeOverviewViewModel
 import com.android.sample.model.recipe.networkData.FirestoreRecipesRepository

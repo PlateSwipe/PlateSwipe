@@ -209,9 +209,9 @@ private fun FridgeContent(
     userViewModel: UserViewModel,
     listFridgeItem: List<Pair<FridgeItem, Ingredient>>
 ) {
-  Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+  Column(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().weight(1f),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally) {
           // Row to display the title and number of items
@@ -267,15 +267,20 @@ private fun FridgeContent(
           }
         }
     // button to add ingredient
-    PlateSwipeButton(
-        stringResource(R.string.add_ingredient),
-        modifier = Modifier.padding(PADDING_16.dp).align(Alignment.BottomCenter),
-        onClick = {
-          userViewModel.clearIngredientList()
-          userViewModel.clearSearchingIngredientList()
-          userViewModel.clearIngredient()
-          navigationActions.navigateTo(Screen.FRIDGE_SEARCH_ITEM)
-        })
+    Row(
+        modifier = Modifier.fillMaxWidth().background(Color.Transparent),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically) {
+          PlateSwipeButton(
+              stringResource(R.string.add_ingredient),
+              modifier = Modifier.padding(PADDING_16.dp),
+              onClick = {
+                userViewModel.clearIngredientList()
+                userViewModel.clearSearchingIngredientList()
+                userViewModel.clearIngredient()
+                navigationActions.navigateTo(Screen.FRIDGE_SEARCH_ITEM)
+              })
+        }
   }
 }
 

@@ -163,7 +163,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun SwipePage(
     navigationActions: NavigationActions,
-    recipesViewModel: RecipesViewModel = viewModel(factory = RecipesViewModel.Factory),
+    recipesViewModel: RecipesViewModel =
+        viewModel(factory = RecipesViewModel.provideFactory(LocalContext.current)),
     userViewModel: UserViewModel =
         viewModel(factory = UserViewModel.provideFactory(context = LocalContext.current))
 ) {
