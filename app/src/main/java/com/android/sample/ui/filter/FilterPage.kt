@@ -161,7 +161,11 @@ fun FilterBox(
 
           // Reset button to reset all filters to their default values
           Button(
-              onClick = { filterViewModel.resetFilters() },
+              onClick = {
+                filterViewModel.resetFilters()
+                filterViewModel.applyChanges()
+                navigationActions.navigateTo(Screen.SWIPE)
+              },
               colors =
                   ButtonDefaults.buttonColors(
                       containerColor = MaterialTheme.colorScheme.onSecondaryContainer,
