@@ -79,12 +79,6 @@ class DefaultRecipeRepositoryTest {
   }
 
   @Test
-  fun listCategoriesCallNetworkRepository() {
-    defaultRecipeRepository.listCategories(onSuccess4, onFailure)
-    verify(mockNetworkRepository).listCategories(onSuccess4, onFailure)
-  }
-
-  @Test
   fun addDownloadCallLocalRepository() {
     defaultRecipeRepository.addDownload(recipe, onSuccess, onFailure)
     verify(mockLocalRepository).add(recipe, onSuccess, onFailure)

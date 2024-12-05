@@ -86,8 +86,6 @@ interface RecipesRepository {
       onFailure: (Exception) -> Unit,
       limit: Int = 5
   )
-  /** Lists all the categories in the API. */
-  fun listCategories(onSuccess: (List<String>) -> Unit, onFailure: (Exception) -> Unit)
 
   /**
    * Adds a recipe to the list of downloads.
