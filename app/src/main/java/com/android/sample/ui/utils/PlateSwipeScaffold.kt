@@ -122,8 +122,6 @@ private fun PlateSwipeTopBar(navigationActions: NavigationActions, showBackArrow
         color = MaterialTheme.colorScheme.onPrimary,
     )
 
-    // Spacer(modifier = Modifier.weight(1f))
-
     Row(modifier = Modifier.weight(1f), horizontalArrangement = Arrangement.End) {
       if (navigationActions.currentRoute() == Screen.ACCOUNT) {
         IconButton(

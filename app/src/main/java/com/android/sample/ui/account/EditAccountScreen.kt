@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -27,6 +26,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -34,6 +34,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -46,7 +47,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
@@ -54,10 +54,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Popup
 import com.android.sample.R
 import com.android.sample.feature.camera.openGallery
 import com.android.sample.feature.camera.uriToBitmap
@@ -65,7 +65,18 @@ import com.android.sample.model.image.ImageDirectoryType
 import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C.Tag.AccountScreen.PROFILE_PICTURE_CONTENT_DESCRIPTION
+import com.android.sample.resources.C.Tag.EditAccountScreen.CHANGE_PROFILE_PICTURE_BUTTON_DESCRIPTION
+import com.android.sample.resources.C.Tag.EditAccountScreen.DATE_OF_BIRTH_FIELD_DESCRIPTION
+import com.android.sample.resources.C.Tag.EditAccountScreen.LOG_MESSAGE_TAG
 import com.android.sample.resources.C.Tag.UserViewModel.IMAGE_NAME
+import com.android.sample.resources.C.TestTag.EditAccountScreen.CHANGE_PROFILE_PICTURE_BUTTON_TAG
+import com.android.sample.resources.C.TestTag.EditAccountScreen.DATE_OF_BIRTH_CHANGE_BUTTON_TAG
+import com.android.sample.resources.C.TestTag.EditAccountScreen.DATE_OF_BIRTH_TEXT_FIELD_TAG
+import com.android.sample.resources.C.TestTag.EditAccountScreen.DATE_PICKER_POP_UP_CANCEL_TAG
+import com.android.sample.resources.C.TestTag.EditAccountScreen.DATE_PICKER_POP_UP_CONFIRM_TAG
+import com.android.sample.resources.C.TestTag.EditAccountScreen.DATE_PICKER_POP_UP_TAG
+import com.android.sample.resources.C.TestTag.EditAccountScreen.PROFILE_PICTURE_TAG
+import com.android.sample.resources.C.TestTag.EditAccountScreen.SAVE_CHANGES_BUTTON_TAG
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.TopLevelDestinations
 import com.android.sample.ui.utils.PlateSwipeButton
@@ -106,7 +117,7 @@ fun EditAccountScreen(
                 IMAGE_NAME,
                 ImageDirectoryType.USER,
                 { newProfilePictureImageBitmap = it },
-                { Log.e("EditAccountScreen", it.message!!) })
+                { Log.e(LOG_MESSAGE_TAG, it.message!!) })
           }
         }
         val photoPickerLauncher =
@@ -150,8 +161,8 @@ fun EditAccountScreen(
               Spacer(modifier = Modifier.weight(.2f))
 
               PlateSwipeButton(
-                  "Save changes",
-                  Modifier.testTag("Save Changes Button"),
+                  stringResource(R.string.save_changes_button),
+                  Modifier.testTag(SAVE_CHANGES_BUTTON_TAG),
                   onClick = {
                     saveChangesUsername(userViewModel, userName, newUserName)
                     saveChangesProfilePicture(
@@ -194,7 +205,7 @@ private fun ProfilePicture(
               Modifier.fillMaxSize()
                   .clip(CircleShape)
                   .border(2.dp, Color.Black, shape = CircleShape)
-                  .testTag("Profile Picture"))
+                  .testTag(PROFILE_PICTURE_TAG))
     } else {
       Image(
           bitmap = newProfilePictureImageBitmap,
@@ -204,7 +215,7 @@ private fun ProfilePicture(
               Modifier.fillMaxSize()
                   .clip(CircleShape)
                   .border(2.dp, Color.Black, shape = CircleShape)
-                  .testTag("Profile Picture"))
+                  .testTag(PROFILE_PICTURE_TAG))
     }
     Box(
         modifier =
@@ -216,9 +227,9 @@ private fun ProfilePicture(
                 .clickable { openGallery(photoPickerLauncher) }) {
           Icon(
               imageVector = Icons.Default.CameraAlt,
-              contentDescription = "",
+              contentDescription = CHANGE_PROFILE_PICTURE_BUTTON_DESCRIPTION,
               modifier =
-                  Modifier.fillMaxSize().padding(5.dp).testTag("Change profile picture button"),
+                  Modifier.fillMaxSize().padding(5.dp).testTag(CHANGE_PROFILE_PICTURE_BUTTON_TAG),
               tint = Color.Black)
         }
   }
@@ -272,23 +283,29 @@ private fun DateOfBirthBox(newDateOfBirth: String?, onValueChange: (String) -> U
       value = displayedDate,
       onValueChange = {},
       textStyle = TextStyle(fontSize = 16.sp),
-      label = { Text("Date of birth") },
+      label = { Text(stringResource(R.string.date_of_birth_label)) },
       readOnly = true,
       trailingIcon = {
-        IconButton(onClick = { showDatePicker = !showDatePicker }) {
-          Icon(imageVector = Icons.Default.DateRange, contentDescription = "Selected Date")
-        }
+        IconButton(
+            modifier = Modifier.testTag(DATE_OF_BIRTH_CHANGE_BUTTON_TAG),
+            onClick = { showDatePicker = !showDatePicker }) {
+              Icon(
+                  imageVector = Icons.Default.DateRange,
+                  contentDescription = DATE_OF_BIRTH_FIELD_DESCRIPTION)
+            }
       },
-      modifier = Modifier.width(350.dp).testTag("Date of birth text field"))
+      modifier = Modifier.width(350.dp).testTag(DATE_OF_BIRTH_TEXT_FIELD_TAG))
 
   DateOfBirthPopUpLogic(
       showDatePicker,
       datePickerState,
-  ) {
-    showDatePicker = false
-    displayedDate = selectedDate
-    onValueChange(selectedDate)
-  }
+      onDismissRequest = { showDatePicker = false },
+      confirmButtonClickAction = {
+        showDatePicker = false
+        displayedDate = selectedDate
+        onValueChange(selectedDate)
+      },
+      dismissButtonClickAction = { showDatePicker = false })
 }
 
 /**
@@ -303,21 +320,34 @@ private fun DateOfBirthBox(newDateOfBirth: String?, onValueChange: (String) -> U
 private fun DateOfBirthPopUpLogic(
     showDatePicker: Boolean,
     datePickerState: DatePickerState,
-    onDismissRequest: () -> Unit
+    onDismissRequest: () -> Unit,
+    confirmButtonClickAction: () -> Unit,
+    dismissButtonClickAction: () -> Unit
 ) {
   if (showDatePicker) {
-    Popup(onDismissRequest = onDismissRequest, alignment = Alignment.TopStart) {
-      Box(
-          modifier =
-              Modifier.fillMaxWidth()
-                  .offset(y = 0.dp)
-                  .shadow(elevation = 4.dp)
-                  .background(MaterialTheme.colorScheme.surface)
-                  .padding(16.dp)
-                  .testTag("Date picker pop up")) {
-            DatePicker(state = datePickerState, showModeToggle = false)
-          }
-    }
+    DatePickerDialog(
+        modifier = Modifier.testTag(DATE_PICKER_POP_UP_TAG),
+        onDismissRequest = onDismissRequest,
+        confirmButton = {
+          TextButton(
+              modifier = Modifier.testTag(DATE_PICKER_POP_UP_CONFIRM_TAG),
+              onClick = confirmButtonClickAction) {
+                Text(
+                    text = stringResource(R.string.confirm_date_of_birth_pop_up),
+                    color = MaterialTheme.colorScheme.onSecondaryContainer)
+              }
+        },
+        dismissButton = {
+          TextButton(
+              modifier = Modifier.testTag(DATE_PICKER_POP_UP_CANCEL_TAG),
+              onClick = dismissButtonClickAction) {
+                Text(
+                    text = stringResource(R.string.cancel_date_of_birth_pop_up),
+                    color = MaterialTheme.colorScheme.onSecondaryContainer)
+              }
+        }) {
+          DatePicker(state = datePickerState, showModeToggle = false)
+        }
   }
 }
 
@@ -342,11 +372,11 @@ private fun ListChangeableInformation(
     onValueChangeDateOfBirth: (String) -> Unit
 ) {
   Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-    InputTextBox("Username", newUserName, false, onValueChangeUserName)
+    InputTextBox(stringResource(R.string.username_label), newUserName, false, onValueChangeUserName)
 
     Spacer(modifier = Modifier.weight(.3f))
 
-    InputTextBox("Email", firebaseAuth.currentUser!!.email!!, true) {}
+    InputTextBox(stringResource(R.string.email_label), firebaseAuth.currentUser!!.email!!, true) {}
 
     Spacer(modifier = Modifier.weight(.3f))
 
@@ -397,9 +427,9 @@ private fun saveChangesProfilePicture(
               IMAGE_NAME,
               ImageDirectoryType.USER,
               { userViewModel.changeProfilePictureUrl(it.toString()) },
-              { Log.e("EditAccountScreen", it.message!!) })
+              { Log.e(LOG_MESSAGE_TAG, it.message!!) })
         },
-        { Log.e("EditAccountScreen", it.message!!) })
+        { Log.e(LOG_MESSAGE_TAG, it.message!!) })
   }
 }
 
