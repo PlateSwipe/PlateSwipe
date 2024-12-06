@@ -60,6 +60,7 @@ interface SearchIngredientViewModel {
    * @param quantity2: the second string quantity to add
    */
   private fun addFirstInt(quantity1: String?, quantity2: String?): String {
+    /*
     if (quantity1 == null || quantity2 == null) {
       return quantity1 ?: quantity2 ?: ""
     }
@@ -73,6 +74,33 @@ interface SearchIngredientViewModel {
     return if (match1 != null && match2 != null) {
       val addition = match1.value.toInt() + match2.value.toInt()
       quantity1.replaceFirst(match1.value, addition.toString())
+    } else if (match1 != null) {
+      quantity1
+    } else {
+      quantity2
+    }*/
+    if (quantity1 == null || quantity2 == null) {
+      return quantity1 ?: quantity2 ?: ""
+    }
+
+    // Regular expression to find the first number in the string, considering possible decimal
+    // separators
+    val regex = Regex("""\d+[,.]?\d*""")
+
+    val match1 = regex.find(quantity1)
+    val match2 = regex.find(quantity2)
+
+    return if (match1 != null && match2 != null) {
+      // Replace ',' with '.' for both matches to standardize
+      val number1 = match1.value.replace(',', '.').toDouble()
+      val number2 = match2.value.replace(',', '.').toDouble()
+      val addition = number1 + number2
+
+      // Format the result, replace the first occurrence, and return
+      quantity1
+          .replaceFirst(match1.value, addition.toString())
+          .replaceFirst(".0", "")
+          .replaceFirst(",0", "")
     } else if (match1 != null) {
       quantity1
     } else {
