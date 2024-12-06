@@ -81,7 +81,7 @@ class RecipeOverviewTest {
       onSuccess(mockedRecipesList)
       null
     }
-    `when`(mockRepository.searchByCategory(any(), any(), any(), any())).thenAnswer { invocation ->
+    `when`(mockRepository.filterSearch(any(), any(), any(), any())).thenAnswer { invocation ->
       val onSuccess = invocation.getArgument<(List<Recipe>) -> Unit>(1)
       onSuccess(mockedRecipesList)
       null
@@ -96,8 +96,6 @@ class RecipeOverviewTest {
     // Init the filter
     recipesViewModel.updateTimeRange(0f, 100f)
     recipesViewModel.updateTimeRange(5f, 99f)
-    recipesViewModel.updatePriceRange(0f, 100f)
-    recipesViewModel.updatePriceRange(5f, 52f)
     recipesViewModel.updateDifficulty(Difficulty.Easy)
     recipesViewModel.updateCategory("Dessert")
   }

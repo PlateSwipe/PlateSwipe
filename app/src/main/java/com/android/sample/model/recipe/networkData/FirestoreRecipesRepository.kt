@@ -1,6 +1,8 @@
 package com.android.sample.model.recipe.networkData
 
 import android.util.Log
+import com.android.sample.model.filter.Difficulty
+import com.android.sample.model.filter.Filter
 import com.android.sample.model.recipe.Instruction
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.resources.C.Tag.CHARACTERS
@@ -17,7 +19,11 @@ import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_PICTURE_ID
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_PRICE
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_TIME
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_URL
+import com.android.sample.resources.C.Tag.Filter.UNINITIALIZED_BORN_VALUE
+import com.android.sample.resources.C.Tag.FilterPage.TIME_RANGE_MAX
+import com.android.sample.resources.C.Tag.FilterPage.TIME_RANGE_MIN
 import com.android.sample.resources.C.Tag.FirestoreRecipesRepository.ERROR_GETTING_DOCUMENT
+import com.android.sample.resources.C.Tag.FirestoreRecipesRepository.FILTER_RANDOM_FACTOR
 import com.android.sample.resources.C.Tag.FirestoreRecipesRepository.FIRESTORE_COLLECTION_NAME
 import com.android.sample.resources.C.Tag.FirestoreRecipesRepository.MAX_FIRESTORE_FETCH
 import com.android.sample.resources.C.Tag.FirestoreRecipesRepository.NOT_ENOUGH_RECIPE_MSG
@@ -28,6 +34,7 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 
 class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipeNetworkRepository {
   /** ****************************************** */
@@ -279,8 +286,81 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipeNetw
         .addOnFailureListener { e -> onFailure(e) }
   }
 
-  /** Will be deleted in next PR */
-  override fun listCategories(onSuccess: (List<String>) -> Unit, onFailure: (Exception) -> Unit) {
-    throw NotImplementedError("Not implemented")
+  /**
+   * Fetches a list of recipes from Firestore that match the given filter.
+   *
+   * @param filter The filter to apply to the search.
+   * @param limit The number of recipes to fetch.
+   * @param onSuccess The callback to call if the operation is successful.
+   * @param onFailure The callback to call if the operation fails.
+   */
+  override fun filterSearch(
+      filter: Filter,
+      onSuccess: (List<Recipe>) -> Unit,
+      onFailure: (Exception) -> Unit,
+      limit: Int,
+  ) {
+    require(limit > 0) { LIMIT_MUST_BE_POSITIVE_MESSAGE }
+    val recipes = mutableListOf<Recipe>()
+    var finalQuery: Query = db.collection(FIRESTORE_COLLECTION_NAME)
+
+    /** ******************** Apply all the filters ********************* */
+
+    /*
+     * Category filter
+     */
+    finalQuery =
+        filter.category?.let { finalQuery.whereEqualTo(FIRESTORE_RECIPE_CATEGORY, it) }
+            ?: finalQuery
+
+    /*
+     * Time filter
+     */
+    filter.timeRange.min
+        .takeIf {
+          it.toInt() != UNINITIALIZED_BORN_VALUE.toInt() && it.toInt() != TIME_RANGE_MIN.toInt()
+        }
+        ?.let {
+          finalQuery = finalQuery.whereGreaterThan(FIRESTORE_RECIPE_TIME, it.toInt().toString())
+        }
+
+    filter.timeRange.max
+        .takeIf {
+          it.toInt() != UNINITIALIZED_BORN_VALUE.toInt() && it.toInt() != TIME_RANGE_MAX.toInt()
+        }
+        ?.let {
+          finalQuery = finalQuery.whereLessThan(FIRESTORE_RECIPE_TIME, it.toInt().toString())
+        }
+
+    /*
+     * Difficulty filter
+     */
+    filter.difficulty
+        .takeIf { it != Difficulty.Undefined }
+        ?.let { finalQuery = finalQuery.whereEqualTo(FIRESTORE_RECIPE_DIFFICULTY, it.toString()) }
+    /** ******************* End of the filters ********************* */
+
+    /*
+     * Fetch the recipes
+     */
+    finalQuery
+        .orderBy(FIRESTORE_RECIPE_URL)
+        .limit(limit.toLong() * FILTER_RANDOM_FACTOR)
+        .get()
+        .addOnSuccessListener { result ->
+          result.documents.forEach { document ->
+            val recipe = documentToRecipe(document)
+            if (recipe != null) {
+              recipes.add(recipe)
+            }
+          }
+          /*
+           * Create a randomness by shuffling the recipes we fetched but only taking
+           * the first nbOfElements recipes
+           */
+          recipes.shuffle()
+          onSuccess(recipes.take(limit))
+        }
+        .addOnFailureListener(onFailure)
   }
 }

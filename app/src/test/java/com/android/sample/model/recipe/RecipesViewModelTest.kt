@@ -113,11 +113,11 @@ class RecipesViewModelTest {
     assertThat(recipesViewModel.loading.value, `is`(false)) // Check loading is false after fetching
   }
 
+  @OptIn(ExperimentalCoroutinesApi::class)
   @Test
-  fun fetchByCategoriesRecipesHandlesFailure() {
+  fun fetchByCategoriesRecipesHandlesFailure() = runTest {
     // Simulate the failure of the repository
-    `when`(mockRecipeRepository.searchByCategory(any(), any(), any(), any())).thenAnswer {
-        invocation ->
+    `when`(mockRecipeRepository.filterSearch(any(), any(), any(), any())).thenAnswer { invocation ->
       val onFailure = invocation.getArgument<(Throwable) -> Unit>(2)
       onFailure(Exception("Network error")) // Simulate a failure
       null
@@ -127,6 +127,8 @@ class RecipesViewModelTest {
     recipesViewModel.updateCategory("Dessert")
     recipesViewModel.applyChanges()
     recipesViewModel.fetchRandomRecipes(2)
+
+    advanceUntilIdle()
 
     // Assert
     assertThat(recipesViewModel.loading.value, `is`(false)) // Check loading is false after fetch
@@ -460,17 +462,6 @@ class RecipesViewModelTest {
     assertEquals(newDifficulty, recipesViewModel.tmpFilter.value.difficulty)
   }
 
-  /** Tests for the filter price range functionality. */
-  @Test
-  fun `test updatePriceRange updates the price range correctly`() {
-    val newMin = 10f
-    val newMax = 50f
-    recipesViewModel.updatePriceRange(newMin, newMax)
-
-    assertEquals(newMin, recipesViewModel.tmpFilter.value.priceRange.min, 0.001f)
-    assertEquals(newMax, recipesViewModel.tmpFilter.value.priceRange.max, 0.001f)
-  }
-
   /** Tests for the filter time range functionality. */
   @Test
   fun `test updateTimeRange updates the time range correctly`() {
@@ -498,14 +489,6 @@ class RecipesViewModelTest {
     assertEquals(
         recipesViewModel.filter.value.difficulty, recipesViewModel.tmpFilter.value.difficulty)
     assertEquals(recipesViewModel.filter.value.category, recipesViewModel.tmpFilter.value.category)
-    assertEquals(
-        recipesViewModel.filter.value.priceRange.min,
-        recipesViewModel.tmpFilter.value.priceRange.min,
-        0.001f)
-    assertEquals(
-        recipesViewModel.filter.value.priceRange.max,
-        recipesViewModel.tmpFilter.value.priceRange.max,
-        0.001f)
     assertEquals(
         recipesViewModel.filter.value.timeRange.min,
         recipesViewModel.tmpFilter.value.timeRange.min,

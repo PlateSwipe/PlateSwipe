@@ -2,6 +2,9 @@ package com.android.sample.model.recipe.network
 
 import android.os.Looper
 import androidx.test.core.app.ApplicationProvider
+import com.android.sample.model.filter.Difficulty
+import com.android.sample.model.filter.Filter
+import com.android.sample.model.filter.FloatRange
 import com.android.sample.model.recipe.Instruction
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.recipe.networkData.FirestoreRecipesRepository
@@ -17,6 +20,7 @@ import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_NAME
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_PICTURE_ID
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_PRICE
 import com.android.sample.resources.C.Tag.FIRESTORE_RECIPE_TIME
+import com.android.sample.resources.C.Tag.Filter.UNINITIALIZED_BORN_VALUE
 import com.android.sample.ui.utils.testRecipes
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.FirebaseApp
@@ -25,6 +29,7 @@ import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.util.Assert.fail
 import junit.framework.TestCase.assertEquals
@@ -61,6 +66,39 @@ class FirestoreRecipesRepositoryTest {
   private lateinit var firestoreFirebaseRepository: FirestoreRecipesRepository
 
   private val recipe = testRecipes[0]
+
+  private val filterWithTimeAndPrice =
+      Filter(
+          timeRange = FloatRange(0f, 100f, 0f, 100f),
+          difficulty = Difficulty.Undefined,
+          category = null,
+      )
+
+  private val filterWithCategory =
+      Filter(
+          timeRange = FloatRange(0f, 100f, 0f, 100f),
+          difficulty = Difficulty.Undefined,
+          category = "Beef",
+      )
+
+  private val filterWithDifficultyAndTimeAndPrice =
+      Filter(
+          timeRange = FloatRange(0f, 100f, 0f, 100f),
+          difficulty = Difficulty.Easy,
+          category = null,
+      )
+
+  private val filterWithDifficulty =
+      Filter(
+          timeRange =
+              FloatRange(
+                  UNINITIALIZED_BORN_VALUE,
+                  UNINITIALIZED_BORN_VALUE,
+                  UNINITIALIZED_BORN_VALUE,
+                  UNINITIALIZED_BORN_VALUE),
+          difficulty = Difficulty.Easy,
+          category = null,
+      )
 
   @Before
   fun setup() {
@@ -571,5 +609,327 @@ class FirestoreRecipesRepositoryTest {
     // Ensure all asynchronous operations are completed
     shadowOf(Looper.getMainLooper()).idle()
     assertTrue(haveFailed)
+  }
+
+  @Test
+  fun `test filterSearch function throws error when limit smaller than 0`() {
+    assertThrows(IllegalArgumentException::class.java) {
+      firestoreFirebaseRepository.filterSearch(
+          filter = filterWithTimeAndPrice,
+          onSuccess = { fail("Success callback should not be called") },
+          onFailure = { fail("Failure callback should not be called") },
+          limit = -1)
+    }
+  }
+
+  @Test
+  fun `test filterSearch function does not throw error when limit is equal to 1`() {
+    val mockQuerySnapshot = mock(QuerySnapshot::class.java)
+    val mockDocumentSnapshot = mock(DocumentSnapshot::class.java)
+    val mockQuery = mock(Query::class.java)
+
+    `when`(mockCollectionReference.whereEqualTo(any<String>(), any())).thenReturn(mockQuery)
+    `when`(mockCollectionReference.whereGreaterThan(any<String>(), any())).thenReturn(mockQuery)
+    `when`(mockCollectionReference.whereLessThan(any<String>(), any())).thenReturn(mockQuery)
+
+    `when`(mockQuery.whereGreaterThan(any<String>(), any())).thenReturn(mockQuery)
+    `when`(mockQuery.whereLessThan(any<String>(), any())).thenReturn(mockQuery)
+    `when`(mockQuery.whereEqualTo(any<String>(), any())).thenReturn(mockQuery)
+    `when`(mockQuery.limit(any())).thenReturn(mockQuery)
+    `when`(mockQuery.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
+
+    `when`(mockQuerySnapshot.documents).thenReturn(listOf(mockDocumentSnapshot))
+    `when`(mockDocumentSnapshot.id).thenReturn("1")
+    `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_NAME)).thenReturn("Test Recipe")
+    `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_CATEGORY)).thenReturn("Category")
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INSTRUCTIONS_TEXT))
+        .thenReturn(listOf("Instructions1", "Instructions2", "Instructions3"))
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INSTRUCTION_TIME))
+        .thenReturn(listOf("Time1", "", "Time3"))
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INSTRUCTION_ICON))
+        .thenReturn(listOf("Cook", "", "Fire"))
+    `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_PICTURE_ID)).thenReturn("ThumbUrl")
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INGREDIENTS))
+        .thenReturn(listOf("Ingredient1", "Ingredient2"))
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_MEASUREMENTS))
+        .thenReturn(listOf("Measurement1", "Measurement2"))
+
+    // Mock Firestore query to return the mock QuerySnapshot
+    `when`(mockQuery.orderBy(any<String>())).thenReturn(mockCollectionReference)
+    `when`(mockQuery.limit(any())).thenReturn(mockQuery)
+    `when`(mockQuery.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
+    `when`(mockCollectionReference.whereEqualTo(FIRESTORE_RECIPE_CATEGORY, "Category"))
+        .thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.orderBy(any<String>())).thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.limit(any())).thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
+
+    val fetchedRecipes = mutableListOf<Recipe>()
+    firestoreFirebaseRepository.filterSearch(
+        filter = filterWithTimeAndPrice,
+        onSuccess = { recipes -> fetchedRecipes += recipes },
+        onFailure = { fail("Failure callback should not be called") },
+        limit = 1)
+
+    shadowOf(Looper.getMainLooper()).idle()
+    assertEquals(1, fetchedRecipes.size)
+  }
+
+  @Test
+  fun `test filterSearch function correctly passes through filter ifs filterWithTime`() {
+    val mockQuerySnapshot = mock(QuerySnapshot::class.java)
+    val mockDocumentSnapshot = mock(DocumentSnapshot::class.java)
+    val mockQuery = mock(Query::class.java)
+
+    `when`(mockCollectionReference.whereEqualTo(any<String>(), any())).thenReturn(mockQuery)
+    `when`(mockCollectionReference.whereGreaterThan(any<String>(), any())).thenReturn(mockQuery)
+    `when`(mockCollectionReference.whereLessThan(any<String>(), any())).thenReturn(mockQuery)
+
+    `when`(mockQuery.whereGreaterThan(any<String>(), any())).thenReturn(mockQuery)
+    `when`(mockQuery.whereLessThan(any<String>(), any())).thenReturn(mockQuery)
+    `when`(mockQuery.whereEqualTo(any<String>(), any())).thenReturn(mockQuery)
+    `when`(mockQuery.limit(any())).thenReturn(mockQuery)
+    `when`(mockQuery.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
+
+    `when`(mockQuerySnapshot.documents).thenReturn(listOf(mockDocumentSnapshot))
+    `when`(mockDocumentSnapshot.id).thenReturn("1")
+    `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_NAME)).thenReturn("Test Recipe")
+    `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_CATEGORY)).thenReturn("Category")
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INSTRUCTIONS_TEXT))
+        .thenReturn(listOf("Instructions1", "Instructions2", "Instructions3"))
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INSTRUCTION_TIME))
+        .thenReturn(listOf("Time1", "", "Time3"))
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INSTRUCTION_ICON))
+        .thenReturn(listOf("Cook", "", "Fire"))
+    `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_PICTURE_ID)).thenReturn("ThumbUrl")
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INGREDIENTS))
+        .thenReturn(listOf("Ingredient1", "Ingredient2"))
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_MEASUREMENTS))
+        .thenReturn(listOf("Measurement1", "Measurement2"))
+
+    // Mock Firestore query to return the mock QuerySnapshot
+    `when`(mockQuery.orderBy(any<String>())).thenReturn(mockCollectionReference)
+    `when`(mockQuery.limit(any())).thenReturn(mockQuery)
+    `when`(mockQuery.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
+    `when`(mockCollectionReference.whereEqualTo(FIRESTORE_RECIPE_CATEGORY, "Category"))
+        .thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.orderBy(any<String>())).thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.limit(any())).thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
+
+    val fetchedRecipes = mutableListOf<Recipe>()
+    firestoreFirebaseRepository.filterSearch(
+        filter = filterWithTimeAndPrice,
+        onSuccess = { recipes -> fetchedRecipes += recipes },
+        onFailure = { fail("Failure callback should not be called") },
+        limit = 1)
+
+    // check if all calls were made correctly
+    verify(mockCollectionReference, times(0)).whereEqualTo(any<String>(), any())
+    verify(mockCollectionReference, times(0)).whereGreaterThan(any<String>(), any())
+
+    verify(mockQuery, times(0)).whereLessThan(any<String>(), any())
+
+    verify(mockQuery, times(0)).whereEqualTo(any<String>(), any())
+
+    shadowOf(Looper.getMainLooper()).idle()
+
+    assertEquals(1, fetchedRecipes.size)
+  }
+
+  @Test
+  fun `test filterSearch function correctly passes through filter ifs filterWithCategory`() {
+    val mockQuerySnapshot = mock(QuerySnapshot::class.java)
+    val mockDocumentSnapshot = mock(DocumentSnapshot::class.java)
+    val mockQuery = mock(Query::class.java)
+
+    `when`(mockCollectionReference.whereEqualTo(any<String>(), any())).thenReturn(mockQuery)
+    `when`(mockCollectionReference.whereGreaterThan(any<String>(), any())).thenReturn(mockQuery)
+    `when`(mockCollectionReference.whereLessThan(any<String>(), any())).thenReturn(mockQuery)
+
+    `when`(mockQuery.whereGreaterThan(any<String>(), any())).thenReturn(mockQuery)
+    `when`(mockQuery.whereLessThan(any<String>(), any())).thenReturn(mockQuery)
+    `when`(mockQuery.whereEqualTo(any<String>(), any())).thenReturn(mockQuery)
+    `when`(mockQuery.limit(any())).thenReturn(mockQuery)
+    `when`(mockQuery.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
+
+    `when`(mockQuerySnapshot.documents).thenReturn(listOf(mockDocumentSnapshot))
+    `when`(mockDocumentSnapshot.id).thenReturn("1")
+    `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_NAME)).thenReturn("Test Recipe")
+    `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_CATEGORY)).thenReturn("Category")
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INSTRUCTIONS_TEXT))
+        .thenReturn(listOf("Instructions1", "Instructions2", "Instructions3"))
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INSTRUCTION_TIME))
+        .thenReturn(listOf("Time1", "", "Time3"))
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INSTRUCTION_ICON))
+        .thenReturn(listOf("Cook", "", "Fire"))
+    `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_PICTURE_ID)).thenReturn("ThumbUrl")
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INGREDIENTS))
+        .thenReturn(listOf("Ingredient1", "Ingredient2"))
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_MEASUREMENTS))
+        .thenReturn(listOf("Measurement1", "Measurement2"))
+
+    // Mock Firestore query to return the mock QuerySnapshot
+    `when`(mockQuery.orderBy(any<String>())).thenReturn(mockCollectionReference)
+    `when`(mockQuery.limit(any())).thenReturn(mockQuery)
+    `when`(mockQuery.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
+    `when`(mockCollectionReference.whereEqualTo(FIRESTORE_RECIPE_CATEGORY, "Category"))
+        .thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.orderBy(any<String>())).thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.limit(any())).thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
+
+    val fetchedRecipes = mutableListOf<Recipe>()
+    firestoreFirebaseRepository.filterSearch(
+        filter = filterWithCategory,
+        onSuccess = { recipes -> fetchedRecipes += recipes },
+        onFailure = { fail("Failure callback should not be called") },
+        limit = 1)
+
+    /*
+    check if all calls were made correctly, the logic here is done in a way where the first
+    filter is done with the mockCollectionReference object and then it is casted  to a mockQuery
+    */
+    verify(mockCollectionReference, times(1)).whereEqualTo(any<String>(), any())
+
+    verify(mockQuery, times(0)).whereGreaterThan(any<String>(), any())
+    verify(mockQuery, times(1)).whereLessThan(any<String>(), any())
+
+    verify(mockQuery, times(0)).whereEqualTo(any<String>(), any())
+
+    shadowOf(Looper.getMainLooper()).idle()
+
+    assertEquals(1, fetchedRecipes.size)
+  }
+
+  @Test
+  fun `test filterSearch function correctly passes through filter ifs filterWithDifficultyAndTimeAndPrice`() {
+    val mockQuerySnapshot = mock(QuerySnapshot::class.java)
+    val mockDocumentSnapshot = mock(DocumentSnapshot::class.java)
+    val mockQuery = mock(Query::class.java)
+
+    `when`(mockCollectionReference.whereEqualTo(any<String>(), any())).thenReturn(mockQuery)
+    `when`(mockCollectionReference.whereGreaterThan(any<String>(), any())).thenReturn(mockQuery)
+    `when`(mockCollectionReference.whereLessThan(any<String>(), any())).thenReturn(mockQuery)
+
+    `when`(mockQuery.whereGreaterThan(any<String>(), any())).thenReturn(mockQuery)
+    `when`(mockQuery.whereLessThan(any<String>(), any())).thenReturn(mockQuery)
+    `when`(mockQuery.whereEqualTo(any<String>(), any())).thenReturn(mockQuery)
+    `when`(mockQuery.limit(any())).thenReturn(mockQuery)
+    `when`(mockQuery.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
+
+    `when`(mockQuerySnapshot.documents).thenReturn(listOf(mockDocumentSnapshot))
+    `when`(mockDocumentSnapshot.id).thenReturn("1")
+    `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_NAME)).thenReturn("Test Recipe")
+    `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_CATEGORY)).thenReturn("Category")
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INSTRUCTIONS_TEXT))
+        .thenReturn(listOf("Instructions1", "Instructions2", "Instructions3"))
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INSTRUCTION_TIME))
+        .thenReturn(listOf("Time1", "", "Time3"))
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INSTRUCTION_ICON))
+        .thenReturn(listOf("Cook", "", "Fire"))
+    `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_PICTURE_ID)).thenReturn("ThumbUrl")
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INGREDIENTS))
+        .thenReturn(listOf("Ingredient1", "Ingredient2"))
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_MEASUREMENTS))
+        .thenReturn(listOf("Measurement1", "Measurement2"))
+
+    // Mock Firestore query to return the mock QuerySnapshot
+    `when`(mockQuery.orderBy(any<String>())).thenReturn(mockCollectionReference)
+    `when`(mockQuery.limit(any())).thenReturn(mockQuery)
+    `when`(mockQuery.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
+    `when`(mockCollectionReference.whereEqualTo(FIRESTORE_RECIPE_CATEGORY, "Category"))
+        .thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.orderBy(any<String>())).thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.limit(any())).thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
+
+    val fetchedRecipes = mutableListOf<Recipe>()
+    firestoreFirebaseRepository.filterSearch(
+        filter = filterWithDifficultyAndTimeAndPrice,
+        onSuccess = { recipes -> fetchedRecipes += recipes },
+        onFailure = { fail("Failure callback should not be called") },
+        limit = 1)
+
+    /*
+    check if all calls were made correctly, the logic here is done in a way where the first
+    filter is done with the mockCollectionReference object and then it is casted  to a mockQuery
+    */
+    verify(mockCollectionReference, times(0)).whereEqualTo(any<String>(), any())
+    verify(mockCollectionReference, times(0)).whereGreaterThan(any<String>(), any())
+
+    verify(mockCollectionReference, times(1)).whereLessThan(any<String>(), any())
+
+    verify(mockQuery, times(1)).whereEqualTo(any<String>(), any())
+
+    shadowOf(Looper.getMainLooper()).idle()
+
+    assertEquals(1, fetchedRecipes.size)
+  }
+
+  @Test
+  fun `test filterSearch function correctly passes through filter ifs filterWithDifficulty`() {
+    val mockQuerySnapshot = mock(QuerySnapshot::class.java)
+    val mockDocumentSnapshot = mock(DocumentSnapshot::class.java)
+    val mockQuery = mock(Query::class.java)
+
+    `when`(mockCollectionReference.whereEqualTo(any<String>(), any())).thenReturn(mockQuery)
+    `when`(mockCollectionReference.whereGreaterThan(any<String>(), any())).thenReturn(mockQuery)
+    `when`(mockCollectionReference.whereLessThan(any<String>(), any())).thenReturn(mockQuery)
+
+    `when`(mockQuery.whereGreaterThan(any<String>(), any())).thenReturn(mockQuery)
+    `when`(mockQuery.whereLessThan(any<String>(), any())).thenReturn(mockQuery)
+    `when`(mockQuery.whereEqualTo(any<String>(), any())).thenReturn(mockQuery)
+    `when`(mockQuery.limit(any())).thenReturn(mockQuery)
+    `when`(mockQuery.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
+
+    `when`(mockQuerySnapshot.documents).thenReturn(listOf(mockDocumentSnapshot))
+    `when`(mockDocumentSnapshot.id).thenReturn("1")
+    `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_NAME)).thenReturn("Test Recipe")
+    `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_CATEGORY)).thenReturn("Category")
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INSTRUCTIONS_TEXT))
+        .thenReturn(listOf("Instructions1", "Instructions2", "Instructions3"))
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INSTRUCTION_TIME))
+        .thenReturn(listOf("Time1", "", "Time3"))
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INSTRUCTION_ICON))
+        .thenReturn(listOf("Cook", "", "Fire"))
+    `when`(mockDocumentSnapshot.getString(FIRESTORE_RECIPE_PICTURE_ID)).thenReturn("ThumbUrl")
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_INGREDIENTS))
+        .thenReturn(listOf("Ingredient1", "Ingredient2"))
+    `when`(mockDocumentSnapshot.get(FIRESTORE_RECIPE_MEASUREMENTS))
+        .thenReturn(listOf("Measurement1", "Measurement2"))
+
+    // Mock Firestore query to return the mock QuerySnapshot
+    `when`(mockQuery.orderBy(any<String>())).thenReturn(mockCollectionReference)
+    `when`(mockQuery.limit(any())).thenReturn(mockQuery)
+    `when`(mockQuery.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
+    `when`(mockCollectionReference.whereEqualTo(FIRESTORE_RECIPE_CATEGORY, "Category"))
+        .thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.orderBy(any<String>())).thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.limit(any())).thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
+
+    val fetchedRecipes = mutableListOf<Recipe>()
+    firestoreFirebaseRepository.filterSearch(
+        filter = filterWithDifficulty,
+        onSuccess = { recipes -> fetchedRecipes += recipes },
+        onFailure = { fail("Failure callback should not be called") },
+        limit = 1)
+
+    /*
+    check if all calls were made correctly, the logic here is done in a way where the first
+    filter is done with the mockCollectionReference object and then it is casted  to a mockQuery
+    */
+    verify(mockCollectionReference, times(1)).whereEqualTo(any<String>(), any())
+    verify(mockCollectionReference, times(0)).whereGreaterThan(any<String>(), any())
+
+    verify(mockQuery, times(0)).whereGreaterThan(any<String>(), any())
+    verify(mockQuery, times(0)).whereLessThan(any<String>(), any())
+
+    verify(mockQuery, times(0)).whereEqualTo(any<String>(), any())
+
+    shadowOf(Looper.getMainLooper()).idle()
+
+    assertEquals(1, fetchedRecipes.size)
   }
 }

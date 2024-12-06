@@ -1,5 +1,6 @@
 package com.android.sample.model.recipe.networkData
 
+import com.android.sample.model.filter.Filter
 import com.android.sample.model.recipe.Instruction
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.resources.C.Tag.MAXIMUM_RECIPES_TO_FETCH_MEAL_DB
@@ -211,7 +212,16 @@ class MealDBRecipesRepository(private val client: OkHttpClient) : RecipeNetworkR
             })
   }
 
-  override fun listCategories(onSuccess: (List<String>) -> Unit, onFailure: (Exception) -> Unit) {
+  override fun filterSearch(
+      filter: Filter,
+      onSuccess: (List<Recipe>) -> Unit,
+      onFailure: (Exception) -> Unit,
+      limit: Int
+  ) {
+    throw UnsupportedOperationException(UNSUPPORTED_MESSAGE)
+  }
+
+  fun listCategories(onSuccess: (List<String>) -> Unit, onFailure: (Exception) -> Unit) {
     val url = MEAL_DB_URL + "categories.php"
     val request =
         Request.Builder().url(url).header(MEAL_DB_USER_AGENT, MEAL_DB_USER_AGENT_VALUE).build()

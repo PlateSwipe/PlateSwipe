@@ -1,6 +1,7 @@
 package com.android.sample.ui.swipePage
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.animateFloatAsState
@@ -109,6 +110,7 @@ import com.android.sample.resources.C.Dimension.SwipePage.STAR_SIZE
 import com.android.sample.resources.C.Dimension.SwipePage.STAR_WEIGHT
 import com.android.sample.resources.C.Dimension.SwipePage.SWIPE_THRESHOLD
 import com.android.sample.resources.C.Dimension.SwipePage.THRESHOLD_INTENSITY
+import com.android.sample.resources.C.Tag.Filter.UNINITIALIZED_BORN_VALUE
 import com.android.sample.resources.C.Tag.LOADING
 import com.android.sample.resources.C.Tag.PADDING
 import com.android.sample.resources.C.Tag.SMALL_PADDING
@@ -130,7 +132,6 @@ import com.android.sample.resources.C.TestTag.SwipePage.DIFFICULTY_CHIP
 import com.android.sample.resources.C.TestTag.SwipePage.DRAGGABLE_ITEM
 import com.android.sample.resources.C.TestTag.SwipePage.FILTER
 import com.android.sample.resources.C.TestTag.SwipePage.FILTER_ROW
-import com.android.sample.resources.C.TestTag.SwipePage.PRICE_RANGE_CHIP
 import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_IMAGE_1
 import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_IMAGE_2
 import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_NAME
@@ -295,9 +296,7 @@ fun RecipeDisplay(
                     var displayTimeRange by remember {
                       mutableStateOf(!filter.timeRange.isLimited())
                     }
-                    var displayPriceRange by remember {
-                      mutableStateOf(!filter.priceRange.isLimited())
-                    }
+
                     var displayDifficulty by remember {
                       mutableStateOf(filter.difficulty != Difficulty.Undefined)
                     }
@@ -307,9 +306,14 @@ fun RecipeDisplay(
                         displayState = displayTimeRange,
                         onDelete = {
                           displayTimeRange = false
-                          recipesViewModel.updateTimeRange(
-                              recipesViewModel.filter.value.timeRange.minBorn,
-                              recipesViewModel.filter.value.timeRange.maxBorn)
+                          if (checkIfFilterUsed(
+                              displayTimeRange,
+                              displayDifficulty,
+                              displayCategory,
+                              recipesViewModel)) {
+                            recipesViewModel.updateTimeRange(
+                                UNINITIALIZED_BORN_VALUE, UNINITIALIZED_BORN_VALUE)
+                          }
                           recipesViewModel.applyChanges()
                         },
                         label =
@@ -318,24 +322,16 @@ fun RecipeDisplay(
                         contentDescription = stringResource(R.string.time_range_name))
 
                     FilterChip(
-                        displayState = displayPriceRange,
-                        onDelete = {
-                          displayPriceRange = false
-                          recipesViewModel.updatePriceRange(
-                              recipesViewModel.filter.value.priceRange.minBorn,
-                              recipesViewModel.filter.value.priceRange.maxBorn)
-                          recipesViewModel.applyChanges()
-                        },
-                        label =
-                            "${filter.priceRange.min.toInt()} - ${filter.priceRange.max.toInt()} $",
-                        testTag = PRICE_RANGE_CHIP,
-                        contentDescription = stringResource(R.string.price_range_name))
-
-                    FilterChip(
                         displayState = displayDifficulty,
                         onDelete = {
                           displayDifficulty = false
-                          recipesViewModel.updateDifficulty(Difficulty.Undefined)
+                          if (checkIfFilterUsed(
+                              displayTimeRange,
+                              displayDifficulty,
+                              displayCategory,
+                              recipesViewModel)) {
+                            recipesViewModel.updateDifficulty(Difficulty.Undefined)
+                          }
                           recipesViewModel.applyChanges()
                         },
                         label = filter.difficulty.toString(),
@@ -346,7 +342,13 @@ fun RecipeDisplay(
                         displayState = displayCategory,
                         onDelete = {
                           displayCategory = false
-                          recipesViewModel.updateCategory(null)
+                          if (checkIfFilterUsed(
+                              displayTimeRange,
+                              displayDifficulty,
+                              displayCategory,
+                              recipesViewModel)) {
+                            recipesViewModel.updateCategory(null)
+                          }
                           recipesViewModel.applyChanges()
                         },
                         label = filter.category.orEmpty(),
@@ -450,6 +452,20 @@ fun RecipeDisplay(
               }
             }
       }
+}
+
+fun checkIfFilterUsed(
+    time: Boolean,
+    difficulty: Boolean,
+    category: Boolean,
+    recipesViewModel: RecipesViewModel
+): Boolean {
+  Log.d("SwipePage", "checkIfFilterUsed $time $difficulty $category")
+  if ((!time) && (!difficulty) && (!category)) {
+    recipesViewModel.resetFilters()
+    return false
+  }
+  return true
 }
 
 /**

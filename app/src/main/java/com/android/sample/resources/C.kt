@@ -90,9 +90,7 @@ object C {
 
     object FilterPage {
       const val TIME_RANGE_MIN = 0f
-      const val TIME_RANGE_MAX = 200f
-      const val PRICE_RANGE_MIN = 0f
-      const val PRICE_RANGE_MAX = 100f
+      const val TIME_RANGE_MAX = 1440f // 24h*60min
       const val MAX_ITEM_IN_ROW = 3 // Choose to optimize with medium and small phone
       const val SLIDER_COLOR_ACTIVE = 0.4f
       const val SLIDER_COLOR_INACTIVE = 0.2f
@@ -175,6 +173,7 @@ object C {
       const val NOT_ENOUGH_RECIPE_MSG = "Not enough recipes found"
       const val REPOSITORY_TAG_MSG = "FirestoreRecipesRepository"
       const val ERROR_GETTING_DOCUMENT = "Error getting documents"
+      const val FILTER_RANDOM_FACTOR = 5
     }
 
     // UserRepositoryFirestore
