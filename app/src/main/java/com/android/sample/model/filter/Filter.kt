@@ -37,7 +37,10 @@ data class FloatRange(var min: Float, var max: Float, var minBorn: Float, var ma
     max = newMax
   }
 
+  /** Checks if the range is limited. */
   fun isLimited() =
+      // Check if there was a change in the range value to avoid unnecessary calls to the database
+      // with the time filter
       !((min.toInt() != TIME_RANGE_MIN.toInt() || max.toInt() != TIME_RANGE_MAX.toInt()) &&
           (min != minBorn || max != maxBorn) &&
           (min != UNINITIALIZED_BORN_VALUE && max != UNINITIALIZED_BORN_VALUE))
