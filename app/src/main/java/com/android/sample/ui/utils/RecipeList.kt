@@ -27,7 +27,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.FileDownloadOff
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.rounded.FileDownload
 import androidx.compose.material.icons.rounded.FileDownloadOff
@@ -279,7 +278,7 @@ fun TopCornerUnLikeButton(
   var recipeUnlike: Boolean by remember { mutableStateOf(false) }
   // Check if the recipe is in the recipe download list
   var recipeDownload: Boolean by remember {
-    mutableStateOf(recipeDownloadList.value.find { it.uid == recipe.uid } != null)
+    mutableStateOf(recipeDownloadList.value.any { it.uid == recipe.uid })
   }
   // Used to determine when we want to download a recipe
   var download: Boolean by remember { mutableStateOf(false) }
