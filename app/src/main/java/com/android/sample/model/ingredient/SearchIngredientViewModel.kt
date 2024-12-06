@@ -54,35 +54,15 @@ interface SearchIngredientViewModel {
   fun fetchIngredientByName(name: String)
 
   /**
-   * Add the first integer in the two strings
+   * Perform an addition operation of the first integers of two string quantities
    *
    * @param quantity1: the first string quantity to add
    * @param quantity2: the second string quantity to add
    */
   private fun addFirstInt(quantity1: String?, quantity2: String?): String {
-    /*
     if (quantity1 == null || quantity2 == null) {
       return quantity1 ?: quantity2 ?: ""
     }
-
-    // Regular expression to find the first integer in the string
-    val regex = Regex("""\d+""")
-    val match1 = regex.find(quantity1)
-    val match2 = regex.find(quantity2)
-
-    // If both strings contain an integer, add them together
-    return if (match1 != null && match2 != null) {
-      val addition = match1.value.toInt() + match2.value.toInt()
-      quantity1.replaceFirst(match1.value, addition.toString())
-    } else if (match1 != null) {
-      quantity1
-    } else {
-      quantity2
-    }*/
-    if (quantity1 == null || quantity2 == null) {
-      return quantity1 ?: quantity2 ?: ""
-    }
-
     // Regular expression to find the first number in the string, considering possible decimal
     // separators
     val regex = Regex("""\d+[,.]?\d*""")
@@ -96,7 +76,7 @@ interface SearchIngredientViewModel {
       val number2 = match2.value.replace(',', '.').toDouble()
       val addition = number1 + number2
 
-      // Format the result, replace the first occurrence, and return
+      // Format the result, replace the first occurrence, delete .0 and ,0 and return
       quantity1
           .replaceFirst(match1.value, addition.toString())
           .replaceFirst(".0", "")
