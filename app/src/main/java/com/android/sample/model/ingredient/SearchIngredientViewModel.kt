@@ -130,7 +130,7 @@ interface SearchIngredientViewModel {
         }
       } else {
         // Ingredient doesn't exist; add it to the list
-        currentList + (ingredient to ingredient.quantity)
+        currentList + (ingredient to (ingredient.quantity?.replaceFirst(",", ".") ?: ""))
       }
     }
   }
