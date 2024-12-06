@@ -3,6 +3,7 @@ package com.android.sample.utils
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
@@ -17,6 +18,7 @@ import com.android.sample.model.recipe.networkData.FirestoreRecipesRepository
 import com.android.sample.model.user.UserRepository
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_CARD_TEST_TAG
+import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_DOWNLOAD_ICON_TEST_TAG
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_FAVORITE_ICON_TEST_TAG
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_IMAGE_TEST_TAG
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_TITLE_TEST_TAG
@@ -24,6 +26,7 @@ import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.utils.RecipeList
 import com.android.sample.ui.utils.TopCornerUnLikeButton
+import com.android.sample.ui.utils.testRecipes
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import org.junit.Before
@@ -168,4 +171,21 @@ class RecipeListTest {
     composeTestRule.waitForIdle()
     assert(selected)
   }
+
+    @Test
+    fun testTopCornerUnLikeButton() {
+        recipesViewModel.setDownload(testRecipes)
+        composeTestRule.setContent {
+            TopCornerUnLikeButton(recipe = testRecipes[0], userViewModel = userViewModel, recipesViewModel)
+        }
+        composeTestRule.onNodeWithTag(RECIPE_DOWNLOAD_ICON_TEST_TAG).assertIsDisplayed().performClick()
+    }
+
+    @Test
+    fun testTopCornerUnLikeButtonNotDownload() {
+        composeTestRule.setContent {
+            TopCornerUnLikeButton(recipe = testRecipes[0], userViewModel = userViewModel, recipesViewModel)
+        }
+        composeTestRule.onNodeWithTag(RECIPE_DOWNLOAD_ICON_TEST_TAG).assertIsDisplayed().performClick()
+    }
 }
