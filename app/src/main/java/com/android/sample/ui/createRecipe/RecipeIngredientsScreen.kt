@@ -15,7 +15,7 @@ fun RecipeIngredientsScreen(
     navigationActions: NavigationActions,
     ingredientViewModel: IngredientViewModel,
     currentStep: Int,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
   val ingredientList by ingredientViewModel.ingredientList.collectAsState()
 

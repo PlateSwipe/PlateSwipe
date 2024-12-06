@@ -137,6 +137,17 @@ val testIngredients =
           images = ingredientImages,
       )
     }
+val testIngredientsNullCategory =
+    ingredientNames.mapIndexed { index, name ->
+      Ingredient(
+          uid = (index + 1).toString(),
+          barCode = index.toLong(),
+          name = name,
+          brands = ingredientBrands[index],
+          categories = ingredientCategories[index],
+          images = ingredientImages,
+      )
+    }
 
 val ingredientExpirationDateExample: LocalDate = LocalDate.of(2024, 11, 25)
 
@@ -174,6 +185,7 @@ val testUsers: List<User> =
             "",
             listOf(testFridgeItem[0]),
             listOf(testRecipes[0].uid),
-            listOf(testRecipes[1].uid)),
-        User("002", "Ion Popescu", "", emptyList(), emptyList(), emptyList()),
+            listOf(testRecipes[1].uid),
+            "25/01/2002"),
+        User("002", "Ion Popescu", "", emptyList(), emptyList(), emptyList(), ""),
     )

@@ -44,16 +44,15 @@ import com.android.sample.resources.C.Dimension.PADDING_4
 import com.android.sample.resources.C.Dimension.PADDING_8
 import com.android.sample.resources.C.Dimension.SwipePage.BUTTON_ELEVATION
 import com.android.sample.resources.C.Dimension.SwipePage.BUTTON_RADIUS
+import com.android.sample.resources.C.Tag.Filter.UNINITIALIZED_BORN_VALUE
 import com.android.sample.resources.C.Tag.FilterPage.MAX_ITEM_IN_ROW
-import com.android.sample.resources.C.Tag.FilterPage.PRICE_RANGE_MAX
-import com.android.sample.resources.C.Tag.FilterPage.PRICE_RANGE_MIN
 import com.android.sample.resources.C.Tag.FilterPage.SLIDER_COLOR_ACTIVE
 import com.android.sample.resources.C.Tag.FilterPage.SLIDER_COLOR_INACTIVE
 import com.android.sample.resources.C.Tag.FilterPage.TIME_RANGE_MAX
 import com.android.sample.resources.C.Tag.FilterPage.TIME_RANGE_MIN
+import com.android.sample.resources.C.Tag.MINUTES_PER_HOUR
 import com.android.sample.resources.C.TestTag.FilterPage.TEST_TAG_CATEGORY
 import com.android.sample.resources.C.TestTag.FilterPage.TEST_TAG_DIFFICULTY
-import com.android.sample.resources.C.TestTag.FilterPage.TEST_TAG_PRICE_RANGE_SLIDER
 import com.android.sample.resources.C.TestTag.FilterPage.TEST_TAG_TIME_RANGE_SLIDER
 import com.android.sample.resources.C.TestTag.SwipePage.VIEW_RECIPE_BUTTON
 import com.android.sample.ui.navigation.NavigationActions
@@ -101,17 +100,16 @@ fun FilterBox(
             name = stringResource(id = R.string.time_range_name),
             min = TIME_RANGE_MIN,
             max = TIME_RANGE_MAX,
-            unit = stringResource(id = R.string.time_unit),
             range = filterViewModel.timeRangeState,
-            updateRange = { newMin, newMax -> filterViewModel.updateTimeRange(newMin, newMax) })
-        ValueRangeSlider(
-            modifier = Modifier.testTag(TEST_TAG_PRICE_RANGE_SLIDER),
-            name = stringResource(id = R.string.price_range_name),
-            min = PRICE_RANGE_MIN,
-            max = PRICE_RANGE_MAX,
-            unit = stringResource(id = R.string.price_unit),
-            range = filterViewModel.priceRangeState,
-            updateRange = { newMin, newMax -> filterViewModel.updatePriceRange(newMin, newMax) })
+            updateRange = { newMin, newMax ->
+              // only update when time range is changed
+              if (newMin.toInt() > TIME_RANGE_MIN.toInt() ||
+                  newMax.toInt() < TIME_RANGE_MAX.toInt()) {
+                filterViewModel.updateTimeRange(newMin, newMax)
+              } else {
+                filterViewModel.updateTimeRange(UNINITIALIZED_BORN_VALUE, UNINITIALIZED_BORN_VALUE)
+              }
+            })
 
         val difficultyLevels = listOf(Difficulty.Easy, Difficulty.Medium, Difficulty.Hard)
         val selectedDifficulty = filter.difficulty
@@ -163,7 +161,11 @@ fun FilterBox(
 
           // Reset button to reset all filters to their default values
           Button(
-              onClick = { filterViewModel.resetFilters() },
+              onClick = {
+                filterViewModel.resetFilters()
+                filterViewModel.applyChanges()
+                navigationActions.navigateTo(Screen.SWIPE)
+              },
               colors =
                   ButtonDefaults.buttonColors(
                       containerColor = MaterialTheme.colorScheme.onSecondaryContainer,
@@ -185,6 +187,23 @@ fun FilterBox(
 }
 
 /**
+ * Composable function to reformat the time.
+ *
+ * @param time The time to reformat in minutes.
+ */
+@Composable
+fun reformatTime(time: Float): String {
+  val timeInt = time.toInt()
+  return if (timeInt > MINUTES_PER_HOUR) {
+    val hours = timeInt / MINUTES_PER_HOUR
+    val minutes = timeInt % MINUTES_PER_HOUR
+    "$hours h $minutes ${stringResource(id = R.string.time_unit)}"
+  } else {
+    "$timeInt ${stringResource(id = R.string.time_unit)}"
+  }
+}
+
+/**
  * Composable function to display a range slider.
  *
  * @param name The name of the slider.
@@ -201,7 +220,6 @@ fun ValueRangeSlider(
     name: String,
     min: Float,
     max: Float,
-    unit: String,
     range: StateFlow<FloatRange>,
     updateRange: (Float, Float) -> Unit,
 ) {
@@ -226,18 +244,18 @@ fun ValueRangeSlider(
         // Display selected min and max values
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
           Text(
-              "${rangeSlider.value.start.toInt()} " + unit,
+              reformatTime(rangeSlider.value.start),
               style = MaterialTheme.typography.bodyMedium,
               color = MaterialTheme.colorScheme.onPrimary)
           Text(
-              "${rangeSlider.value.endInclusive.toInt()} " + unit,
+              reformatTime(rangeSlider.value.endInclusive),
               style = MaterialTheme.typography.bodyMedium,
               color = MaterialTheme.colorScheme.onPrimary)
         }
 
         Spacer(modifier = Modifier.height(PADDING_8.dp))
 
-        // Range slider with minimum 0 and maximum 120 minutes
+        // Range slider with minimum 0 and maximum 1440 minutes
         RangeSlider(
             modifier = modifier.fillMaxWidth(),
             value = rangeSlider.value,

@@ -59,6 +59,8 @@ import com.android.sample.R
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.model.user.UserViewModel
+import com.android.sample.resources.C.Dimension.PADDING_4
+import com.android.sample.resources.C.Dimension.RecipeList.EDIT_ICON_SIZE
 import com.android.sample.resources.C.Dimension.RecipeList.POP_UP_CLIP
 import com.android.sample.resources.C.Dimension.RecipeList.POP_UP_DESCRIPTION_FONT_SIZE
 import com.android.sample.resources.C.Dimension.RecipeList.POP_UP_ELEVATION
@@ -238,6 +240,25 @@ private fun RecipeTitle(recipe: Recipe, modifier: Modifier) {
       fontWeight = FontWeight.Bold,
       maxLines = 1,
       overflow = TextOverflow.Ellipsis)
+}
+
+/**
+ * A button that when pressed, it will allow the user to edit the specific recipe.
+ *
+ * @param recipe the recipe to edit.
+ * @param onEditClicked the callback to invoke when the edit button is clicked.
+ */
+@Composable
+fun TopCornerEditButton(recipe: Recipe, onEditClicked: (Recipe) -> Unit) {
+  Icon(
+      painter = painterResource(id = R.drawable.pencil),
+      contentDescription = stringResource(R.string.edit_recipe_icon_description),
+      modifier =
+          Modifier.padding(PADDING_4.dp)
+              .size(EDIT_ICON_SIZE.dp)
+              .testTag(RECIPE_FAVORITE_ICON_TEST_TAG)
+              .clickable { onEditClicked(recipe) },
+      tint = MaterialTheme.colorScheme.onPrimary)
 }
 
 /**

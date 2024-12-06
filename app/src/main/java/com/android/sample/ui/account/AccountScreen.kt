@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.android.sample.R
 import com.android.sample.model.recipe.RecipesViewModel
+import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C.Dimension.AccountScreen.ACCOUNT_SCREEN_SELECTED_LIST_HEIGHT
 import com.android.sample.resources.C.Dimension.AccountScreen.ACCOUNT_SCREEN_SELECTED_LIST_SEPARATOR_FILL_MAX_WIDTH
@@ -46,6 +47,7 @@ import com.android.sample.resources.C.Tag.AccountScreen.PROFILE_PICTURE_CONTENT_
 import com.android.sample.resources.C.TestTag.AccountScreen.CREATED_RECIPES_BUTTON_TEST_TAG
 import com.android.sample.resources.C.TestTag.AccountScreen.LIKED_RECIPES_BUTTON_TEST_TAG
 import com.android.sample.resources.C.TestTag.AccountScreen.PROFILE_PICTURE_TEST_TAG
+import com.android.sample.resources.C.TestTag.AccountScreen.RECIPE_EDIT_ICON_TEST_TAG
 import com.android.sample.resources.C.TestTag.AccountScreen.USERNAME_TEST_TAG
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
@@ -53,6 +55,7 @@ import com.android.sample.ui.navigation.TopLevelDestinations
 import com.android.sample.ui.utils.PlateSwipeScaffold
 import com.android.sample.ui.utils.RecipeList
 import com.android.sample.ui.utils.TopCornerDeleteButton
+import com.android.sample.ui.utils.TopCornerEditButton
 import com.android.sample.ui.utils.TopCornerUnLikeButton
 import com.android.sample.utils.NetworkUtils
 
@@ -61,6 +64,11 @@ fun AccountScreen(
     navigationActions: NavigationActions,
     userViewModel: UserViewModel,
     recipeViewModel: RecipesViewModel
+) {
+fun AccountScreen(
+    navigationActions: NavigationActions,
+    userViewModel: UserViewModel,
+    createRecipeViewModel: CreateRecipeViewModel
 ) {
   LaunchedEffect(Unit) { userViewModel.getCurrentUser() }
 
@@ -87,6 +95,11 @@ fun AccountScreen(
               style = MaterialTheme.typography.titleMedium,
               color = MaterialTheme.colorScheme.onPrimary)
 
+          ListSelection(
+              navigationActions,
+              userViewModel,
+              modifier = Modifier.weight(.8f),
+              createRecipeViewModel)
           ListSelection(
               navigationActions, userViewModel, modifier = Modifier.weight(.8f), recipeViewModel)
         }
@@ -118,6 +131,8 @@ private fun ListSelectionButton(
 private fun ListSelection(
     navigationActions: NavigationActions,
     userViewModel: UserViewModel,
+    modifier: Modifier = Modifier,
+    createRecipeViewModel: CreateRecipeViewModel
     modifier: Modifier = Modifier,
     recipeViewModel: RecipesViewModel
 ) {
@@ -183,6 +198,12 @@ private fun ListSelection(
           if (selectedListIndex == 0) {
             TopCornerUnLikeButton(recipe, userViewModel, recipeViewModel)
           } else {
+            TopCornerEditButton(recipe) { selectedRecipe ->
+              createRecipeViewModel.resetInitializationState()
+              createRecipeViewModel.initializeRecipeForEditing(selectedRecipe)
+              navigationActions.navigateTo(Screen.EDIT_RECIPE)
+              Modifier.testTag(RECIPE_EDIT_ICON_TEST_TAG)
+            }
             TopCornerDeleteButton(recipe, userViewModel)
           }
         })
@@ -200,7 +221,7 @@ private fun ProfilePicture(profilePictureUrl: String?, modifier: Modifier = Modi
               rememberAsyncImagePainter(model = profilePictureUrl)
             },
         contentDescription = PROFILE_PICTURE_CONTENT_DESCRIPTION,
-        contentScale = ContentScale.Crop,
+        contentScale = ContentScale.FillBounds,
         modifier = Modifier.fillMaxSize().testTag(PROFILE_PICTURE_TEST_TAG))
   }
 }

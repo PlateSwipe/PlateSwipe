@@ -5,22 +5,13 @@ import com.android.sample.resources.C.Tag.Filter.MAX_SHOULD_NOT_BE_NEGATIVE
 import com.android.sample.resources.C.Tag.Filter.MIN_BORN_SHOULD_NOT_BE_NEGATIVE
 import com.android.sample.resources.C.Tag.Filter.MIN_SHOULD_NOT_BE_GREATER_THAN_MAX
 import com.android.sample.resources.C.Tag.Filter.MIN_SHOULD_NOT_BE_NEGATIVE
-import com.android.sample.resources.C.Tag.Filter.NEW_MAX_SHOULD_NOT_BE_NEGATIVE
-import com.android.sample.resources.C.Tag.Filter.NEW_MIN_AND_NEW_MAX_SHOULD_BE_WITHIN_RANGE
-import com.android.sample.resources.C.Tag.Filter.NEW_MIN_SHOULD_NOT_BE_NEGATIVE
-import com.android.sample.resources.C.Tag.Filter.NEW_MIN_SHOULD_NOT_EXCEED_MAX
 import com.android.sample.resources.C.Tag.Filter.UNINITIALIZED_BORN_VALUE
-import kotlin.math.roundToInt
+import com.android.sample.resources.C.Tag.FilterPage.TIME_RANGE_MAX
+import com.android.sample.resources.C.Tag.FilterPage.TIME_RANGE_MIN
 
 /** Filter class to store filter types. */
 open class Filter(
     var timeRange: FloatRange =
-        FloatRange(
-            UNINITIALIZED_BORN_VALUE,
-            UNINITIALIZED_BORN_VALUE,
-            UNINITIALIZED_BORN_VALUE,
-            UNINITIALIZED_BORN_VALUE),
-    var priceRange: FloatRange =
         FloatRange(
             UNINITIALIZED_BORN_VALUE,
             UNINITIALIZED_BORN_VALUE,
@@ -41,19 +32,18 @@ data class FloatRange(var min: Float, var max: Float, var minBorn: Float, var ma
   }
 
   fun update(newMin: Float, newMax: Float) {
-    require(0 <= newMin) { NEW_MIN_SHOULD_NOT_BE_NEGATIVE }
-    require(0 <= newMax) { NEW_MAX_SHOULD_NOT_BE_NEGATIVE }
-    require(newMin <= newMax) { NEW_MIN_SHOULD_NOT_EXCEED_MAX }
-    if (minBorn == UNINITIALIZED_BORN_VALUE && maxBorn == UNINITIALIZED_BORN_VALUE) {
-      minBorn = newMin.roundToInt().toFloat()
-      maxBorn = newMax.roundToInt().toFloat()
-    }
-    require(newMin >= minBorn && newMax <= maxBorn) { NEW_MIN_AND_NEW_MAX_SHOULD_BE_WITHIN_RANGE }
-    min = newMin.roundToInt().toFloat()
-    max = newMax.roundToInt().toFloat()
+    require(newMin <= newMax) { MIN_SHOULD_NOT_BE_GREATER_THAN_MAX }
+    min = newMin
+    max = newMax
   }
 
-  fun isLimited() = min == minBorn && max == maxBorn
+  /** Checks if the range is limited. */
+  fun isLimited() =
+      // Check if there was a change in the range value to avoid unnecessary calls to the database
+      // with the time filter
+      !((min.toInt() != TIME_RANGE_MIN.toInt() || max.toInt() != TIME_RANGE_MAX.toInt()) &&
+          (min != minBorn || max != maxBorn) &&
+          (min != UNINITIALIZED_BORN_VALUE && max != UNINITIALIZED_BORN_VALUE))
 }
 
 /** Enum class to store the difficulty of a recipe. */

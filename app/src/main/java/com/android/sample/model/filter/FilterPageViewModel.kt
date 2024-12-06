@@ -9,7 +9,6 @@ interface FilterPageViewModel {
   val tmpFilter: StateFlow<Filter>
   val categories: StateFlow<List<String>>
   val timeRangeState: StateFlow<FloatRange>
-  val priceRangeState: StateFlow<FloatRange>
 
   /** Fetches the list of categories from the repository. */
   fun getCategoryList()
@@ -20,14 +19,6 @@ interface FilterPageViewModel {
    * @param difficulty The difficulty to filter by.
    */
   fun updateDifficulty(difficulty: Difficulty)
-
-  /**
-   * Updates the price range filter.
-   *
-   * @param min The minimum price.
-   * @param max The maximum price.
-   */
-  fun updatePriceRange(min: Float, max: Float)
 
   /**
    * Updates the time range filter.

@@ -80,22 +80,11 @@ class RecipesViewModel(
   override val categories: StateFlow<List<String>>
     get() = _categories
 
+  private val isFilterUsed = MutableStateFlow(false)
+
   override val timeRangeState: StateFlow<FloatRange> =
       _tmpFilter
           .map { it.timeRange }
-          .stateIn(
-              viewModelScope,
-              SharingStarted.WhileSubscribed(),
-              initialValue =
-                  FloatRange(
-                      UNINITIALIZED_BORN_VALUE,
-                      UNINITIALIZED_BORN_VALUE,
-                      UNINITIALIZED_BORN_VALUE,
-                      UNINITIALIZED_BORN_VALUE))
-
-  override val priceRangeState: StateFlow<FloatRange> =
-      _tmpFilter
-          .map { it.priceRange }
           .stateIn(
               viewModelScope,
               SharingStarted.WhileSubscribed(),
@@ -135,16 +124,7 @@ class RecipesViewModel(
    */
   override fun updateDifficulty(difficulty: Difficulty) {
     _tmpFilter.value.difficulty = difficulty
-  }
-
-  /**
-   * Updates the price range filter.
-   *
-   * @param min The minimum price.
-   * @param max The maximum price.
-   */
-  override fun updatePriceRange(min: Float, max: Float) {
-    _tmpFilter.value.priceRange.update(min, max)
+    isFilterUsed.value = checkIfFilterUsed()
   }
 
   /**
@@ -155,6 +135,7 @@ class RecipesViewModel(
    */
   override fun updateTimeRange(min: Float, max: Float) {
     _tmpFilter.value.timeRange.update(min, max)
+    isFilterUsed.value = checkIfFilterUsed()
   }
 
   /** Applies the changes made to the filters. */
@@ -164,6 +145,7 @@ class RecipesViewModel(
       _recipes.value = emptyList()
       _currentRecipe.value = null
       _nextRecipe.value = null
+      isFilterUsed.value = checkIfFilterUsed()
       fetchRandomRecipes(NUMBER_RECIPES_TO_FETCH)
       _loading.collect { isLoading ->
         if (!isLoading) {
@@ -174,21 +156,28 @@ class RecipesViewModel(
     }
   }
 
+  /** Checks if the filter is used. */
+  private fun checkIfFilterUsed(): Boolean {
+    return _filter.value.difficulty != Difficulty.Undefined ||
+        _filter.value.category != null ||
+        _filter.value.timeRange.min != UNINITIALIZED_BORN_VALUE ||
+        _filter.value.timeRange.max != UNINITIALIZED_BORN_VALUE
+  }
+
   /** Resets all filters to their default values. */
   override fun resetFilters() {
+    isFilterUsed.value = false
     _tmpFilter.value = Filter()
+    _filter.value = Filter()
   }
 
   /** Initializes the filter. */
   override fun initFilter() {
 
-    if (_filter.value.priceRange.min != UNINITIALIZED_BORN_VALUE &&
-        _filter.value.priceRange.max != UNINITIALIZED_BORN_VALUE) {
-      _tmpFilter.value.priceRange.update(_filter.value.priceRange.min, _filter.value.priceRange.max)
-    }
     if (_filter.value.timeRange.min != UNINITIALIZED_BORN_VALUE &&
         _filter.value.timeRange.max != UNINITIALIZED_BORN_VALUE) {
-      _tmpFilter.value.timeRange.update(_filter.value.timeRange.min, _filter.value.timeRange.max)
+      _tmpFilter.value.timeRange.update(UNINITIALIZED_BORN_VALUE, UNINITIALIZED_BORN_VALUE)
+      _filter.value.timeRange.update(UNINITIALIZED_BORN_VALUE, UNINITIALIZED_BORN_VALUE)
     }
     _tmpFilter.value.difficulty = _filter.value.difficulty
     _tmpFilter.value.category = _filter.value.category
@@ -201,6 +190,7 @@ class RecipesViewModel(
    */
   override fun updateCategory(category: String?) {
     _tmpFilter.value.category = category
+    isFilterUsed.value = checkIfFilterUsed()
   }
 
   /**
@@ -212,11 +202,11 @@ class RecipesViewModel(
     require(numberOfRecipes >= 1) { "Number of fetched recipes must be at least 1" }
     _loading.value = true // Set loading to true while fetching
     // uncomment when backend is ready. Tested with hardcoded mealDB data
-    if (_filter.value.category != null) {
-      repository.searchByCategory(
-          _filter.value.category!!,
-          onSuccess = { recipes ->
-            _recipes.value += recipes
+    if (isFilterUsed.value) {
+      repository.filterSearch(
+          filter = _filter.value,
+          onSuccess = { categoryRecipes ->
+            _recipes.value += categoryRecipes
             _loading.value = false
           },
           onFailure = { exception ->

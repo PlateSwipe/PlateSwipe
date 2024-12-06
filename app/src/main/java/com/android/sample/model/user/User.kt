@@ -9,6 +9,7 @@ import com.android.sample.model.fridge.FridgeItem
  * @param fridge list of ingredients
  * @param likedRecipes list of liked recipes
  * @param createdRecipes list of created recipes
+ * @param dateOfBirth date of birth of the user
  */
 data class User(
     val uid: String,
@@ -16,5 +17,6 @@ data class User(
     val profilePictureUrl: String,
     val fridge: List<FridgeItem>,
     val likedRecipes: List<String>,
-    val createdRecipes: List<String>
+    val createdRecipes: List<String>,
+    val dateOfBirth: String
 )

@@ -22,6 +22,12 @@ object Screen {
 
   const val FRIDGE = "Fridge Screen"
 
+  const val FRIDGE_EDIT = "Edit Fridge Item Screen"
+
+  const val FRIDGE_SEARCH_ITEM = "Search Fridge Screen"
+
+  const val FRIDGE_SCAN_CODE_BAR = "Scan Code Bar Screen"
+
   const val SEARCH = "Search Screen"
 
   const val CREATE_RECIPE = "AddRecipe Screen"
@@ -42,6 +48,8 @@ object Screen {
 
   const val ACCOUNT = "Account Screen"
 
+  const val EDIT_ACCOUNT = "Edit Account Screen"
+
   const val OVERVIEW_RECIPE = "Overview Recipe Screen"
 
   const val OVERVIEW_RECIPE_ACCOUNT = "Overview Recipe Account Screen"
@@ -55,6 +63,12 @@ object Screen {
   const val CREATE_RECIPE_LIST_INGREDIENTS = "List Ingredients Screen"
 
   const val CREATE_RECIPE_TIME_PICKER = "Time Picker Screen"
+
+  const val EDIT_RECIPE = "Edit Recipe Screen"
+
+  const val EDIT_CATEGORY_SCREEN = "Edit Category Screen"
+
+  const val EDIT_RECIPE_LIST_INGREDIENTS = "Edit List Ingredients Screen"
 }
 
 data class TopLevelDestination(val route: String, val iconId: Int, val textId: String)

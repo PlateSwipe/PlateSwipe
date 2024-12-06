@@ -1,5 +1,6 @@
 package com.android.sample.model.recipe
 
+import com.android.sample.model.filter.Filter
 import com.android.sample.model.recipe.localData.RecipeLocalRepository
 import com.android.sample.model.recipe.networkData.RecipeNetworkRepository
 
@@ -101,16 +102,6 @@ class DefaultRecipeRepository(
   }
 
   /**
-   * Lists all recipe categories from the network repository.
-   *
-   * @param onSuccess Callback to be invoked when the listing is successful.
-   * @param onFailure Callback to be invoked when the listing fails.
-   */
-  override fun listCategories(onSuccess: (List<String>) -> Unit, onFailure: (Exception) -> Unit) {
-    networkRepository.listCategories(onSuccess, onFailure)
-  }
-
-  /**
    * Adds a recipe to the local repository.
    *
    * @param recipe The recipe to add.
@@ -155,5 +146,15 @@ class DefaultRecipeRepository(
    */
   override fun deleteAllDownloads(onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     localRepository.deleteAll(onSuccess, onFailure)
+  }
+
+  override fun filterSearch(
+      filter: Filter,
+      onSuccess: (List<Recipe>) -> Unit,
+      onFailure: (Exception) -> Unit,
+      limit: Int
+  ) {
+    networkRepository.filterSearch(
+        filter = filter, onSuccess = onSuccess, onFailure = onFailure, limit = limit)
   }
 }
