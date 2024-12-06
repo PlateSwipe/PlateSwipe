@@ -1,12 +1,14 @@
 package com.android.sample.model.recipe
 
 import android.content.Context
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.sample.model.filter.Difficulty
 import com.android.sample.model.image.ImageDownload
 import com.android.sample.resources.C.Tag.NUMBER_RECIPES_TO_FETCH
 import com.android.sample.ui.utils.testRecipes
+import com.google.firebase.FirebaseApp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -567,4 +569,13 @@ class RecipesViewModelTest {
         advanceUntilIdle()
         assert(onFailCall)
       }
+
+  @Test
+  fun testFactory() {
+    val context: Context = ApplicationProvider.getApplicationContext()
+    FirebaseApp.initializeApp(context)
+    val factory = RecipesViewModel.provideFactory(context = context)
+    val viewModel = factory.create(RecipesViewModel::class.java)
+    assertNotNull(viewModel)
+  }
 }

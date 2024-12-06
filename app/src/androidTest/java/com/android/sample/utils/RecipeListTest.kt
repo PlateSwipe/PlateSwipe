@@ -17,6 +17,9 @@ import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.model.recipe.networkData.FirestoreRecipesRepository
 import com.android.sample.model.user.UserRepository
 import com.android.sample.model.user.UserViewModel
+import com.android.sample.resources.C.TestTag.RecipeList.CANCEL_BUTTON
+import com.android.sample.resources.C.TestTag.RecipeList.CONFIRMATION_BUTTON
+import com.android.sample.resources.C.TestTag.RecipeList.CONFIRMATION_POP_UP
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_CARD_TEST_TAG
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_DOWNLOAD_ICON_TEST_TAG
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_FAVORITE_ICON_TEST_TAG
@@ -208,6 +211,12 @@ class RecipeListTest {
           recipe = testRecipes[0], userViewModel = userViewModel, recipesViewModel)
     }
     composeTestRule.onNodeWithTag(RECIPE_DOWNLOAD_ICON_TEST_TAG).assertIsDisplayed().performClick()
+    composeTestRule.onNodeWithTag(CONFIRMATION_POP_UP).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CANCEL_BUTTON).assertIsDisplayed().performClick()
+
+    composeTestRule.onNodeWithTag(RECIPE_DOWNLOAD_ICON_TEST_TAG).assertIsDisplayed().performClick()
+    composeTestRule.onNodeWithTag(CONFIRMATION_POP_UP).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CONFIRMATION_BUTTON).assertIsDisplayed().performClick()
   }
 
   @Test
@@ -217,5 +226,11 @@ class RecipeListTest {
           recipe = testRecipes[0], userViewModel = userViewModel, recipesViewModel)
     }
     composeTestRule.onNodeWithTag(RECIPE_DOWNLOAD_ICON_TEST_TAG).assertIsDisplayed().performClick()
+    composeTestRule.onNodeWithTag(CONFIRMATION_POP_UP).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CANCEL_BUTTON).assertIsDisplayed().performClick()
+
+    composeTestRule.onNodeWithTag(RECIPE_DOWNLOAD_ICON_TEST_TAG).assertIsDisplayed().performClick()
+    composeTestRule.onNodeWithTag(CONFIRMATION_POP_UP).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CONFIRMATION_BUTTON).assertIsDisplayed().performClick()
   }
 }
