@@ -13,6 +13,7 @@ class UserTest {
   private lateinit var fridge: List<FridgeItem>
   private lateinit var likedRecipes: List<String>
   private lateinit var createdRecipes: List<String>
+  private lateinit var dateOfBirth: String
 
   @Before
   fun setUp() {
@@ -22,11 +23,13 @@ class UserTest {
     fridge = testUsers[0].fridge
     likedRecipes = testUsers[0].likedRecipes
     createdRecipes = testUsers[0].createdRecipes
+    dateOfBirth = testUsers[0].dateOfBirth
   }
 
   @Test
   fun createUserTest() {
-    val user = User(uid, userName, profilePictureUrl, fridge, likedRecipes, createdRecipes)
+    val user =
+        User(uid, userName, profilePictureUrl, fridge, likedRecipes, createdRecipes, dateOfBirth)
 
     assert(user.uid == testUsers[0].uid)
     assert(user.userName == testUsers[0].userName)
@@ -34,5 +37,6 @@ class UserTest {
     assert(user.fridge == testUsers[0].fridge)
     assert(user.likedRecipes == testUsers[0].likedRecipes)
     assert(user.createdRecipes == testUsers[0].createdRecipes)
+    assert(user.dateOfBirth == testUsers[0].dateOfBirth)
   }
 }

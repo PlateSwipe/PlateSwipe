@@ -70,7 +70,6 @@ object C {
 
     object IngredientSearchScreen {
       const val DO_NOT_SHOW_CONFIRMATION = false
-      const val INITIAL_LOADING_STATE = false
     }
 
     object Filter {
@@ -227,8 +226,6 @@ object C {
     const val INGREDIENT_VIEWMODEL_LOG_TAG = "IngredientViewModel"
     const val INGR_DOWNLOAD_ERROR_GET_ING = "Error getting ingredient"
     const val INGR_DOWNLOAD_ERROR_DOWNLOAD_IMAGE = "Error downloading image"
-    const val INGR_DOWNLOAD_ERROR_UPDATE_ING = "Error updating ingredient"
-    const val INGR_DOWNLOAD_ERROR_DELETE_ING = "Error deleting ingredient"
     const val INGR_DOWNLOAD_ERROR_NULL_POINTER = "Error getting URI"
 
     // OpenFoodFactsIngredientRepository
@@ -284,8 +281,6 @@ object C {
     const val UNSUPPORTED_MESSAGE = "Operation not supported"
     const val INGREDIENT_NOT_FOUND_MESSAGE = "Ingredient not found"
     const val INGREDIENT_NAME_NOT_PROVIDED = "Ingredient name is required but has not been provided"
-    const val INGREDIENT_BARCODE_NOT_PROVIDED =
-        "Ingredient barcode is required but has not been provided"
 
     // Camera Actions
     const val LOG_TAG_CAMERA_ACTIONS = "CameraActions"
@@ -357,8 +352,6 @@ object C {
 
     // UserViewModel
     object UserViewModel {
-      const val REMOVED_TOO_MANY_INGREDIENTS_ERROR =
-          "Cannot remove more ingredients than there are in the fridge."
       const val REMOVED_INGREDIENT_NOT_IN_FRIDGE_ERROR =
           "Cannot remove an ingredient that is not in the fridge."
       const val LOG_TAG = "UserViewModel"
@@ -380,6 +373,13 @@ object C {
     // AccountScreen
     object AccountScreen {
       const val PROFILE_PICTURE_CONTENT_DESCRIPTION = "profilePicture"
+    }
+
+    // EditAccountScreen
+    object EditAccountScreen {
+      const val LOG_MESSAGE_TAG = "EditAccountScreen"
+      const val CHANGE_PROFILE_PICTURE_BUTTON_DESCRIPTION = "Change Profile Picture button"
+      const val DATE_OF_BIRTH_FIELD_DESCRIPTION = "Selected Date"
     }
 
     // Create Recipe Add Image
@@ -460,23 +460,37 @@ object C {
       const val IMAGE_ROUND_CORNER = 10
       const val COUNTER_ROUND_CORNER = 25
       const val OVERVIEW_RECIPE_STAR_SIZE = 24
-      const val COUNTER_MIN_MAX_SIZE = 35
       const val OVERVIEW_TIME_DISPLAY_RATE = 1f / 12f
-      const val OVERVIEW_MIN_COUNTER_VALUE = 1
-      const val OVERVIEW_MAX_COUNTER_VALUE = 99
       const val OVERVIEW_CHECKBOX_SIZE = 15
-      const val OVERVIEW_COUNTER_TEXT_SIZE = 28
       const val OVERVIEW_RECIPE_ROUND = 5
       const val OVERVIEW_RECIPE_ROUND_ROW = 10
       const val OVERVIEW_RECIPE_CARD_SHAPE = 16
       const val OVERVIEW_RECIPE_CARD_ELEVATION = 4
-      const val OVERVIEW_RECIPE_COUNTER_PADDING = 0
       const val OVERVIEW_RECIPE_RATE = 1f / 3f
       const val OVERVIEW_INSTRUCTION_START = 25
       const val OVERVIEW_INSTRUCTION_END = 15
       const val OVERVIEW_INSTRUCTION_TOP = 10
       const val OVERVIEW_INSTRUCTION_BOTTOM = 5
       const val OVERVIEW_FONT_SIZE_MEDIUM = 20
+    }
+
+    object Counter {
+      const val MIN_VALUE = 1
+      const val MAX_VALUE = 99
+      const val COUNTER_MIN_MAX_SIZE = 38
+      const val COUNTER_TEXT_SIZE = 28
+      const val COUNTER_FONT_SIZE = 20
+      const val RECIPE_COUNTER_PADDING = 0
+      const val REMOVE = "removeServings"
+      const val NUMBER = "numberServings"
+      const val ADD = "addServings"
+    }
+
+    object EditFridgeItemScreen {
+      const val TITLE_LINE_HEIGHT = 28
+      const val TITLE_FONT_SIZE = 24
+      const val TEXT_FONT_SIZE = 20
+      const val EPOCH_LITERAL = 86400000L
     }
 
     object SignInScreen {
@@ -548,6 +562,7 @@ object C {
       const val TOP_BAR_HEIGHT = 50
       const val TOP_BAR_TITLE_FONT_SIZE = 28
       const val BACK_ARROW_ICON_SIZE = 26
+      const val EDIT_ACCOUNT_ICON_SIZE = 26
       const val CHEF_HAT_ICON_SIZE = 35
       const val CHEF_HAT_ICON_END_PADDING = 8
       const val BOTTOM_BAR_HEIGHT = 60
@@ -644,6 +659,7 @@ object C {
       const val POP_UP_ELEVATION = 4
       const val POP_UP_CLIP = true
       const val POP_UP_DESCRIPTION_FONT_SIZE = 16
+      const val EDIT_ICON_SIZE = 24
     }
 
     object AccountScreen {
@@ -657,6 +673,32 @@ object C {
     object CategoryScreen {
       const val DROPDOWN_HEIGHT_FRACTION = 0.3f
       const val DIVIDER_ALPHA = 0.12f
+    }
+
+    object FridgeScreen {
+      const val TITLE_FONT_SIZE = 20
+      const val MAX_ORANGE_DAY = 5
+      const val MIN_ORANGE_DAY = 1
+      const val ALL_BAR = 1.0f
+      const val MAX_PROPORTION = 15f
+      const val MIN_PROPORTION = 0.1f
+      const val BAR_HEIGHT = 10
+      const val BAR_ROUND_CORNER = 4
+      const val DIALOG_CORNER = 12
+      const val DIALOG_ELEVATION = 8
+      const val DIALOG_TITLE_LINE_HEIGHT = 28
+      const val DIALOG_TITLE_FONT_SIZE = 22
+      const val DIALOG_TITLE_ALPHA = 0.6f
+      const val MIN_VALUE = 0
+      const val ITEM_ALPHA = 0.7f
+      const val INGREDIENT_MAX_LINE = 3
+      const val INGREDIENT_NAME_FONT_SIZE = 16
+      const val FRIDGE_TAG_CORNER = 16
+      const val INGREDIENT_IMAGE_SIZE = 100
+      const val EDIT_ICON_SIZE = 20
+      const val CARD_ELEVATION = 4
+      const val EMPTY_FRIDGE_FONT_SIZE = 40
+      const val NUMBER_CARD_IN_A_ROW = 2
     }
   }
 
@@ -681,6 +723,7 @@ object C {
       const val TOP_BAR = "topBar"
       const val TOP_BAR_TITLE = "topBarTitle"
       const val BACK_ARROW_ICON = "backArrowIcon"
+      const val EDIT_ACCOUNT_ICON = "editAccountIcon"
       const val PLATESWIPE_SCAFFOLD = "plateSwipeScaffold"
       const val CHEF_HAT_ICON = "chefHatIcon"
       const val BOTTOM_BAR = "bottomNavigationMenu"
@@ -712,9 +755,6 @@ object C {
       const val RECIPE_STAR = "recipeStar"
       const val RECIPE_RATE = "recipeRate"
       const val INGREDIENTS_VIEW = "ingredientsView"
-      const val REMOVE_SERVINGS = "removeServings"
-      const val NUMBER_SERVINGS = "numberServings"
-      const val ADD_SERVINGS = "addServings"
       const val INSTRUCTIONS_VIEW = "instructionsView"
       const val INGREDIENT_CHECKBOX = "checkboxIngredient"
       const val INGREDIENT_PREFIX = "ingredient"
@@ -761,6 +801,20 @@ object C {
       const val LIKED_RECIPES_BUTTON_TEST_TAG = "likedRecipesButton"
       const val CREATED_RECIPES_BUTTON_TEST_TAG = "createdRecipesButton"
       const val PROFILE_PICTURE_TEST_TAG = "profilePicture"
+      const val RECIPE_EDIT_ICON_TEST_TAG = "recipeEditIcon"
+    }
+
+    object EditAccountScreen {
+      const val SAVE_CHANGES_BUTTON_TAG = "saveChangesButton"
+      const val PROFILE_PICTURE_TAG = "profilePicture"
+      const val USERNAME_FIELD_TAG = "usernameTextField"
+      const val EMAIL_FIELD_TAG = "emailTextField"
+      const val CHANGE_PROFILE_PICTURE_BUTTON_TAG = "changeProfilePictureButton"
+      const val DATE_OF_BIRTH_TEXT_FIELD_TAG = "dateOfBirthTextField"
+      const val DATE_OF_BIRTH_CHANGE_BUTTON_TAG = "dateOfBirthChangeButton"
+      const val DATE_PICKER_POP_UP_TAG = "datePickerPopUp"
+      const val DATE_PICKER_POP_UP_CONFIRM_TAG = "confirmationButtonPopUp"
+      const val DATE_PICKER_POP_UP_CANCEL_TAG = "dismissButtonPopUp"
     }
 
     object CreateRecipeListInstructionsScreen {
@@ -863,10 +917,20 @@ object C {
       const val MINUTES_LABEL = "MinutesLabel"
     }
 
+    object Fridge {
+      const val RED = "red"
+      const val GREEN = "green"
+      const val ORANGE = "orange"
+    }
+
     object PlateSwipeDropdown {
       const val DROPDOWN = "PlateSwipeDropdown"
       const val DROPDOWN_ITEM = "PlateSwipeDropdownItem"
       const val DROPDOWN_TITLE = "PlateSwipeDropdownTitle"
+    }
+
+    object RecipeNameScreen {
+      const val LOADING_COOK_TEST_TAG = "LoadingCook"
     }
   }
 }

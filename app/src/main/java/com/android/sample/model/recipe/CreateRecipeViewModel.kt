@@ -36,6 +36,31 @@ class CreateRecipeViewModel(
   // Fields for the selected Instruction when modifying a recipe
   private val selectedInstruction = MutableStateFlow<Int?>(null)
 
+  // Replace StateFlow with a simple mutable boolean
+  var isRecipeInitialized = false
+
+  /**
+   * Initializes the recipe for editing.
+   *
+   * @param recipe The recipe to initialize.
+   */
+  fun initializeRecipeForEditing(recipe: Recipe) {
+    recipeBuilder.initializeFromRecipe(recipe)
+    isRecipeInitialized = true // Mark as initialized
+  }
+
+  /** Starts a new recipe. */
+  fun startNewRecipe() {
+    recipeBuilder.clear()
+    isRecipeInitialized = true // Mark as initialized for new recipe
+  }
+
+  /** Resets the initialization state. */
+  fun resetInitializationState() {
+    recipeBuilder.clear()
+    isRecipeInitialized = false // Reset state
+  }
+
   /**
    * Selects the description at the given index. This is used when modifying a recipe.
    *

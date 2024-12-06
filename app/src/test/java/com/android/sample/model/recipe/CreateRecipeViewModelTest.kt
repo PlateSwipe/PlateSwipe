@@ -16,6 +16,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -581,5 +582,54 @@ class CreateRecipeViewModelTest {
             .getDeclaredField("category")
             .apply { isAccessible = true }
             .get(createRecipeViewModel.recipeBuilder))
+  }
+
+  @Test
+  fun `test initializeRecipeForEditing initializes the recipe correctly`() {
+    val recipe = createDefaultRecipe()
+
+    createRecipeViewModel.initializeRecipeForEditing(recipe)
+
+    // Verify recipe builder contains the recipe's data
+    assertEquals(recipe.name, createRecipeViewModel.getRecipeName())
+    assertEquals(recipe.instructions, createRecipeViewModel.getRecipeListOfInstructions())
+    assertEquals(recipe.strMealThumbUrl, createRecipeViewModel.getRecipeThumbnail())
+    assertEquals(
+        recipe.ingredientsAndMeasurements, createRecipeViewModel.getIngredientsAndMeasurements())
+    assertTrue(createRecipeViewModel.isRecipeInitialized)
+  }
+
+  @Test
+  fun `test startNewRecipe clears recipeBuilder and initializes`() {
+    val recipe = createDefaultRecipe()
+
+    // Add some data to the builder
+    createRecipeViewModel.initializeRecipeForEditing(recipe)
+
+    // Start a new recipe
+    createRecipeViewModel.startNewRecipe()
+
+    // Verify the recipe builder is cleared and initialized
+    assertEquals("", createRecipeViewModel.getRecipeName())
+    assertTrue(createRecipeViewModel.getRecipeListOfInstructions().isEmpty())
+    assertTrue(createRecipeViewModel.getIngredientsAndMeasurements().isEmpty())
+    assertTrue(createRecipeViewModel.isRecipeInitialized)
+  }
+
+  @Test
+  fun `test resetInitializationState clears builder and resets state`() {
+    val recipe = createDefaultRecipe()
+
+    // Add some data to the builder and set initialization state
+    createRecipeViewModel.initializeRecipeForEditing(recipe)
+
+    // Reset initialization state
+    createRecipeViewModel.resetInitializationState()
+
+    // Verify the builder is cleared and initialization state is reset
+    assertEquals("", createRecipeViewModel.getRecipeName())
+    assertTrue(createRecipeViewModel.getRecipeListOfInstructions().isEmpty())
+    assertTrue(createRecipeViewModel.getIngredientsAndMeasurements().isEmpty())
+    assertFalse(createRecipeViewModel.isRecipeInitialized)
   }
 }
