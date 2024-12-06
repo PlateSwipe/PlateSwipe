@@ -7,9 +7,12 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import com.android.sample.model.image.ImageDownload
 import com.android.sample.model.ingredient.networkData.FirestoreIngredientRepository
 import com.android.sample.model.recipe.Instruction
 import com.android.sample.model.recipe.Recipe
+import com.android.sample.model.recipe.RecipesRepository
+import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.model.recipe.networkData.FirestoreRecipesRepository
 import com.android.sample.model.user.UserRepository
 import com.android.sample.model.user.UserViewModel
@@ -38,6 +41,8 @@ class RecipeListTest {
   private lateinit var mockIngredientRepository: FirestoreIngredientRepository
 
   private lateinit var userViewModel: UserViewModel
+  private lateinit var recipesViewModel: RecipesViewModel
+  private lateinit var recipeRepository: RecipesRepository
 
   private val recipesList: List<Recipe> =
       listOf(
@@ -110,10 +115,12 @@ class RecipeListTest {
     mockFirebaseAuth = mock(FirebaseAuth::class.java)
     mockIngredientRepository = FirestoreIngredientRepository(mockFirebaseFirestore)
     mockRecipeRepository = FirestoreRecipesRepository(mockFirebaseFirestore)
+    recipeRepository = mock(RecipesRepository::class.java)
 
     userViewModel =
         UserViewModel(
             mockUserRepository, mockFirebaseAuth, mockRecipeRepository, mockIngredientRepository)
+    recipesViewModel = RecipesViewModel(recipeRepository, ImageDownload())
 
     `when`(mockNavigationActions.currentRoute()).thenReturn(Screen.ACCOUNT)
   }
@@ -126,7 +133,7 @@ class RecipeListTest {
           list = recipesList,
           onRecipeSelected = {},
           topCornerButton = { recipe ->
-            TopCornerUnLikeButton(recipe = recipe, userViewModel = userViewModel)
+            TopCornerUnLikeButton(recipe = recipe, userViewModel = userViewModel, recipesViewModel)
           })
     }
 

@@ -28,12 +28,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.android.sample.R
+import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C.Dimension.AccountScreen.ACCOUNT_SCREEN_SELECTED_LIST_HEIGHT
 import com.android.sample.resources.C.Dimension.AccountScreen.ACCOUNT_SCREEN_SELECTED_LIST_SEPARATOR_FILL_MAX_WIDTH
@@ -52,9 +54,14 @@ import com.android.sample.ui.utils.PlateSwipeScaffold
 import com.android.sample.ui.utils.RecipeList
 import com.android.sample.ui.utils.TopCornerDeleteButton
 import com.android.sample.ui.utils.TopCornerUnLikeButton
+import com.android.sample.utils.NetworkUtils
 
 @Composable
-fun AccountScreen(navigationActions: NavigationActions, userViewModel: UserViewModel) {
+fun AccountScreen(
+    navigationActions: NavigationActions,
+    userViewModel: UserViewModel,
+    recipeViewModel: RecipesViewModel
+) {
   LaunchedEffect(Unit) { userViewModel.getCurrentUser() }
 
   PlateSwipeScaffold(
@@ -80,7 +87,8 @@ fun AccountScreen(navigationActions: NavigationActions, userViewModel: UserViewM
               style = MaterialTheme.typography.titleMedium,
               color = MaterialTheme.colorScheme.onPrimary)
 
-          ListSelection(navigationActions, userViewModel, modifier = Modifier.weight(.8f))
+          ListSelection(
+              navigationActions, userViewModel, modifier = Modifier.weight(.8f), recipeViewModel)
         }
       })
 }
@@ -110,12 +118,19 @@ private fun ListSelectionButton(
 private fun ListSelection(
     navigationActions: NavigationActions,
     userViewModel: UserViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    recipeViewModel: RecipesViewModel
 ) {
   val likedRecipes = userViewModel.likedRecipes.collectAsState()
   val createdRecipes = userViewModel.createdRecipes.collectAsState()
+  val downloadedRecipes = recipeViewModel.recipesDownload.collectAsState()
+  val context = LocalContext.current
+  val isNetworkAvailable = NetworkUtils().isNetworkAvailable(context)
 
-  var selectedList by remember { mutableStateOf(likedRecipes) }
+  // Use the liked recipe list if connection is available else use downloadedRecipes list
+  var selectedList by remember {
+    mutableStateOf(if (isNetworkAvailable) likedRecipes else downloadedRecipes)
+  }
   var selectedListIndex by remember { mutableIntStateOf(0) }
 
   Column(
@@ -130,8 +145,13 @@ private fun ListSelection(
               Modifier.weight(ACCOUNT_SCREEN_SELECTED_LIST_WEIGHT)
                   .testTag(LIKED_RECIPES_BUTTON_TEST_TAG),
           onClick = {
-            selectedList = likedRecipes
-            selectedListIndex = 0
+            if (isNetworkAvailable) {
+              selectedList = likedRecipes
+              selectedListIndex = 0
+            } else {
+              selectedList = downloadedRecipes
+              selectedListIndex = 0
+            }
           },
           title = stringResource(R.string.account_screen_liked_recipe_button_title),
           isSelected = selectedListIndex == 0)
@@ -161,7 +181,7 @@ private fun ListSelection(
         },
         topCornerButton = { recipe ->
           if (selectedListIndex == 0) {
-            TopCornerUnLikeButton(recipe, userViewModel)
+            TopCornerUnLikeButton(recipe, userViewModel, recipeViewModel)
           } else {
             TopCornerDeleteButton(recipe, userViewModel)
           }

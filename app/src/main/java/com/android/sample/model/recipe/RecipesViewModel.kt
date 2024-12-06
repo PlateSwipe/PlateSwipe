@@ -110,6 +110,9 @@ class RecipesViewModel(
     viewModelScope.launch {
       getCategoryList()
       fetchRandomRecipes(NUMBER_RECIPES_TO_FETCH)
+      getAllDownloads(
+          onSuccess = { _ -> Log.d(LOG_TAG_RECIPE_VIEWMODEL, "Downloaded recipes fetched") },
+          onFailure = { e -> Log.e(LOG_TAG_RECIPE_VIEWMODEL, "Exception:${e.message}") })
 
       _loading.collect { isLoading ->
         if (!isLoading) {
@@ -335,7 +338,12 @@ class RecipesViewModel(
         onSuccess = { uri ->
           val newRecipe = recipe.copy(url = uri)
           repository.addDownload(
-              newRecipe, onSuccess = { onSuccess(newRecipe) }, onFailure = { e -> onFailure(e) })
+              newRecipe,
+              onSuccess = {
+                _recipesDownload.value += newRecipe
+                onSuccess(newRecipe)
+              },
+              onFailure = { e -> onFailure(e) })
         },
         onFailure = { e -> onFailure(e) })
   }
@@ -396,6 +404,7 @@ class RecipesViewModel(
    */
   fun deleteDownload(recipe: Recipe) {
     repository.deleteDownload(recipe)
+    _recipesDownload.value = _recipesDownload.value.filter { it.uid != recipe.uid }
   }
 
   /** Deletes all downloaded recipes. */

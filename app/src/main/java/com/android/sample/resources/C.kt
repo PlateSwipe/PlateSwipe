@@ -147,6 +147,7 @@ object C {
     const val RECIPE_RATING_CONTENT_DESCRIPTION = "rating"
     const val RECIPE_FAVORITE_ICON_CONTENT_DESCRIPTION = "like"
     const val RECIPE_DELETE_ICON_CONTENT_DESCRIPTION = "delete"
+    const val RECIPE_LIST_DOWNLOAD = "download"
 
     // SearchBar
     const val SEARCH_BAR_CORNER_RADIUS = 16
@@ -734,6 +735,7 @@ object C {
       const val RECIPE_IMAGE_TEST_TAG = "recipeImage"
       const val RECIPE_TITLE_TEST_TAG = "recipeTitle"
       const val RECIPE_FAVORITE_ICON_TEST_TAG = "recipeFavoriteIcon"
+      const val RECIPE_DOWNLOAD_ICON_TEST_TAG = "recipeDownloadIcon"
       const val RECIPE_DELETE_ICON_TEST_TAG = "recipeDeleteIcon"
       const val CONFIRMATION_POP_UP = "confirmationPopUp"
       const val CONFIRMATION_BUTTON = "confirmButton"
