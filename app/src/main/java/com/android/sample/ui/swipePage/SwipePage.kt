@@ -54,6 +54,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -147,6 +148,7 @@ import com.android.sample.ui.theme.redSwipe
 import com.android.sample.ui.theme.starColor
 import com.android.sample.ui.utils.PlateSwipeScaffold
 import com.android.sample.ui.utils.Tag
+import com.android.sample.utils.NetworkUtils
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -208,7 +210,8 @@ fun RecipeDisplay(
   val currentRecipe by recipesViewModel.currentRecipe.collectAsState()
   val nextRecipe by recipesViewModel.nextRecipe.collectAsState()
   val filter by recipesViewModel.filter.collectAsState()
-
+  val context = LocalContext.current
+  val isConnected = NetworkUtils().isNetworkAvailable(context)
   Box(
       modifier =
           Modifier.fillMaxSize()
@@ -367,16 +370,12 @@ fun RecipeDisplay(
                       Column(
                           modifier =
                               Modifier.background(color = MaterialTheme.colorScheme.onPrimary)) {
-                            Image(
-                                painter =
-                                    rememberAsyncImagePainter(
-                                        model =
-                                            if (displayCard1) currentRecipe?.url
-                                            else nextRecipe?.url),
-                                contentDescription = stringResource(R.string.recipe_image),
-                                modifier = Modifier.fillMaxSize().testTag(RECIPE_IMAGE_1),
-                                contentScale = ContentScale.Crop,
-                            )
+                            RecipeImage(
+                                displayCard1,
+                                currentRecipe,
+                                nextRecipe,
+                                isConnected,
+                                RECIPE_IMAGE_1)
                           }
                     }
 
@@ -392,16 +391,12 @@ fun RecipeDisplay(
                       Column(
                           modifier =
                               Modifier.background(color = MaterialTheme.colorScheme.onPrimary)) {
-                            Image(
-                                painter =
-                                    rememberAsyncImagePainter(
-                                        model =
-                                            if (!displayCard1) currentRecipe?.url
-                                            else nextRecipe?.url),
-                                contentDescription = stringResource(R.string.recipe_image),
-                                modifier = Modifier.fillMaxSize().testTag(RECIPE_IMAGE_2),
-                                contentScale = ContentScale.Crop,
-                            )
+                            RecipeImage(
+                                displayCard1,
+                                currentRecipe,
+                                nextRecipe,
+                                isConnected,
+                                RECIPE_IMAGE_2)
                           }
                     }
               }
@@ -782,5 +777,35 @@ fun LikeDislikeIconAnimation(
               tint = iconColor,
               modifier = Modifier.scale(iconScale).alpha(iconOpacity).zIndex(BACKGROUND_ANIMATION))
         }
+  }
+}
+
+@Composable
+fun RecipeImage(
+    displayCard1: Boolean,
+    currentRecipe: Recipe?,
+    nextRecipe: Recipe?,
+    isConnected: Boolean,
+    name: String
+) {
+
+  Column(modifier = Modifier.background(color = MaterialTheme.colorScheme.onPrimary)) {
+    if (isConnected) {
+      // Load image from URL
+      Image(
+          painter =
+              rememberAsyncImagePainter(
+                  model = if (displayCard1) currentRecipe?.url else nextRecipe?.url),
+          contentDescription = stringResource(R.string.recipe_image),
+          modifier = Modifier.fillMaxSize().testTag(name),
+          contentScale = ContentScale.Crop)
+    } else {
+      // Load no-wifi icon from drawable
+      Image(
+          painter = painterResource(id = R.drawable.round_wifi_off_24),
+          contentDescription = "no wifi image",
+          modifier = Modifier.fillMaxSize().testTag(name),
+          contentScale = ContentScale.Crop)
+    }
   }
 }
