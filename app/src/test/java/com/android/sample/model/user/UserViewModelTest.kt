@@ -740,6 +740,192 @@ class UserViewModelTest {
   }
 
   @Test
+  fun addIngredientWithPointRegexIngredientTest() {
+    // Create an initial ingredient
+    val ingredient =
+        Ingredient(
+            barCode = 123456L,
+            name = "Test Ingredient",
+            brands = "Brand",
+            quantity = "1.5",
+            categories = listOf("Category1"),
+            images =
+                mutableMapOf(
+                    PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
+                    PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
+                    PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
+
+    // Add the ingredient to the ingredient list
+    userViewModel.addIngredient(ingredient)
+    userViewModel.addIngredient(ingredient)
+
+    // Verify that the ingredient list contains the ingredient with the updated quantity
+    val updatedIngredient =
+        userViewModel.ingredientList.value.find { it.first.barCode == ingredient.barCode }
+    assertNotNull(updatedIngredient)
+    TestCase.assertEquals("3", updatedIngredient?.second)
+  }
+
+  @Test
+  fun addIngredientWithCommaRegexIngredientTest() {
+    // Create an initial ingredient
+    val ingredient =
+        Ingredient(
+            barCode = 123456L,
+            name = "Test Ingredient",
+            brands = "Brand",
+            quantity = "1,5",
+            categories = listOf("Category1"),
+            images =
+                mutableMapOf(
+                    PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
+                    PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
+                    PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
+
+    // Add the ingredient to the ingredient list
+    userViewModel.addIngredient(ingredient)
+
+    // Verify that the ingredient list contains the ingredient with the updated quantity
+    val updatedIngredient =
+        userViewModel.ingredientList.value.find { it.first.barCode == ingredient.barCode }
+    assertNotNull(updatedIngredient)
+    TestCase.assertEquals("1.5", updatedIngredient?.second)
+  }
+
+  @Test
+  fun addIngredientWithMultipleCommaRegexIngredientTest() {
+    // Create an initial ingredient
+    val ingredient =
+        Ingredient(
+            barCode = 123456L,
+            name = "Test Ingredient",
+            brands = "Brand",
+            quantity = "1,5 ingredient, pasta",
+            categories = listOf("Category1"),
+            images =
+                mutableMapOf(
+                    PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
+                    PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
+                    PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
+
+    // Add the ingredient to the ingredient list
+    userViewModel.addIngredient(ingredient)
+
+    // Verify that the ingredient list contains the ingredient with the updated quantity
+    val updatedIngredient =
+        userViewModel.ingredientList.value.find { it.first.barCode == ingredient.barCode }
+    assertNotNull(updatedIngredient)
+    TestCase.assertEquals("1.5 ingredient, pasta", updatedIngredient?.second)
+  }
+
+  @Test
+  fun addTwoIngredientWithCommaRegexIngredientTest() {
+    // Create an initial ingredient
+    val ingredient =
+        Ingredient(
+            barCode = 123456L,
+            name = "Test Ingredient",
+            brands = "Brand",
+            quantity = "1,5",
+            categories = listOf("Category1"),
+            images =
+                mutableMapOf(
+                    PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
+                    PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
+                    PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
+
+    // Add the ingredient to the ingredient list
+    userViewModel.addIngredient(ingredient)
+    userViewModel.addIngredient(ingredient)
+
+    // Verify that the ingredient list contains the ingredient with the updated quantity
+    val updatedIngredient =
+        userViewModel.ingredientList.value.find { it.first.barCode == ingredient.barCode }
+    assertNotNull(updatedIngredient)
+    TestCase.assertEquals("3", updatedIngredient?.second)
+  }
+
+  @Test
+  fun addIngredientWithCommaAndNoRegexIngredientTest() {
+    // Create an initial ingredient
+    val ingredient1 =
+        Ingredient(
+            barCode = 123456L,
+            name = "Test Ingredient",
+            brands = "Brand",
+            quantity = "1,5",
+            categories = listOf("Category1"),
+            images =
+                mutableMapOf(
+                    PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
+                    PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
+                    PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
+
+    val ingredient2 =
+        Ingredient(
+            barCode = 123456L,
+            name = "Test Ingredient",
+            brands = "Brand",
+            quantity = "1",
+            categories = listOf("Category1"),
+            images =
+                mutableMapOf(
+                    PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
+                    PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
+                    PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
+
+    // Add the ingredient to the ingredient list
+    userViewModel.addIngredient(ingredient1)
+    userViewModel.addIngredient(ingredient2)
+
+    // Verify that the ingredient list contains the ingredient with the updated quantity
+    val updatedIngredient =
+        userViewModel.ingredientList.value.find { it.first.barCode == ingredient1.barCode }
+    assertNotNull(updatedIngredient)
+    TestCase.assertEquals("2.5", updatedIngredient?.second)
+  }
+
+  @Test
+  fun addIngredientWithPointAndNoRegexIngredientTest() {
+    // Create an initial ingredient
+    val ingredient1 =
+        Ingredient(
+            barCode = 123456L,
+            name = "Test Ingredient",
+            brands = "Brand",
+            quantity = "1.5",
+            categories = listOf("Category1"),
+            images =
+                mutableMapOf(
+                    PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
+                    PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
+                    PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
+
+    val ingredient2 =
+        Ingredient(
+            barCode = 123456L,
+            name = "Test Ingredient",
+            brands = "Brand",
+            quantity = "1",
+            categories = listOf("Category1"),
+            images =
+                mutableMapOf(
+                    PRODUCT_FRONT_IMAGE_NORMAL_URL to "https://display_normal",
+                    PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
+                    PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
+
+    // Add the ingredient to the ingredient list
+    userViewModel.addIngredient(ingredient1)
+    userViewModel.addIngredient(ingredient2)
+
+    // Verify that the ingredient list contains the ingredient with the updated quantity
+    val updatedIngredient =
+        userViewModel.ingredientList.value.find { it.first.barCode == ingredient1.barCode }
+    assertNotNull(updatedIngredient)
+    TestCase.assertEquals("2.5", updatedIngredient?.second)
+  }
+
+  @Test
   fun clearIngredientTest() {
     val barCode = 123456L
     val ingredient = testIngredients[0].copy(barCode = barCode)
