@@ -414,9 +414,9 @@ class RecipesViewModel(
     }
   }
 
-    fun setDownload(recipes: List<Recipe>) {
-        _recipesDownload.value = recipes
-    }
+  fun setDownload(recipes: List<Recipe>) {
+    _recipesDownload.value = recipes
+  }
 
   companion object {
     fun provideFactory(context: Context): ViewModelProvider.Factory {

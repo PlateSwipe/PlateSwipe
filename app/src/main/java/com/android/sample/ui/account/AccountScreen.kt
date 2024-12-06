@@ -35,8 +35,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.android.sample.R
-import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.model.recipe.CreateRecipeViewModel
+import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C.Dimension.AccountScreen.ACCOUNT_SCREEN_SELECTED_LIST_HEIGHT
 import com.android.sample.resources.C.Dimension.AccountScreen.ACCOUNT_SCREEN_SELECTED_LIST_SEPARATOR_FILL_MAX_WIDTH
@@ -63,11 +63,7 @@ import com.android.sample.utils.NetworkUtils
 fun AccountScreen(
     navigationActions: NavigationActions,
     userViewModel: UserViewModel,
-    recipeViewModel: RecipesViewModel
-) {
-fun AccountScreen(
-    navigationActions: NavigationActions,
-    userViewModel: UserViewModel,
+    recipeViewModel: RecipesViewModel,
     createRecipeViewModel: CreateRecipeViewModel
 ) {
   LaunchedEffect(Unit) { userViewModel.getCurrentUser() }
@@ -99,9 +95,8 @@ fun AccountScreen(
               navigationActions,
               userViewModel,
               modifier = Modifier.weight(.8f),
-              createRecipeViewModel)
-          ListSelection(
-              navigationActions, userViewModel, modifier = Modifier.weight(.8f), recipeViewModel)
+              createRecipeViewModel,
+              recipeViewModel)
         }
       })
 }
@@ -132,8 +127,7 @@ private fun ListSelection(
     navigationActions: NavigationActions,
     userViewModel: UserViewModel,
     modifier: Modifier = Modifier,
-    createRecipeViewModel: CreateRecipeViewModel
-    modifier: Modifier = Modifier,
+    createRecipeViewModel: CreateRecipeViewModel,
     recipeViewModel: RecipesViewModel
 ) {
   val likedRecipes = userViewModel.likedRecipes.collectAsState()

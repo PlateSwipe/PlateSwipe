@@ -3,12 +3,12 @@ package com.android.sample.utils
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import com.android.sample.model.image.ImageDownload
-import com.android.sample.model.ingredient.networkData.FirestoreIngredientRepository
 import com.android.sample.model.ingredient.IngredientRepository
 import com.android.sample.model.recipe.Instruction
 import com.android.sample.model.recipe.Recipe
@@ -124,7 +124,6 @@ class RecipeListTest {
     userViewModel =
         UserViewModel(
             mockUserRepository, mockFirebaseAuth, mockIngredientRepository, mockRecipeRepository)
-            mockUserRepository, mockFirebaseAuth, mockRecipeRepository, mockIngredientRepository)
     recipesViewModel = RecipesViewModel(recipeRepository, ImageDownload())
 
     `when`(mockNavigationActions.currentRoute()).thenReturn(Screen.ACCOUNT)
@@ -201,20 +200,22 @@ class RecipeListTest {
     assert(clickedRecipe == testRecipe)
   }
 
-    @Test
-    fun testTopCornerUnLikeButton() {
-        recipesViewModel.setDownload(testRecipes)
-        composeTestRule.setContent {
-            TopCornerUnLikeButton(recipe = testRecipes[0], userViewModel = userViewModel, recipesViewModel)
-        }
-        composeTestRule.onNodeWithTag(RECIPE_DOWNLOAD_ICON_TEST_TAG).assertIsDisplayed().performClick()
+  @Test
+  fun testTopCornerUnLikeButton() {
+    recipesViewModel.setDownload(testRecipes)
+    composeTestRule.setContent {
+      TopCornerUnLikeButton(
+          recipe = testRecipes[0], userViewModel = userViewModel, recipesViewModel)
     }
+    composeTestRule.onNodeWithTag(RECIPE_DOWNLOAD_ICON_TEST_TAG).assertIsDisplayed().performClick()
+  }
 
-    @Test
-    fun testTopCornerUnLikeButtonNotDownload() {
-        composeTestRule.setContent {
-            TopCornerUnLikeButton(recipe = testRecipes[0], userViewModel = userViewModel, recipesViewModel)
-        }
-        composeTestRule.onNodeWithTag(RECIPE_DOWNLOAD_ICON_TEST_TAG).assertIsDisplayed().performClick()
+  @Test
+  fun testTopCornerUnLikeButtonNotDownload() {
+    composeTestRule.setContent {
+      TopCornerUnLikeButton(
+          recipe = testRecipes[0], userViewModel = userViewModel, recipesViewModel)
     }
+    composeTestRule.onNodeWithTag(RECIPE_DOWNLOAD_ICON_TEST_TAG).assertIsDisplayed().performClick()
+  }
 }

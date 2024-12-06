@@ -211,7 +211,7 @@ fun PlateSwipeApp() {
         route = Route.ACCOUNT,
     ) {
       composable(Screen.ACCOUNT) {
-        AccountScreen(navigationActions, userViewModel, createRecipeViewModel)
+        AccountScreen(navigationActions, userViewModel, recipesViewModel, createRecipeViewModel)
       }
       composable(Screen.OVERVIEW_RECIPE_ACCOUNT) {
         RecipeOverview(navigationActions, userViewModel)

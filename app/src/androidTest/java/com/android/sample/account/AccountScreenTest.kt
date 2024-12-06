@@ -12,8 +12,8 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import com.android.sample.model.image.ImageDownload
 import androidx.test.core.app.ApplicationProvider
+import com.android.sample.model.image.ImageDownload
 import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.recipe.RecipesRepository
@@ -67,7 +67,6 @@ class AccountScreenTest {
             .create(UserViewModel::class.java)
 
     recipeRepository = mock(RecipesRepository::class.java)
-    userViewModel = UserViewModel.Factory.create(UserViewModel::class.java)
     recipeViewModel = RecipesViewModel(recipeRepository, ImageDownload())
     userViewModel.changeUserName(userName)
 
@@ -79,11 +78,12 @@ class AccountScreenTest {
 
   @Test
   fun testAccountDisplaysWithoutProfilePicture() {
+
     composeTestRule.setContent {
       SampleAppTheme {
-        AccountScreen(mockNavigationActions, userViewModel,recipeViewModel, mockCreateRecipeViewModel)
+        AccountScreen(
+            mockNavigationActions, userViewModel, recipeViewModel, mockCreateRecipeViewModel)
       }
-      SampleAppTheme { AccountScreen(mockNavigationActions, userViewModel, recipeViewModel) }
     }
 
     composeTestRule.onNodeWithTag(PROFILE_PICTURE_TEST_TAG).assertIsDisplayed()
@@ -101,9 +101,9 @@ class AccountScreenTest {
         "app/src/androidTest/res/drawable/scoobygourmand_normal.jpg")
     composeTestRule.setContent {
       SampleAppTheme {
-        AccountScreen(mockNavigationActions, userViewModel, mockCreateRecipeViewModel)
+        AccountScreen(
+            mockNavigationActions, userViewModel, recipeViewModel, mockCreateRecipeViewModel)
       }
-      SampleAppTheme { AccountScreen(mockNavigationActions, userViewModel, recipeViewModel) }
     }
 
     composeTestRule.onNodeWithTag(PROFILE_PICTURE_TEST_TAG).assertIsDisplayed()
@@ -118,9 +118,9 @@ class AccountScreenTest {
   @Test
   fun testChangingSelectedListChangesDisplay() {
     composeTestRule.setContent {
-      SampleAppTheme { AccountScreen(mockNavigationActions, userViewModel, recipeViewModel) }
       SampleAppTheme {
-        AccountScreen(mockNavigationActions, userViewModel, mockCreateRecipeViewModel)
+        AccountScreen(
+            mockNavigationActions, userViewModel, recipeViewModel, mockCreateRecipeViewModel)
       }
     }
 
@@ -142,9 +142,9 @@ class AccountScreenTest {
   @Test
   fun testSelectALikedRecipe() {
     composeTestRule.setContent {
-      SampleAppTheme { AccountScreen(mockNavigationActions, userViewModel, recipeViewModel) }
       SampleAppTheme {
-        AccountScreen(mockNavigationActions, userViewModel, mockCreateRecipeViewModel)
+        AccountScreen(
+            mockNavigationActions, userViewModel, recipeViewModel, mockCreateRecipeViewModel)
       }
     }
 
@@ -158,9 +158,9 @@ class AccountScreenTest {
   @Test
   fun testRemoveLikedRecipePopUpDisplayed() {
     composeTestRule.setContent {
-      SampleAppTheme { AccountScreen(mockNavigationActions, userViewModel, recipeViewModel) }
       SampleAppTheme {
-        AccountScreen(mockNavigationActions, userViewModel, mockCreateRecipeViewModel)
+        AccountScreen(
+            mockNavigationActions, userViewModel, recipeViewModel, mockCreateRecipeViewModel)
       }
     }
     composeTestRule
@@ -180,9 +180,9 @@ class AccountScreenTest {
   @Test
   fun testDeleteCreatedRecipePopUpDisplayed() {
     composeTestRule.setContent {
-      SampleAppTheme { AccountScreen(mockNavigationActions, userViewModel, recipeViewModel) }
       SampleAppTheme {
-        AccountScreen(mockNavigationActions, userViewModel, mockCreateRecipeViewModel)
+        AccountScreen(
+            mockNavigationActions, userViewModel, recipeViewModel, mockCreateRecipeViewModel)
       }
     }
 
@@ -209,9 +209,9 @@ class AccountScreenTest {
   @Test
   fun testRemoveALikedRecipe() {
     composeTestRule.setContent {
-      SampleAppTheme { AccountScreen(mockNavigationActions, userViewModel, recipeViewModel) }
       SampleAppTheme {
-        AccountScreen(mockNavigationActions, userViewModel, mockCreateRecipeViewModel)
+        AccountScreen(
+            mockNavigationActions, userViewModel, recipeViewModel, mockCreateRecipeViewModel)
       }
     }
     composeTestRule
@@ -232,9 +232,9 @@ class AccountScreenTest {
   @Test
   fun testNotRemoveALikedRecipe() {
     composeTestRule.setContent {
-      SampleAppTheme { AccountScreen(mockNavigationActions, userViewModel, recipeViewModel) }
       SampleAppTheme {
-        AccountScreen(mockNavigationActions, userViewModel, mockCreateRecipeViewModel)
+        AccountScreen(
+            mockNavigationActions, userViewModel, recipeViewModel, mockCreateRecipeViewModel)
       }
     }
     composeTestRule
@@ -256,9 +256,9 @@ class AccountScreenTest {
   fun testNotDeleteACreatedRecipe() {
     composeTestRule.setContent {
       SampleAppTheme {
-        AccountScreen(mockNavigationActions, userViewModel, mockCreateRecipeViewModel)
+        AccountScreen(
+            mockNavigationActions, userViewModel, recipeViewModel, mockCreateRecipeViewModel)
       }
-      SampleAppTheme { AccountScreen(mockNavigationActions, userViewModel, recipeViewModel) }
     }
 
     composeTestRule.onNodeWithTag(CREATED_RECIPES_BUTTON_TEST_TAG).assertIsDisplayed()
@@ -286,7 +286,8 @@ class AccountScreenTest {
     // Render the AccountScreen with the mocked dependencies
     composeTestRule.setContent {
       SampleAppTheme {
-        AccountScreen(mockNavigationActions, userViewModel, mockCreateRecipeViewModel)
+        AccountScreen(
+            mockNavigationActions, userViewModel, recipeViewModel, mockCreateRecipeViewModel)
       }
     }
 
