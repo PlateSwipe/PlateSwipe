@@ -144,7 +144,6 @@ class UserViewModel(
     userRepository.getUserById(
         id = userId,
         onSuccess = { user ->
-          println("User found")
           _userName.value = user.userName
           _profilePictureUrl.value = user.profilePictureUrl
           if (isConnected) {
@@ -154,15 +153,12 @@ class UserViewModel(
               fridgeItemRepository.add(fridgeItem)
             }
           } else {
-            println("No connection")
             fridgeItemRepository.getAll(
                 onSuccess = { fridgeItems ->
-                  println("Fridge items found")
                   fridgeItems.forEach { fridgeItem ->
                     ingredientRepository.getByBarcode(
                         fridgeItem.id.toLong(),
                         onSuccess = { ingredient ->
-                          println("Ingredient found")
                           if (ingredient != null) {
                             updateList(_fridgeItems, Pair(fridgeItem, ingredient), add = true)
                           }
