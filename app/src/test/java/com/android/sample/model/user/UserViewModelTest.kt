@@ -114,6 +114,7 @@ class UserViewModelTest {
 
   private val createdRecipeExample: Recipe = testRecipes[1]
   private val context = ApplicationProvider.getApplicationContext<Context>()
+  private val isConnected = true
 
   @Before
   fun setUp() {
@@ -143,7 +144,7 @@ class UserViewModelTest {
 
   @Test
   fun `test get current user calls repository`() {
-    userViewModel.getCurrentUser(context)
+    userViewModel.getCurrentUser(isConnected)
     verify(mockUserRepository).getUserById(any(), any(), any())
   }
 
@@ -177,7 +178,7 @@ class UserViewModelTest {
 
     doNothing().`when`(mockUserRepository).getUserById(any(), capture(onSuccessCaptor), any())
 
-    userViewModel.getCurrentUser(context)
+    userViewModel.getCurrentUser(false)
 
     onSuccessCaptor.value.invoke(userExample)
 
@@ -202,7 +203,7 @@ class UserViewModelTest {
     doNothing().`when`(mockUserRepository).getUserById(any(), any(), capture(onFailureCaptorGet))
     doNothing().`when`(mockUserRepository).addUser(any(), any(), capture(onFailureCaptorAdd))
 
-    userViewModel.getCurrentUser(context)
+    userViewModel.getCurrentUser(isConnected)
 
     onFailureCaptorGet.value.invoke(Exception())
 
@@ -220,7 +221,7 @@ class UserViewModelTest {
 
     doNothing().`when`(mockUserRepository).updateUser(any(), any(), capture(onFailureCaptor))
 
-    userViewModel.getCurrentUser(context)
+    userViewModel.getCurrentUser(isConnected)
 
     assertThrows(Exception::class.java) { onFailureCaptor.value.invoke(Exception()) }
   }
@@ -237,20 +238,20 @@ class UserViewModelTest {
     val addedUserCaptor: ArgumentCaptor<User> = ArgumentCaptor.forClass(User::class.java)
 
     doNothing().`when`(mockUserRepository).getUserById(any(), capture(onInitialGetCaptor), any())
-    userViewModel.getCurrentUser(context)
+    userViewModel.getCurrentUser(isConnected)
 
     onInitialGetCaptor.value.invoke(userExample)
 
     doNothing().`when`(mockUserRepository).getUserById(any(), any(), capture(onFailureCaptor))
     doNothing().`when`(mockUserRepository).addUser(capture(addedUserCaptor), any(), any())
-    userViewModel.getCurrentUser(context)
+    userViewModel.getCurrentUser(false)
 
     onFailureCaptor.value.invoke(Exception())
 
     assertEquals(addedUserCaptor.value.uid, userExample.uid)
     assertEquals(addedUserCaptor.value.userName, userExample.userName)
     assertEquals(addedUserCaptor.value.profilePictureUrl, userExample.profilePictureUrl)
-    verify(mockIngredientRepository, times(userExample.fridge.count())).get(any(), any(), any())
+    verify(mockIngredientRepository, times(userExample.fridge.count() + 1)).get(any(), any(), any())
     verify(
             mockRecipeRepository,
             times(userExample.likedRecipes.count() + userExample.createdRecipes.count()))
@@ -370,7 +371,7 @@ class UserViewModelTest {
 
     doNothing().`when`(mockIngredientRepository).get(any(), capture(onSuccessCaptorFridge), any())
 
-    userViewModel.getCurrentUser(context)
+    userViewModel.getCurrentUser(isConnected)
 
     onSuccessCaptor.value.invoke(userExample)
     onSuccessCaptorFridge.value.invoke(ingredientExample)
@@ -393,7 +394,7 @@ class UserViewModelTest {
     doNothing().`when`(mockIngredientRepository).get(any(), capture(onSuccessCaptorFridge), any())
 
     mockStatic(Log::class.java).use { mockedLog ->
-      userViewModel.getCurrentUser(context)
+      userViewModel.getCurrentUser(isConnected)
 
       onSuccessCaptor.value.invoke(userExample)
       onSuccessCaptorFridge.value.invoke(null)
@@ -414,7 +415,7 @@ class UserViewModelTest {
     doNothing().`when`(mockIngredientRepository).get(any(), any(), capture(onFailureCaptorFridge))
 
     mockStatic(Log::class.java).use { mockedLog ->
-      userViewModel.getCurrentUser(context)
+      userViewModel.getCurrentUser(isConnected)
 
       onSuccessCaptor.value.invoke(userExample)
       onFailureCaptorFridge.value.invoke(Exception())
@@ -438,7 +439,7 @@ class UserViewModelTest {
         .`when`(mockRecipeRepository)
         .search(any(), capture(onSuccessCaptorLikedRecipe), any())
 
-    userViewModel.getCurrentUser(context)
+    userViewModel.getCurrentUser(isConnected)
 
     // we need to make a copy without any created recipes
     // to avoid crushing the argument captor
@@ -464,7 +465,7 @@ class UserViewModelTest {
         .search(any(), any(), capture(onFailureCaptorLikedRecipe))
 
     mockStatic(Log::class.java).use { mockedLog ->
-      userViewModel.getCurrentUser(context)
+      userViewModel.getCurrentUser(isConnected)
 
       // we need to make a copy without any created recipes
       // to avoid crushing the argument captor
@@ -490,7 +491,7 @@ class UserViewModelTest {
         .`when`(mockRecipeRepository)
         .search(any(), capture(onSuccessCaptorCreatedRecipe), any())
 
-    userViewModel.getCurrentUser(context)
+    userViewModel.getCurrentUser(isConnected)
 
     onSuccessCaptor.value.invoke(userExample)
     onSuccessCaptorCreatedRecipe.value.invoke(createdRecipeExample)
@@ -514,7 +515,7 @@ class UserViewModelTest {
         .search(any(), any(), capture(onFailureCaptorCreatedRecipe))
 
     mockStatic(Log::class.java).use { mockedLog ->
-      userViewModel.getCurrentUser(context)
+      userViewModel.getCurrentUser(isConnected)
 
       onSuccessCaptor.value.invoke(userExample)
       onFailureCaptorCreatedRecipe.value.invoke(Exception())
@@ -765,5 +766,29 @@ class UserViewModelTest {
 
     userViewModel.clearIngredient()
     TestCase.assertEquals(Pair(null, null), userViewModel.ingredient.value)
+  }
+
+  @Test
+  fun notConnectedCallRoomDB() {
+
+    userViewModel.getCurrentUser(false)
+    `when`(mockUserRepository.getUserById(any(), any(), any())).thenAnswer { invocation ->
+      val onSuccess: (User) -> Unit = invocation.getArgument(1)
+      onSuccess(userExample)
+    }
+
+    `when`(mockFridgeItemRepository.getAll(any(), any())).thenAnswer { invocation ->
+      val onSuccess: (List<Pair<FridgeItem, Ingredient>>) -> Unit = invocation.getArgument(0)
+      onSuccess(listOf(Pair(fridgeItemExample, ingredientExample)))
+    }
+    `when`(mockIngredientRepository.getByBarcode(any(), any(), any())).thenAnswer { invocation ->
+      val onSuccess: (Ingredient?) -> Unit = invocation.getArgument(1)
+      onSuccess(ingredientExample)
+    }
+    // verify(mockIngredientRepository).getByBarcode(any(), any(), any())
+    userViewModel.fridgeItems.value.forEach {
+      assertEquals(it.first, fridgeItemExample)
+      assertEquals(it.second, ingredientExample)
+    }
   }
 }

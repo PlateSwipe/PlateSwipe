@@ -148,6 +148,7 @@ import com.android.sample.resources.C.TestTag.SignInScreen.TACO
 import com.android.sample.resources.C.TestTag.SignInScreen.TOMATO
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
+import com.android.sample.utils.NetworkUtils
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.firebase.Firebase
@@ -170,6 +171,7 @@ fun SignInScreen(navigationActions: NavigationActions, userViewModel: UserViewMo
   val registered = remember { mutableStateOf(false) }
   var isProcessing by remember { mutableStateOf(false) }
 
+  val isConnected = NetworkUtils().isNetworkAvailable(context)
   val coroutineScope = rememberCoroutineScope()
   val activityContext = LocalContext.current
   val token = stringResource(R.string.default_web_client_id)
@@ -189,7 +191,7 @@ fun SignInScreen(navigationActions: NavigationActions, userViewModel: UserViewMo
           if (Firebase.auth.currentUser != null || registered.value) {
             LoadingAnimation(
                 onFinish = {
-                  userViewModel.getCurrentUser(context)
+                  userViewModel.getCurrentUser(isConnected)
                   navigationActions.navigateTo(Screen.SWIPE)
                 },
                 duration = ANIMATION_DURATION)

@@ -56,6 +56,7 @@ import com.android.sample.ui.utils.RecipeList
 import com.android.sample.ui.utils.TopCornerDeleteButton
 import com.android.sample.ui.utils.TopCornerEditButton
 import com.android.sample.ui.utils.TopCornerUnLikeButton
+import com.android.sample.utils.NetworkUtils
 
 @Composable
 fun AccountScreen(
@@ -64,7 +65,8 @@ fun AccountScreen(
     createRecipeViewModel: CreateRecipeViewModel
 ) {
   val context = LocalContext.current
-  LaunchedEffect(Unit) { userViewModel.getCurrentUser(context) }
+  val isConnected = NetworkUtils().isNetworkAvailable(context)
+  LaunchedEffect(Unit) { userViewModel.getCurrentUser(isConnected) }
 
   PlateSwipeScaffold(
       navigationActions = navigationActions,

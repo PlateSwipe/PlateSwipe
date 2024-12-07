@@ -35,7 +35,6 @@ import com.android.sample.resources.C.Tag.UserViewModel.NOT_FOUND_INGREDIENT_IN_
 import com.android.sample.resources.C.Tag.UserViewModel.RECIPE_DELETED_SUCCESSFULY
 import com.android.sample.resources.C.Tag.UserViewModel.RECIPE_NOT_FOUND
 import com.android.sample.resources.C.Tag.UserViewModel.REMOVED_INGREDIENT_NOT_IN_FRIDGE_ERROR
-import com.android.sample.utils.NetworkUtils
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.firestore
@@ -138,33 +137,32 @@ class UserViewModel(
    * does not exist, it creates a new user with the current user id. If no user is logged in, it
    * does nothing.
    */
-  fun getCurrentUser(context: Context) {
+  fun getCurrentUser(isConnected: Boolean) {
     val userId: String = firebaseAuth.currentUser?.uid ?: return
     val displayName: String = firebaseAuth.currentUser?.displayName ?: "User"
 
     userRepository.getUserById(
         id = userId,
         onSuccess = { user ->
+          println("User found")
           _userName.value = user.userName
           _profilePictureUrl.value = user.profilePictureUrl
-          if (NetworkUtils().isNetworkAvailable(context)) {
-            Log.d(LOG_TAG, "Network is available")
+          if (isConnected) {
             user.fridge.forEach { fridgeItem ->
-              Log.d(LOG_TAG, "Fridge item: $fridgeItem")
               fetchIngredientInFridge(fridgeItem)
               // Update the local database with the fridge items
               fridgeItemRepository.add(fridgeItem)
             }
           } else {
-            Log.d(LOG_TAG, "Network is not available")
+            println("No connection")
             fridgeItemRepository.getAll(
                 onSuccess = { fridgeItems ->
+                  println("Fridge items found")
                   fridgeItems.forEach { fridgeItem ->
-                    Log.d(LOG_TAG, "Fridge item: $fridgeItem")
                     ingredientRepository.getByBarcode(
                         fridgeItem.id.toLong(),
                         onSuccess = { ingredient ->
-                          Log.d(LOG_TAG, "Ingredient: $ingredient")
+                          println("Ingredient found")
                           if (ingredient != null) {
                             updateList(_fridgeItems, Pair(fridgeItem, ingredient), add = true)
                           }
@@ -208,7 +206,7 @@ class UserViewModel(
                       likedRecipes = _likedRecipes.value.map { it.uid },
                       createdRecipes = _createdRecipes.value.map { it.uid },
                       dateOfBirth = ""),
-              onSuccess = { getCurrentUser(context) },
+              onSuccess = { getCurrentUser(isConnected) },
               onFailure = { e -> throw e })
         })
   }
