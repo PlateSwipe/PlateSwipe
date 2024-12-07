@@ -3,7 +3,6 @@ package com.android.sample.model.image
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
-import android.util.Log
 import androidx.core.net.toUri
 import coil.ImageLoader
 import coil.request.ImageRequest

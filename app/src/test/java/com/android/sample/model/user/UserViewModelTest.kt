@@ -3,6 +3,7 @@ package com.android.sample.model.user
 import android.content.Context
 import android.util.Log
 import androidx.test.core.app.ApplicationProvider
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.sample.model.fridge.FridgeItem
 import com.android.sample.model.fridge.localData.FridgeItemLocalRepository
 import com.android.sample.model.image.ImageRepositoryFirebase
@@ -42,6 +43,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.mock
@@ -55,6 +57,7 @@ import org.mockito.kotlin.eq
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 
+@RunWith(AndroidJUnit4::class)
 class UserViewModelTest {
 
   @Suppress("UNCHECKED_CAST")
