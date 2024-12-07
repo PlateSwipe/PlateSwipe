@@ -216,13 +216,12 @@ class IngredientViewModel(
         val imageFormats = ingredient.images.keys
         val deferredUri =
             imageFormats.map { format ->
-              val fileName = ingredient.name + format
+              val fileName = ingredient.uid + format
               val url = ingredient.images[format]
               async {
                 try {
                   if (url != null) {
                     val uri = imgDownload.downloadAndSaveImage(context, url, fileName, dispatcher)
-                    println("Image downloaded successfully for format: $format, uri: $uri")
                     Log.d(
                         INGREDIENT_VIEWMODEL_LOG_TAG,
                         "Image downloaded successfully for format: $format, uri: $uri")

@@ -44,16 +44,6 @@ fun EmptyScreen(navigationActions: NavigationActions, title: String) {
                     "Work in progress... Stay tuned!",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimary)
-
-
-                  Image(
-                      painter = rememberAsyncImagePainter("file:///data/user/0/com.android.sample/files/Wiener%20Waffelimage_front_thumb_url.jpg"),
-                      contentDescription = null,
-                      modifier =
-                      Modifier.aspectRatio(1f)
-                          .fillMaxSize()
-                          .clip(RoundedCornerShape(RECIPE_LIST_CORNER_RADIUS.dp))
-                          .testTag(RECIPE_IMAGE_TEST_TAG))
             }
       }
 }
