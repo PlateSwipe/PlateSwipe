@@ -187,8 +187,6 @@ fun SignInScreen(navigationActions: NavigationActions, userViewModel: UserViewMo
         Box(modifier = Modifier.fillMaxSize().padding(padding)) {
           // Show the loading animation if the user is registered
           if (Firebase.auth.currentUser != null || registered.value) {
-            Log.d("SignIn", "User is registered")
-
             LoadingAnimation(
                 onFinish = {
                   userViewModel.getCurrentUser(context)

@@ -486,12 +486,8 @@ private fun UpdateQuantityDialog(
                         val newFridgeItem =
                             fridgeIngredientPair.first.copy(quantity = updatedQuantity)
                         if (newFridgeItem.quantity == 0) {
-                          Log.d("Fridge", "Delete local: $newFridgeItem")
-                          Log.d("Fridge", "Ingredient : ${fridgeIngredientPair.second}")
                           userViewModel.deleteLocalFridgeItem(newFridgeItem)
                         } else {
-                          Log.d("Fridge", "Update local: $newFridgeItem")
-                          Log.d("Fridge", "Ingredient : ${fridgeIngredientPair.second}")
                           userViewModel.updateLocalFridgeItem(newFridgeItem)
                         }
 
