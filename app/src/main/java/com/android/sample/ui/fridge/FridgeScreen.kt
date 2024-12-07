@@ -1,6 +1,7 @@
 package com.android.sample.ui.fridge
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -330,6 +331,9 @@ private fun ItemCard(
                 Column(
                     modifier = Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally) {
+                      Log.d(
+                          "Fridge",
+                          "URI : ${card.second.images[PRODUCT_FRONT_IMAGE_THUMBNAIL_URL]}")
                       Spacer(Modifier.size(EDIT_ICON_SIZE.dp).padding(PADDING_8.dp))
 
                       Image(
@@ -477,6 +481,20 @@ private fun UpdateQuantityDialog(
                             updatedQuantity,
                             fridgeIngredientPair.first.expirationDate,
                             false)
+
+                        // Update the local Fridge Item ( Delete if quantity is 0)
+                        val newFridgeItem =
+                            fridgeIngredientPair.first.copy(quantity = updatedQuantity)
+                        if (newFridgeItem.quantity == 0) {
+                          Log.d("Fridge", "Delete local: $newFridgeItem")
+                          Log.d("Fridge", "Ingredient : ${fridgeIngredientPair.second}")
+                          userViewModel.deleteLocalFridgeItem(newFridgeItem)
+                        } else {
+                          Log.d("Fridge", "Update local: $newFridgeItem")
+                          Log.d("Fridge", "Ingredient : ${fridgeIngredientPair.second}")
+                          userViewModel.updateLocalFridgeItem(newFridgeItem)
+                        }
+
                         hiddeEditDialog()
                       },
                       colors =

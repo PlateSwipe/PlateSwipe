@@ -56,4 +56,13 @@ interface IngredientRepository {
    * @param onFailure The callback to be called with an exception if the search fails.
    */
   fun getAllDownload(onSuccess: (List<Ingredient>) -> Unit, onFailure: (Exception) -> Unit)
+
+  /**
+   * Get an ingredient by barcode.
+   *
+   * @param barCode barcode of the ingredient
+   * @param onSuccess callback with the ingredient
+   * @param onFailure callback with an exception
+   */
+  fun getByBarcode(barCode: Long, onSuccess: (Ingredient?) -> Unit, onFailure: (Exception) -> Unit)
 }

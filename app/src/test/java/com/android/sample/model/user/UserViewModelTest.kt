@@ -1,7 +1,10 @@
 package com.android.sample.model.user
 
+import android.content.Context
 import android.util.Log
+import androidx.test.core.app.ApplicationProvider
 import com.android.sample.model.fridge.FridgeItem
+import com.android.sample.model.fridge.localData.FridgeItemLocalRepository
 import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.ingredient.IngredientRepository
@@ -88,7 +91,7 @@ class UserViewModelTest {
   private lateinit var mockIngredientRepository: IngredientRepository
   private lateinit var mockRecipeRepository: FirestoreRecipesRepository
   private lateinit var mockImageRepositoryFirebase: ImageRepositoryFirebase
-
+  private lateinit var mockFridgeItemRepository: FridgeItemLocalRepository
   private lateinit var userViewModel: UserViewModel
 
   private lateinit var mockCall: Call
@@ -107,6 +110,7 @@ class UserViewModelTest {
   private val recipeExample: Recipe = testRecipes[0]
 
   private val createdRecipeExample: Recipe = testRecipes[1]
+  private val context = ApplicationProvider.getApplicationContext<Context>()
 
   @Before
   fun setUp() {
@@ -119,6 +123,7 @@ class UserViewModelTest {
     mockIngredientRepository = mock(IngredientRepository::class.java)
     mockRecipeRepository = mock(FirestoreRecipesRepository::class.java)
     mockImageRepositoryFirebase = mock(ImageRepositoryFirebase::class.java)
+    mockFridgeItemRepository = mock(FridgeItemLocalRepository::class.java)
 
     `when`(mockFirebaseAuth.currentUser).thenReturn(mockCurrentUser)
     `when`(mockCurrentUser.uid).thenReturn(userExample.uid)
@@ -129,12 +134,13 @@ class UserViewModelTest {
             mockFirebaseAuth,
             mockIngredientRepository,
             mockRecipeRepository,
-            mockImageRepositoryFirebase)
+            mockImageRepositoryFirebase,
+            mockFridgeItemRepository)
   }
 
   @Test
   fun `test get current user calls repository`() {
-    userViewModel.getCurrentUser()
+    userViewModel.getCurrentUser(context)
     verify(mockUserRepository).getUserById(any(), any(), any())
   }
 
@@ -168,7 +174,7 @@ class UserViewModelTest {
 
     doNothing().`when`(mockUserRepository).getUserById(any(), capture(onSuccessCaptor), any())
 
-    userViewModel.getCurrentUser()
+    userViewModel.getCurrentUser(context)
 
     onSuccessCaptor.value.invoke(userExample)
 
@@ -193,7 +199,7 @@ class UserViewModelTest {
     doNothing().`when`(mockUserRepository).getUserById(any(), any(), capture(onFailureCaptorGet))
     doNothing().`when`(mockUserRepository).addUser(any(), any(), capture(onFailureCaptorAdd))
 
-    userViewModel.getCurrentUser()
+    userViewModel.getCurrentUser(context)
 
     onFailureCaptorGet.value.invoke(Exception())
 
@@ -211,7 +217,7 @@ class UserViewModelTest {
 
     doNothing().`when`(mockUserRepository).updateUser(any(), any(), capture(onFailureCaptor))
 
-    userViewModel.getCurrentUser()
+    userViewModel.getCurrentUser(context)
 
     assertThrows(Exception::class.java) { onFailureCaptor.value.invoke(Exception()) }
   }
@@ -228,13 +234,13 @@ class UserViewModelTest {
     val addedUserCaptor: ArgumentCaptor<User> = ArgumentCaptor.forClass(User::class.java)
 
     doNothing().`when`(mockUserRepository).getUserById(any(), capture(onInitialGetCaptor), any())
-    userViewModel.getCurrentUser()
+    userViewModel.getCurrentUser(context)
 
     onInitialGetCaptor.value.invoke(userExample)
 
     doNothing().`when`(mockUserRepository).getUserById(any(), any(), capture(onFailureCaptor))
     doNothing().`when`(mockUserRepository).addUser(capture(addedUserCaptor), any(), any())
-    userViewModel.getCurrentUser()
+    userViewModel.getCurrentUser(context)
 
     onFailureCaptor.value.invoke(Exception())
 
@@ -361,7 +367,7 @@ class UserViewModelTest {
 
     doNothing().`when`(mockIngredientRepository).get(any(), capture(onSuccessCaptorFridge), any())
 
-    userViewModel.getCurrentUser()
+    userViewModel.getCurrentUser(context)
 
     onSuccessCaptor.value.invoke(userExample)
     onSuccessCaptorFridge.value.invoke(ingredientExample)
@@ -384,7 +390,7 @@ class UserViewModelTest {
     doNothing().`when`(mockIngredientRepository).get(any(), capture(onSuccessCaptorFridge), any())
 
     mockStatic(Log::class.java).use { mockedLog ->
-      userViewModel.getCurrentUser()
+      userViewModel.getCurrentUser(context)
 
       onSuccessCaptor.value.invoke(userExample)
       onSuccessCaptorFridge.value.invoke(null)
@@ -405,7 +411,7 @@ class UserViewModelTest {
     doNothing().`when`(mockIngredientRepository).get(any(), any(), capture(onFailureCaptorFridge))
 
     mockStatic(Log::class.java).use { mockedLog ->
-      userViewModel.getCurrentUser()
+      userViewModel.getCurrentUser(context)
 
       onSuccessCaptor.value.invoke(userExample)
       onFailureCaptorFridge.value.invoke(Exception())
@@ -429,7 +435,7 @@ class UserViewModelTest {
         .`when`(mockRecipeRepository)
         .search(any(), capture(onSuccessCaptorLikedRecipe), any())
 
-    userViewModel.getCurrentUser()
+    userViewModel.getCurrentUser(context)
 
     // we need to make a copy without any created recipes
     // to avoid crushing the argument captor
@@ -455,7 +461,7 @@ class UserViewModelTest {
         .search(any(), any(), capture(onFailureCaptorLikedRecipe))
 
     mockStatic(Log::class.java).use { mockedLog ->
-      userViewModel.getCurrentUser()
+      userViewModel.getCurrentUser(context)
 
       // we need to make a copy without any created recipes
       // to avoid crushing the argument captor
@@ -481,7 +487,7 @@ class UserViewModelTest {
         .`when`(mockRecipeRepository)
         .search(any(), capture(onSuccessCaptorCreatedRecipe), any())
 
-    userViewModel.getCurrentUser()
+    userViewModel.getCurrentUser(context)
 
     onSuccessCaptor.value.invoke(userExample)
     onSuccessCaptorCreatedRecipe.value.invoke(createdRecipeExample)
@@ -505,7 +511,7 @@ class UserViewModelTest {
         .search(any(), any(), capture(onFailureCaptorCreatedRecipe))
 
     mockStatic(Log::class.java).use { mockedLog ->
-      userViewModel.getCurrentUser()
+      userViewModel.getCurrentUser(context)
 
       onSuccessCaptor.value.invoke(userExample)
       onFailureCaptorCreatedRecipe.value.invoke(Exception())

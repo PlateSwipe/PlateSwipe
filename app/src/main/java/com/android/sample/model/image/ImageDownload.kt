@@ -3,6 +3,7 @@ package com.android.sample.model.image
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
+import android.util.Log
 import androidx.core.net.toUri
 import coil.ImageLoader
 import coil.request.ImageRequest
@@ -42,6 +43,7 @@ class ImageDownload {
   ): String? {
     return withContext(dispatcher) {
       try {
+        Log.d("ImageDownload", "Downloading image from $imageUrl")
         // Load the image from the URL and convert it to a Bitmap
         val loader = getImageLoader(context)
         val request = ImageRequest.Builder(context).data(imageUrl).build()
@@ -58,6 +60,7 @@ class ImageDownload {
         // Return the file URI as a String
         file.toUri().toString()
       } catch (e: Exception) {
+        Log.d("ImageDownload", "Error downloading image: $e")
         e.printStackTrace()
         null
       }

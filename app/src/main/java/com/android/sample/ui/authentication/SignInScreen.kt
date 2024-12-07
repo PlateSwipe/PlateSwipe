@@ -187,8 +187,13 @@ fun SignInScreen(navigationActions: NavigationActions, userViewModel: UserViewMo
         Box(modifier = Modifier.fillMaxSize().padding(padding)) {
           // Show the loading animation if the user is registered
           if (Firebase.auth.currentUser != null || registered.value) {
+            Log.d("SignIn", "User is registered")
+
             LoadingAnimation(
-                onFinish = { navigationActions.navigateTo(Screen.SWIPE) },
+                onFinish = {
+                  userViewModel.getCurrentUser(context)
+                  navigationActions.navigateTo(Screen.SWIPE)
+                },
                 duration = ANIMATION_DURATION)
           } else {
             RecipesAnimation()
@@ -205,7 +210,6 @@ fun SignInScreen(navigationActions: NavigationActions, userViewModel: UserViewMo
                             Toast.makeText(context, LOGIN_SUCCESSFUL, Toast.LENGTH_SHORT).show()
                             registered.value = true
                             isProcessing = false
-                            userViewModel.getCurrentUser()
                           },
                           onAuthError = {
                             Log.e(SIGN_IN_TAG, "$SIGN_IN_FAILED${it.message}")

@@ -164,6 +164,7 @@ class IngredientViewModel(
         dispatcher,
         onSuccess = {
           repository.addDownload(ingredient)
+          Log.d(INGREDIENT_VIEWMODEL_LOG_TAG, "Ingredient downloaded successfully : $ingredient")
           onSuccess()
         },
         onFailure = {
@@ -220,8 +221,11 @@ class IngredientViewModel(
               async {
                 try {
                   if (url != null) {
-                    val uri = imgDownload.downloadAndSaveImage(context, fileName, url, dispatcher)
+                    val uri = imgDownload.downloadAndSaveImage(context, url, fileName, dispatcher)
                     println("Image downloaded successfully for format: $format, uri: $uri")
+                    Log.d(
+                        INGREDIENT_VIEWMODEL_LOG_TAG,
+                        "Image downloaded successfully for format: $format, uri: $uri")
                     format to uri!!
                   } else {
                     null
