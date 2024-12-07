@@ -77,10 +77,7 @@ interface SearchIngredientViewModel {
       val addition = number1 + number2
 
       // Format the result, replace the first occurrence, delete .0 and ,0 and return
-      quantity1
-          .replaceFirst(match1.value, addition.toString())
-          .replaceFirst(".0", "")
-          .replaceFirst(",0", "")
+      quantity1.replaceFirst(match1.value, addition.toString()).replaceFirst(".0", "")
     } else if (match1 != null) {
       quantity1
     } else {
