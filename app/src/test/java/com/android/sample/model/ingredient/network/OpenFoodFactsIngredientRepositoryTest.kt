@@ -161,8 +161,8 @@ class OpenFoodFactsIngredientRepositoryTest {
                         "$PRODUCT_NAME": "Ingredient 1",
                         "$PRODUCT_BRAND": "Brand 1",
                         "$PRODUCT_CATEGORIES": [
-                            "${testIngredients[0].categories[0]}",
-                            "${testIngredients[0].categories[1]}"
+                            "en:${testIngredients[0].categories[0]}",
+                            "en:${testIngredients[0].categories[1]}"
                         ],
                         "$PRODUCT_QUANTITY": "",
                         "$PRODUCT_FRONT_IMAGE_NORMAL_URL": "ww",
