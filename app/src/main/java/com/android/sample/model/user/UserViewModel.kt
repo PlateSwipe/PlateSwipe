@@ -140,6 +140,7 @@ class UserViewModel(
   fun handleFridgeItem(isConnected: Boolean, user: User) {
     if (isConnected) {
       user.fridge.forEach { fridgeItem ->
+        Log.d(LOG_TAG, "Fetching ingredient from database: $fridgeItem")
         fetchIngredientInFridge(fridgeItem)
         // Update the local database with the fridge items
         fridgeItemRepository.add(fridgeItem)
@@ -148,6 +149,7 @@ class UserViewModel(
       fridgeItemRepository.getAll(
           onSuccess = { fridgeItems ->
             fridgeItems.forEach { fridgeItem ->
+              Log.d(LOG_TAG, "Updating ingredient from local database: $fridgeItem")
               ingredientRepository.getByBarcode(
                   fridgeItem.id.toLong(),
                   onSuccess = { ingredient ->
@@ -479,6 +481,7 @@ class UserViewModel(
         fridgeItem.id.toLong(),
         onSuccess = { ingredient ->
           if (ingredient != null) {
+            Log.d(LOG_TAG, "Updating ingredient from fridge: $ingredient")
             updateIngredientFromFridge(
                 ingredient, fridgeItem.quantity, fridgeItem.expirationDate, false)
           } else {

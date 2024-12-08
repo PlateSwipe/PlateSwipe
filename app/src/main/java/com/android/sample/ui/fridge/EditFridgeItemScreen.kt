@@ -187,17 +187,22 @@ fun EditComposable(
             modifier = Modifier.align(Alignment.CenterHorizontally).zIndex(1f),
             onClick = {
               userViewModel.updateIngredientFromFridge(ingredient, quantity, expirationDate, true)
-              if (ingredient.uid != null) {
-                // Download the Ingredient to the local database for offline use
-                ingredientViewModel.downloadIngredient(
-                    ingredient.copy(),
-                    context,
-                    Dispatchers.IO,
-                    onSuccess = { Log.d("EditFridge", "Ingredient downloaded : $ingredient") },
-                    onFailure = { Log.d("EditFridge", "Ingredient download failed") })
-                val fridgeItem = FridgeItem(ingredient.barCode.toString(), quantity, expirationDate)
-                userViewModel.updateLocalFridgeItem(fridgeItem)
+              Log.d("EditFridge", "Ingredient updated : $ingredient")
+              var newIngredient = ingredient.copy()
+              if (ingredient.uid == null) {
+                Log.d("EditFridge", "Ingredient has no uid")
+                newIngredient = ingredient.copy(uid = ingredient.barCode.toString())
               }
+              // Download the Ingredient to the local database for offline use
+              ingredientViewModel.downloadIngredient(
+                  newIngredient.copy(),
+                  context,
+                  Dispatchers.IO,
+                  onSuccess = { Log.d("EditFridge", "Ingredient downloaded : $newIngredient") },
+                  onFailure = { Log.d("EditFridge", "Ingredient download failed") })
+              val fridgeItem =
+                  FridgeItem(newIngredient.barCode.toString(), quantity, expirationDate)
+              userViewModel.updateLocalFridgeItem(fridgeItem)
 
               navigationActions.navigateTo(Screen.FRIDGE)
             })
