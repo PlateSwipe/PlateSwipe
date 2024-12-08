@@ -146,8 +146,7 @@ fun PlateSwipeApp() {
         RecipeIngredientsScreen(
             navigationActions = navigationActions,
             currentStep = SECOND_STEP_OF_THE_CREATION,
-            ingredientViewModel = ingredientViewModel,
-            createRecipeViewModel = createRecipeViewModel)
+            ingredientViewModel = ingredientViewModel)
       }
       composable(Screen.CREATE_RECIPE_INSTRUCTIONS) {
         RecipeInstructionsScreen(
@@ -230,16 +229,13 @@ fun PlateSwipeApp() {
         RecipeIngredientsScreen(
             navigationActions = navigationActions,
             currentStep = SECOND_STEP_OF_THE_CREATION,
-            ingredientViewModel = ingredientViewModel,
-            createRecipeViewModel = createRecipeViewModel,
-            isEditing = true)
+            ingredientViewModel = ingredientViewModel)
       }
       composable(Screen.EDIT_RECIPE_LIST_INGREDIENTS) {
         IngredientListScreen(
             navigationActions = navigationActions,
             ingredientViewModel = ingredientViewModel,
-            createRecipeViewModel = createRecipeViewModel,
-            isEditing = true)
+            createRecipeViewModel = createRecipeViewModel)
       }
       composable(Screen.EDIT_RECIPE_SEARCH_INGREDIENTS) {
         SearchIngredientScreen(
@@ -252,8 +248,7 @@ fun PlateSwipeApp() {
               ingredientViewModel.addIngredient(it)
               navigationActions.navigateTo(Screen.EDIT_RECIPE_LIST_INGREDIENTS)
             },
-            onSearchFinished = { navigationActions.navigateTo(Screen.CAMERA_SCAN_CODE_BAR) },
-            isEditing = true)
+            onSearchFinished = { navigationActions.navigateTo(Screen.CAMERA_SCAN_CODE_BAR) })
       }
       composable(Screen.EDIT_RECIPE_ADD_INSTRUCTION) {
         AddInstructionStepScreen(
