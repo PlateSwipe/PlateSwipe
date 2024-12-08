@@ -234,7 +234,7 @@ object C {
     const val PRODUCT_BRAND = "brands"
     const val PRODUCT_ID = "_id"
     const val PRODUCT_QUANTITY = "quantity"
-    const val PRODUCT_CATEGORIES = "categories"
+    const val PRODUCT_CATEGORIES = "categories_tags"
     const val PRODUCT_FRONT_IMAGE_NORMAL_URL = "image_front_url"
     const val PRODUCT_FRONT_IMAGE_NORMAL = "display_normal"
     const val PRODUCT_FRONT_IMAGE_THUMBNAIL_URL = "image_front_thumb_url"
@@ -267,6 +267,7 @@ object C {
             "_bg",
             "_ro",
             "_el")
+    const val PRODUCT_CATEGORIES_PREFIX = "en:"
 
     const val INGR_DB_COL_NAME_UID = "uid"
     const val INGR_DB_COL_NAME_BARCODE = "barcode"
