@@ -45,11 +45,13 @@ import com.android.sample.ui.fridge.FridgeScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
+import com.android.sample.ui.offline.OfflineScreen
 import com.android.sample.ui.recipe.SearchRecipeScreen
 import com.android.sample.ui.recipeOverview.RecipeOverview
 import com.android.sample.ui.searchIngredient.SearchIngredientScreen
 import com.android.sample.ui.swipePage.SwipePage
 import com.android.sample.ui.theme.SampleAppTheme
+import com.android.sample.utils.NetworkUtils
 
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,6 +71,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun PlateSwipeApp() {
   val context = LocalContext.current
+  val isConnected = NetworkUtils().isNetworkAvailable(context)
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
   val recipesViewModel: RecipesViewModel =
@@ -92,7 +95,13 @@ fun PlateSwipeApp() {
         startDestination = Screen.SWIPE,
         route = Route.SWIPE,
     ) {
-      composable(Screen.SWIPE) { SwipePage(navigationActions, recipesViewModel, userViewModel) }
+      composable(Screen.SWIPE) {
+        if (isConnected) {
+          SwipePage(navigationActions, recipesViewModel, userViewModel)
+        } else {
+          OfflineScreen(navigationActions)
+        }
+      }
       composable(Screen.OVERVIEW_RECIPE) { RecipeOverview(navigationActions, recipesViewModel) }
       composable(Screen.FILTER) { FilterPage(navigationActions, recipesViewModel) }
     }
@@ -211,7 +220,7 @@ fun PlateSwipeApp() {
         route = Route.ACCOUNT,
     ) {
       composable(Screen.ACCOUNT) {
-        AccountScreen(navigationActions, userViewModel, createRecipeViewModel)
+        AccountScreen(navigationActions, userViewModel, recipesViewModel, createRecipeViewModel)
       }
       composable(Screen.OVERVIEW_RECIPE_ACCOUNT) {
         RecipeOverview(navigationActions, userViewModel)

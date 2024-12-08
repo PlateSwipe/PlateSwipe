@@ -1,5 +1,8 @@
 package com.android.sample.ui.utils
 
+import android.os.Handler
+import android.os.Looper
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -25,12 +28,15 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.rounded.FileDownload
+import androidx.compose.material.icons.rounded.FileDownloadOff
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,6 +45,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -49,6 +56,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.android.sample.R
 import com.android.sample.model.recipe.Recipe
+import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C.Dimension.PADDING_4
 import com.android.sample.resources.C.Dimension.RecipeList.EDIT_ICON_SIZE
@@ -59,6 +67,7 @@ import com.android.sample.resources.C.Tag.PADDING
 import com.android.sample.resources.C.Tag.RECIPE_DELETE_ICON_CONTENT_DESCRIPTION
 import com.android.sample.resources.C.Tag.RECIPE_FAVORITE_ICON_CONTENT_DESCRIPTION
 import com.android.sample.resources.C.Tag.RECIPE_LIST_CORNER_RADIUS
+import com.android.sample.resources.C.Tag.RECIPE_LIST_DOWNLOAD
 import com.android.sample.resources.C.Tag.RECIPE_RATING_CONTENT_DESCRIPTION
 import com.android.sample.resources.C.TestTag.RecipeList.CANCEL_BUTTON
 import com.android.sample.resources.C.TestTag.RecipeList.CONFIRMATION_BUTTON
@@ -66,6 +75,7 @@ import com.android.sample.resources.C.TestTag.RecipeList.CONFIRMATION_POP_UP
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_CARD_TEST_TAG
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_CATEGORIES_TEST_TAG
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_DELETE_ICON_TEST_TAG
+import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_DOWNLOAD_ICON_TEST_TAG
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_FAVORITE_ICON_TEST_TAG
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_IMAGE_TEST_TAG
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_LIST_TEST_TAG
@@ -135,7 +145,7 @@ private fun RecipeCard(
                     modifier = Modifier.fillMaxWidth().weight(1f),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically) {
-                      RecipeTitle(recipe, Modifier.weight(3f))
+                      RecipeTitle(recipe, Modifier.weight(2f))
                       topCornerButton(recipe)
                     }
 
@@ -258,24 +268,116 @@ fun TopCornerEditButton(recipe: Recipe, onEditClicked: (Recipe) -> Unit) {
  * @param userViewModel the current user view model
  */
 @Composable
-fun TopCornerUnLikeButton(recipe: Recipe, userViewModel: UserViewModel) {
+fun TopCornerDownloadAndLikeButton(
+    recipe: Recipe,
+    userViewModel: UserViewModel,
+    recipeViewModel: RecipesViewModel
+) {
+  // List of the downloaded recipes
+  val recipeDownloadList = recipeViewModel.downloadedRecipes.collectAsState()
   var recipeUnlike: Boolean by remember { mutableStateOf(false) }
-  Icon(
-      imageVector = if (!recipeUnlike) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-      contentDescription = RECIPE_FAVORITE_ICON_CONTENT_DESCRIPTION,
-      modifier =
-          Modifier.padding(4.dp).size(24.dp).testTag(RECIPE_FAVORITE_ICON_TEST_TAG).clickable {
-            recipeUnlike = true
-          },
-      tint = valencia)
+  // Check if the recipe is in the recipe download list
+  var recipeDownload: Boolean by remember {
+    mutableStateOf(recipeDownloadList.value.any { it.uid == recipe.uid })
+  }
+  // Used to determine when we want to download a recipe
+  var download: Boolean by remember { mutableStateOf(false) }
+  // Used to determine when we want to remove a recipe
+  var unDownload: Boolean by remember { mutableStateOf(false) }
+  val context = LocalContext.current
+  Row(
+      horizontalArrangement = Arrangement.spacedBy(4.dp),
+      verticalAlignment = Alignment.CenterVertically) {
+        Icon(
+            imageVector =
+                // If the recipe is not downloaded display Download icon else display remove
+                // download icon
+                if (!recipeDownload) Icons.Rounded.FileDownload else Icons.Rounded.FileDownloadOff,
+            contentDescription = RECIPE_LIST_DOWNLOAD,
+            modifier =
+                Modifier.padding(4.dp)
+                    .size(30.dp)
+                    .testTag(RECIPE_DOWNLOAD_ICON_TEST_TAG)
+                    .clickable {
+                      // If recipe is not download, set download to true
+                      if (!recipeDownload) {
+                        recipeDownload = true
+                        download = true
+                      } else {
+                        // If recipe is already download and user click on the remove button ,set
+                        // unDownload to true
+                        recipeDownload = false
+                        unDownload = true
+                      }
+                    },
+            tint = MaterialTheme.colorScheme.onPrimary)
+        Icon(
+            imageVector = if (!recipeUnlike) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+            contentDescription = RECIPE_FAVORITE_ICON_CONTENT_DESCRIPTION,
+            modifier =
+                Modifier.padding(4.dp)
+                    .size(30.dp)
+                    .testTag(RECIPE_FAVORITE_ICON_TEST_TAG)
+                    .clickable { recipeUnlike = true },
+            tint = valencia)
+      }
+
   if (recipeUnlike) {
     ConfirmationPopUp(
         {
           userViewModel.removeRecipeFromUserLikedRecipes(recipe)
+          // If the user unlike a recipe, also remove it from download
+          recipeViewModel.deleteDownload(recipe)
           recipeUnlike = false
         },
         { recipeUnlike = false },
         stringResource(R.string.message_pop_up_remove_liked))
+  }
+  // Confirmation Pop Up for download recipe
+  if (download) {
+    ConfirmationPopUp(
+        {
+          recipeViewModel.downloadRecipe(
+              recipe,
+              onSuccess = {
+                Handler(Looper.getMainLooper()).post {
+                  Toast.makeText(
+                          context,
+                          context.getString(R.string.recipe_downloaded),
+                          Toast.LENGTH_SHORT)
+                      .show()
+                }
+              },
+              onFailure = {
+                Handler(Looper.getMainLooper()).post {
+                  Toast.makeText(
+                          context,
+                          context.getString(R.string.recipe_download_failed),
+                          Toast.LENGTH_SHORT)
+                      .show()
+                }
+              },
+              context)
+          download = false
+        },
+        {
+          download = false
+          recipeDownload = false
+        },
+        stringResource(R.string.do_you_want_to_download_this_recipe))
+  }
+  // confirmation Pop up to remove a recipe from the download
+  if (unDownload) {
+    ConfirmationPopUp(
+        {
+          recipeViewModel.deleteDownload(recipe)
+          unDownload = false
+        },
+        {
+          unDownload = false
+          recipeDownload = true
+        },
+        stringResource(R.string.do_you_want_to_remove_this_recipe_from_your_downloads))
   }
 }
 
