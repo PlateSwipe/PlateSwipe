@@ -65,7 +65,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.rememberAsyncImagePainter
 import com.android.sample.R
 import com.android.sample.model.filter.Difficulty
 import com.android.sample.model.recipe.Recipe
@@ -148,6 +147,7 @@ import com.android.sample.ui.theme.jungleGreen
 import com.android.sample.ui.theme.redSwipe
 import com.android.sample.ui.theme.starColor
 import com.android.sample.ui.utils.PlateSwipeScaffold
+import com.android.sample.ui.utils.RecipeImage
 import com.android.sample.ui.utils.Tag
 import com.android.sample.utils.NetworkUtils
 import kotlin.math.abs
@@ -795,35 +795,5 @@ fun LikeDislikeIconAnimation(
               tint = iconColor,
               modifier = Modifier.scale(iconScale).alpha(iconOpacity).zIndex(BACKGROUND_ANIMATION))
         }
-  }
-}
-
-@Composable
-fun RecipeImage(
-    displayCard1: Boolean,
-    currentRecipe: Recipe?,
-    nextRecipe: Recipe?,
-    isConnected: Boolean,
-    name: String
-) {
-
-  Column(modifier = Modifier.background(color = MaterialTheme.colorScheme.onPrimary)) {
-    if (isConnected) {
-      // Load image from URL
-      Image(
-          painter =
-              rememberAsyncImagePainter(
-                  model = if (displayCard1) currentRecipe?.url else nextRecipe?.url),
-          contentDescription = stringResource(R.string.recipe_image),
-          modifier = Modifier.fillMaxSize().testTag(name),
-          contentScale = ContentScale.Crop)
-    } else {
-      // Load no-wifi icon from drawable
-      Image(
-          painter = painterResource(id = R.drawable.round_wifi_off_24),
-          contentDescription = "no wifi image",
-          modifier = Modifier.fillMaxSize().testTag(name),
-          contentScale = ContentScale.Crop)
-    }
   }
 }

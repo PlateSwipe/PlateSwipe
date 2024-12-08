@@ -4,7 +4,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.android.sample.ui.swipePage.RecipeImage
+import com.android.sample.ui.utils.RecipeImage
 import com.android.sample.ui.utils.testRecipes
 import org.junit.Rule
 import org.junit.Test
