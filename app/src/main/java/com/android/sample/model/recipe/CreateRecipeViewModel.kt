@@ -371,7 +371,7 @@ class CreateRecipeViewModel(
       onSuccess: (Recipe) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    if (isEditing) {
+    if (!isEditing) {
       val newUid = repository.getNewUid()
       recipeBuilder.setId(newUid)
     }
