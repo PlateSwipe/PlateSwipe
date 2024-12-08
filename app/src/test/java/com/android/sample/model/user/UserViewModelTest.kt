@@ -31,6 +31,7 @@ import com.android.sample.ui.utils.testRecipes
 import com.android.sample.ui.utils.testUsers
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import java.time.LocalDate
 import junit.framework.TestCase
 import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertTrue
@@ -348,6 +349,28 @@ class UserViewModelTest {
         ingredientExample, ingredientExpirationDateModifiedExample)
     assert(userViewModel.fridgeItems.value.size == 1)
     assertEquals(Pair(fridgeItemExample, ingredientExample), userViewModel.fridgeItems.value[0])
+  }
+
+  @Test
+  fun `test maps fridge ingredients to the correct values`() {
+    val fridgeItems = testIngredients
+    val category1 = fridgeItems[0].categories[0]
+    val category2 = fridgeItems[1].categories[0]
+    val category3 = fridgeItems[1].categories[1]
+    val categories = listOf(category1, category2, category3)
+
+    userViewModel.updateIngredientFromFridge(fridgeItems[0], 1, LocalDate.now(), false)
+    userViewModel.updateIngredientFromFridge(fridgeItems[1], 1, LocalDate.now(), false)
+
+    val map: Map<String, List<Pair<FridgeItem, Ingredient>>> =
+        userViewModel.mapFridgeIngredientsToCategories(categories)
+
+    assertEquals(map[category1]?.count(), 1)
+    assertEquals(map[category1]?.get(0)?.second, fridgeItems[0])
+    assertEquals(map[category2]?.count(), 1)
+    assertEquals(map[category2]?.get(0)?.second, fridgeItems[1])
+    assertEquals(map[category3]?.count(), 1)
+    assertEquals(map[category3]?.get(0)?.second, fridgeItems[1])
   }
 
   @Test
