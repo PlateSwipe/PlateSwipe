@@ -14,27 +14,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,7 +38,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.zIndex
 import coil.compose.rememberAsyncImagePainter
 import com.android.sample.R
@@ -55,17 +46,11 @@ import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.ingredient.IngredientViewModel
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_IMAGE_BORDER_RADIUS
-import com.android.sample.resources.C.Dimension.Counter.MAX_VALUE
 import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScreen.CARD_BORDER_ROUND
 import com.android.sample.resources.C.Dimension.FridgeScreen.ALL_BAR
 import com.android.sample.resources.C.Dimension.FridgeScreen.BAR_HEIGHT
 import com.android.sample.resources.C.Dimension.FridgeScreen.BAR_ROUND_CORNER
 import com.android.sample.resources.C.Dimension.FridgeScreen.CARD_ELEVATION
-import com.android.sample.resources.C.Dimension.FridgeScreen.DIALOG_CORNER
-import com.android.sample.resources.C.Dimension.FridgeScreen.DIALOG_ELEVATION
-import com.android.sample.resources.C.Dimension.FridgeScreen.DIALOG_TITLE_ALPHA
-import com.android.sample.resources.C.Dimension.FridgeScreen.DIALOG_TITLE_FONT_SIZE
-import com.android.sample.resources.C.Dimension.FridgeScreen.DIALOG_TITLE_LINE_HEIGHT
 import com.android.sample.resources.C.Dimension.FridgeScreen.EDIT_ICON_SIZE
 import com.android.sample.resources.C.Dimension.FridgeScreen.EMPTY_FRIDGE_FONT_SIZE
 import com.android.sample.resources.C.Dimension.FridgeScreen.FRIDGE_TAG_CORNER
@@ -77,7 +62,6 @@ import com.android.sample.resources.C.Dimension.FridgeScreen.MAX_ORANGE_DAY
 import com.android.sample.resources.C.Dimension.FridgeScreen.MAX_PROPORTION
 import com.android.sample.resources.C.Dimension.FridgeScreen.MIN_ORANGE_DAY
 import com.android.sample.resources.C.Dimension.FridgeScreen.MIN_PROPORTION
-import com.android.sample.resources.C.Dimension.FridgeScreen.MIN_VALUE
 import com.android.sample.resources.C.Dimension.FridgeScreen.TITLE_FONT_SIZE
 import com.android.sample.resources.C.Dimension.PADDING_16
 import com.android.sample.resources.C.Dimension.PADDING_32
@@ -96,7 +80,6 @@ import com.android.sample.ui.theme.firebrickRed
 import com.android.sample.ui.theme.jungleGreen
 import com.android.sample.ui.theme.orangeExpirationBar
 import com.android.sample.ui.theme.tagBackground
-import com.android.sample.ui.utils.Counter
 import com.android.sample.ui.utils.PlateSwipeButton
 import com.android.sample.ui.utils.PlateSwipeScaffold
 import java.time.LocalDate
@@ -249,12 +232,12 @@ private fun FridgeContent(
                         ) {
                           // First card in the chunk
                           chunk.getOrNull(0)?.let { card1 ->
-                            ItemCard(Modifier.weight(1f), card1, userViewModel)
+                            ItemCard(Modifier.weight(1f), card1, userViewModel, navigationActions)
                           }
 
                           // Second card in the chunk (if present)
                           chunk.getOrNull(1)?.let { card2 ->
-                            ItemCard(Modifier.weight(1f), card2, userViewModel)
+                            ItemCard(Modifier.weight(1f), card2, userViewModel, navigationActions)
                           }
 
                           // Add an empty spacer if only one card exists in the chunk
@@ -296,10 +279,9 @@ private fun FridgeContent(
 private fun ItemCard(
     modifier: Modifier,
     card: Pair<FridgeItem, Ingredient>,
-    userViewModel: UserViewModel
+    userViewModel: UserViewModel,
+    navigationActions: NavigationActions
 ) {
-  var showEditDialog by remember { mutableStateOf(false) }
-  var updatedQuantity by remember { mutableIntStateOf(card.first.quantity) }
 
   Column(
       modifier = modifier.padding(PADDING_8.dp),
@@ -313,7 +295,13 @@ private fun ItemCard(
               Box(modifier = Modifier.fillMaxSize()) {
                 // Pencil Icon - Positioned at Top Right
                 IconButton(
-                    onClick = { showEditDialog = true },
+                    onClick = {
+                      userViewModel.setEditingIngredient(card)
+                      userViewModel.clearIngredientList()
+                      userViewModel.addIngredient(card.second)
+                      navigationActions.navigateTo(Screen.FRIDGE_EDIT)
+                      // showEditDialog = true
+                    },
                     modifier =
                         Modifier.align(Alignment.TopEnd)
                             .padding(PADDING_8.dp)
@@ -390,108 +378,7 @@ private fun ItemCard(
             text = formattedDate,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onPrimary.copy(alpha = ITEM_ALPHA))
-
-        // Edit Quantity Popup Dialog
-        if (showEditDialog) {
-          UpdateQuantityDialog(
-              fridgeIngredientPair = card,
-              updatedQuantity = updatedQuantity,
-              hiddeEditDialog = { showEditDialog = false },
-              setUpdatedQuantity = { updatedQuantity = it },
-              userViewModel = userViewModel)
-        }
       }
-}
-
-/**
- * Update Quantity Dialog
- *
- * @param fridgeIngredientPair: Pair<FridgeItem, Ingredient> object to hold the fridge item and
- *   ingredient
- * @param updatedQuantity: Int object to hold the updated quantity
- * @param hiddeEditDialog: Function to hide the edit dialog
- * @param setUpdatedQuantity: Function to set the updated quantity
- * @param userViewModel: UserViewModel object to handle user view model
- */
-@Composable
-private fun UpdateQuantityDialog(
-    fridgeIngredientPair: Pair<FridgeItem, Ingredient>,
-    updatedQuantity: Int,
-    hiddeEditDialog: () -> Unit,
-    setUpdatedQuantity: (Int) -> Unit,
-    userViewModel: UserViewModel
-) {
-  Dialog(onDismissRequest = hiddeEditDialog) {
-    Card(
-        shape = RoundedCornerShape(DIALOG_CORNER.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = DIALOG_ELEVATION.dp),
-        modifier = Modifier.padding(PADDING_16.dp),
-        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.secondary)) {
-          Column(
-              modifier = Modifier.padding(PADDING_16.dp),
-              horizontalAlignment = Alignment.CenterHorizontally) {
-                // Dialog Title with the ingredient name and quantity
-                Text(
-                    text =
-                        "Update Quantity: ${fridgeIngredientPair.second.name} (${fridgeIngredientPair.second.quantity})",
-                    style = MaterialTheme.typography.titleMedium,
-                    lineHeight = DIALOG_TITLE_LINE_HEIGHT.sp,
-                    fontSize = DIALOG_TITLE_FONT_SIZE.sp,
-                    color = MaterialTheme.colorScheme.onPrimary.copy(alpha = DIALOG_TITLE_ALPHA),
-                    modifier = Modifier.padding(bottom = PADDING_16.dp))
-                // Quantity Adjust Buttons
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = PADDING_16.dp),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically) {
-                      Counter(
-                          count = updatedQuantity,
-                          minValue = MIN_VALUE,
-                          maxValue = MAX_VALUE,
-                          onCounterChange = { setUpdatedQuantity(it) })
-                    }
-
-                Spacer(modifier = Modifier.height(PADDING_16.dp))
-
-                // Cancel Button
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-                  TextButton(
-                      onClick = {
-                        setUpdatedQuantity(fridgeIngredientPair.first.quantity)
-                        hiddeEditDialog()
-                      }) {
-                        Text(
-                            text = stringResource(R.string.cancel),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSecondaryContainer,
-                        )
-                      }
-
-                  Spacer(modifier = Modifier.width(PADDING_8.dp))
-
-                  // Save Button
-                  Button(
-                      onClick = {
-                        userViewModel.updateIngredientFromFridge(
-                            fridgeIngredientPair.second,
-                            updatedQuantity,
-                            fridgeIngredientPair.first.expirationDate,
-                            false)
-                        hiddeEditDialog()
-                      },
-                      colors =
-                          ButtonDefaults.buttonColors(
-                              MaterialTheme.colorScheme.onSecondaryContainer)) {
-                        Text(
-                            text = stringResource(R.string.save),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = Color.White,
-                        )
-                      }
-                }
-              }
-        }
-  }
 }
 
 /**

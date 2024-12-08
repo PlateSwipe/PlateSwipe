@@ -24,6 +24,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.times
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.verify
 
@@ -230,54 +231,7 @@ class FridgeScreenTest {
   }
 
   @Test
-  fun quantityDialogCorrectlyDisplayed() {
-    userViewModel.updateIngredientFromFridge(testIngredients[0], 1, LocalDate.of(2022, 2, 1), true)
-    composeTestRule.waitForIdle()
-
-    composeTestRule
-        .onNodeWithContentDescription("Edit ${testIngredients[0].name} Quantity")
-        .assertIsDisplayed()
-    composeTestRule
-        .onNodeWithContentDescription("Edit ${testIngredients[0].name} Quantity")
-        .performClick()
-
-    composeTestRule
-        .onNodeWithText(
-            "Update Quantity: ${testIngredients[0].name} (${testIngredients[0].quantity})")
-        .assertIsDisplayed()
-    composeTestRule.onNodeWithText("+").assertIsDisplayed()
-    composeTestRule.onNodeWithText("-").assertIsDisplayed()
-    composeTestRule.onNodeWithText("1").assertIsDisplayed()
-
-    composeTestRule.onNodeWithText("Cancel").assertIsDisplayed()
-    composeTestRule.onNodeWithText("Save").assertIsDisplayed()
-  }
-
-  @Test
-  fun quantityDialogAddAndSave() {
-    userViewModel.updateIngredientFromFridge(testIngredients[0], 1, LocalDate.of(2022, 2, 1), true)
-    composeTestRule.waitForIdle()
-
-    composeTestRule
-        .onNodeWithContentDescription("Edit ${testIngredients[0].name} Quantity")
-        .assertIsDisplayed()
-    composeTestRule
-        .onNodeWithContentDescription("Edit ${testIngredients[0].name} Quantity")
-        .performClick()
-
-    composeTestRule.onNodeWithText("+").assertIsDisplayed()
-    composeTestRule.onNodeWithText("+").performClick()
-    composeTestRule.waitForIdle()
-
-    composeTestRule.onNodeWithText("2").assertIsDisplayed()
-    composeTestRule.onNodeWithText("Save").assertIsDisplayed()
-    composeTestRule.onNodeWithText("Save").performClick()
-
-    assert(userViewModel.fridgeItems.value[0].first.quantity == 2)
-  }
-
-  @Test
-  fun quantityDialogRemoveAndSave() {
+  fun quantityCorrectlyUpdates() {
     userViewModel.updateIngredientFromFridge(testIngredients[0], 2, LocalDate.of(2022, 2, 1), true)
     composeTestRule.waitForIdle()
 
@@ -288,20 +242,15 @@ class FridgeScreenTest {
         .onNodeWithContentDescription("Edit ${testIngredients[0].name} Quantity")
         .performClick()
 
-    composeTestRule.onNodeWithText("-").assertIsDisplayed()
-    composeTestRule.onNodeWithText("-").performClick()
-    composeTestRule.waitForIdle()
-
-    composeTestRule.onNodeWithText("1").assertIsDisplayed()
-    composeTestRule.onNodeWithText("Save").assertIsDisplayed()
-    composeTestRule.onNodeWithText("Save").performClick()
-
-    assert(userViewModel.fridgeItems.value[0].first.quantity == 1)
+    assert(userViewModel.currentEditingFridgeIngredient.value != null)
+    assert(userViewModel.ingredientList.value.size == 1)
+    verify(navigationActions).navigateTo(Screen.FRIDGE_EDIT)
   }
 
   @Test
-  fun quantityDialogDeleteAndSave() {
-    userViewModel.updateIngredientFromFridge(testIngredients[0], 1, LocalDate.of(2022, 2, 1), true)
+  fun quantityCorrectlyUpdatesWithMultipleIngredient() {
+    userViewModel.updateIngredientFromFridge(testIngredients[0], 2, LocalDate.of(2022, 2, 1), true)
+    userViewModel.updateIngredientFromFridge(testIngredients[1], 2, LocalDate.of(2022, 2, 1), true)
     composeTestRule.waitForIdle()
 
     composeTestRule
@@ -311,37 +260,21 @@ class FridgeScreenTest {
         .onNodeWithContentDescription("Edit ${testIngredients[0].name} Quantity")
         .performClick()
 
-    composeTestRule.onNodeWithText("-").assertIsDisplayed()
-    composeTestRule.onNodeWithText("-").performClick()
-    composeTestRule.waitForIdle()
-
-    composeTestRule.onNodeWithText("0").assertIsDisplayed()
-    composeTestRule.onNodeWithText("Save").assertIsDisplayed()
-    composeTestRule.onNodeWithText("Save").performClick()
-
-    assert(userViewModel.fridgeItems.value.isEmpty())
-  }
-
-  @Test
-  fun quantityDialogAddAndDontSave() {
-    userViewModel.updateIngredientFromFridge(testIngredients[0], 1, LocalDate.of(2022, 2, 1), true)
-    composeTestRule.waitForIdle()
+    assert(userViewModel.currentEditingFridgeIngredient.value != null)
+    assert(userViewModel.ingredientList.value.size == 1)
+    assert(userViewModel.ingredientList.value[0].first == testIngredients[0])
+    verify(navigationActions).navigateTo(Screen.FRIDGE_EDIT)
 
     composeTestRule
-        .onNodeWithContentDescription("Edit ${testIngredients[0].name} Quantity")
+        .onNodeWithContentDescription("Edit ${testIngredients[1].name} Quantity")
         .assertIsDisplayed()
     composeTestRule
-        .onNodeWithContentDescription("Edit ${testIngredients[0].name} Quantity")
+        .onNodeWithContentDescription("Edit ${testIngredients[1].name} Quantity")
         .performClick()
 
-    composeTestRule.onNodeWithText("-").assertIsDisplayed()
-    composeTestRule.onNodeWithText("-").performClick()
-    composeTestRule.waitForIdle()
-
-    composeTestRule.onNodeWithText("0").assertIsDisplayed()
-    composeTestRule.onNodeWithText("Cancel").assertIsDisplayed()
-    composeTestRule.onNodeWithText("Cancel").performClick()
-
-    assert(userViewModel.fridgeItems.value[0].first.quantity == 1)
+    assert(userViewModel.currentEditingFridgeIngredient.value != null)
+    assert(userViewModel.ingredientList.value.size == 1)
+    assert(userViewModel.ingredientList.value[0].first == testIngredients[1])
+    verify(navigationActions, times(2)).navigateTo(Screen.FRIDGE_EDIT)
   }
 }
