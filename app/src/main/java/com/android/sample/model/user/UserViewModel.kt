@@ -131,7 +131,39 @@ class UserViewModel(
       }
     }
   }
-
+  /**
+   * Handles the fridge items for the user based on the connection status.
+   *
+   * @param isConnected Boolean indicating if the device is connected to the internet.
+   * @param user The user whose fridge items are to be handled.
+   */
+  fun handleFridgeItem(isConnected: Boolean, user: User) {
+    if (isConnected) {
+      user.fridge.forEach { fridgeItem ->
+        fetchIngredientInFridge(fridgeItem)
+        // Update the local database with the fridge items
+        fridgeItemRepository.add(fridgeItem)
+      }
+    } else {
+      fridgeItemRepository.getAll(
+          onSuccess = { fridgeItems ->
+            fridgeItems.forEach { fridgeItem ->
+              ingredientRepository.getByBarcode(
+                  fridgeItem.id.toLong(),
+                  onSuccess = { ingredient ->
+                    if (ingredient != null) {
+                      updateList(_fridgeItems, Pair(fridgeItem, ingredient), add = true)
+                    } else {
+                      Log.e(LOG_TAG, NOT_FOUND_INGREDIENT_IN_DATABASE_ERROR)
+                      throw Exception(NOT_FOUND_INGREDIENT_IN_DATABASE_ERROR)
+                    }
+                  },
+                  onFailure = { e -> throw e })
+            }
+          },
+          onFailure = { e -> throw e })
+    }
+  }
   /**
    * Gets the current user from the database and updates the view model with the values. If the user
    * does not exist, it creates a new user with the current user id. If no user is logged in, it
@@ -146,32 +178,10 @@ class UserViewModel(
         onSuccess = { user ->
           _userName.value = user.userName
           _profilePictureUrl.value = user.profilePictureUrl
-          if (isConnected) {
-            user.fridge.forEach { fridgeItem ->
-              fetchIngredientInFridge(fridgeItem)
-              // Update the local database with the fridge items
-              fridgeItemRepository.add(fridgeItem)
-            }
-          } else {
-            fridgeItemRepository.getAll(
-                onSuccess = { fridgeItems ->
-                  fridgeItems.forEach { fridgeItem ->
-                    ingredientRepository.getByBarcode(
-                        fridgeItem.id.toLong(),
-                        onSuccess = { ingredient ->
-                          if (ingredient != null) {
-                            updateList(_fridgeItems, Pair(fridgeItem, ingredient), add = true)
-                          }
-                        },
-                        onFailure = { e -> throw e })
-                  }
-                },
-                onFailure = { e -> throw e })
-          }
-          user.fridge.forEach { fridgeItem ->
-            fetchIngredientInFridge(fridgeItem)
-            // Update the local database with the fridge items
-            fridgeItemRepository.add(fridgeItem)
+          try {
+            handleFridgeItem(isConnected, user)
+          } catch (e: Exception) {
+            Log.e(LOG_TAG, FAILED_TO_FETCH_INGREDIENT_FROM_DATABASE_ERROR, e)
           }
           user.likedRecipes.forEach { uid ->
             fetchRecipe(
