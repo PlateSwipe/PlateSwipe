@@ -80,7 +80,8 @@ class RoomIngredientRepositoryTest {
   @Test
   fun getCallIngredientDAO() =
       runTest(testDispatcher) {
-        roomIngredientRepository.get(ingredient.barCode!!, { assert(true) }, { fail("Fail") })
+        roomIngredientRepository.getByBarcode(
+            ingredient.barCode!!, { assert(true) }, { fail("Fail") })
         `when`(mockIngredientDAO.get(ingredient.barCode!!)).thenReturn(ingredient.toEntity())
         testScheduler.advanceUntilIdle()
         verify(mockIngredientDAO).get(ingredient.barCode!!)

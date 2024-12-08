@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -55,6 +56,7 @@ import com.android.sample.ui.utils.RecipeList
 import com.android.sample.ui.utils.TopCornerDeleteButton
 import com.android.sample.ui.utils.TopCornerEditButton
 import com.android.sample.ui.utils.TopCornerUnLikeButton
+import com.android.sample.utils.NetworkUtils
 
 @Composable
 fun AccountScreen(
@@ -62,7 +64,9 @@ fun AccountScreen(
     userViewModel: UserViewModel,
     createRecipeViewModel: CreateRecipeViewModel
 ) {
-  LaunchedEffect(Unit) { userViewModel.getCurrentUser() }
+  val context = LocalContext.current
+  val isConnected = NetworkUtils().isNetworkAvailable(context)
+  LaunchedEffect(Unit) { userViewModel.getCurrentUser(isConnected) }
 
   PlateSwipeScaffold(
       navigationActions = navigationActions,

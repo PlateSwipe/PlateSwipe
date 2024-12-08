@@ -5,6 +5,9 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.android.sample.model.fridge.FridgeItem
+import com.android.sample.model.fridge.localData.FridgeItemDatabase
+import com.android.sample.model.fridge.localData.FridgeItemLocalRepository
+import com.android.sample.model.fridge.localData.RoomFridgeItemRepository
 import com.android.sample.model.image.ImageDirectoryType
 import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.image.ImageUploader
@@ -52,7 +55,8 @@ class UserViewModel(
     private val recipesRepository: FirestoreRecipesRepository =
         FirestoreRecipesRepository(Firebase.firestore),
     private val imageRepositoryFirebase: ImageRepositoryFirebase =
-        ImageRepositoryFirebase(Firebase.storage)
+        ImageRepositoryFirebase(Firebase.storage),
+    private val fridgeItemRepository: FridgeItemLocalRepository
 ) : ViewModel(), RecipeOverviewViewModel, SearchIngredientViewModel {
 
   private val _userName: MutableStateFlow<String?> = MutableStateFlow(null)
@@ -115,21 +119,57 @@ class UserViewModel(
           val ingredientDao = appDatabase.ingredientDao()
           val localRepository = RoomIngredientRepository(ingredientDao, Dispatchers.IO)
           val defaultRepository = DefaultIngredientRepository(localRepository, networkRepository)
+          val fridgeLocalDB = FridgeItemDatabase.getDatabase(appContext)
+          val fridgeItemDao = fridgeLocalDB.fridgeItemDao()
+          val fridgeItemLocalRepository = RoomFridgeItemRepository(fridgeItemDao, Dispatchers.IO)
           return UserViewModel(
               userRepository = UserRepositoryFirestore(Firebase.firestore),
-              ingredientRepository = defaultRepository)
+              ingredientRepository = defaultRepository,
+              fridgeItemRepository = fridgeItemLocalRepository)
               as T
         }
       }
     }
   }
-
+  /**
+   * Handles the fridge items for the user based on the connection status.
+   *
+   * @param isConnected Boolean indicating if the device is connected to the internet.
+   * @param user The user whose fridge items are to be handled.
+   */
+  fun handleFridgeItem(isConnected: Boolean, user: User) {
+    if (isConnected) {
+      user.fridge.forEach { fridgeItem ->
+        fetchIngredientInFridge(fridgeItem)
+        // Update the local database with the fridge items
+        fridgeItemRepository.add(fridgeItem)
+      }
+    } else {
+      fridgeItemRepository.getAll(
+          onSuccess = { fridgeItems ->
+            fridgeItems.forEach { fridgeItem ->
+              ingredientRepository.getByBarcode(
+                  fridgeItem.id.toLong(),
+                  onSuccess = { ingredient ->
+                    if (ingredient != null) {
+                      updateList(_fridgeItems, Pair(fridgeItem, ingredient), add = true)
+                    } else {
+                      Log.e(LOG_TAG, NOT_FOUND_INGREDIENT_IN_DATABASE_ERROR)
+                      throw Exception(NOT_FOUND_INGREDIENT_IN_DATABASE_ERROR)
+                    }
+                  },
+                  onFailure = { e -> throw e })
+            }
+          },
+          onFailure = { e -> throw e })
+    }
+  }
   /**
    * Gets the current user from the database and updates the view model with the values. If the user
    * does not exist, it creates a new user with the current user id. If no user is logged in, it
    * does nothing.
    */
-  fun getCurrentUser() {
+  fun getCurrentUser(isConnected: Boolean) {
     val userId: String = firebaseAuth.currentUser?.uid ?: return
     val displayName: String = firebaseAuth.currentUser?.displayName ?: "User"
 
@@ -138,7 +178,11 @@ class UserViewModel(
         onSuccess = { user ->
           _userName.value = user.userName
           _profilePictureUrl.value = user.profilePictureUrl
-          user.fridge.forEach { fridgeItem -> fetchIngredientInFridge(fridgeItem) }
+          try {
+            handleFridgeItem(isConnected, user)
+          } catch (e: Exception) {
+            Log.e(LOG_TAG, FAILED_TO_FETCH_INGREDIENT_FROM_DATABASE_ERROR, e)
+          }
           user.likedRecipes.forEach { uid ->
             fetchRecipe(
                 uid,
@@ -168,7 +212,7 @@ class UserViewModel(
                       likedRecipes = _likedRecipes.value.map { it.uid },
                       createdRecipes = _createdRecipes.value.map { it.uid },
                       dateOfBirth = ""),
-              onSuccess = { getCurrentUser() },
+              onSuccess = { getCurrentUser(isConnected) },
               onFailure = { e -> throw e })
         })
   }
@@ -503,5 +547,13 @@ class UserViewModel(
         ingredientRepository,
         { _isSearching.value = true },
         { _isSearching.value = false })
+  }
+
+  fun updateLocalFridgeItem(fridgeItem: FridgeItem) {
+    fridgeItemRepository.add(fridgeItem)
+  }
+
+  fun deleteLocalFridgeItem(fridgeItem: FridgeItem) {
+    fridgeItemRepository.delete(fridgeItem)
   }
 }

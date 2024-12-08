@@ -1,6 +1,7 @@
 package com.android.sample.ui.fridge
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -36,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -43,6 +45,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import coil.compose.rememberAsyncImagePainter
 import com.android.sample.R
+import com.android.sample.model.fridge.FridgeItem
+import com.android.sample.model.ingredient.IngredientViewModel
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_IMAGE_BORDER_RADIUS
 import com.android.sample.resources.C.Dimension.EditFridgeItemScreen.EPOCH_LITERAL
@@ -61,15 +65,20 @@ import com.android.sample.ui.utils.PlateSwipeButton
 import com.android.sample.ui.utils.PlateSwipeScaffold
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import kotlinx.coroutines.Dispatchers
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun EditFridgeItemScreen(navigationActions: NavigationActions, userViewModel: UserViewModel) {
+fun EditFridgeItemScreen(
+    navigationActions: NavigationActions,
+    userViewModel: UserViewModel,
+    ingredientViewModel: IngredientViewModel
+) {
   PlateSwipeScaffold(
       navigationActions = navigationActions,
       selectedItem = navigationActions.currentRoute(),
       content = { paddingValues ->
-        EditComposable(paddingValues, navigationActions, userViewModel)
+        EditComposable(paddingValues, navigationActions, userViewModel, ingredientViewModel)
       },
       showBackArrow = true)
 }
@@ -87,7 +96,8 @@ fun EditFridgeItemScreen(navigationActions: NavigationActions, userViewModel: Us
 fun EditComposable(
     paddingValues: PaddingValues,
     navigationActions: NavigationActions,
-    userViewModel: UserViewModel
+    userViewModel: UserViewModel,
+    ingredientViewModel: IngredientViewModel
 ) {
 
   val ingredient = userViewModel.ingredientList.collectAsState().value[0].first
@@ -95,7 +105,7 @@ fun EditComposable(
   var expirationDate by remember { mutableStateOf(LocalDate.now()) }
 
   val showDatePickerDialog = remember { mutableStateOf(false) }
-
+  val context = LocalContext.current
   Column(
       modifier = Modifier.fillMaxSize().padding(paddingValues).padding(PADDING_16.dp),
       verticalArrangement = Arrangement.spacedBy(PADDING_16.dp)) {
@@ -177,6 +187,18 @@ fun EditComposable(
             modifier = Modifier.align(Alignment.CenterHorizontally).zIndex(1f),
             onClick = {
               userViewModel.updateIngredientFromFridge(ingredient, quantity, expirationDate, true)
+              if (ingredient.uid != null) {
+                // Download the Ingredient to the local database for offline use
+                ingredientViewModel.downloadIngredient(
+                    ingredient.copy(),
+                    context,
+                    Dispatchers.IO,
+                    onSuccess = { Log.d("EditFridge", "Ingredient downloaded : $ingredient") },
+                    onFailure = { Log.d("EditFridge", "Ingredient download failed") })
+                val fridgeItem = FridgeItem(ingredient.barCode.toString(), quantity, expirationDate)
+                userViewModel.updateLocalFridgeItem(fridgeItem)
+              }
+
               navigationActions.navigateTo(Screen.FRIDGE)
             })
 

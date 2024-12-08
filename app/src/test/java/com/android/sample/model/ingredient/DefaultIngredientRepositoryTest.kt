@@ -68,4 +68,10 @@ class DefaultIngredientRepositoryTest {
     defaultIngredientRepository.getAllDownload(onSuccess2, onFailure)
     verify(mockLocalRepository).getAll(onSuccess2, onFailure)
   }
+
+  @Test
+  fun getByBarcodeCallLocalRepository() {
+    defaultIngredientRepository.getByBarcode(ingredient.barCode!!, onSuccess, onFailure)
+    verify(mockLocalRepository).getByBarcode(ingredient.barCode!!, onSuccess, onFailure)
+  }
 }

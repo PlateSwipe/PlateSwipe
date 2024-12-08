@@ -1,5 +1,6 @@
 package com.android.sample.model.ingredient
 
+import android.util.Log
 import com.android.sample.model.ingredient.localData.IngredientEntity
 import com.google.common.reflect.TypeToken
 import com.google.gson.Gson
@@ -11,6 +12,7 @@ import com.google.gson.Gson
  */
 fun Ingredient.toEntity(): IngredientEntity {
   val gson = Gson()
+  Log.d("EntityMapper", "toEntity : $this")
   return IngredientEntity(
       uid = this.uid ?: "",
       barCode = this.barCode,
@@ -28,6 +30,7 @@ fun Ingredient.toEntity(): IngredientEntity {
  */
 fun IngredientEntity.toIngredient(): Ingredient {
   val gson = Gson()
+  Log.d("EntityMapper", "toIngredient : $this")
   return Ingredient(
       uid = this.uid,
       barCode = this.barCode,

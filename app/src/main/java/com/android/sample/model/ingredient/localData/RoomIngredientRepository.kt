@@ -60,14 +60,18 @@ class RoomIngredientRepository(
    *   found.
    * @param onFailure Callback function to be invoked if an error occurs.
    */
-  override fun get(
+  override fun getByBarcode(
       barCode: Long,
       onSuccess: (Ingredient?) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
     CoroutineScope(dispatcher).launch {
-      val ingredient = ingredientDAO.get(barCode).toIngredient()
-      onSuccess(ingredient)
+      try {
+        val ingredient = ingredientDAO.get(barCode).toIngredient()
+        onSuccess(ingredient)
+      } catch (e: Exception) {
+        onFailure(e)
+      }
     }
   }
 }

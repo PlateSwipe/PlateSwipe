@@ -276,6 +276,12 @@ object C {
     const val INGR_DB_COL_NAME_CATEGORIES = "categories"
     const val INGR_DB_COL_NAME_IMAGES = "images"
     const val INGR_DB_COL_NAME_TABLE = "ingredient"
+
+    const val FRIDGE_DB_COL_NAME_TABLE = "fridge"
+    const val FRIDGE_DB_COL_NAME_ID = "id"
+    const val FRIDGE_DB_COL_NAME_QTY = "quantity"
+    const val FRIDGE_DB_COL_NAME_EXPIRATION_DATE = "expirationDate"
+    const val FRIDGE_DATABASE_NAME = "fridge_database"
     // EXCEPTION MESSAGES
     const val LIMIT_MUST_BE_POSITIVE_MESSAGE = "Limit must be greater than 0"
     const val UNSUPPORTED_MESSAGE = "Operation not supported"

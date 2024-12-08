@@ -86,4 +86,20 @@ open class DefaultIngredientRepository(
   ) {
     localRepository.getAll(onSuccess, onFailure)
   }
+
+  /**
+   * Retrieves an ingredient by its barcode from the local repository.
+   *
+   * @param barCode The barcode of the ingredient to retrieve.
+   * @param onSuccess Callback function to be invoked with the retrieved ingredient, or null if not
+   *   found.
+   * @param onFailure Callback function to be invoked if an error occurs.
+   */
+  override fun getByBarcode(
+      barCode: Long,
+      onSuccess: (Ingredient?) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    localRepository.getByBarcode(barCode, onSuccess, onFailure)
+  }
 }
