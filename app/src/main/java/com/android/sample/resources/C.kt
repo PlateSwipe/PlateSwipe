@@ -342,6 +342,8 @@ object C {
     // CreateRecipeViewModel
     const val RECIPE_PUBLISHED_SUCCESS_MESSAGE = "Recipe published successfully!"
     const val RECIPE_PUBLISH_ERROR_MESSAGE = "Failed to publish recipe: %1\$s"
+    const val RECIPE_UPDATED_SUCCESS_MESSAGE = "Recipe updated successfully!"
+    const val RECIPE_UPDATE_ERROR_MESSAGE = "Failed to update recipe: %1\$s"
 
     // IconType
     const val ICON_FIRE = "fire"
