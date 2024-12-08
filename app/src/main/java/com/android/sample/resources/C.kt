@@ -346,6 +346,11 @@ object C {
     const val RECIPE_PUBLISHED_SUCCESS_MESSAGE = "Recipe published successfully!"
     const val RECIPE_PUBLISH_ERROR_MESSAGE = "Failed to publish recipe: %1\$s"
 
+    // Offline Screen
+    const val TEST_TAG_OFFLINE_SCREEN_TITLE = "offlineScreenTitle"
+    const val TEST_TAG_OFFLINE_SCREEN_DESCRIPTION = "offlineScreenDescription"
+    const val TEST_TAG_OFFLINE_SCREEN_IMAGE = "offlineScreenImage"
+
     // IconType
     const val ICON_FIRE = "fire"
     const val ICON_SALT = "salt"
