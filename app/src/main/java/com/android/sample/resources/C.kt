@@ -282,7 +282,9 @@ object C {
     const val UNSUPPORTED_MESSAGE = "Operation not supported"
     const val INGREDIENT_NOT_FOUND_MESSAGE = "Ingredient not found"
     const val INGREDIENT_NAME_NOT_PROVIDED = "Ingredient name is required but has not been provided"
+    const val EXCEPTION = "Exception: "
 
+    const val GET_ALL_DOWNLOAD_RECIPE = "Downloaded recipes fetched"
     // Camera Actions
     const val LOG_TAG_CAMERA_ACTIONS = "CameraActions"
     const val UNBINDING_ERR = "Error in unbinding all use cases"

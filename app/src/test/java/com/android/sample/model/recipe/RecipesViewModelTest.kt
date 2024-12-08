@@ -1,7 +1,6 @@
 package com.android.sample.model.recipe
 
 import android.content.Context
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.sample.model.filter.Difficulty
@@ -524,7 +523,7 @@ class RecipesViewModelTest {
       onSuc(testRecipes)
     }
     recipesViewModel.getAllDownloads(onSuccess = onSuccess, onFailure = onFailure)
-    assert(recipesViewModel.recipesDownload.value == testRecipes)
+    assert(recipesViewModel.downloadedRecipes.value == testRecipes)
   }
 
   @Test
@@ -537,7 +536,7 @@ class RecipesViewModelTest {
       onFail(Exception("Error"))
     }
     recipesViewModel.getAllDownloads(onSuccess = onSuccess, onFailure = onFailure)
-    assert(recipesViewModel.recipesDownload.value == emptyList<Recipe>())
+    assert(recipesViewModel.downloadedRecipes.value == emptyList<Recipe>())
   }
 
   @OptIn(ExperimentalCoroutinesApi::class)
