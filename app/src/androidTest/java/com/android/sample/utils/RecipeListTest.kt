@@ -28,8 +28,8 @@ import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_TITLE_TEST_TAG
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.utils.RecipeList
+import com.android.sample.ui.utils.TopCornerDownloadAndLikeButton
 import com.android.sample.ui.utils.TopCornerEditButton
-import com.android.sample.ui.utils.TopCornerUnLikeButton
 import com.android.sample.ui.utils.testRecipes
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -140,7 +140,8 @@ class RecipeListTest {
           list = recipesList,
           onRecipeSelected = {},
           topCornerButton = { recipe ->
-            TopCornerUnLikeButton(recipe = recipe, userViewModel = userViewModel, recipesViewModel)
+            TopCornerDownloadAndLikeButton(
+                recipe = recipe, userViewModel = userViewModel, recipesViewModel)
           })
     }
 
@@ -207,7 +208,7 @@ class RecipeListTest {
   fun testTopCornerUnLikeButton() {
     recipesViewModel.setDownload(testRecipes)
     composeTestRule.setContent {
-      TopCornerUnLikeButton(
+      TopCornerDownloadAndLikeButton(
           recipe = testRecipes[0], userViewModel = userViewModel, recipesViewModel)
     }
     composeTestRule.onNodeWithTag(RECIPE_DOWNLOAD_ICON_TEST_TAG).assertIsDisplayed().performClick()
@@ -222,7 +223,7 @@ class RecipeListTest {
   @Test
   fun testTopCornerUnLikeButtonNotDownload() {
     composeTestRule.setContent {
-      TopCornerUnLikeButton(
+      TopCornerDownloadAndLikeButton(
           recipe = testRecipes[0], userViewModel = userViewModel, recipesViewModel)
     }
     composeTestRule.onNodeWithTag(RECIPE_DOWNLOAD_ICON_TEST_TAG).assertIsDisplayed().performClick()

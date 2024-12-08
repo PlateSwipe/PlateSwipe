@@ -268,13 +268,13 @@ fun TopCornerEditButton(recipe: Recipe, onEditClicked: (Recipe) -> Unit) {
  * @param userViewModel the current user view model
  */
 @Composable
-fun TopCornerUnLikeButton(
+fun TopCornerDownloadAndLikeButton(
     recipe: Recipe,
     userViewModel: UserViewModel,
     recipeViewModel: RecipesViewModel
 ) {
   // List of the downloaded recipes
-  val recipeDownloadList = recipeViewModel.recipesDownload.collectAsState()
+  val recipeDownloadList = recipeViewModel.downloadedRecipes.collectAsState()
   var recipeUnlike: Boolean by remember { mutableStateOf(false) }
   // Check if the recipe is in the recipe download list
   var recipeDownload: Boolean by remember {
