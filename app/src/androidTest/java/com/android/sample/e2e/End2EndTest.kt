@@ -550,7 +550,8 @@ class EndToEndTest {
           RecipeIngredientsScreen(
               navigationActions = navigationActions,
               currentStep = 1,
-              ingredientViewModel = ingredientViewModel)
+              ingredientViewModel = ingredientViewModel,
+              createRecipeViewModel = createRecipeViewModel)
         }
         composable(Screen.CREATE_RECIPE_INSTRUCTIONS) {
           RecipeInstructionsScreen(navigationActions = navigationActions, currentStep = 2)

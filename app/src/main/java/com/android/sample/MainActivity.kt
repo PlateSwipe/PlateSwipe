@@ -146,7 +146,8 @@ fun PlateSwipeApp() {
         RecipeIngredientsScreen(
             navigationActions = navigationActions,
             currentStep = SECOND_STEP_OF_THE_CREATION,
-            ingredientViewModel = ingredientViewModel)
+            ingredientViewModel = ingredientViewModel,
+            createRecipeViewModel = createRecipeViewModel)
       }
       composable(Screen.CREATE_RECIPE_INSTRUCTIONS) {
         RecipeInstructionsScreen(
@@ -225,12 +226,60 @@ fun PlateSwipeApp() {
       composable(Screen.EDIT_CATEGORY_SCREEN) {
         OptionalInformationScreen(navigationActions, createRecipeViewModel, isEditing = true)
       }
+      composable(Screen.EDIT_RECIPE_INGREDIENTS) {
+        RecipeIngredientsScreen(
+            navigationActions = navigationActions,
+            currentStep = SECOND_STEP_OF_THE_CREATION,
+            ingredientViewModel = ingredientViewModel,
+            createRecipeViewModel = createRecipeViewModel,
+            isEditing = true)
+      }
       composable(Screen.EDIT_RECIPE_LIST_INGREDIENTS) {
         IngredientListScreen(
             navigationActions = navigationActions,
             ingredientViewModel = ingredientViewModel,
-            createRecipeViewModel = createRecipeViewModel)
+            createRecipeViewModel = createRecipeViewModel,
+            isEditing = true)
       }
+      composable(Screen.EDIT_RECIPE_SEARCH_INGREDIENTS) {
+        SearchIngredientScreen(
+            navigationActions = navigationActions,
+            searchIngredientViewModel = ingredientViewModel,
+            popUpTitle = stringResource(R.string.pop_up_title),
+            popUpConfirmationText = stringResource(R.string.pop_up_description),
+            popUpConfirmationButtonText = stringResource(R.string.pop_up_confirmation),
+            onConfirmation = {
+              ingredientViewModel.addIngredient(it)
+              navigationActions.navigateTo(Screen.EDIT_RECIPE_LIST_INGREDIENTS)
+            },
+            onSearchFinished = { navigationActions.navigateTo(Screen.CAMERA_SCAN_CODE_BAR) },
+            isEditing = true)
+      }
+      composable(Screen.EDIT_RECIPE_ADD_INSTRUCTION) {
+        AddInstructionStepScreen(
+            navigationActions = navigationActions,
+            createRecipeViewModel = createRecipeViewModel,
+            true)
+      }
+
+      composable(Screen.EDIT_RECIPE_LIST_INSTRUCTIONS) {
+        RecipeListInstructionsScreen(
+            navigationActions = navigationActions,
+            createRecipeViewModel = createRecipeViewModel,
+            isEditing = true)
+      }
+      composable(Screen.EDIT_RECIPE_TIME_PICKER) {
+        TimePickerScreen(navigationActions, createRecipeViewModel, isEditing = true)
+      }
+
+      composable(Screen.PUBLISH_EDITED_RECIPE) {
+        PublishRecipeScreen(
+            navigationActions = navigationActions,
+            createRecipeViewModel = createRecipeViewModel,
+            userViewModel = userViewModel,
+            isEditing = true)
+      }
+
       composable(Screen.EDIT_ACCOUNT) { EditAccountScreen(navigationActions, userViewModel) }
     }
   }

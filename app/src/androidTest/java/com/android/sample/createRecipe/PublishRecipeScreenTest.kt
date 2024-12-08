@@ -114,7 +114,7 @@ class PublishRecipeScreenTest {
     val onFailure = slot<(Exception) -> Unit>()
 
     // Verify that publishRecipe was called with onSuccess and onFailure
-    verify { createRecipeViewModel.publishRecipe(capture(onSuccess), capture(onFailure)) }
+    verify { createRecipeViewModel.publishRecipe(false, capture(onSuccess), capture(onFailure)) }
 
     // Simulate success callback
     onSuccess.captured.invoke(createRecipeViewModel.recipeBuilder.build())
@@ -136,5 +136,55 @@ class PublishRecipeScreenTest {
   @Test(expected = IllegalArgumentException::class)
   fun publishRecipeScreen_throwsErrorWhenMeasurementIsBlank() {
     createRecipeViewModel.addIngredientAndMeasurement("Sugar", "")
+  }
+
+  @Test
+  fun publishRecipeScreen_allFieldsDisplayed_InEditMode() {
+    composeTestRule.setContent {
+      PublishRecipeScreen(
+          navigationActions = navigationActions,
+          createRecipeViewModel = createRecipeViewModel,
+          userViewModel = userViewModel,
+          isEditing = true)
+    }
+
+    composeTestRule.onNodeWithTag("DoneText").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("ChefImage").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("PublishButton").assertIsDisplayed()
+  }
+
+  @OptIn(ExperimentalCoroutinesApi::class)
+  @Test
+  fun publishRecipeScreen_publishButtonTriggersPublishAndNavigation_InEditMode() = runTest {
+    // Set up required fields in the CreateRecipeViewModel
+    createRecipeViewModel.updateRecipeName("Test Recipe")
+    createRecipeViewModel.addRecipeInstruction(Instruction("Test instructions"))
+    createRecipeViewModel.updateRecipeThumbnail("https://example.com/image.jpg")
+    createRecipeViewModel.addIngredientAndMeasurement("Ingredient", "1 cup")
+
+    composeTestRule.setContent {
+      PublishRecipeScreen(
+          navigationActions = navigationActions,
+          createRecipeViewModel = createRecipeViewModel,
+          userViewModel,
+          isEditing = true)
+    }
+
+    // Click the publish button
+    composeTestRule.onNodeWithText("Publish Recipe").performClick()
+
+    // Set up success callback
+    val onSuccess = slot<(Recipe) -> Unit>()
+    val onFailure = slot<(Exception) -> Unit>()
+
+    // Verify that publishRecipe was called with onSuccess and onFailure
+    verify { createRecipeViewModel.publishRecipe(true, capture(onSuccess), capture(onFailure)) }
+
+    // Simulate success callback
+    onSuccess.captured.invoke(createRecipeViewModel.recipeBuilder.build())
+    advanceUntilIdle()
+
+    // Verify navigation to the CREATE_RECIPE screen
+    verify { navigationActions.navigateTo(Screen.SWIPE) }
   }
 }

@@ -79,19 +79,20 @@ import com.android.sample.ui.utils.PlateSwipeScaffold
 @Composable
 fun RecipeListInstructionsScreen(
     createRecipeViewModel: CreateRecipeViewModel,
-    navigationActions: NavigationActions
+    navigationActions: NavigationActions,
+    isEditing: Boolean = false
 ) {
 
   PlateSwipeScaffold(
       navigationActions = navigationActions,
-      selectedItem = Route.CREATE_RECIPE,
+      selectedItem = if (isEditing) Route.ACCOUNT else Route.CREATE_RECIPE,
       showBackArrow = true,
       content = { paddingValues ->
         RecipeListInstructionsContent(
             createRecipeViewModel = createRecipeViewModel,
             modifier = Modifier.padding(paddingValues = paddingValues),
             navigationActions = navigationActions,
-        )
+            isEditing)
       })
 }
 
@@ -100,6 +101,7 @@ fun RecipeListInstructionsContent(
     createRecipeViewModel: CreateRecipeViewModel,
     modifier: Modifier,
     navigationActions: NavigationActions,
+    isEditing: Boolean
 ) {
 
   Column(
@@ -127,9 +129,7 @@ fun RecipeListInstructionsContent(
           modifier =
               Modifier.size(ICON_SIZE.dp)
                   .clickable(
-                      onClick = {
-                        navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_INSTRUCTION)
-                      })
+                      onClick = { navigationActions.navigateTo(toAddInstructionScreen(isEditing)) })
                   .testTag(ADD_INSTRUCTION_BUTTON),
           tint = MaterialTheme.colorScheme.onPrimary)
     }
@@ -168,7 +168,7 @@ fun RecipeListInstructionsContent(
                 time = createRecipeViewModel.getRecipeInstruction(index).time,
                 onClick = { x ->
                   createRecipeViewModel.selectInstruction(index = x)
-                  navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_INSTRUCTION)
+                  navigationActions.navigateTo(previousScreen(isEditing))
                 })
           }
         }
@@ -179,7 +179,7 @@ fun RecipeListInstructionsContent(
         modifier = Modifier.align(Alignment.CenterHorizontally).testTag(NEXT_STEP_BUTTON),
         onClick = {
           if (createRecipeViewModel.getRecipeListOfInstructions().isNotEmpty()) {
-            navigationActions.navigateTo(Screen.CREATE_RECIPE_TIME_PICKER)
+            navigationActions.navigateTo(nextScreen(isEditing))
           } else {
             Toast.makeText(
                     context,
@@ -276,3 +276,15 @@ fun Modifier.fadingEdge(brush: Brush) =
       drawContent()
       drawRect(brush = brush, blendMode = BlendMode.DstIn)
     }
+
+fun previousScreen(isEditing: Boolean): String {
+  return if (isEditing) Screen.EDIT_RECIPE_ADD_INSTRUCTION else Screen.CREATE_RECIPE_ADD_INSTRUCTION
+}
+
+fun nextScreen(isEditing: Boolean): String {
+  return if (isEditing) Screen.EDIT_RECIPE_TIME_PICKER else Screen.CREATE_RECIPE_TIME_PICKER
+}
+
+fun toAddInstructionScreen(isEditing: Boolean): String {
+  return if (isEditing) Screen.EDIT_RECIPE_ADD_INSTRUCTION else Screen.CREATE_RECIPE_ADD_INSTRUCTION
+}

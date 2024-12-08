@@ -14,6 +14,8 @@ import com.android.sample.resources.C
 import com.android.sample.resources.C.Tag.ERROR_NULL_IMAGE
 import com.android.sample.resources.C.Tag.RECIPE_PUBLISHED_SUCCESS_MESSAGE
 import com.android.sample.resources.C.Tag.RECIPE_PUBLISH_ERROR_MESSAGE
+import com.android.sample.resources.C.Tag.RECIPE_UPDATED_SUCCESS_MESSAGE
+import com.android.sample.resources.C.Tag.RECIPE_UPDATE_ERROR_MESSAGE
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.storage
@@ -364,25 +366,32 @@ class CreateRecipeViewModel(
    *
    * @throws IllegalArgumentException if the recipe ID is blank or if the image upload fails.
    */
-  fun publishRecipe(onSuccess: (Recipe) -> Unit, onFailure: (Exception) -> Unit) {
-    val newUid = repository.getNewUid()
-    recipeBuilder.setId(newUid)
+  fun publishRecipe(
+      isEditing: Boolean,
+      onSuccess: (Recipe) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    if (isEditing) {
+      val newUid = repository.getNewUid()
+      recipeBuilder.setId(newUid)
+    }
+
     try {
       if (_photo.value != null) {
         // Upload the image to the Image Repository with Name FIRESTORE_RECIPE_IMAGE_NAME and the
         // generated UID
         repoImg.uploadImage(
-            newUid,
+            recipeBuilder.getId(),
             C.Tag.FIRESTORE_RECIPE_IMAGE_NAME,
             ImageDirectoryType.RECIPE,
             _photo.value!!.asImageBitmap(),
             onSuccess = {
               // Set the Image UID to the Builder
-              recipeBuilder.setPictureID(newUid)
+              recipeBuilder.setPictureID(recipeBuilder.getId())
 
               // Get the Image URL from the Image Repository
               repoImg.getImageUrl(
-                  newUid,
+                  recipeBuilder.getId(),
                   C.Tag.FIRESTORE_RECIPE_IMAGE_NAME,
                   ImageDirectoryType.RECIPE,
                   onSuccess = { uri ->
@@ -394,19 +403,34 @@ class CreateRecipeViewModel(
                       // Build the Recipe
                       val recipe = recipeBuilder.build()
 
-                      // Add the Recipe to the Repository
-                      repository.addRecipe(
-                          recipe,
-                          onSuccess = {
-                            onSuccess(recipe)
-                            _publishStatus.value = RECIPE_PUBLISHED_SUCCESS_MESSAGE
-                            recipeBuilder.clear()
-                          },
-                          onFailure = { exception ->
-                            _publishStatus.value =
-                                RECIPE_PUBLISH_ERROR_MESSAGE.format(exception.message)
-                            onFailure(exception)
-                          })
+                      if (isEditing) {
+                        // Mise à jour de la recette existante
+                        repository.updateRecipe(
+                            recipe,
+                            onSuccess = {
+                              onSuccess(recipe)
+                              _publishStatus.value = RECIPE_UPDATED_SUCCESS_MESSAGE
+                            },
+                            onFailure = { exception ->
+                              _publishStatus.value =
+                                  RECIPE_UPDATE_ERROR_MESSAGE.format(exception.message)
+                              onFailure(exception)
+                            })
+                      } else {
+                        // Add the Recipe to the Repository
+                        repository.addRecipe(
+                            recipe,
+                            onSuccess = {
+                              onSuccess(recipe)
+                              _publishStatus.value = RECIPE_PUBLISHED_SUCCESS_MESSAGE
+                              recipeBuilder.clear()
+                            },
+                            onFailure = { exception ->
+                              _publishStatus.value =
+                                  RECIPE_PUBLISH_ERROR_MESSAGE.format(exception.message)
+                              onFailure(exception)
+                            })
+                      }
                     } catch (e: IllegalArgumentException) {
                       _publishStatus.value = e.message
                       onFailure(e)
