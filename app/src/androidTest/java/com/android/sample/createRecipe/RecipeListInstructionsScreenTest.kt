@@ -79,4 +79,37 @@ class RecipeListInstructionsScreenTest {
     // Verify that the navigateTo function was called with the correct parameter
     verify { navigationActions.navigateTo(Screen.CREATE_RECIPE_TIME_PICKER) }
   }
+
+  @Test
+  fun recipeListInstructionsScreen_allFieldsDisplayed_InEditMode() {
+    composeTestRule.setContent {
+      RecipeListInstructionsScreen(
+          navigationActions = navigationActions,
+          createRecipeViewModel = createRecipeViewModel,
+          isEditing = true)
+    }
+
+    composeTestRule.onNodeWithTag(SCREEN_COLUMN).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(RECIPE_NAME_TEXT).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(INSTRUCTION_TEXT).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(ADD_INSTRUCTION_BUTTON).assertIsDisplayed()
+  }
+
+  // Check if everything is clickable and verify navigation action
+  @Test
+  fun recipeListInstructionsScreen_allFieldsClickable_and_navigatesCorrectly_InEditMode() {
+    composeTestRule.setContent {
+      RecipeListInstructionsScreen(
+          navigationActions = navigationActions,
+          createRecipeViewModel = createRecipeViewModel,
+          isEditing = true)
+    }
+
+    // Perform clicks on items
+    composeTestRule.onNodeWithTag(INSTRUCTION_LIST_ITEM).assertIsDisplayed().performClick()
+    composeTestRule.onNodeWithTag(NEXT_STEP_BUTTON).assertIsDisplayed().performClick()
+
+    // Verify that the navigateTo function was called with the correct parameter
+    verify { navigationActions.navigateTo(Screen.EDIT_RECIPE_TIME_PICKER) }
+  }
 }

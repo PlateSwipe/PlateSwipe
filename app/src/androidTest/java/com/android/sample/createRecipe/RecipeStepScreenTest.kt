@@ -84,4 +84,74 @@ class RecipeStepScreenTest {
 
     composeTestRule.onNodeWithContentDescription("Chef standing").assertExists().assertIsDisplayed()
   }
+
+  @Test
+  fun testRecipeStepScreenComponentsAreDisplayedInEditMode() {
+    composeTestRule.setContent {
+      RecipeStepScreen(
+          title = titleText,
+          subtitle = subtitleText,
+          buttonText = buttonText,
+          onButtonClick = {},
+          navigationActions = mockNavigationActions,
+          currentStep = 1,
+          isEditing = true)
+    }
+
+    composeTestRule.onNodeWithText(titleText).assertExists().assertIsDisplayed()
+    composeTestRule.onNodeWithText(subtitleText).assertExists().assertIsDisplayed()
+    composeTestRule.onNodeWithText(buttonText).assertExists().assertIsDisplayed()
+    composeTestRule.onNodeWithTag("progressBar").assertExists().assertIsDisplayed()
+  }
+
+  @Test
+  fun testBackButtonFunctionalityInEditMode() {
+    composeTestRule.setContent {
+      RecipeStepScreen(
+          title = titleText,
+          subtitle = subtitleText,
+          buttonText = buttonText,
+          onButtonClick = {},
+          navigationActions = mockNavigationActions,
+          currentStep = 1,
+          isEditing = true)
+    }
+
+    composeTestRule.onNodeWithTag("backArrowIcon").assertExists().performClick()
+    verify(mockNavigationActions).goBack()
+  }
+
+  @Test
+  fun testOnButtonClickFunctionalityInEditMode() {
+    val onButtonClick = mock<(Unit) -> Unit>()
+
+    composeTestRule.setContent {
+      RecipeStepScreen(
+          title = titleText,
+          subtitle = subtitleText,
+          buttonText = buttonText,
+          onButtonClick = { onButtonClick(Unit) },
+          navigationActions = mockNavigationActions,
+          currentStep = 1,
+          isEditing = true)
+    }
+
+    composeTestRule.onNodeWithText(buttonText).assertExists().performClick()
+    verify(onButtonClick).invoke(Unit)
+  }
+
+  @Test
+  fun testChefImageIsDisplayedWithCorrectOffsetInEditMode() {
+    composeTestRule.setContent {
+      RecipeStepScreen(
+          title = titleText,
+          subtitle = subtitleText,
+          buttonText = buttonText,
+          onButtonClick = {},
+          navigationActions = mockNavigationActions,
+          currentStep = 1)
+    }
+
+    composeTestRule.onNodeWithContentDescription("Chef standing").assertExists().assertIsDisplayed()
+  }
 }

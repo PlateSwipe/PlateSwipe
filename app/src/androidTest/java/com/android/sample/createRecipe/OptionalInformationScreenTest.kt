@@ -235,6 +235,22 @@ class OptionalInformationScreenTest {
     composeTestRule.onNodeWithTag("NextStepButton").assertExists().performClick()
 
     // Verify navigation to the next screen
-    verify { mockNavigationActions.navigateTo(Screen.EDIT_RECIPE_LIST_INGREDIENTS) }
+    verify { mockNavigationActions.navigateTo(Screen.EDIT_RECIPE_ADD_INSTRUCTION) }
+  }
+
+  @Test
+  fun testNextStepButtonNavigatesToNextScreenInCreateMode() {
+    composeTestRule.setContent {
+      OptionalInformationScreen(
+          navigationActions = mockNavigationActions,
+          createRecipeViewModel = createRecipeViewModel,
+          isEditing = false)
+    }
+
+    // Click the "Next Step" button
+    composeTestRule.onNodeWithTag("NextStepButton").assertExists().performClick()
+
+    // Verify navigation to the next screen
+    verify { mockNavigationActions.navigateTo(Screen.CREATE_RECIPE_INGREDIENTS) }
   }
 }

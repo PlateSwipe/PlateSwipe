@@ -51,17 +51,19 @@ import com.android.sample.ui.utils.PlateSwipeScaffold
 fun TimePickerScreen(
     navigationActions: NavigationActions,
     createRecipeViewModel: CreateRecipeViewModel,
+    isEditing: Boolean = false
 ) {
   PlateSwipeScaffold(
       navigationActions = navigationActions,
-      selectedItem = Route.CREATE_RECIPE,
+      selectedItem = if (isEditing) Route.ACCOUNT else Route.CREATE_RECIPE,
       showBackArrow = true,
       content = { paddingValues ->
         TimePickerContent(
             currentStep = THIRD_STEP_OF_THE_CREATION,
             navigationActions = navigationActions,
             createRecipeViewModel = createRecipeViewModel,
-            modifier = Modifier.fillMaxSize().padding(paddingValues))
+            modifier = Modifier.fillMaxSize().padding(paddingValues),
+            isEditing = isEditing)
       })
 }
 
@@ -78,7 +80,8 @@ fun TimePickerContent(
     modifier: Modifier = Modifier,
     currentStep: Int,
     navigationActions: NavigationActions,
-    createRecipeViewModel: CreateRecipeViewModel
+    createRecipeViewModel: CreateRecipeViewModel,
+    isEditing: Boolean
 ) {
   val totalMinutes = remember { createRecipeViewModel.getRecipeTime()?.toIntOrNull() ?: 0 }
   val initialHours = totalMinutes / MINUTES_PER_HOUR
@@ -140,7 +143,8 @@ fun TimePickerContent(
         onClick = {
           val totalTimeInMinutes = (hours.intValue * MINUTES_PER_HOUR) + minutes.intValue
           createRecipeViewModel.updateRecipeTime(totalTimeInMinutes.toString())
-          navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_IMAGE)
+          navigationActions.navigateTo(
+              if (isEditing) Screen.PUBLISH_EDITED_RECIPE else Screen.CREATE_RECIPE_ADD_IMAGE)
         })
   }
 }

@@ -147,7 +147,10 @@ fun OptionalInformationContent(
               onClick = {
                 createRecipeViewModel.updateRecipeCategory(selectedCategory.value)
                 createRecipeViewModel.updateRecipeDifficulty(selectedDifficulty.value)
-                fromOptionalInformationScreenNavigateToNextScreen(isEditing, navigationActions)
+                val hasInstructions =
+                    createRecipeViewModel.getRecipeListOfInstructions().isNotEmpty()
+                val targetScreen = determineInstructionScreen(isEditing, hasInstructions)
+                navigationActions.navigateTo(targetScreen)
               })
         }
   }
@@ -190,8 +193,16 @@ fun fromOptionalInformationScreenNavigateToNextScreen(
     navigationActions: NavigationActions
 ) {
   if (isEditing) {
-    navigationActions.navigateTo(Screen.EDIT_RECIPE_LIST_INGREDIENTS)
+    navigationActions.navigateTo(Screen.EDIT_RECIPE_INGREDIENTS)
   } else {
     navigationActions.navigateTo(Screen.CREATE_RECIPE_INGREDIENTS)
+  }
+}
+
+fun determineInstructionScreen(isEditing: Boolean, hasInstructions: Boolean): String {
+  return when {
+    isEditing && !hasInstructions -> Screen.EDIT_RECIPE_ADD_INSTRUCTION
+    isEditing -> Screen.EDIT_RECIPE_LIST_INSTRUCTIONS
+    else -> Screen.CREATE_RECIPE_INGREDIENTS
   }
 }
