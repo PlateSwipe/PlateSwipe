@@ -339,11 +339,12 @@ class UserViewModel(
   private fun getIngredientsByCategoryInFridge(
       category: String
   ): List<Pair<FridgeItem, Ingredient>> {
-    return _fridgeItems.value.filter { it.second.categories.contains(category) }
+    return _fridgeItems.value.filter { it.second.categories.contains(category.lowercase()) }
   }
 
   /**
    * Method that maps each category in categories to a list of ingredients that have this category
+   * If a category doesn't have any ingredients, it isn't included into the mapping
    *
    * Example: Map: "Beef":
    * - (FridgeItem,Ingredient with category "Beef")
@@ -355,7 +356,9 @@ class UserViewModel(
   fun mapFridgeIngredientsToCategories(
       categories: List<String>
   ): Map<String, List<Pair<FridgeItem, Ingredient>>> {
-    return categories.associateWith { category -> getIngredientsByCategoryInFridge(category) }
+    return categories
+        .associateWith { category -> getIngredientsByCategoryInFridge(category) }
+        .filterValues { it.isNotEmpty() }
   }
 
   /**
