@@ -1,6 +1,5 @@
 package com.android.sample.model.ingredient.localData
 
-import android.util.Log
 import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.ingredient.toEntity
 import com.android.sample.model.ingredient.toIngredient
@@ -68,9 +67,8 @@ class RoomIngredientRepository(
   ) {
     CoroutineScope(dispatcher).launch {
       try {
-        val ingredient = ingredientDAO.get(barCode)
-        Log.d("RoomIngredientRepository", "getByBarcode : $ingredient")
-        onSuccess(ingredient.toIngredient())
+        val ingredient = ingredientDAO.get(barCode).toIngredient()
+        onSuccess(ingredient)
       } catch (e: Exception) {
         onFailure(e)
       }
