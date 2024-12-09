@@ -14,8 +14,11 @@ import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTouchInput
 import androidx.test.core.app.ApplicationProvider
+import com.android.sample.model.image.ImageDownload
 import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.recipe.CreateRecipeViewModel
+import com.android.sample.model.recipe.RecipesRepository
+import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.model.user.User
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C.Tag.EditAccountScreen.DATE_OF_BIRTH_FIELD_DESCRIPTION
@@ -68,6 +71,7 @@ class EditAccountScreenTest {
   @Mock private lateinit var mockStorageRef: StorageReference
   @Mock private lateinit var mockImageRef: StorageReference
   @Mock private lateinit var mockDownload: FileDownloadTask
+  @Mock private lateinit var mockRecipeRepository: RecipesRepository
 
   private lateinit var mockNavigationActions: NavigationActions
   private lateinit var mockFirebaseAuth: FirebaseAuth
@@ -77,6 +81,8 @@ class EditAccountScreenTest {
   private lateinit var userViewModel: UserViewModel
   private lateinit var createRecipeViewModel: CreateRecipeViewModel
   private lateinit var imageRepositoryFirebase: ImageRepositoryFirebase
+
+  private lateinit var recipeViewModel: RecipesViewModel
 
   @get:Rule val composeTestRule = createComposeRule()
 
@@ -90,6 +96,7 @@ class EditAccountScreenTest {
     mockFirebaseAuth = mock(FirebaseAuth::class.java)
     mockFirebaseUser = mock(FirebaseUser::class.java)
     mockFirebaseStorageReference = mock(StorageReference::class.java)
+    mockRecipeRepository = mock(RecipesRepository::class.java)
 
     `when`(mockFirebaseAuth.currentUser).thenReturn(mockFirebaseUser)
     `when`(mockFirebaseUser.email).thenReturn("example@mail.ch")
@@ -100,6 +107,7 @@ class EditAccountScreenTest {
 
     `when`(mockNavigationActions.currentRoute()).thenReturn(Screen.ACCOUNT)
 
+    recipeViewModel = RecipesViewModel(mockRecipeRepository, ImageDownload())
     userViewModel =
         UserViewModel.provideFactory(ApplicationProvider.getApplicationContext())
             .create(UserViewModel::class.java)
@@ -114,7 +122,9 @@ class EditAccountScreenTest {
   @Test
   fun editAccountIsAccessibleTest() {
     composeTestRule.setContent {
-      SampleAppTheme { AccountScreen(mockNavigationActions, userViewModel, createRecipeViewModel) }
+      SampleAppTheme {
+        AccountScreen(mockNavigationActions, userViewModel, recipeViewModel, createRecipeViewModel)
+      }
     }
 
     composeTestRule.onNodeWithTag(EDIT_ACCOUNT_ICON).assertIsDisplayed()

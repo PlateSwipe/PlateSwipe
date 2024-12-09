@@ -16,7 +16,9 @@ import com.android.sample.model.recipe.networkData.FirestoreRecipesRepository
 import com.android.sample.resources.C.Tag.ERROR_DELETE_DOWNLOAD
 import com.android.sample.resources.C.Tag.ERROR_DOWNLOAD_IMG
 import com.android.sample.resources.C.Tag.ERROR_RECIPE_WITH_NO_IMG
+import com.android.sample.resources.C.Tag.EXCEPTION
 import com.android.sample.resources.C.Tag.Filter.UNINITIALIZED_BORN_VALUE
+import com.android.sample.resources.C.Tag.GET_ALL_DOWNLOAD_RECIPE
 import com.android.sample.resources.C.Tag.LOG_TAG_RECIPE_VIEWMODEL
 import com.android.sample.resources.C.Tag.MINIMUM_RECIPES_BEFORE_FETCH
 import com.android.sample.resources.C.Tag.NUMBER_RECIPES_TO_FETCH
@@ -50,9 +52,9 @@ class RecipesViewModel(
   val recipes: StateFlow<List<Recipe>>
     get() = _recipes
 
-  private val _recipesDownload = MutableStateFlow<List<Recipe>>(emptyList())
-  val recipesDownload: StateFlow<List<Recipe>>
-    get() = _recipesDownload
+  private val _downloadedRecipes = MutableStateFlow<List<Recipe>>(emptyList())
+  val downloadedRecipes: StateFlow<List<Recipe>>
+    get() = _downloadedRecipes
 
   // StateFlow for loading/error states
   private val _loading = MutableStateFlow(false)
@@ -99,6 +101,9 @@ class RecipesViewModel(
     viewModelScope.launch {
       getCategoryList()
       fetchRandomRecipes(NUMBER_RECIPES_TO_FETCH)
+      getAllDownloads(
+          onSuccess = { _ -> Log.d(LOG_TAG_RECIPE_VIEWMODEL, GET_ALL_DOWNLOAD_RECIPE) },
+          onFailure = { e -> Log.e(LOG_TAG_RECIPE_VIEWMODEL, EXCEPTION + e.message) })
 
       _loading.collect { isLoading ->
         if (!isLoading) {
@@ -325,7 +330,12 @@ class RecipesViewModel(
         onSuccess = { uri ->
           val newRecipe = recipe.copy(url = uri)
           repository.addDownload(
-              newRecipe, onSuccess = { onSuccess(newRecipe) }, onFailure = { e -> onFailure(e) })
+              newRecipe,
+              onSuccess = {
+                _downloadedRecipes.value += newRecipe
+                onSuccess(newRecipe)
+              },
+              onFailure = { e -> onFailure(e) })
         },
         onFailure = { e -> onFailure(e) })
   }
@@ -373,7 +383,7 @@ class RecipesViewModel(
   fun getAllDownloads(onSuccess: (List<Recipe>) -> Unit, onFailure: (Exception) -> Unit) {
     repository.getAllDownload(
         onSuccess = { recipes ->
-          _recipesDownload.value = recipes
+          _downloadedRecipes.value = recipes
           onSuccess(recipes)
         },
         onFailure = { exception -> onFailure(exception) })
@@ -386,6 +396,7 @@ class RecipesViewModel(
    */
   fun deleteDownload(recipe: Recipe) {
     repository.deleteDownload(recipe)
+    _downloadedRecipes.value = _downloadedRecipes.value.filter { it.uid != recipe.uid }
   }
 
   /** Deletes all downloaded recipes. */
@@ -403,6 +414,10 @@ class RecipesViewModel(
           { e -> Log.e(LOG_TAG_RECIPE_VIEWMODEL, "Exception:${e.message}") },
           context)
     }
+  }
+
+  fun setDownload(recipes: List<Recipe>) {
+    _downloadedRecipes.value = recipes
   }
 
   companion object {

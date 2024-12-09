@@ -144,6 +144,7 @@ object C {
     const val RECIPE_RATING_CONTENT_DESCRIPTION = "rating"
     const val RECIPE_FAVORITE_ICON_CONTENT_DESCRIPTION = "like"
     const val RECIPE_DELETE_ICON_CONTENT_DESCRIPTION = "delete"
+    const val RECIPE_LIST_DOWNLOAD = "download"
 
     // SearchBar
     const val SEARCH_BAR_CORNER_RADIUS = 16
@@ -281,7 +282,9 @@ object C {
     const val UNSUPPORTED_MESSAGE = "Operation not supported"
     const val INGREDIENT_NOT_FOUND_MESSAGE = "Ingredient not found"
     const val INGREDIENT_NAME_NOT_PROVIDED = "Ingredient name is required but has not been provided"
+    const val EXCEPTION = "Exception: "
 
+    const val GET_ALL_DOWNLOAD_RECIPE = "Downloaded recipes fetched"
     // Camera Actions
     const val LOG_TAG_CAMERA_ACTIONS = "CameraActions"
     const val UNBINDING_ERR = "Error in unbinding all use cases"
@@ -344,6 +347,11 @@ object C {
     const val RECIPE_PUBLISH_ERROR_MESSAGE = "Failed to publish recipe: %1\$s"
     const val RECIPE_UPDATED_SUCCESS_MESSAGE = "Recipe updated successfully!"
     const val RECIPE_UPDATE_ERROR_MESSAGE = "Failed to update recipe: %1\$s"
+
+    // Offline Screen
+    const val TEST_TAG_OFFLINE_SCREEN_TITLE = "offlineScreenTitle"
+    const val TEST_TAG_OFFLINE_SCREEN_DESCRIPTION = "offlineScreenDescription"
+    const val TEST_TAG_OFFLINE_SCREEN_IMAGE = "offlineScreenImage"
 
     // IconType
     const val ICON_FIRE = "fire"
@@ -775,6 +783,7 @@ object C {
       const val RECIPE_IMAGE_TEST_TAG = "recipeImage"
       const val RECIPE_TITLE_TEST_TAG = "recipeTitle"
       const val RECIPE_FAVORITE_ICON_TEST_TAG = "recipeFavoriteIcon"
+      const val RECIPE_DOWNLOAD_ICON_TEST_TAG = "recipeDownloadIcon"
       const val RECIPE_DELETE_ICON_TEST_TAG = "recipeDeleteIcon"
       const val CONFIRMATION_POP_UP = "confirmationPopUp"
       const val CONFIRMATION_BUTTON = "confirmButton"
