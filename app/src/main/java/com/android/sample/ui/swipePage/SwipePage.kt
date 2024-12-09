@@ -212,7 +212,6 @@ fun RecipeDisplay(
   val currentRecipe by recipesViewModel.currentRecipe.collectAsState()
   val nextRecipe by recipesViewModel.nextRecipe.collectAsState()
   val filter by recipesViewModel.filter.collectAsState()
-  val context = LocalContext.current
   Box(
       modifier =
           Modifier.fillMaxSize()
