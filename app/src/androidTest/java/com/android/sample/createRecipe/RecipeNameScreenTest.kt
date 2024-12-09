@@ -305,4 +305,50 @@ class RecipeNameScreenTest {
     // Verify navigation to the category screen in edit mode
     verify { mockNavigationActions.navigateTo(Screen.EDIT_CATEGORY_SCREEN) }
   }
+
+  @Test
+  fun testErrorDisplayedWhenRecipeNameIsBlank() {
+    composeTestRule.setContent {
+      RecipeNameScreen(
+          navigationActions = mockNavigationActions,
+          currentStep = 0,
+          createRecipeViewModel = createRecipeViewModel,
+          isEditing = false)
+    }
+
+    // Provide blank input for the recipe name
+    composeTestRule.onNodeWithTag("recipeNameTextField").performTextInput("  ")
+
+    // Click the "Next Step" button without entering a recipe name
+    composeTestRule.onNodeWithTag("NextStepButton").performClick()
+
+    // Verify that the error message is displayed
+    composeTestRule.onNodeWithTag("ErrorMessage").assertExists().assertIsDisplayed()
+
+    // Verify that no navigation occurred
+    verify(exactly = 0) { mockNavigationActions.navigateTo(Screen.CREATE_CATEGORY_SCREEN) }
+  }
+
+  @Test
+  fun testErrorDisplayedWhenRecipeNameIsBlankInEditMode() {
+    composeTestRule.setContent {
+      RecipeNameScreen(
+          navigationActions = mockNavigationActions,
+          currentStep = 0,
+          createRecipeViewModel = createRecipeViewModel,
+          isEditing = true)
+    }
+
+    // Provide blank input for the recipe name
+    composeTestRule.onNodeWithTag("recipeNameTextField").performTextInput("  ")
+
+    // Click the "Next Step" button without entering a recipe name
+    composeTestRule.onNodeWithTag("NextStepButton").performClick()
+
+    // Verify that the error message is displayed
+    composeTestRule.onNodeWithTag("ErrorMessage").assertExists().assertIsDisplayed()
+
+    // Verify that no navigation occurred
+    verify(exactly = 0) { mockNavigationActions.navigateTo(Screen.EDIT_CATEGORY_SCREEN) }
+  }
 }
