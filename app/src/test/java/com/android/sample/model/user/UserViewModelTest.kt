@@ -879,9 +879,15 @@ class UserViewModelTest {
   }
 
   @Test
-  fun updateLocalFridgeItemTest() {
+  fun updateLocalFridgeItemTestCallUpdate() {
     userViewModel.updateLocalFridgeItem(fridgeItemExample)
     verify(mockFridgeItemRepository).add(any())
+  }
+
+  @Test
+  fun updateLocalFridgeItemTestCallDelete() {
+    userViewModel.updateLocalFridgeItem(fridgeItemExample.copy(quantity = 0))
+    verify(mockFridgeItemRepository).delete(any())
   }
 
   @Test

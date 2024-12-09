@@ -483,13 +483,8 @@ private fun UpdateQuantityDialog(
                             false)
 
                         // Update the local Fridge Item ( Delete if quantity is 0)
-                        val newFridgeItem =
-                            fridgeIngredientPair.first.copy(quantity = updatedQuantity)
-                        if (newFridgeItem.quantity == 0) {
-                          userViewModel.deleteLocalFridgeItem(newFridgeItem)
-                        } else {
-                          userViewModel.updateLocalFridgeItem(newFridgeItem)
-                        }
+                        userViewModel.updateLocalFridgeItem(
+                            fridgeIngredientPair.first.copy(quantity = updatedQuantity))
 
                         hiddeEditDialog()
                       },

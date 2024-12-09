@@ -137,7 +137,7 @@ class UserViewModel(
    * @param isConnected Boolean indicating if the device is connected to the internet.
    * @param user The user whose fridge items are to be handled.
    */
-  fun handleFridgeItem(isConnected: Boolean, user: User) {
+  internal fun handleFridgeItem(isConnected: Boolean, user: User) {
     if (isConnected) {
       user.fridge.forEach { fridgeItem ->
         Log.d(LOG_TAG, "Fetching ingredient from database: $fridgeItem")
@@ -156,7 +156,6 @@ class UserViewModel(
                     if (ingredient != null) {
                       updateList(_fridgeItems, Pair(fridgeItem, ingredient), add = true)
                     } else {
-                      Log.e(LOG_TAG, NOT_FOUND_INGREDIENT_IN_DATABASE_ERROR)
                       throw Exception(NOT_FOUND_INGREDIENT_IN_DATABASE_ERROR)
                     }
                   },
@@ -553,7 +552,11 @@ class UserViewModel(
   }
 
   fun updateLocalFridgeItem(fridgeItem: FridgeItem) {
-    fridgeItemRepository.add(fridgeItem)
+    if (fridgeItem.quantity <= 0) {
+      deleteLocalFridgeItem(fridgeItem)
+    } else {
+      fridgeItemRepository.add(fridgeItem)
+    }
   }
 
   fun deleteLocalFridgeItem(fridgeItem: FridgeItem) {
