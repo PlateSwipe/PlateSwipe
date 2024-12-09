@@ -57,6 +57,7 @@ import com.android.sample.resources.C.TestTag.SwipePage.VIEW_RECIPE_BUTTON
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.utils.PlateSwipeScaffold
+import com.android.sample.ui.utils.ValueRangeSlider
 import com.android.sample.ui.utils.reformatTime
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -184,77 +185,6 @@ fun FilterBox(
                 )
               }
         }
-      }
-}
-
-/**
- * Composable function to display a range slider.
- *
- * @param name The name of the slider.
- * @param min The minimum value of the slider.
- * @param max The maximum value of the slider.
- * @param unit The unit of the slider.
- * @param range The range of the slider.
- * @param updateRange The function to update the range.
- */
-@SuppressLint("StateFlowValueCalledInComposition", "UnrememberedMutableState")
-@Composable
-fun ValueRangeSlider(
-    modifier: Modifier,
-    name: String,
-    min: Float,
-    max: Float,
-    range: StateFlow<FloatRange>,
-    updateRange: (Float, Float) -> Unit,
-) {
-  // Update the range to the [min, max] if it is unbounded
-  if (range.value.isLimited()) {
-    range.value.update(min, max)
-  }
-  // Mutable state to store the slider position
-  val currentRange by range.collectAsState()
-  val rangeSlider = mutableStateOf(currentRange.min..currentRange.max)
-
-  Column(
-      modifier = Modifier.padding(PADDING_16.dp),
-      horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            text = name,
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.align(Alignment.Start))
-
-        Spacer(modifier = Modifier.height(PADDING_8.dp))
-
-        // Display selected min and max values
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-          Text(
-              reformatTime(rangeSlider.value.start),
-              style = MaterialTheme.typography.bodyMedium,
-              color = MaterialTheme.colorScheme.onPrimary)
-          Text(
-              reformatTime(rangeSlider.value.endInclusive),
-              style = MaterialTheme.typography.bodyMedium,
-              color = MaterialTheme.colorScheme.onPrimary)
-        }
-
-        Spacer(modifier = Modifier.height(PADDING_8.dp))
-
-        // Range slider with minimum 0 and maximum 1440 minutes
-        RangeSlider(
-            modifier = modifier.fillMaxWidth(),
-            value = rangeSlider.value,
-            onValueChange = {
-              rangeSlider.value = it
-              updateRange(it.start, it.endInclusive)
-            },
-            valueRange = min..max,
-            colors =
-                SliderDefaults.colors(
-                    thumbColor = MaterialTheme.colorScheme.primary,
-                    activeTrackColor =
-                        MaterialTheme.colorScheme.primary.copy(alpha = SLIDER_COLOR_ACTIVE),
-                    inactiveTrackColor =
-                        MaterialTheme.colorScheme.onSurface.copy(alpha = SLIDER_COLOR_INACTIVE)))
       }
 }
 
