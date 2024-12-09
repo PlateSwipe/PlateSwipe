@@ -228,6 +228,7 @@ object C {
     const val INGR_DOWNLOAD_ERROR_GET_ING = "Error getting ingredient"
     const val INGR_DOWNLOAD_ERROR_DOWNLOAD_IMAGE = "Error downloading image"
     const val INGR_DOWNLOAD_ERROR_NULL_POINTER = "Error getting URI"
+    const val INGR_ROOM_NOT_FOUND = "Ingredient not found in Room"
 
     // OpenFoodFactsIngredientRepository
     const val OPEN_FOOD_FACTS_URL = "https://world.openfoodfacts.org"
