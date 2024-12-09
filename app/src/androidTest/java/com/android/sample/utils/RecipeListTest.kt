@@ -9,21 +9,29 @@ import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import com.android.sample.model.fridge.localData.FridgeItemLocalRepository
+import com.android.sample.model.image.ImageDownload
 import com.android.sample.model.ingredient.IngredientRepository
 import com.android.sample.model.recipe.Instruction
 import com.android.sample.model.recipe.Recipe
+import com.android.sample.model.recipe.RecipesRepository
+import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.model.recipe.networkData.FirestoreRecipesRepository
 import com.android.sample.model.user.UserRepository
 import com.android.sample.model.user.UserViewModel
+import com.android.sample.resources.C.TestTag.RecipeList.CANCEL_BUTTON
+import com.android.sample.resources.C.TestTag.RecipeList.CONFIRMATION_BUTTON
+import com.android.sample.resources.C.TestTag.RecipeList.CONFIRMATION_POP_UP
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_CARD_TEST_TAG
+import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_DOWNLOAD_ICON_TEST_TAG
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_FAVORITE_ICON_TEST_TAG
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_IMAGE_TEST_TAG
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_TITLE_TEST_TAG
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.utils.RecipeList
+import com.android.sample.ui.utils.TopCornerDownloadAndLikeButton
 import com.android.sample.ui.utils.TopCornerEditButton
-import com.android.sample.ui.utils.TopCornerUnLikeButton
+import com.android.sample.ui.utils.testRecipes
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import org.junit.Before
@@ -42,6 +50,8 @@ class RecipeListTest {
   private lateinit var mockFridgeItemLocalRepository: FridgeItemLocalRepository
 
   private lateinit var userViewModel: UserViewModel
+  private lateinit var recipesViewModel: RecipesViewModel
+  private lateinit var recipeRepository: RecipesRepository
 
   private val recipesList: List<Recipe> =
       listOf(
@@ -115,14 +125,16 @@ class RecipeListTest {
     mockIngredientRepository = mock(IngredientRepository::class.java)
     mockRecipeRepository = FirestoreRecipesRepository(mockFirebaseFirestore)
     mockFridgeItemLocalRepository = mock(FridgeItemLocalRepository::class.java)
+    recipeRepository = mock(RecipesRepository::class.java)
 
-    userViewModel =
-        UserViewModel(
-            mockUserRepository,
-            mockFirebaseAuth,
-            mockIngredientRepository,
-            mockRecipeRepository,
-            fridgeItemRepository = mockFridgeItemLocalRepository)
+      userViewModel =
+          UserViewModel(
+              mockUserRepository,
+              mockFirebaseAuth,
+              mockIngredientRepository,
+              mockRecipeRepository,
+              fridgeItemRepository = mockFridgeItemLocalRepository)
+    recipesViewModel = RecipesViewModel(recipeRepository, ImageDownload())
 
     `when`(mockNavigationActions.currentRoute()).thenReturn(Screen.ACCOUNT)
   }
@@ -135,7 +147,8 @@ class RecipeListTest {
           list = recipesList,
           onRecipeSelected = {},
           topCornerButton = { recipe ->
-            TopCornerUnLikeButton(recipe = recipe, userViewModel = userViewModel)
+            TopCornerDownloadAndLikeButton(
+                recipe = recipe, userViewModel = userViewModel, recipesViewModel)
           })
     }
 
@@ -196,5 +209,36 @@ class RecipeListTest {
     // Verify the callback was triggered with the correct recipe
     composeTestRule.waitForIdle()
     assert(clickedRecipe == testRecipe)
+  }
+
+  @Test
+  fun testTopCornerUnLikeButton() {
+    recipesViewModel.setDownload(testRecipes)
+    composeTestRule.setContent {
+      TopCornerDownloadAndLikeButton(
+          recipe = testRecipes[0], userViewModel = userViewModel, recipesViewModel)
+    }
+    composeTestRule.onNodeWithTag(RECIPE_DOWNLOAD_ICON_TEST_TAG).assertIsDisplayed().performClick()
+    composeTestRule.onNodeWithTag(CONFIRMATION_POP_UP).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CANCEL_BUTTON).assertIsDisplayed().performClick()
+
+    composeTestRule.onNodeWithTag(RECIPE_DOWNLOAD_ICON_TEST_TAG).assertIsDisplayed().performClick()
+    composeTestRule.onNodeWithTag(CONFIRMATION_POP_UP).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CONFIRMATION_BUTTON).assertIsDisplayed().performClick()
+  }
+
+  @Test
+  fun testTopCornerUnLikeButtonNotDownload() {
+    composeTestRule.setContent {
+      TopCornerDownloadAndLikeButton(
+          recipe = testRecipes[0], userViewModel = userViewModel, recipesViewModel)
+    }
+    composeTestRule.onNodeWithTag(RECIPE_DOWNLOAD_ICON_TEST_TAG).assertIsDisplayed().performClick()
+    composeTestRule.onNodeWithTag(CONFIRMATION_POP_UP).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CANCEL_BUTTON).assertIsDisplayed().performClick()
+
+    composeTestRule.onNodeWithTag(RECIPE_DOWNLOAD_ICON_TEST_TAG).assertIsDisplayed().performClick()
+    composeTestRule.onNodeWithTag(CONFIRMATION_POP_UP).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CONFIRMATION_BUTTON).assertIsDisplayed().performClick()
   }
 }

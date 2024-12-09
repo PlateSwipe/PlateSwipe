@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.android.sample.R
 import com.android.sample.model.recipe.CreateRecipeViewModel
+import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C.Dimension.AccountScreen.ACCOUNT_SCREEN_SELECTED_LIST_HEIGHT
 import com.android.sample.resources.C.Dimension.AccountScreen.ACCOUNT_SCREEN_SELECTED_LIST_SEPARATOR_FILL_MAX_WIDTH
@@ -55,13 +56,14 @@ import com.android.sample.ui.utils.PlateSwipeScaffold
 import com.android.sample.ui.utils.RecipeList
 import com.android.sample.ui.utils.TopCornerDeleteButton
 import com.android.sample.ui.utils.TopCornerEditButton
-import com.android.sample.ui.utils.TopCornerUnLikeButton
+import com.android.sample.ui.utils.TopCornerDownloadAndLikeButton
 import com.android.sample.utils.NetworkUtils
 
 @Composable
 fun AccountScreen(
     navigationActions: NavigationActions,
     userViewModel: UserViewModel,
+    recipeViewModel: RecipesViewModel,
     createRecipeViewModel: CreateRecipeViewModel
 ) {
   val context = LocalContext.current
@@ -95,7 +97,8 @@ fun AccountScreen(
               navigationActions,
               userViewModel,
               modifier = Modifier.weight(.8f),
-              createRecipeViewModel)
+              createRecipeViewModel,
+              recipeViewModel)
         }
       })
 }
@@ -126,12 +129,19 @@ private fun ListSelection(
     navigationActions: NavigationActions,
     userViewModel: UserViewModel,
     modifier: Modifier = Modifier,
-    createRecipeViewModel: CreateRecipeViewModel
+    createRecipeViewModel: CreateRecipeViewModel,
+    recipeViewModel: RecipesViewModel
 ) {
   val likedRecipes = userViewModel.likedRecipes.collectAsState()
   val createdRecipes = userViewModel.createdRecipes.collectAsState()
+  val downloadedRecipes = recipeViewModel.downloadedRecipes.collectAsState()
+  val context = LocalContext.current
+  val isNetworkAvailable = NetworkUtils().isNetworkAvailable(context)
 
-  var selectedList by remember { mutableStateOf(likedRecipes) }
+  // Use the liked recipe list if connection is available else use downloadedRecipes list
+  var selectedList by remember {
+    mutableStateOf(if (isNetworkAvailable) likedRecipes else downloadedRecipes)
+  }
   var selectedListIndex by remember { mutableIntStateOf(0) }
 
   Column(
@@ -146,8 +156,13 @@ private fun ListSelection(
               Modifier.weight(ACCOUNT_SCREEN_SELECTED_LIST_WEIGHT)
                   .testTag(LIKED_RECIPES_BUTTON_TEST_TAG),
           onClick = {
-            selectedList = likedRecipes
-            selectedListIndex = 0
+            if (isNetworkAvailable) {
+              selectedList = likedRecipes
+              selectedListIndex = 0
+            } else {
+              selectedList = downloadedRecipes
+              selectedListIndex = 0
+            }
           },
           title = stringResource(R.string.account_screen_liked_recipe_button_title),
           isSelected = selectedListIndex == 0)
@@ -177,7 +192,7 @@ private fun ListSelection(
         },
         topCornerButton = { recipe ->
           if (selectedListIndex == 0) {
-            TopCornerUnLikeButton(recipe, userViewModel)
+            TopCornerDownloadAndLikeButton(recipe, userViewModel, recipeViewModel)
           } else {
             TopCornerEditButton(recipe) { selectedRecipe ->
               createRecipeViewModel.resetInitializationState()
