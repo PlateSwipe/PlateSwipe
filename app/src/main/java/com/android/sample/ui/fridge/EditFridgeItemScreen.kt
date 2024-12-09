@@ -183,7 +183,7 @@ fun EditComposable(
         // Save Button
         PlateSwipeButton(
             stringResource(
-                if (userViewModel.currentEditingFridgeIngredient.value != null) R.string.save
+                if (userViewModel.currentEditingFridgeIngredient.collectAsState().value != null) R.string.save
                 else R.string.add),
             modifier = Modifier.align(Alignment.CenterHorizontally).zIndex(1f),
             onClick = {
