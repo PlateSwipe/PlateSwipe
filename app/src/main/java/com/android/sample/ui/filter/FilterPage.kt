@@ -50,7 +50,6 @@ import com.android.sample.resources.C.Tag.FilterPage.SLIDER_COLOR_ACTIVE
 import com.android.sample.resources.C.Tag.FilterPage.SLIDER_COLOR_INACTIVE
 import com.android.sample.resources.C.Tag.FilterPage.TIME_RANGE_MAX
 import com.android.sample.resources.C.Tag.FilterPage.TIME_RANGE_MIN
-import com.android.sample.resources.C.Tag.MINUTES_PER_HOUR
 import com.android.sample.resources.C.TestTag.FilterPage.TEST_TAG_CATEGORY
 import com.android.sample.resources.C.TestTag.FilterPage.TEST_TAG_DIFFICULTY
 import com.android.sample.resources.C.TestTag.FilterPage.TEST_TAG_TIME_RANGE_SLIDER
@@ -58,6 +57,7 @@ import com.android.sample.resources.C.TestTag.SwipePage.VIEW_RECIPE_BUTTON
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.utils.PlateSwipeScaffold
+import com.android.sample.ui.utils.reformatTime
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -185,23 +185,6 @@ fun FilterBox(
               }
         }
       }
-}
-
-/**
- * Composable function to reformat the time.
- *
- * @param time The time to reformat in minutes.
- */
-@Composable
-fun reformatTime(time: Float): String {
-  val timeInt = time.toInt()
-  return if (timeInt > MINUTES_PER_HOUR) {
-    val hours = timeInt / MINUTES_PER_HOUR
-    val minutes = timeInt % MINUTES_PER_HOUR
-    "$hours h $minutes ${stringResource(id = R.string.time_unit)}"
-  } else {
-    "$timeInt ${stringResource(id = R.string.time_unit)}"
-  }
 }
 
 /**
