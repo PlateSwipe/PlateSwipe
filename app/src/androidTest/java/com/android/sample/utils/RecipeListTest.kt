@@ -127,13 +127,13 @@ class RecipeListTest {
     mockFridgeItemLocalRepository = mock(FridgeItemLocalRepository::class.java)
     recipeRepository = mock(RecipesRepository::class.java)
 
-      userViewModel =
-          UserViewModel(
-              mockUserRepository,
-              mockFirebaseAuth,
-              mockIngredientRepository,
-              mockRecipeRepository,
-              fridgeItemRepository = mockFridgeItemLocalRepository)
+    userViewModel =
+        UserViewModel(
+            mockUserRepository,
+            mockFirebaseAuth,
+            mockIngredientRepository,
+            mockRecipeRepository,
+            fridgeItemRepository = mockFridgeItemLocalRepository)
     recipesViewModel = RecipesViewModel(recipeRepository, ImageDownload())
 
     `when`(mockNavigationActions.currentRoute()).thenReturn(Screen.ACCOUNT)

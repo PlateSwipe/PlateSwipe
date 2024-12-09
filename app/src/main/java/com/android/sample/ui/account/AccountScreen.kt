@@ -55,8 +55,8 @@ import com.android.sample.ui.navigation.TopLevelDestinations
 import com.android.sample.ui.utils.PlateSwipeScaffold
 import com.android.sample.ui.utils.RecipeList
 import com.android.sample.ui.utils.TopCornerDeleteButton
-import com.android.sample.ui.utils.TopCornerEditButton
 import com.android.sample.ui.utils.TopCornerDownloadAndLikeButton
+import com.android.sample.ui.utils.TopCornerEditButton
 import com.android.sample.utils.NetworkUtils
 
 @Composable
