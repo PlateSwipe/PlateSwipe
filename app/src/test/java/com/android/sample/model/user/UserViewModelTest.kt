@@ -357,7 +357,7 @@ class UserViewModelTest {
     val category1 = fridgeItems[0].categories[0]
     val category2 = fridgeItems[1].categories[0]
     val category3 = fridgeItems[1].categories[1]
-      val category4 = "Inexistent category"
+    val category4 = "Inexistent category"
     val categories = listOf(category1, category2, category3, category4)
 
     userViewModel.updateIngredientFromFridge(fridgeItems[0], 1, LocalDate.now(), false)
@@ -372,7 +372,7 @@ class UserViewModelTest {
     assertEquals(map[category2]?.get(0)?.second, fridgeItems[1])
     assertEquals(map[category3]?.count(), 1)
     assertEquals(map[category3]?.get(0)?.second, fridgeItems[1])
-      assert(!map.containsKey(category4))
+    assert(!map.containsKey(category4))
   }
 
   @Test
