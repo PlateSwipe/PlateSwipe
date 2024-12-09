@@ -19,6 +19,7 @@ import com.android.sample.resources.C.TestTag.Category.CATEGORY_DROPDOWN
 import com.android.sample.resources.C.TestTag.Category.DIFFICULTY_DROPDOWN
 import com.android.sample.resources.C.TestTag.PlateSwipeDropdown.DROPDOWN_TITLE
 import com.android.sample.ui.createRecipe.OptionalInformationScreen
+import com.android.sample.ui.createRecipe.fromOptionalInformationScreenNavigateToNextScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.google.firebase.firestore.FirebaseFirestore
@@ -251,6 +252,26 @@ class OptionalInformationScreenTest {
     composeTestRule.onNodeWithTag("NextStepButton").assertExists().performClick()
 
     // Verify navigation to the next screen
+    verify { mockNavigationActions.navigateTo(Screen.CREATE_RECIPE_INGREDIENTS) }
+  }
+
+  @Test
+  fun testFromOptionalInformationScreenNavigateToNextScreenInEditMode() {
+    // Call the function in edit mode
+    fromOptionalInformationScreenNavigateToNextScreen(
+        isEditing = true, navigationActions = mockNavigationActions)
+
+    // Verify navigation to the edit ingredients screen
+    verify { mockNavigationActions.navigateTo(Screen.EDIT_RECIPE_INGREDIENTS) }
+  }
+
+  @Test
+  fun testFromOptionalInformationScreenNavigateToNextScreenInCreateMode() {
+    // Call the function in create mode
+    fromOptionalInformationScreenNavigateToNextScreen(
+        isEditing = false, navigationActions = mockNavigationActions)
+
+    // Verify navigation to the create ingredients screen
     verify { mockNavigationActions.navigateTo(Screen.CREATE_RECIPE_INGREDIENTS) }
   }
 }
