@@ -137,27 +137,6 @@ fun FilterBox(
 
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
           // Apply button to apply the changes made to the filters
-          Button(
-              onClick = {
-                filterViewModel.applyChanges()
-                navigationActions.navigateTo(Screen.SWIPE)
-              },
-              colors =
-                  ButtonDefaults.buttonColors(
-                      containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                      contentColor = MaterialTheme.colorScheme.onPrimary),
-              elevation = ButtonDefaults.buttonElevation(BUTTON_ELEVATION.dp),
-              shape = RoundedCornerShape(BUTTON_RADIUS.dp),
-              modifier =
-                  Modifier.padding(horizontal = PADDING_8.dp, vertical = (PADDING_4).dp)
-                      .wrapContentSize()
-                      .testTag(VIEW_RECIPE_BUTTON)) {
-                Text(
-                    text = stringResource(id = R.string.apply_filter),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onPrimary,
-                )
-              }
 
           // Reset button to reset all filters to their default values
           Button(
@@ -180,6 +159,28 @@ fun FilterBox(
                     text = stringResource(id = R.string.reset_filter),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.background,
+                )
+              }
+
+          Button(
+              onClick = {
+                filterViewModel.applyChanges()
+                navigationActions.navigateTo(Screen.SWIPE)
+              },
+              colors =
+                  ButtonDefaults.buttonColors(
+                      containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                      contentColor = MaterialTheme.colorScheme.onPrimary),
+              elevation = ButtonDefaults.buttonElevation(BUTTON_ELEVATION.dp),
+              shape = RoundedCornerShape(BUTTON_RADIUS.dp),
+              modifier =
+                  Modifier.padding(horizontal = PADDING_8.dp, vertical = (PADDING_4).dp)
+                      .wrapContentSize()
+                      .testTag(VIEW_RECIPE_BUTTON)) {
+                Text(
+                    text = stringResource(id = R.string.apply_filter),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onPrimary,
                 )
               }
         }
