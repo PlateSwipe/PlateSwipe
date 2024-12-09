@@ -302,12 +302,14 @@ class UserViewModel(
       expirationDate: LocalDate,
       scannedItem: Boolean
   ) {
+    // edit ingredient case
     if (_currentEditingFridgeIngredient.value != null) {
       _fridgeItems.value =
           _fridgeItems.value.filter { it.first != _currentEditingFridgeIngredient.value!!.first }
       if (quantity != 0) addIngredientToUserFridge(ingredient, quantity, expirationDate)
       clearEditingIngredient()
     } else {
+      // add new ingredient case
       val changedIngredient =
           _fridgeItems.value.find {
             (it.first.id == ingredient.barCode.toString()) &&

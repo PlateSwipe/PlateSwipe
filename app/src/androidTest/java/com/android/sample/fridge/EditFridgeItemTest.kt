@@ -123,30 +123,28 @@ class EditFridgeItemTest {
 
   @Test
   fun testAddButtonNavigation() {
-    composeTestRule
-        .onNodeWithText("Add", useUnmergedTree = true)
-        .assertIsDisplayed()
-        .performClick()
+    composeTestRule.onNodeWithText("Add", useUnmergedTree = true).assertIsDisplayed().performClick()
     assert(userViewModel.ingredientList.value.map { it.first }.contains(testIngredients[0]))
     verify(navigationActions).navigateTo(Screen.FRIDGE)
   }
 
-    @Test
-    fun editModeDisplay() {
-        userViewModel.setEditingIngredient(Pair(FridgeItem("1", 1, LocalDate.of(2000,1,1)),testIngredients[0]))
-        composeTestRule
-            .onNodeWithText(testIngredients[0].name, useUnmergedTree = true)
-            .assertIsDisplayed()
-        composeTestRule
-            .onNodeWithText("Quantity (x ${testIngredients[0].quantity}):", useUnmergedTree = true)
-            .assertIsDisplayed()
-        composeTestRule.onNodeWithText("Expiration Date:", useUnmergedTree = true).assertIsDisplayed()
-        composeTestRule
-            .onNodeWithText(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
-            .assertIsDisplayed()
-        composeTestRule.onNodeWithText("+", useUnmergedTree = true).assertIsDisplayed()
-        composeTestRule.onNodeWithText("-", useUnmergedTree = true).assertIsDisplayed()
-        composeTestRule.onNodeWithText("1", useUnmergedTree = true).assertIsDisplayed()
-        composeTestRule.onNodeWithText("Save", useUnmergedTree = true).assertIsDisplayed()
-    }
+  @Test
+  fun editModeDisplay() {
+    userViewModel.setEditingIngredient(
+        Pair(FridgeItem("1", 1, LocalDate.of(2000, 1, 1)), testIngredients[0]))
+    composeTestRule
+        .onNodeWithText(testIngredients[0].name, useUnmergedTree = true)
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithText("Quantity (x ${testIngredients[0].quantity}):", useUnmergedTree = true)
+        .assertIsDisplayed()
+    composeTestRule.onNodeWithText("Expiration Date:", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule
+        .onNodeWithText(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
+        .assertIsDisplayed()
+    composeTestRule.onNodeWithText("+", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithText("-", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithText("1", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithText("Save", useUnmergedTree = true).assertIsDisplayed()
+  }
 }
