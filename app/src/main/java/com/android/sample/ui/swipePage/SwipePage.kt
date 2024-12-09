@@ -149,7 +149,6 @@ import com.android.sample.ui.theme.redSwipe
 import com.android.sample.ui.theme.starColor
 import com.android.sample.ui.utils.PlateSwipeScaffold
 import com.android.sample.ui.utils.Tag
-import com.android.sample.utils.NetworkUtils
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -214,7 +213,6 @@ fun RecipeDisplay(
   val nextRecipe by recipesViewModel.nextRecipe.collectAsState()
   val filter by recipesViewModel.filter.collectAsState()
   val context = LocalContext.current
-  val isConnected = NetworkUtils().isNetworkAvailable(context)
   Box(
       modifier =
           Modifier.fillMaxSize()
