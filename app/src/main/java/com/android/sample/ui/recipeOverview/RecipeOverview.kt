@@ -85,7 +85,6 @@ import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_TIME_DIS
 import com.android.sample.resources.C.Tag.PADDING
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_THUMBNAIL_URL
 import com.android.sample.resources.C.Tag.SMALL_PADDING
-import com.android.sample.resources.C.TestTag
 import com.android.sample.resources.C.TestTag.RecipeOverview.COOK_TIME_TEXT
 import com.android.sample.resources.C.TestTag.RecipeOverview.DRAGGABLE_ITEM
 import com.android.sample.resources.C.TestTag.RecipeOverview.INGREDIENTS_VIEW
@@ -93,13 +92,13 @@ import com.android.sample.resources.C.TestTag.RecipeOverview.INGREDIENT_CHECKBOX
 import com.android.sample.resources.C.TestTag.RecipeOverview.INGREDIENT_PREFIX
 import com.android.sample.resources.C.TestTag.RecipeOverview.INSTRUCTIONS_VIEW
 import com.android.sample.resources.C.TestTag.RecipeOverview.PREP_TIME_TEXT
+import com.android.sample.resources.C.TestTag.RecipeOverview.RECIPE_FRIDGE_INGREDIENTS
+import com.android.sample.resources.C.TestTag.RecipeOverview.RECIPE_FRIDGE_INGREDIENTS_TEXT
 import com.android.sample.resources.C.TestTag.RecipeOverview.RECIPE_IMAGE
 import com.android.sample.resources.C.TestTag.RecipeOverview.RECIPE_TITLE
 import com.android.sample.resources.C.TestTag.RecipeOverview.SLIDING_BUTTON_INGREDIENTS
 import com.android.sample.resources.C.TestTag.RecipeOverview.SLIDING_BUTTON_INSTRUCTIONS
 import com.android.sample.resources.C.TestTag.RecipeOverview.TOTAL_TIME_TEXT
-import com.android.sample.resources.C.TestTag.RecipeOverview.RECIPE_FRIDGE_INGREDIENTS
-import com.android.sample.resources.C.TestTag.RecipeOverview.RECIPE_FRIDGE_INGREDIENTS_TEXT
 import com.android.sample.resources.C.Values.RecipeOverview.INITIAL_NUMBER_PERSON_PER_RECIPE
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.theme.graySlate
@@ -123,8 +122,7 @@ fun RecipeOverview(
         null
       }
 
-    Log.d("dsad", "RecipeDescription: $fridgeIngredientsMap , $currentRecipe")
-
+  Log.d("dsad", "RecipeDescription: $fridgeIngredientsMap , $currentRecipe")
 
   PlateSwipeScaffold(
       navigationActions = navigationActions,
@@ -301,8 +299,7 @@ private fun RecipeDescription(currentRecipe: Recipe, fridgeIngredientsCount: Int
             Icon(
                 painter = painterResource(R.drawable.fridgeicon),
                 contentDescription = stringResource(R.string.fridge_ingredients_description),
-                modifier =
-                    Modifier.size(OVERVIEW_RECIPE_STAR_SIZE.dp),
+                modifier = Modifier.size(OVERVIEW_RECIPE_STAR_SIZE.dp),
                 tint = graySlate)
 
             Spacer(modifier = Modifier.size(SMALL_PADDING.dp))

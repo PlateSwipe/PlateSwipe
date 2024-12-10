@@ -102,7 +102,9 @@ fun PlateSwipeApp() {
           OfflineScreen(navigationActions)
         }
       }
-      composable(Screen.OVERVIEW_RECIPE) { RecipeOverview(navigationActions, recipesViewModel, userViewModel) }
+      composable(Screen.OVERVIEW_RECIPE) {
+        RecipeOverview(navigationActions, recipesViewModel, userViewModel)
+      }
       composable(Screen.FILTER) { FilterPage(navigationActions, recipesViewModel) }
     }
     navigation(

@@ -44,6 +44,7 @@ import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.recipeOverview.RecipeOverview
 import com.android.sample.ui.utils.testIngredients
 import com.android.sample.ui.utils.testRecipes
+import java.time.LocalDate
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -53,8 +54,6 @@ import org.junit.Test
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
-import java.time.LocalDate
-import java.util.Date
 
 class RecipeOverviewTest {
   private lateinit var mockNavigationActions: NavigationActions
@@ -62,7 +61,7 @@ class RecipeOverviewTest {
   private lateinit var recipesViewModel: RecipesViewModel
   private lateinit var userViewModel: UserViewModel
 
-  //used to have one ingredient in the fridge that shares a category with the recipe
+  // used to have one ingredient in the fridge that shares a category with the recipe
   private val sharedCategory: String = "Apple"
 
   private val mockedRecipesList =
@@ -76,7 +75,8 @@ class RecipeOverviewTest {
           testRecipes[1],
       )
 
-    private val mockedFridgeIngredient = testIngredients[0].copy(categories = listOf(sharedCategory.lowercase()))
+  private val mockedFridgeIngredient =
+      testIngredients[0].copy(categories = listOf(sharedCategory.lowercase()))
 
   @get:Rule val composeTestRule = createComposeRule()
 
@@ -100,13 +100,13 @@ class RecipeOverviewTest {
 
     recipesViewModel = RecipesViewModel(mockRepository, ImageDownload())
 
-      userViewModel =
-          UserViewModel.provideFactory(ApplicationProvider.getApplicationContext())
-              .create(UserViewModel::class.java)
+    userViewModel =
+        UserViewModel.provideFactory(ApplicationProvider.getApplicationContext())
+            .create(UserViewModel::class.java)
 
-      userViewModel.updateIngredientFromFridge(mockedFridgeIngredient, 1, LocalDate.now(), false)
+    userViewModel.updateIngredientFromFridge(mockedFridgeIngredient, 1, LocalDate.now(), false)
 
-      advanceUntilIdle()
+    advanceUntilIdle()
 
     `when`(mockNavigationActions.currentRoute()).thenReturn(Route.SWIPE)
     `when`(mockNavigationActions.navigateTo(Route.AUTH)).then {}
@@ -121,7 +121,10 @@ class RecipeOverviewTest {
   @Test
   fun screenDisplayedCorrectlyTest() = runTest {
     composeTestRule.setContent {
-      RecipeOverview(mockNavigationActions, recipesViewModel, userViewModel) // Set up the SignInScreen directly
+      RecipeOverview(
+          mockNavigationActions,
+          recipesViewModel,
+          userViewModel) // Set up the SignInScreen directly
     }
     // Checking if the main components of the screen are displayed
     composeTestRule.onNodeWithTag(TOP_BAR, useUnmergedTree = true).assertIsDisplayed()
@@ -139,7 +142,10 @@ class RecipeOverviewTest {
     recipesViewModel = RecipesViewModel(mockRepository, ImageDownload())
 
     composeTestRule.setContent {
-      RecipeOverview(mockNavigationActions, recipesViewModel, userViewModel) // Set up the SignInScreen directly
+      RecipeOverview(
+          mockNavigationActions,
+          recipesViewModel,
+          userViewModel) // Set up the SignInScreen directly
     }
 
     composeTestRule
@@ -151,7 +157,10 @@ class RecipeOverviewTest {
   @Test
   fun testIngredientAndInstructionSwitch() {
     composeTestRule.setContent {
-      RecipeOverview(mockNavigationActions, recipesViewModel, userViewModel) // Set up the SignInScreen directly
+      RecipeOverview(
+          mockNavigationActions,
+          recipesViewModel,
+          userViewModel) // Set up the SignInScreen directly
     }
     composeTestRule
         .onNodeWithTag(DRAGGABLE_ITEM, useUnmergedTree = true)
@@ -171,7 +180,10 @@ class RecipeOverviewTest {
   @Test
   fun testServingsCountButtons() {
     composeTestRule.setContent {
-      RecipeOverview(mockNavigationActions, recipesViewModel, userViewModel) // Set up the SignInScreen directly
+      RecipeOverview(
+          mockNavigationActions,
+          recipesViewModel,
+          userViewModel) // Set up the SignInScreen directly
     }
     // Check initial servings count
     composeTestRule
@@ -192,7 +204,10 @@ class RecipeOverviewTest {
   @Test
   fun testIngredientsListCheckboxes() {
     composeTestRule.setContent {
-      RecipeOverview(mockNavigationActions, recipesViewModel, userViewModel) // Set up the SignInScreen directly
+      RecipeOverview(
+          mockNavigationActions,
+          recipesViewModel,
+          userViewModel) // Set up the SignInScreen directly
     }
 
     composeTestRule
@@ -208,7 +223,7 @@ class RecipeOverviewTest {
 
     composeTestRule.waitForIdle()
 
-      //the first is on because there is an ingredient corresponding to it in the fridge
+    // the first is on because there is an ingredient corresponding to it in the fridge
     composeTestRule.onAllNodesWithTag(INGREDIENT_CHECKBOX, useUnmergedTree = true).apply {
       assertCountEquals(3)
       get(0).assertIsOn()
@@ -236,7 +251,10 @@ class RecipeOverviewTest {
   @Test
   fun testPrepareCookTotalTimeDisplay() {
     composeTestRule.setContent {
-      RecipeOverview(mockNavigationActions, recipesViewModel, userViewModel) // Set up the SignInScreen directly
+      RecipeOverview(
+          mockNavigationActions,
+          recipesViewModel,
+          userViewModel) // Set up the SignInScreen directly
     }
     // Check if each time property is displayed correctly
     composeTestRule
@@ -250,7 +268,10 @@ class RecipeOverviewTest {
   @Test
   fun testRecipeImageDisplayed() {
     composeTestRule.setContent {
-      RecipeOverview(mockNavigationActions, recipesViewModel, userViewModel) // Set up the SignInScreen directly
+      RecipeOverview(
+          mockNavigationActions,
+          recipesViewModel,
+          userViewModel) // Set up the SignInScreen directly
     }
     // Check if the recipe image is displayed
     composeTestRule.onNodeWithTag(RECIPE_IMAGE, useUnmergedTree = true).assertIsDisplayed()
@@ -259,7 +280,10 @@ class RecipeOverviewTest {
   @Test
   fun testRecipeTitleDisplayed() {
     composeTestRule.setContent {
-      RecipeOverview(mockNavigationActions, recipesViewModel, userViewModel) // Set up the SignInScreen directly
+      RecipeOverview(
+          mockNavigationActions,
+          recipesViewModel,
+          userViewModel) // Set up the SignInScreen directly
     }
     // Check if the recipe title is displayed
     composeTestRule.onNodeWithTag(RECIPE_TITLE, useUnmergedTree = true).assertIsDisplayed()
@@ -268,19 +292,28 @@ class RecipeOverviewTest {
   @Test
   fun testFridgeComponentsDisplayed() {
     composeTestRule.setContent {
-      RecipeOverview(mockNavigationActions, recipesViewModel, userViewModel) // Set up the SignInScreen directly
+      RecipeOverview(
+          mockNavigationActions,
+          recipesViewModel,
+          userViewModel) // Set up the SignInScreen directly
     }
 
-
     // Check if the rating star and rate text are displayed
-    composeTestRule.onNodeWithTag(RECIPE_FRIDGE_INGREDIENTS, useUnmergedTree = true).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(RECIPE_FRIDGE_INGREDIENTS_TEXT, useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(RECIPE_FRIDGE_INGREDIENTS, useUnmergedTree = true)
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(RECIPE_FRIDGE_INGREDIENTS_TEXT, useUnmergedTree = true)
+        .assertIsDisplayed()
   }
 
   @Test
   fun testIngredientQuantityIncreasedOnServingsChange() {
     composeTestRule.setContent {
-      RecipeOverview(mockNavigationActions, recipesViewModel, userViewModel) // Set up the SignInScreen directly
+      RecipeOverview(
+          mockNavigationActions,
+          recipesViewModel,
+          userViewModel) // Set up the SignInScreen directly
     }
     // Initially check for ingredient quantity with 1 serving
 
@@ -319,7 +352,10 @@ class RecipeOverviewTest {
   @Test
   fun testInstructionsAreDisplayed() {
     composeTestRule.setContent {
-      RecipeOverview(mockNavigationActions, recipesViewModel, userViewModel) // Set up the SignInScreen directly
+      RecipeOverview(
+          mockNavigationActions,
+          recipesViewModel,
+          userViewModel) // Set up the SignInScreen directly
     }
     composeTestRule
         .onNodeWithTag(DRAGGABLE_ITEM, useUnmergedTree = true)

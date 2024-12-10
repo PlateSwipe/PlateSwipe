@@ -178,13 +178,13 @@ class OpenFoodFactsIngredientRepository(private val client: OkHttpClient) :
 }
 
 private fun parseCategories(json: JSONObject): List<String> {
-    return json.getJSONArray(PRODUCT_CATEGORIES).let { categories ->
-        (0 until categories.length()).mapNotNull { i ->
-            try {
-                categories.getString(i).removePrefix(PRODUCT_CATEGORIES_PREFIX).lowercase()
-            } catch (e: JSONException) {
-                null
-            }
-        }
+  return json.getJSONArray(PRODUCT_CATEGORIES).let { categories ->
+    (0 until categories.length()).mapNotNull { i ->
+      try {
+        categories.getString(i).removePrefix(PRODUCT_CATEGORIES_PREFIX).lowercase()
+      } catch (e: JSONException) {
+        null
+      }
     }
+  }
 }
