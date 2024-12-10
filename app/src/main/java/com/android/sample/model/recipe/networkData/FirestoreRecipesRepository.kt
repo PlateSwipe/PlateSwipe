@@ -310,6 +310,7 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipeNetw
     You will also need to create a composite index in Firestore to support the new filter:
     https://console.firebase.google.com/u/0/project/plateswipe/firestore/databases/-default-/indexes
     you can refer to the documentation in the wiki for more information:
+    https://github.com/PlateSwipe/PlateSwipe/wiki/Add-a-new-Filter-to-the-Swipe-Page-Firestore-version
      */
 
     /** Category filter */
