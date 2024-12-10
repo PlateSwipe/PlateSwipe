@@ -272,4 +272,40 @@ class FridgeScreenTest {
     assert(userViewModel.ingredientList.value[0].first == testIngredients[1])
     verify(navigationActions, times(2)).navigateTo(Screen.FRIDGE_EDIT)
   }
+
+  @Test
+  fun removeIngredientFromFridge() {
+    userViewModel.updateIngredientFromFridge(testIngredients[0], 1, LocalDate.of(2022, 2, 1), true)
+    composeTestRule.waitForIdle()
+    composeTestRule
+        .onNodeWithContentDescription(
+            "Remove ${testIngredients[0].name} that expired 2022-02-01 from fridge")
+        .performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithText("Remove ${testIngredients[0].name}").assertIsDisplayed()
+    composeTestRule
+        .onNodeWithText(
+            "Are you sure you want to remove ${testIngredients[0].name} from your fridge?")
+        .assertIsDisplayed()
+    composeTestRule.onNodeWithText("No").assertIsDisplayed()
+    composeTestRule.onNodeWithText("Yes").assertIsDisplayed().performClick()
+
+    assert(userViewModel.ingredientList.value.isEmpty())
+  }
+
+  @Test
+  fun cancelRemoveIngredientFromFridge() {
+    userViewModel.updateIngredientFromFridge(testIngredients[0], 1, LocalDate.of(2022, 2, 1), true)
+    composeTestRule.waitForIdle()
+    composeTestRule
+        .onNodeWithContentDescription(
+            "Remove ${testIngredients[0].name} that expired 2022-02-01 from fridge")
+        .performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithText("Remove ${testIngredients[0].name}").assertIsDisplayed()
+    composeTestRule.onNodeWithText("No").assertIsDisplayed().performClick()
+
+    assert(userViewModel.ingredientList.value.size == 1)
+    assert(userViewModel.ingredientList.value.first().first == testIngredients[0])
+  }
 }
