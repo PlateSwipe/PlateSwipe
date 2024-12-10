@@ -305,17 +305,20 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipeNetw
     var finalQuery: Query = db.collection(FIRESTORE_COLLECTION_NAME)
 
     /** ******************** Apply all the filters ********************* */
-
     /*
-     * Category filter
+    If you decide to change or add a filter in the future, you can add it here.
+    You will also need to create a composite index in Firestore to support the new filter:
+    https://console.firebase.google.com/u/0/project/plateswipe/firestore/databases/-default-/indexes
+    you can refer to the documentation in the wiki for more information:
+    https://github.com/PlateSwipe/PlateSwipe/wiki/Add-a-new-Filter-to-the-Swipe-Page-Firestore-version
      */
+
+    /** Category filter */
     finalQuery =
         filter.category?.let { finalQuery.whereEqualTo(FIRESTORE_RECIPE_CATEGORY, it) }
             ?: finalQuery
 
-    /*
-     * Time filter
-     */
+    /** Time filter */
     filter.timeRange.min
         .takeIf {
           it.toInt() != UNINITIALIZED_BORN_VALUE.toInt() && it.toInt() != TIME_RANGE_MIN.toInt()
@@ -332,9 +335,7 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipeNetw
           finalQuery = finalQuery.whereLessThan(FIRESTORE_RECIPE_TIME, it.toInt().toString())
         }
 
-    /*
-     * Difficulty filter
-     */
+    /** Difficulty filter */
     filter.difficulty
         .takeIf { it != Difficulty.Undefined }
         ?.let { finalQuery = finalQuery.whereEqualTo(FIRESTORE_RECIPE_DIFFICULTY, it.toString()) }
