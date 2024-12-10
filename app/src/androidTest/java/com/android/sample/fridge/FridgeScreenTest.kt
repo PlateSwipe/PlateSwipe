@@ -75,13 +75,12 @@ class FridgeScreenTest {
     composeTestRule.onNodeWithText("Fridge").assertIsDisplayed()
     composeTestRule.onNodeWithText("1 items").assertIsDisplayed()
     composeTestRule.onNodeWithText(testIngredients[0].name).performScrollTo().assertIsDisplayed()
-    composeTestRule.onNodeWithText("01/02/2022").assertIsDisplayed()
     composeTestRule.onNodeWithText("1 x ${testIngredients[0].quantity}").assertIsDisplayed()
     composeTestRule
         .onNodeWithContentDescription("Edit ${testIngredients[0].name} Quantity")
         .assertIsDisplayed()
     composeTestRule.onNodeWithContentDescription("Recipe Image").assertIsDisplayed()
-    composeTestRule.onNodeWithText("0 day left").assertIsDisplayed()
+    composeTestRule.onNodeWithText("Expired").assertIsDisplayed()
     composeTestRule.onNodeWithTag("expirationBar${testIngredients[0].name}2022-02-01$RED")
 
     composeTestRule.onNodeWithText("Add Ingredient").assertIsDisplayed()
@@ -96,13 +95,12 @@ class FridgeScreenTest {
     composeTestRule.onNodeWithText("Fridge").assertIsDisplayed()
     composeTestRule.onNodeWithText("1 items").assertIsDisplayed()
     composeTestRule.onNodeWithText(testIngredients[0].name).performScrollTo().assertIsDisplayed()
-    composeTestRule.onNodeWithText("01/02/2022").assertIsDisplayed()
     composeTestRule.onNodeWithText("2 x ${testIngredients[0].quantity}").assertIsDisplayed()
     composeTestRule
         .onNodeWithContentDescription("Edit ${testIngredients[0].name} Quantity")
         .assertIsDisplayed()
     composeTestRule.onNodeWithContentDescription("Recipe Image").assertIsDisplayed()
-    composeTestRule.onNodeWithText("0 day left").assertIsDisplayed()
+    composeTestRule.onNodeWithText("Expired").assertIsDisplayed()
     composeTestRule
         .onNodeWithTag("expirationBar${testIngredients[0].name}2022-02-01$RED")
         .assertIsDisplayed()
@@ -119,14 +117,12 @@ class FridgeScreenTest {
     composeTestRule.onNodeWithText("Fridge").assertIsDisplayed()
     composeTestRule.onNodeWithText("2 items").assertIsDisplayed()
     composeTestRule.onAllNodesWithText(testIngredients[0].name).assertCountEquals(2)
-    composeTestRule.onNodeWithText("01/02/2022").assertIsDisplayed()
-    composeTestRule.onNodeWithText("01/01/2022").assertIsDisplayed()
     composeTestRule.onAllNodesWithText("1 x ${testIngredients[0].quantity}").assertCountEquals(2)
     composeTestRule
         .onAllNodesWithContentDescription("Edit ${testIngredients[0].name} Quantity")
         .assertCountEquals(2)
     composeTestRule.onAllNodesWithContentDescription("Recipe Image").assertCountEquals(2)
-    composeTestRule.onAllNodesWithText("0 day left").assertCountEquals(2)
+    composeTestRule.onAllNodesWithText("Expired").assertCountEquals(2)
     composeTestRule
         .onNodeWithTag("expirationBar${testIngredients[0].name}2022-02-01$RED")
         .assertIsDisplayed()
@@ -155,13 +151,12 @@ class FridgeScreenTest {
     composeTestRule.onNodeWithText("Fridge").assertIsDisplayed()
     composeTestRule.onNodeWithText("2 items").assertIsDisplayed()
     composeTestRule.onNodeWithText(testIngredients[0].name).performScrollTo().assertIsDisplayed()
-    composeTestRule.onAllNodesWithText("01/02/2022").assertCountEquals(2)
     composeTestRule.onNodeWithText("1 x ${testIngredients[0].quantity}").assertIsDisplayed()
     composeTestRule
         .onNodeWithContentDescription("Edit ${testIngredients[0].name} Quantity")
         .assertIsDisplayed()
     composeTestRule.onAllNodesWithContentDescription("Recipe Image").assertCountEquals(2)
-    composeTestRule.onAllNodesWithText("0 day left").assertCountEquals(2)
+    composeTestRule.onAllNodesWithText("Expired").assertCountEquals(2)
     composeTestRule
         .onNodeWithTag("expirationBar${testIngredients[0].name}2022-02-01$RED")
         .assertIsDisplayed()
@@ -201,7 +196,7 @@ class FridgeScreenTest {
     composeTestRule
         .onNodeWithTag("expirationBar${testIngredients[0].name}${testExpirationDate}$ORANGE")
         .assertIsDisplayed()
-    composeTestRule.onNodeWithText("5 day left").assertIsDisplayed()
+    composeTestRule.onNodeWithText("5 days left").assertIsDisplayed()
   }
 
   @Test
@@ -214,7 +209,7 @@ class FridgeScreenTest {
     composeTestRule
         .onNodeWithTag("expirationBar${testIngredients[0].name}${testExpirationDate}$GREEN")
         .assertIsDisplayed()
-    composeTestRule.onNodeWithText("6 day left").assertIsDisplayed()
+    composeTestRule.onNodeWithText("6 days left").assertIsDisplayed()
   }
 
   @Test
@@ -227,7 +222,7 @@ class FridgeScreenTest {
     composeTestRule
         .onNodeWithTag("expirationBar${testIngredients[0].name}${testExpirationDate}$RED")
         .assertIsDisplayed()
-    composeTestRule.onNodeWithText("0 day left").assertIsDisplayed()
+    composeTestRule.onNodeWithText("Expired").assertIsDisplayed()
   }
 
   @Test

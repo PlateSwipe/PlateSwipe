@@ -3,6 +3,7 @@ package com.android.sample.ui.fridge
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -50,6 +52,7 @@ import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScre
 import com.android.sample.resources.C.Dimension.FridgeScreen.ALL_BAR
 import com.android.sample.resources.C.Dimension.FridgeScreen.BAR_HEIGHT
 import com.android.sample.resources.C.Dimension.FridgeScreen.BAR_ROUND_CORNER
+import com.android.sample.resources.C.Dimension.FridgeScreen.BORDER_FRIDGE_WIDTH
 import com.android.sample.resources.C.Dimension.FridgeScreen.CARD_ELEVATION
 import com.android.sample.resources.C.Dimension.FridgeScreen.EDIT_ICON_SIZE
 import com.android.sample.resources.C.Dimension.FridgeScreen.EMPTY_FRIDGE_FONT_SIZE
@@ -62,6 +65,7 @@ import com.android.sample.resources.C.Dimension.FridgeScreen.MAX_ORANGE_DAY
 import com.android.sample.resources.C.Dimension.FridgeScreen.MAX_PROPORTION
 import com.android.sample.resources.C.Dimension.FridgeScreen.MIN_ORANGE_DAY
 import com.android.sample.resources.C.Dimension.FridgeScreen.MIN_PROPORTION
+import com.android.sample.resources.C.Dimension.FridgeScreen.NUMBER_CARD_IN_A_ROW
 import com.android.sample.resources.C.Dimension.FridgeScreen.TITLE_FONT_SIZE
 import com.android.sample.resources.C.Dimension.PADDING_16
 import com.android.sample.resources.C.Dimension.PADDING_32
@@ -77,13 +81,12 @@ import com.android.sample.ui.createRecipe.ChefImage
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.firebrickRed
+import com.android.sample.ui.theme.grayBorder
 import com.android.sample.ui.theme.jungleGreen
 import com.android.sample.ui.theme.orangeExpirationBar
-import com.android.sample.ui.theme.tagBackground
 import com.android.sample.ui.utils.PlateSwipeButton
 import com.android.sample.ui.utils.PlateSwipeScaffold
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import kotlin.math.max
 
@@ -219,35 +222,50 @@ private fun FridgeContent(
                     color = MaterialTheme.colorScheme.onPrimary)
               }
 
-          // Lazy Column to display the fridge items
-          LazyColumn(modifier = Modifier.fillMaxSize()) {
-            item {
-              listFridgeItem
-                  .sortedBy { it.first.expirationDate }
-                  .chunked(2)
-                  .forEach { chunk ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center // Distribute cards evenly
-                        ) {
-                          // First card in the chunk
-                          chunk.getOrNull(0)?.let { card1 ->
-                            ItemCard(Modifier.weight(1f), card1, userViewModel, navigationActions)
-                          }
+          // Card that represents the fridge
+          Card(
+              modifier =
+                  Modifier.fillMaxSize()
+                      .padding(PADDING_16.dp)
+                      .border(
+                          width = BORDER_FRIDGE_WIDTH.dp,
+                          color = grayBorder,
+                          shape = RoundedCornerShape(CARD_BORDER_ROUND.dp)),
+              shape = RoundedCornerShape(CARD_BORDER_ROUND.dp),
+              elevation = CardDefaults.cardElevation(defaultElevation = CARD_ELEVATION.dp),
+              colors = CardDefaults.cardColors(MaterialTheme.colorScheme.secondary)) {
+                // Lazy Column to display the fridge items
+                LazyColumn(modifier = Modifier.fillMaxSize().background(Color.Transparent)) {
+                  item {
+                    listFridgeItem
+                        .sortedBy { it.first.expirationDate }
+                        .chunked(NUMBER_CARD_IN_A_ROW)
+                        .forEach { chunk ->
+                          Row(
+                              modifier = Modifier.fillMaxWidth(),
+                              horizontalArrangement = Arrangement.Center // Distribute cards evenly
+                              ) {
+                                // First card in the chunk
+                                chunk.getOrNull(0)?.let { card1 ->
+                                  ItemCard(
+                                      Modifier.weight(1f), card1, userViewModel, navigationActions)
+                                }
 
-                          // Second card in the chunk (if present)
-                          chunk.getOrNull(1)?.let { card2 ->
-                            ItemCard(Modifier.weight(1f), card2, userViewModel, navigationActions)
-                          }
+                                // Second card in the chunk (if present)
+                                chunk.getOrNull(1)?.let { card2 ->
+                                  ItemCard(
+                                      Modifier.weight(1f), card2, userViewModel, navigationActions)
+                                }
 
-                          // Add an empty spacer if only one card exists in the chunk
-                          if (chunk.size == 1) {
-                            Spacer(modifier = Modifier.weight(1f).padding(PADDING_16.dp))
-                          }
+                                // Add an empty spacer if only one card exists in the chunk
+                                if (chunk.size == 1) {
+                                  Spacer(modifier = Modifier.weight(1f).padding(PADDING_16.dp))
+                                }
+                              }
                         }
                   }
-            }
-          }
+                }
+              }
         }
     // button to add ingredient
     Row(
@@ -289,7 +307,7 @@ private fun ItemCard(
       verticalArrangement = Arrangement.Center) {
         Card(
             modifier = Modifier.padding(PADDING_8.dp),
-            colors = CardDefaults.cardColors(MaterialTheme.colorScheme.secondary),
+            colors = CardDefaults.cardColors(Color.White),
             shape = RoundedCornerShape(CARD_BORDER_ROUND.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = CARD_ELEVATION.dp)) {
               Box(modifier = Modifier.fillMaxSize()) {
@@ -300,7 +318,6 @@ private fun ItemCard(
                       userViewModel.clearIngredientList()
                       userViewModel.addIngredient(card.second)
                       navigationActions.navigateTo(Screen.FRIDGE_EDIT)
-                      // showEditDialog = true
                     },
                     modifier =
                         Modifier.align(Alignment.TopEnd)
@@ -316,7 +333,7 @@ private fun ItemCard(
 
                 // Column to display the image, quantity, and expiration bar
                 Column(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.fillMaxSize().padding(vertical = PADDING_8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally) {
                       Spacer(Modifier.size(EDIT_ICON_SIZE.dp).padding(PADDING_8.dp))
 
@@ -340,7 +357,7 @@ private fun ItemCard(
                               Modifier.padding(
                                       PADDING_8.dp, PADDING_8.dp, PADDING_8.dp, PADDING_8.dp)
                                   .background(
-                                      color = tagBackground,
+                                      color = MaterialTheme.colorScheme.onBackground,
                                       shape = RoundedCornerShape(FRIDGE_TAG_CORNER.dp)),
                           verticalAlignment = Alignment.CenterVertically,
                           horizontalArrangement = Arrangement.Center) {
@@ -350,8 +367,7 @@ private fun ItemCard(
                                         horizontal = PADDING_16.dp, vertical = PADDING_4.dp),
                                 text = "${card.first.quantity} x ${card.second.quantity}",
                                 fontSize = 14.sp,
-                                color = Color.White // Text color
-                                )
+                                color = Color.White)
                           }
 
                       ExpirationBar(
@@ -361,23 +377,15 @@ private fun ItemCard(
               }
             }
         Text(
-            modifier = Modifier.padding(vertical = (PADDING_4 / 2).dp, horizontal = PADDING_8.dp),
+            modifier =
+                Modifier.padding(vertical = (PADDING_4 / 2).dp, horizontal = PADDING_8.dp)
+                    .align(Alignment.CenterHorizontally),
             text = card.second.name,
             style = MaterialTheme.typography.titleMedium,
             fontSize = INGREDIENT_NAME_FONT_SIZE.sp,
             color = MaterialTheme.colorScheme.onPrimary,
             maxLines = INGREDIENT_MAX_LINE,
             overflow = TextOverflow.Ellipsis)
-
-        val formattedDate =
-            card.first.expirationDate.format(
-                DateTimeFormatter.ofPattern(stringResource(R.string.date_pattern)))
-
-        Text(
-            modifier = Modifier.padding(vertical = (PADDING_4 / 2).dp, horizontal = PADDING_8.dp),
-            text = formattedDate,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onPrimary.copy(alpha = ITEM_ALPHA))
       }
 }
 
@@ -431,11 +439,29 @@ private fun ExpirationBar(expirationDate: LocalDate, testTag: String) {
                             .zIndex(1f))
               }
         }
+    if (daysLeft > 0) {
+      Text(
+          text = "${max(daysLeft, 0)} ${if (daysLeft == 1) "day" else "days"} left",
+          modifier = Modifier.padding(PADDING_8.dp),
+          style = MaterialTheme.typography.bodySmall,
+          color = MaterialTheme.colorScheme.onPrimary.copy(alpha = ITEM_ALPHA))
+    } else {
+      Row(
+          modifier = Modifier.fillMaxSize(),
+          horizontalArrangement = Arrangement.Center,
+          verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                imageVector = Icons.Default.Block,
+                contentDescription = stringResource(R.string.expired),
+                tint = MaterialTheme.colorScheme.error,
+            )
 
-    Text(
-        text = "${max(daysLeft, 0)} day left",
-        modifier = Modifier.padding(PADDING_8.dp),
-        style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = ITEM_ALPHA))
+            Text(
+                text = stringResource(R.string.expired),
+                modifier = Modifier.padding(PADDING_8.dp),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.error)
+          }
+    }
   }
 }
