@@ -290,12 +290,15 @@ class FridgeScreenTest {
     composeTestRule.onNodeWithText("No").assertIsDisplayed()
     composeTestRule.onNodeWithText("Yes").assertIsDisplayed().performClick()
 
-    assert(userViewModel.ingredientList.value.isEmpty())
+    composeTestRule.waitForIdle()
+    assert(userViewModel.fridgeItems.value.isEmpty())
   }
 
   @Test
   fun cancelRemoveIngredientFromFridge() {
     userViewModel.updateIngredientFromFridge(testIngredients[0], 1, LocalDate.of(2022, 2, 1), true)
+    val originalSize = userViewModel.fridgeItems.value.size
+
     composeTestRule.waitForIdle()
     composeTestRule
         .onNodeWithContentDescription(
@@ -305,7 +308,8 @@ class FridgeScreenTest {
     composeTestRule.onNodeWithText("Remove ${testIngredients[0].name}").assertIsDisplayed()
     composeTestRule.onNodeWithText("No").assertIsDisplayed().performClick()
 
-    assert(userViewModel.ingredientList.value.size == 1)
-    assert(userViewModel.ingredientList.value.first().first == testIngredients[0])
+    composeTestRule.waitForIdle()
+    assert(userViewModel.fridgeItems.value.size == originalSize)
+    assert(userViewModel.fridgeItems.value.first().second == testIngredients[0])
   }
 }
