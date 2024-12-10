@@ -317,27 +317,21 @@ class UserViewModel(
           }
 
       if (changedIngredient != null) {
+        val newQuantity =
+            when {
+              scannedItem -> changedIngredient.first.quantity + quantity
+              quantity > 0 -> quantity
+              else -> 0
+            }
 
-        if (scannedItem) { // case there we scan an item that we want to add to the fridge
-          val actualQuantity = changedIngredient.first.quantity
-          val newQuantity = actualQuantity + quantity
-
+        if (newQuantity > 0) {
           val newFridgeItem =
               FridgeItem(
                   changedIngredient.first.id, newQuantity, changedIngredient.first.expirationDate)
-
           updateList(_fridgeItems, changedIngredient, add = false)
           updateList(_fridgeItems, Pair(newFridgeItem, changedIngredient.second), add = true)
-        } else { // case where we modify the quantity in the fridge item
-          if (quantity <= 0) {
-            removeIngredientFromUserFridge(ingredient, changedIngredient.first.expirationDate)
-          } else {
-            val newFridgeItem =
-                FridgeItem(
-                    changedIngredient.first.id, quantity, changedIngredient.first.expirationDate)
-            updateList(_fridgeItems, changedIngredient, add = false)
-            updateList(_fridgeItems, Pair(newFridgeItem, changedIngredient.second), add = true)
-          }
+        } else {
+          removeIngredientFromUserFridge(ingredient, changedIngredient.first.expirationDate)
         }
       } else {
         addIngredientToUserFridge(ingredient, quantity, expirationDate)
