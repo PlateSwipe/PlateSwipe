@@ -9,7 +9,6 @@ import com.android.sample.resources.C.TestTag.IngredientSearchScreen.CANCEL_BUTT
 import com.android.sample.resources.C.TestTag.IngredientSearchScreen.CONFIRMATION_BUTTON
 import com.android.sample.resources.C.TestTag.IngredientSearchScreen.CONFIRMATION_POPUP
 import com.android.sample.ui.utils.ConfirmationPopUp
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito.mock
@@ -21,20 +20,36 @@ class ConfirmationPopUpTest {
   private val onConfirm = mock<() -> Unit>()
   private val onDismiss = mock<() -> Unit>()
 
-  @Before
-  fun setUp() {
+  @Test
+  fun testBasicPopUpIsVisible() {
+    composeTestRule.setContent {
+      ConfirmationPopUp(
+          onConfirm = onConfirm,
+          onDismiss = onDismiss,
+          titleText = "Confirm Action",
+          confirmationText = "Are you sure you want to proceed?")
+    }
+    // Assert
+    // Assert
+    composeTestRule.onNodeWithText("Confirm Action").assertIsDisplayed() // Title is displayed
+    composeTestRule
+        .onNodeWithText("Are you sure you want to proceed?")
+        .assertIsDisplayed() // Confirmation text is displayed
+    composeTestRule.onNodeWithText("Yes").assertIsDisplayed() // Confirm button text is displayed
+    composeTestRule.onNodeWithText("No").assertIsDisplayed() // Dismiss button text is displayed
+  }
+
+  @Test
+  fun testConfirmButton_onClick_triggersOnConfirm() {
     composeTestRule.setContent {
       ConfirmationPopUp(
           onConfirm = onConfirm,
           onDismiss = onDismiss,
           titleText = "Confirm Action",
           confirmationText = "Are you sure you want to proceed?",
-          confirmationButtonText = "Confirm")
+          confirmationButtonText = "Confirm",
+          dismissButtonText = "Cancel")
     }
-  }
-
-  @Test
-  fun testConfirmButton_onClick_triggersOnConfirm() {
     // Act
     composeTestRule.onNodeWithTag(CONFIRMATION_BUTTON).performClick()
 
@@ -44,6 +59,15 @@ class ConfirmationPopUpTest {
 
   @Test
   fun testDismissButton_onClick_triggersOnDismiss() {
+    composeTestRule.setContent {
+      ConfirmationPopUp(
+          onConfirm = onConfirm,
+          onDismiss = onDismiss,
+          titleText = "Confirm Action",
+          confirmationText = "Are you sure you want to proceed?",
+          confirmationButtonText = "Confirm",
+          dismissButtonText = "Cancel")
+    }
     // Act
     composeTestRule.onNodeWithTag(CANCEL_BUTTON).performClick()
 
@@ -53,6 +77,15 @@ class ConfirmationPopUpTest {
 
   @Test
   fun testTextElements_areDisplayedCorrectly() {
+    composeTestRule.setContent {
+      ConfirmationPopUp(
+          onConfirm = onConfirm,
+          onDismiss = onDismiss,
+          titleText = "Confirm Action",
+          confirmationText = "Are you sure you want to proceed?",
+          confirmationButtonText = "Confirm",
+          dismissButtonText = "Cancel")
+    }
     // Assert
     composeTestRule.onNodeWithText("Confirm Action").assertIsDisplayed() // Title is displayed
     composeTestRule
@@ -66,12 +99,31 @@ class ConfirmationPopUpTest {
 
   @Test
   fun testPopUpIsVisible() {
+    composeTestRule.setContent {
+      ConfirmationPopUp(
+          onConfirm = onConfirm,
+          onDismiss = onDismiss,
+          titleText = "Confirm Action",
+          confirmationText = "Are you sure you want to proceed?",
+          confirmationButtonText = "Confirm",
+          dismissButtonText = "Cancel")
+    }
+
     // Assert
     composeTestRule.onNodeWithTag(CONFIRMATION_POPUP).assertIsDisplayed() // Pop-up is visible
   }
 
   @Test
   fun testPopUpMultipleActionIsVisible() {
+    composeTestRule.setContent {
+      ConfirmationPopUp(
+          onConfirm = onConfirm,
+          onDismiss = onDismiss,
+          titleText = "Confirm Action",
+          confirmationText = "Are you sure you want to proceed?",
+          confirmationButtonText = "Confirm",
+          dismissButtonText = "Cancel")
+    }
     // Assert
     composeTestRule.onNodeWithText("Confirm").assertIsDisplayed().performClick()
     verify(onConfirm).invoke()
