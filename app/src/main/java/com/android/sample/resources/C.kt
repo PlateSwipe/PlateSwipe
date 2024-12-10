@@ -40,7 +40,6 @@ object C {
       const val INITIAL_IS_CLICKING = false
       const val INITIAL_DISPLAY_LIKE = false
       const val INITIAL_DISPLAY_DISLIKE = false
-      const val RATE_VALUE = "4.5"
       const val HAT = "Chef's hat"
       const val LIKE = "Like"
       const val DISLIKE = "Dislike"
@@ -435,8 +434,8 @@ object C {
       const val SCREEN_MIN = 0f
       const val DESCRIPTION_WEIGHT = 3f
       const val DESCRIPTION_FONT_SIZE = 20
-      const val STAR_WEIGHT = 1f
-      const val STAR_SIZE = 24
+      const val FRIDGE_INGREDIENTS_WEIGHT = 1f
+      const val FRIDGE_INGREDIENT_SIZE = 24
       const val LIKE_DISLIKE_ANIMATION_PADDING_RATE = 2f / 11f
       const val LIKE_DISLIKE_ANIMATION_ICON_SCALE_MIN = 0.8f
       const val LIKE_DISLIKE_ANIMATION_ICON_SCALE_MAX = 1.5f
@@ -462,6 +461,7 @@ object C {
       const val COUNTER_ROUND_CORNER = 25
       const val OVERVIEW_RECIPE_STAR_SIZE = 24
       const val OVERVIEW_TIME_DISPLAY_RATE = 1f / 12f
+      const val OVERVIEW_FRIDGE_INGREDIENT_THUMBNAIL_SIZE = 25
       const val OVERVIEW_CHECKBOX_SIZE = 15
       const val OVERVIEW_RECIPE_ROUND = 5
       const val OVERVIEW_RECIPE_ROUND_ROW = 10
@@ -742,8 +742,8 @@ object C {
       const val RECIPE_IMAGE_2 = "recipeImage2"
       const val DRAGGABLE_ITEM = "draggableItem"
       const val RECIPE_NAME = "recipeName"
-      const val RECIPE_STAR = "recipeStar"
-      const val RECIPE_RATE = "recipeRate"
+      const val RECIPE_FRIDGE_INGREDIENTS = "recipeFridgeIngredients"
+      const val RECIPE_FRIDGE_INGREDIENTS_TEXT = "recipeFridgeIngredientsText"
       const val VIEW_RECIPE_BUTTON = "viewRecipeButton"
       const val DELETE_SUFFIX = "Delete"
     }
@@ -752,9 +752,8 @@ object C {
       const val DRAGGABLE_ITEM = "draggableItem"
       const val RECIPE_IMAGE = "recipeImage"
       const val RECIPE_TITLE = "recipeTitle"
-      const val RATING_ICON = "ratingIcon"
-      const val RECIPE_STAR = "recipeStar"
-      const val RECIPE_RATE = "recipeRate"
+      const val RECIPE_FRIDGE_INGREDIENTS = "recipeFridgeIngredients"
+      const val RECIPE_FRIDGE_INGREDIENTS_TEXT = "recipeFridgeIngredientsText"
       const val INGREDIENTS_VIEW = "ingredientsView"
       const val INSTRUCTIONS_VIEW = "instructionsView"
       const val INGREDIENT_CHECKBOX = "checkboxIngredient"
