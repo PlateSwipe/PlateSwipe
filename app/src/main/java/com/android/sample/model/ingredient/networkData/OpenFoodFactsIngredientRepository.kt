@@ -44,16 +44,8 @@ class OpenFoodFactsIngredientRepository(private val client: OkHttpClient) :
     val brands = json.getString(PRODUCT_BRAND) ?: null
     val barcode = json.getLong(PRODUCT_ID)
     val quantity = json.getString(PRODUCT_QUANTITY) ?: null
-    val categories =
-        json.getJSONArray(PRODUCT_CATEGORIES).let { categories ->
-          (0 until categories.length()).mapNotNull { i ->
-            try {
-              categories.getString(i).removePrefix(PRODUCT_CATEGORIES_PREFIX)
-            } catch (e: JSONException) {
-              null
-            }
-          }
-        }
+    val categories = parseCategories(json)
+
     val displayNormal = json.getString(PRODUCT_FRONT_IMAGE_NORMAL_URL)
     val displayThumbnail = json.getString(PRODUCT_FRONT_IMAGE_THUMBNAIL_URL)
     val displaySmall = json.getString(PRODUCT_FRONT_IMAGE_SMALL_URL)
@@ -183,4 +175,16 @@ class OpenFoodFactsIngredientRepository(private val client: OkHttpClient) :
 
     return null
   }
+}
+
+private fun parseCategories(json: JSONObject): List<String> {
+    return json.getJSONArray(PRODUCT_CATEGORIES).let { categories ->
+        (0 until categories.length()).mapNotNull { i ->
+            try {
+                categories.getString(i).removePrefix(PRODUCT_CATEGORIES_PREFIX).lowercase()
+            } catch (e: JSONException) {
+                null
+            }
+        }
+    }
 }
