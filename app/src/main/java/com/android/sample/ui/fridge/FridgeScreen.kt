@@ -20,7 +20,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.RemoveCircleOutline
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -38,6 +37,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -332,7 +332,7 @@ private fun ItemCard(
                   Icon(
                       imageVector = Icons.Default.Edit,
                       contentDescription = "Edit ${card.second.name} Quantity",
-                      tint = MaterialTheme.colorScheme.onSecondary,
+                      tint = MaterialTheme.colorScheme.onTertiary,
                   )
                 }
 
@@ -343,8 +343,9 @@ private fun ItemCard(
                             .padding(PADDING_8.dp)
                             .size(EDIT_ICON_SIZE.dp)) {
                       Icon(
-                          imageVector = Icons.Default.RemoveCircleOutline,
-                          contentDescription = "Remove ${card.second.name} from fridge",
+                          painter = painterResource(R.drawable.close),
+                          contentDescription =
+                              "Remove ${card.second.name} that expired ${card.first.expirationDate} from fridge",
                           tint = MaterialTheme.colorScheme.error,
                       )
                     }
@@ -375,7 +376,7 @@ private fun ItemCard(
                               Modifier.padding(
                                       PADDING_8.dp, PADDING_8.dp, PADDING_8.dp, PADDING_8.dp)
                                   .background(
-                                      color = MaterialTheme.colorScheme.onBackground,
+                                      color = MaterialTheme.colorScheme.onTertiaryContainer,
                                       shape = RoundedCornerShape(FRIDGE_TAG_CORNER.dp)),
                           verticalAlignment = Alignment.CenterVertically,
                           horizontalArrangement = Arrangement.Center) {
@@ -394,16 +395,16 @@ private fun ItemCard(
                     }
               }
             }
-        Text(
-            modifier =
-                Modifier.padding(vertical = (PADDING_4 / 2).dp, horizontal = PADDING_8.dp)
-                    .align(Alignment.CenterHorizontally),
-            text = card.second.name,
-            style = MaterialTheme.typography.titleMedium,
-            fontSize = INGREDIENT_NAME_FONT_SIZE.sp,
-            color = MaterialTheme.colorScheme.onPrimary,
-            maxLines = INGREDIENT_MAX_LINE,
-            overflow = TextOverflow.Ellipsis)
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+          Text(
+              modifier = Modifier.padding(horizontal = PADDING_16.dp),
+              text = card.second.name,
+              style = MaterialTheme.typography.titleMedium,
+              fontSize = INGREDIENT_NAME_FONT_SIZE.sp,
+              color = MaterialTheme.colorScheme.onPrimary,
+              maxLines = INGREDIENT_MAX_LINE,
+              overflow = TextOverflow.Ellipsis)
+        }
       }
 
   if (confirmationRemoveDisplay.value) {
@@ -413,7 +414,7 @@ private fun ItemCard(
           confirmationRemoveDisplay.value = false
         },
         onDismiss = { confirmationRemoveDisplay.value = false },
-        titleText = "Delete ${card.second.name}",
+        titleText = "Remove ${card.second.name}",
         confirmationText = "Are you sure you want to remove ${card.second.name} from your fridge?",
     )
   }
