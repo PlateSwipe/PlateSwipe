@@ -195,7 +195,7 @@ fun EditComposable(
               }
               // Download the Ingredient to the local database for offline use
               ingredientViewModel.downloadIngredient(
-                  newIngredient.copy(),
+                  newIngredient,
                   context,
                   Dispatchers.IO,
                   onSuccess = { Log.d("EditFridge", "Ingredient downloaded : $newIngredient") },
