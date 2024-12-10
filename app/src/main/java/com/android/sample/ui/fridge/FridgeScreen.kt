@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.RemoveCircleOutline
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -29,6 +30,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -84,6 +87,7 @@ import com.android.sample.ui.theme.firebrickRed
 import com.android.sample.ui.theme.grayBorder
 import com.android.sample.ui.theme.jungleGreen
 import com.android.sample.ui.theme.orangeExpirationBar
+import com.android.sample.ui.utils.ConfirmationPopUp
 import com.android.sample.ui.utils.PlateSwipeButton
 import com.android.sample.ui.utils.PlateSwipeScaffold
 import java.time.LocalDate
@@ -301,6 +305,7 @@ private fun ItemCard(
     navigationActions: NavigationActions
 ) {
 
+  val confirmationRemoveDisplay = remember { mutableStateOf(false) }
   Column(
       modifier = modifier.padding(PADDING_8.dp),
       horizontalAlignment = Alignment.CenterHorizontally,
@@ -330,6 +335,19 @@ private fun ItemCard(
                       tint = MaterialTheme.colorScheme.onSecondary,
                   )
                 }
+
+                IconButton(
+                    onClick = { confirmationRemoveDisplay.value = true },
+                    modifier =
+                        Modifier.align(Alignment.TopStart)
+                            .padding(PADDING_8.dp)
+                            .size(EDIT_ICON_SIZE.dp)) {
+                      Icon(
+                          imageVector = Icons.Default.RemoveCircleOutline,
+                          contentDescription = "Remove ${card.second.name} from fridge",
+                          tint = MaterialTheme.colorScheme.error,
+                      )
+                    }
 
                 // Column to display the image, quantity, and expiration bar
                 Column(
@@ -387,6 +405,18 @@ private fun ItemCard(
             maxLines = INGREDIENT_MAX_LINE,
             overflow = TextOverflow.Ellipsis)
       }
+
+  if (confirmationRemoveDisplay.value) {
+    ConfirmationPopUp(
+        onConfirm = {
+          userViewModel.removeIngredientFromUserFridge(card.second, card.first.expirationDate)
+          confirmationRemoveDisplay.value = false
+        },
+        onDismiss = { confirmationRemoveDisplay.value = false },
+        titleText = "Delete ${card.second.name}",
+        confirmationText = "Are you sure you want to remove ${card.second.name} from your fridge?",
+    )
+  }
 }
 
 /**
