@@ -12,7 +12,9 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.android.sample.R
+import com.android.sample.resources.C.Dimension.EditFridgeItemScreen.TITLE_LINE_HEIGHT
 import com.android.sample.resources.C.Dimension.IngredientSearchScreen.POP_UP_CLIP
 import com.android.sample.resources.C.Dimension.IngredientSearchScreen.POP_UP_ELEVATION
 import com.android.sample.resources.C.Dimension.PADDING_16
@@ -32,7 +34,8 @@ fun ConfirmationPopUp(
     onDismiss: () -> Unit,
     titleText: String,
     confirmationText: String,
-    confirmationButtonText: String
+    confirmationButtonText: String = stringResource(R.string.pop_up_confirm_removal_liked_recipe),
+    dismissButtonText: String = stringResource(R.string.pop_up_confirm_cancel_removal_liked_recipe)
 ) {
   AlertDialog(
       onDismissRequest = onDismiss,
@@ -48,6 +51,7 @@ fun ConfirmationPopUp(
         Text(
             text = titleText,
             style = MaterialTheme.typography.titleMedium,
+            lineHeight = TITLE_LINE_HEIGHT.sp,
             color = MaterialTheme.colorScheme.onPrimary)
       },
       text = {
@@ -67,7 +71,7 @@ fun ConfirmationPopUp(
       dismissButton = {
         TextButton(onClick = onDismiss, modifier = Modifier.testTag(CANCEL_BUTTON)) {
           Text(
-              text = stringResource(R.string.pop_up_cancel),
+              dismissButtonText,
               style = MaterialTheme.typography.titleSmall,
               color = MaterialTheme.colorScheme.onPrimary)
         }

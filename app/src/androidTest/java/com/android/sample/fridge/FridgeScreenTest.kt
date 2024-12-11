@@ -24,6 +24,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.times
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.verify
 
@@ -74,13 +75,12 @@ class FridgeScreenTest {
     composeTestRule.onNodeWithText("Fridge").assertIsDisplayed()
     composeTestRule.onNodeWithText("1 items").assertIsDisplayed()
     composeTestRule.onNodeWithText(testIngredients[0].name).performScrollTo().assertIsDisplayed()
-    composeTestRule.onNodeWithText("01/02/2022").assertIsDisplayed()
     composeTestRule.onNodeWithText("1 x ${testIngredients[0].quantity}").assertIsDisplayed()
     composeTestRule
         .onNodeWithContentDescription("Edit ${testIngredients[0].name} Quantity")
         .assertIsDisplayed()
     composeTestRule.onNodeWithContentDescription("Recipe Image").assertIsDisplayed()
-    composeTestRule.onNodeWithText("0 day left").assertIsDisplayed()
+    composeTestRule.onNodeWithText("Expired").assertIsDisplayed()
     composeTestRule.onNodeWithTag("expirationBar${testIngredients[0].name}2022-02-01$RED")
 
     composeTestRule.onNodeWithText("Add Ingredient").assertIsDisplayed()
@@ -95,13 +95,12 @@ class FridgeScreenTest {
     composeTestRule.onNodeWithText("Fridge").assertIsDisplayed()
     composeTestRule.onNodeWithText("1 items").assertIsDisplayed()
     composeTestRule.onNodeWithText(testIngredients[0].name).performScrollTo().assertIsDisplayed()
-    composeTestRule.onNodeWithText("01/02/2022").assertIsDisplayed()
     composeTestRule.onNodeWithText("2 x ${testIngredients[0].quantity}").assertIsDisplayed()
     composeTestRule
         .onNodeWithContentDescription("Edit ${testIngredients[0].name} Quantity")
         .assertIsDisplayed()
     composeTestRule.onNodeWithContentDescription("Recipe Image").assertIsDisplayed()
-    composeTestRule.onNodeWithText("0 day left").assertIsDisplayed()
+    composeTestRule.onNodeWithText("Expired").assertIsDisplayed()
     composeTestRule
         .onNodeWithTag("expirationBar${testIngredients[0].name}2022-02-01$RED")
         .assertIsDisplayed()
@@ -118,14 +117,12 @@ class FridgeScreenTest {
     composeTestRule.onNodeWithText("Fridge").assertIsDisplayed()
     composeTestRule.onNodeWithText("2 items").assertIsDisplayed()
     composeTestRule.onAllNodesWithText(testIngredients[0].name).assertCountEquals(2)
-    composeTestRule.onNodeWithText("01/02/2022").assertIsDisplayed()
-    composeTestRule.onNodeWithText("01/01/2022").assertIsDisplayed()
     composeTestRule.onAllNodesWithText("1 x ${testIngredients[0].quantity}").assertCountEquals(2)
     composeTestRule
         .onAllNodesWithContentDescription("Edit ${testIngredients[0].name} Quantity")
         .assertCountEquals(2)
     composeTestRule.onAllNodesWithContentDescription("Recipe Image").assertCountEquals(2)
-    composeTestRule.onAllNodesWithText("0 day left").assertCountEquals(2)
+    composeTestRule.onAllNodesWithText("Expired").assertCountEquals(2)
     composeTestRule
         .onNodeWithTag("expirationBar${testIngredients[0].name}2022-02-01$RED")
         .assertIsDisplayed()
@@ -154,13 +151,12 @@ class FridgeScreenTest {
     composeTestRule.onNodeWithText("Fridge").assertIsDisplayed()
     composeTestRule.onNodeWithText("2 items").assertIsDisplayed()
     composeTestRule.onNodeWithText(testIngredients[0].name).performScrollTo().assertIsDisplayed()
-    composeTestRule.onAllNodesWithText("01/02/2022").assertCountEquals(2)
     composeTestRule.onNodeWithText("1 x ${testIngredients[0].quantity}").assertIsDisplayed()
     composeTestRule
         .onNodeWithContentDescription("Edit ${testIngredients[0].name} Quantity")
         .assertIsDisplayed()
     composeTestRule.onAllNodesWithContentDescription("Recipe Image").assertCountEquals(2)
-    composeTestRule.onAllNodesWithText("0 day left").assertCountEquals(2)
+    composeTestRule.onAllNodesWithText("Expired").assertCountEquals(2)
     composeTestRule
         .onNodeWithTag("expirationBar${testIngredients[0].name}2022-02-01$RED")
         .assertIsDisplayed()
@@ -200,7 +196,7 @@ class FridgeScreenTest {
     composeTestRule
         .onNodeWithTag("expirationBar${testIngredients[0].name}${testExpirationDate}$ORANGE")
         .assertIsDisplayed()
-    composeTestRule.onNodeWithText("5 day left").assertIsDisplayed()
+    composeTestRule.onNodeWithText("5 days left").assertIsDisplayed()
   }
 
   @Test
@@ -213,7 +209,7 @@ class FridgeScreenTest {
     composeTestRule
         .onNodeWithTag("expirationBar${testIngredients[0].name}${testExpirationDate}$GREEN")
         .assertIsDisplayed()
-    composeTestRule.onNodeWithText("6 day left").assertIsDisplayed()
+    composeTestRule.onNodeWithText("6 days left").assertIsDisplayed()
   }
 
   @Test
@@ -226,58 +222,11 @@ class FridgeScreenTest {
     composeTestRule
         .onNodeWithTag("expirationBar${testIngredients[0].name}${testExpirationDate}$RED")
         .assertIsDisplayed()
-    composeTestRule.onNodeWithText("0 day left").assertIsDisplayed()
+    composeTestRule.onNodeWithText("Expired").assertIsDisplayed()
   }
 
   @Test
-  fun quantityDialogCorrectlyDisplayed() {
-    userViewModel.updateIngredientFromFridge(testIngredients[0], 1, LocalDate.of(2022, 2, 1), true)
-    composeTestRule.waitForIdle()
-
-    composeTestRule
-        .onNodeWithContentDescription("Edit ${testIngredients[0].name} Quantity")
-        .assertIsDisplayed()
-    composeTestRule
-        .onNodeWithContentDescription("Edit ${testIngredients[0].name} Quantity")
-        .performClick()
-
-    composeTestRule
-        .onNodeWithText(
-            "Update Quantity: ${testIngredients[0].name} (${testIngredients[0].quantity})")
-        .assertIsDisplayed()
-    composeTestRule.onNodeWithText("+").assertIsDisplayed()
-    composeTestRule.onNodeWithText("-").assertIsDisplayed()
-    composeTestRule.onNodeWithText("1").assertIsDisplayed()
-
-    composeTestRule.onNodeWithText("Cancel").assertIsDisplayed()
-    composeTestRule.onNodeWithText("Save").assertIsDisplayed()
-  }
-
-  @Test
-  fun quantityDialogAddAndSave() {
-    userViewModel.updateIngredientFromFridge(testIngredients[0], 1, LocalDate.of(2022, 2, 1), true)
-    composeTestRule.waitForIdle()
-
-    composeTestRule
-        .onNodeWithContentDescription("Edit ${testIngredients[0].name} Quantity")
-        .assertIsDisplayed()
-    composeTestRule
-        .onNodeWithContentDescription("Edit ${testIngredients[0].name} Quantity")
-        .performClick()
-
-    composeTestRule.onNodeWithText("+").assertIsDisplayed()
-    composeTestRule.onNodeWithText("+").performClick()
-    composeTestRule.waitForIdle()
-
-    composeTestRule.onNodeWithText("2").assertIsDisplayed()
-    composeTestRule.onNodeWithText("Save").assertIsDisplayed()
-    composeTestRule.onNodeWithText("Save").performClick()
-
-    assert(userViewModel.fridgeItems.value[0].first.quantity == 2)
-  }
-
-  @Test
-  fun quantityDialogRemoveAndSave() {
+  fun quantityCorrectlyUpdates() {
     userViewModel.updateIngredientFromFridge(testIngredients[0], 2, LocalDate.of(2022, 2, 1), true)
     composeTestRule.waitForIdle()
 
@@ -288,20 +237,15 @@ class FridgeScreenTest {
         .onNodeWithContentDescription("Edit ${testIngredients[0].name} Quantity")
         .performClick()
 
-    composeTestRule.onNodeWithText("-").assertIsDisplayed()
-    composeTestRule.onNodeWithText("-").performClick()
-    composeTestRule.waitForIdle()
-
-    composeTestRule.onNodeWithText("1").assertIsDisplayed()
-    composeTestRule.onNodeWithText("Save").assertIsDisplayed()
-    composeTestRule.onNodeWithText("Save").performClick()
-
-    assert(userViewModel.fridgeItems.value[0].first.quantity == 1)
+    assert(userViewModel.currentEditingFridgeIngredient.value != null)
+    assert(userViewModel.ingredientList.value.size == 1)
+    verify(navigationActions).navigateTo(Screen.FRIDGE_EDIT)
   }
 
   @Test
-  fun quantityDialogDeleteAndSave() {
-    userViewModel.updateIngredientFromFridge(testIngredients[0], 1, LocalDate.of(2022, 2, 1), true)
+  fun quantityCorrectlyUpdatesWithMultipleIngredient() {
+    userViewModel.updateIngredientFromFridge(testIngredients[0], 2, LocalDate.of(2022, 2, 1), true)
+    userViewModel.updateIngredientFromFridge(testIngredients[1], 2, LocalDate.of(2022, 2, 1), true)
     composeTestRule.waitForIdle()
 
     composeTestRule
@@ -311,37 +255,61 @@ class FridgeScreenTest {
         .onNodeWithContentDescription("Edit ${testIngredients[0].name} Quantity")
         .performClick()
 
-    composeTestRule.onNodeWithText("-").assertIsDisplayed()
-    composeTestRule.onNodeWithText("-").performClick()
+    assert(userViewModel.currentEditingFridgeIngredient.value != null)
+    assert(userViewModel.ingredientList.value.size == 1)
+    assert(userViewModel.ingredientList.value[0].first == testIngredients[0])
+    verify(navigationActions).navigateTo(Screen.FRIDGE_EDIT)
+
+    composeTestRule
+        .onNodeWithContentDescription("Edit ${testIngredients[1].name} Quantity")
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithContentDescription("Edit ${testIngredients[1].name} Quantity")
+        .performClick()
+
+    assert(userViewModel.currentEditingFridgeIngredient.value != null)
+    assert(userViewModel.ingredientList.value.size == 1)
+    assert(userViewModel.ingredientList.value[0].first == testIngredients[1])
+    verify(navigationActions, times(2)).navigateTo(Screen.FRIDGE_EDIT)
+  }
+
+  @Test
+  fun removeIngredientFromFridge() {
+    userViewModel.updateIngredientFromFridge(testIngredients[0], 1, LocalDate.of(2022, 2, 1), true)
     composeTestRule.waitForIdle()
+    composeTestRule
+        .onNodeWithContentDescription(
+            "Remove ${testIngredients[0].name} that expired 2022-02-01 from fridge")
+        .performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithText("Remove ${testIngredients[0].name}").assertIsDisplayed()
+    composeTestRule
+        .onNodeWithText(
+            "Are you sure you want to remove ${testIngredients[0].name} from your fridge?")
+        .assertIsDisplayed()
+    composeTestRule.onNodeWithText("No").assertIsDisplayed()
+    composeTestRule.onNodeWithText("Yes").assertIsDisplayed().performClick()
 
-    composeTestRule.onNodeWithText("0").assertIsDisplayed()
-    composeTestRule.onNodeWithText("Save").assertIsDisplayed()
-    composeTestRule.onNodeWithText("Save").performClick()
-
+    composeTestRule.waitForIdle()
     assert(userViewModel.fridgeItems.value.isEmpty())
   }
 
   @Test
-  fun quantityDialogAddAndDontSave() {
+  fun cancelRemoveIngredientFromFridge() {
     userViewModel.updateIngredientFromFridge(testIngredients[0], 1, LocalDate.of(2022, 2, 1), true)
-    composeTestRule.waitForIdle()
+    val originalSize = userViewModel.fridgeItems.value.size
 
+    composeTestRule.waitForIdle()
     composeTestRule
-        .onNodeWithContentDescription("Edit ${testIngredients[0].name} Quantity")
-        .assertIsDisplayed()
-    composeTestRule
-        .onNodeWithContentDescription("Edit ${testIngredients[0].name} Quantity")
+        .onNodeWithContentDescription(
+            "Remove ${testIngredients[0].name} that expired 2022-02-01 from fridge")
         .performClick()
-
-    composeTestRule.onNodeWithText("-").assertIsDisplayed()
-    composeTestRule.onNodeWithText("-").performClick()
     composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithText("Remove ${testIngredients[0].name}").assertIsDisplayed()
+    composeTestRule.onNodeWithText("No").assertIsDisplayed().performClick()
 
-    composeTestRule.onNodeWithText("0").assertIsDisplayed()
-    composeTestRule.onNodeWithText("Cancel").assertIsDisplayed()
-    composeTestRule.onNodeWithText("Cancel").performClick()
-
-    assert(userViewModel.fridgeItems.value[0].first.quantity == 1)
+    composeTestRule.waitForIdle()
+    assert(userViewModel.fridgeItems.value.size == originalSize)
+    assert(userViewModel.fridgeItems.value.first().second == testIngredients[0])
   }
 }

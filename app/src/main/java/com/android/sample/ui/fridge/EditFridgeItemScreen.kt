@@ -1,6 +1,7 @@
 package com.android.sample.ui.fridge
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -90,9 +91,17 @@ fun EditComposable(
     userViewModel: UserViewModel
 ) {
 
-  val ingredient = userViewModel.ingredientList.collectAsState().value[0].first
-  var quantity by remember { mutableIntStateOf(1) }
-  var expirationDate by remember { mutableStateOf(LocalDate.now()) }
+  val ingredient = userViewModel.ingredientList.collectAsState()
+  Log.e("FridgeScreen", "Edit ${ingredient.value.first().first.name} Quantity")
+
+  var quantity by remember {
+    mutableIntStateOf(userViewModel.currentEditingFridgeIngredient.value?.first?.quantity ?: 1)
+  }
+  var expirationDate by remember {
+    mutableStateOf(
+        userViewModel.currentEditingFridgeIngredient.value?.first?.expirationDate
+            ?: LocalDate.now())
+  }
 
   val showDatePickerDialog = remember { mutableStateOf(false) }
 
@@ -102,7 +111,7 @@ fun EditComposable(
         // Ingredient Name
         Box(modifier = Modifier.fillMaxWidth().align(Alignment.CenterHorizontally)) {
           Text(
-              text = ingredient.name,
+              text = ingredient.value[0].first.name,
               modifier = Modifier.padding(PADDING_16.dp),
               style = MaterialTheme.typography.titleLarge,
               lineHeight = TITLE_LINE_HEIGHT.sp,
@@ -114,7 +123,7 @@ fun EditComposable(
         Image(
             painter =
                 rememberAsyncImagePainter(
-                    model = ingredient.images[PRODUCT_FRONT_IMAGE_THUMBNAIL_URL]),
+                    model = ingredient.value[0].first.images[PRODUCT_FRONT_IMAGE_THUMBNAIL_URL]),
             contentDescription = stringResource(R.string.recipe_image),
             alignment = Alignment.Center,
             modifier =
@@ -131,7 +140,7 @@ fun EditComposable(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(PADDING_16.dp)) {
               Text(
-                  text = "Quantity (x ${ingredient.quantity}):",
+                  text = "Quantity (x ${ingredient.value[0].first.quantity}):",
                   modifier = Modifier.weight(1f),
                   style = MaterialTheme.typography.bodyMedium,
                   fontSize = TEXT_FONT_SIZE.sp,
@@ -173,10 +182,15 @@ fun EditComposable(
 
         // Save Button
         PlateSwipeButton(
-            stringResource(R.string.save),
+            stringResource(
+                // Specify the button name depends on the screen mode
+                if (userViewModel.currentEditingFridgeIngredient.collectAsState().value != null)
+                    R.string.save
+                else R.string.add),
             modifier = Modifier.align(Alignment.CenterHorizontally).zIndex(1f),
             onClick = {
-              userViewModel.updateIngredientFromFridge(ingredient, quantity, expirationDate, true)
+              userViewModel.updateIngredientFromFridge(
+                  ingredient.value[0].first, quantity, expirationDate, true)
               navigationActions.navigateTo(Screen.FRIDGE)
             })
 
