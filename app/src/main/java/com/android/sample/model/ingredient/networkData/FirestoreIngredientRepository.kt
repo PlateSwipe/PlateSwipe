@@ -4,6 +4,7 @@ import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.ingredient.IngredientRepository
 import com.android.sample.resources.C
 import com.android.sample.resources.C.Tag.FIRESTORE_INGREDIENT_CATEGORIES
+import com.android.sample.resources.C.Tag.FIRESTORE_INGREDIENT_COLLECTION_NAME_TEST
 import com.android.sample.resources.C.Tag.FIRESTORE_INGREDIENT_IMAGES
 import com.android.sample.resources.C.Tag.FIRESTORE_INGREDIENT_QUANTITY
 import com.google.firebase.firestore.DocumentSnapshot
@@ -97,7 +98,7 @@ class FirestoreIngredientRepository(private val db: FirebaseFirestore) :
       onFailure: (Exception) -> Unit,
       count: Int = 20
   ) {
-    db.collection(C.Tag.FIRESTORE_INGREDIENT_COLLECTION_NAME_TEST)
+    db.collection(FIRESTORE_INGREDIENT_COLLECTION_NAME_TEST)
         .where(filter)
         .limit(count.toLong())
         .get()
@@ -130,12 +131,10 @@ class FirestoreIngredientRepository(private val db: FirebaseFirestore) :
     var addedIngredient = ingredient
 
     if (ingredient.uid.isNullOrEmpty()) {
-      addedIngredient =
-          ingredient.copy(
-              uid = db.collection(C.Tag.FIRESTORE_INGREDIENT_COLLECTION_NAME_TEST).document().id)
+      addedIngredient = ingredient.copy(uid = getNewUid())
     }
 
-    db.collection(C.Tag.FIRESTORE_INGREDIENT_COLLECTION_NAME_TEST)
+    db.collection(FIRESTORE_INGREDIENT_COLLECTION_NAME_TEST)
         .document(addedIngredient.uid!!)
         .set(addedIngredient)
         .addOnCompleteListener { result ->
@@ -156,5 +155,14 @@ class FirestoreIngredientRepository(private val db: FirebaseFirestore) :
    */
   fun add(ingredient: List<Ingredient>, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     ingredient.forEach { i -> add(i, onSuccess, onFailure) }
+  }
+
+  /**
+   * Generates a new unique identifier (UID) for an ingredient document.
+   *
+   * @return A new UID as a String.
+   */
+  fun getNewUid(): String {
+    return db.collection(FIRESTORE_INGREDIENT_COLLECTION_NAME_TEST).document().id
   }
 }
