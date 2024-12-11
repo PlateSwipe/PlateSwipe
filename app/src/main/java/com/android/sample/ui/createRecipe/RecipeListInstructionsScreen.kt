@@ -1,6 +1,7 @@
 package com.android.sample.ui.createRecipe
 
 import android.widget.Toast
+import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -277,14 +278,18 @@ fun Modifier.fadingEdge(brush: Brush) =
       drawRect(brush = brush, blendMode = BlendMode.DstIn)
     }
 
-fun previousScreen(isEditing: Boolean): String {
+/** Helper function determine the previous screen */
+private fun previousScreen(isEditing: Boolean): String {
   return if (isEditing) Screen.EDIT_RECIPE_ADD_INSTRUCTION else Screen.CREATE_RECIPE_ADD_INSTRUCTION
 }
 
-fun nextScreen(isEditing: Boolean): String {
+/** Helper function determine the next screen */
+private fun nextScreen(isEditing: Boolean): String {
   return if (isEditing) Screen.EDIT_RECIPE_TIME_PICKER else Screen.CREATE_RECIPE_TIME_PICKER
 }
 
-fun toAddInstructionScreen(isEditing: Boolean): String {
+/** Helper function to determine the screen to navigate to when adding an instruction */
+@VisibleForTesting
+internal fun toAddInstructionScreen(isEditing: Boolean): String {
   return if (isEditing) Screen.EDIT_RECIPE_ADD_INSTRUCTION else Screen.CREATE_RECIPE_ADD_INSTRUCTION
 }
