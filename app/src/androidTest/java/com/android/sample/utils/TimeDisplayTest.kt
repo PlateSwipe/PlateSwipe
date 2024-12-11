@@ -1,6 +1,5 @@
 package com.android.sample.utils
 
-import android.util.Log
 import androidx.compose.ui.test.junit4.createComposeRule
 import com.android.sample.ui.utils.reformatTime
 import org.junit.Rule
