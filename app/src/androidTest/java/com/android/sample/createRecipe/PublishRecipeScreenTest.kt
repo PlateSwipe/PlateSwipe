@@ -17,6 +17,10 @@ import com.android.sample.ui.navigation.Screen
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import io.mockk.*
+import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertFalse
+import junit.framework.TestCase.assertNotNull
+import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -185,6 +189,64 @@ class PublishRecipeScreenTest {
     advanceUntilIdle()
 
     // Verify navigation to the CREATE_RECIPE screen
+    verify { navigationActions.navigateTo(Screen.SWIPE) }
+  }
+
+  @OptIn(ExperimentalCoroutinesApi::class)
+  @Test
+  fun publishRecipeScreen_publishButtonUpdatesUserRecipe_InEditMode() = runTest {
+    // Arrange: Set up the editing mode with existing recipe details
+    val oldRecipeId = "old-recipe-id"
+    val newRecipeName = "Updated Recipe Name"
+
+    createRecipeViewModel.recipeBuilder.setId(oldRecipeId)
+    createRecipeViewModel.updateRecipeName(newRecipeName)
+    createRecipeViewModel.addRecipeInstruction(Instruction("Updated instructions"))
+    createRecipeViewModel.updateRecipeThumbnail("https://example.com/updated-image.jpg")
+    createRecipeViewModel.addIngredientAndMeasurement("Updated Ingredient", "2 cups")
+
+    // Mock existing recipe in user's created recipes
+    val oldRecipe =
+        Recipe(
+            uid = oldRecipeId,
+            name = "Old Recipe Name",
+            category = "Dessert",
+            instructions = listOf(Instruction("Old instructions")),
+            strMealThumbUrl = "https://example.com/old-image.jpg",
+            ingredientsAndMeasurements = listOf("Old Ingredient" to "1 cup"))
+    userViewModel.addRecipeToUserCreatedRecipes(oldRecipe)
+
+    composeTestRule.setContent {
+      PublishRecipeScreen(
+          navigationActions = navigationActions,
+          createRecipeViewModel = createRecipeViewModel,
+          userViewModel = userViewModel,
+          isEditing = true)
+    }
+
+    // Act: Click the publish button
+    composeTestRule.onNodeWithText("Publish Recipe").performClick()
+
+    // Capture success callback
+    val onSuccess = slot<(Recipe) -> Unit>()
+    val onFailure = slot<(Exception) -> Unit>()
+
+    // Verify that publishRecipe was called in editing mode
+    verify { createRecipeViewModel.publishRecipe(true, capture(onSuccess), capture(onFailure)) }
+
+    // Simulate success callback with the updated recipe
+    val updatedRecipe = createRecipeViewModel.recipeBuilder.build()
+    onSuccess.captured.invoke(updatedRecipe)
+    advanceUntilIdle()
+
+    // Assert: Verify the old recipe was replaced with the updated recipe
+    val createdRecipes = userViewModel.createdRecipes.value
+    assertNotNull(createdRecipes)
+    assertTrue(createdRecipes.contains(updatedRecipe))
+    assertFalse(createdRecipes.contains(oldRecipe))
+    assertEquals(1, createdRecipes.size)
+
+    // Assert: Verify navigation to the next screen
     verify { navigationActions.navigateTo(Screen.SWIPE) }
   }
 }

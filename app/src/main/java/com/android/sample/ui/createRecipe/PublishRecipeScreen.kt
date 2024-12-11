@@ -107,7 +107,12 @@ fun PublishRecipeContent(
               createRecipeViewModel.publishRecipe(
                   isEditing,
                   onSuccess = { recipe ->
-                    userViewModel.addRecipeToUserCreatedRecipes(recipe)
+                    if (isEditing) {
+                      userViewModel.replaceRecipeInUserCreatedRecipes(
+                          createRecipeViewModel.getId(), recipe)
+                    } else {
+                      userViewModel.addRecipeToUserCreatedRecipes(recipe)
+                    }
                     navigationActions.navigateTo(Screen.SWIPE)
                   },
                   onFailure = { exception ->

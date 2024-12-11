@@ -354,6 +354,15 @@ class CreateRecipeViewModel(
   }
 
   /**
+   * Gets the ID of the recipe.
+   *
+   * @return The ID of the recipe.
+   */
+  fun getId(): String {
+    return recipeBuilder.getId()
+  }
+
+  /**
    * Publishes a recipe to the repository, handling both creation and editing modes.
    *
    * For new recipes, generates a unique ID, uploads a photo if provided, and saves the recipe. For

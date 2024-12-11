@@ -685,4 +685,17 @@ class CreateRecipeViewModelTest {
     assertEquals(RECIPE_UPDATED_SUCCESS_MESSAGE, createRecipeViewModel.publishStatus.value)
     verify(mockRepository).updateRecipe(any(), any(), any())
   }
+
+  @Test
+  fun `test getId returns correct recipe ID`() {
+    // Arrange
+    val recipeId = "test-recipe-id"
+    createRecipeViewModel.recipeBuilder.setId(recipeId)
+
+    // Act
+    val retrievedId = createRecipeViewModel.getId()
+
+    // Assert
+    assertEquals(recipeId, retrievedId)
+  }
 }
