@@ -199,7 +199,11 @@ fun fromOptionalInformationScreenNavigateToNextScreen(
   }
 }
 
-fun determineInstructionScreen(isEditing: Boolean, hasInstructions: Boolean): String {
+/**
+ * Helper function to determine the next screen based on the editing mode and whether the recipe has
+ * instructions.
+ */
+private fun determineInstructionScreen(isEditing: Boolean, hasInstructions: Boolean): String {
   return when {
     isEditing && !hasInstructions -> Screen.EDIT_RECIPE_ADD_INSTRUCTION
     isEditing -> Screen.EDIT_RECIPE_LIST_INSTRUCTIONS
