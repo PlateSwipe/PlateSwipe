@@ -188,21 +188,34 @@ fun EditComposable(
             onClick = {
               userViewModel.updateIngredientFromFridge(ingredient, quantity, expirationDate, true)
               Log.d("EditFridge", "Ingredient updated : $ingredient")
+
               var newIngredient = ingredient.copy()
-              if (ingredient.uid == null) {
+              if (ingredient.uid == null && ingredient.barCode != null) {
                 Log.d("EditFridge", "Ingredient has no uid")
-                newIngredient = ingredient.copy(uid = ingredient.barCode.toString())
+                ingredientViewModel.getIngredient(
+                    ingredient.barCode,
+                    onSuccess = { ingre ->
+                      Log.d("EditFridge", "getIngredient: $ingre")
+                      ingredientViewModel.downloadIngredient(
+                          ingre,
+                          context,
+                          Dispatchers.IO,
+                          onSuccess = { Log.d("EditFridge", "Ingredient downloaded : $ingre") },
+                          onFailure = { Log.d("EditFridge", "Ingredient download failed") })
+                    },
+                    onFailure = { Log.d("EditFridge", "Ingredient download failed") })
+              } else {
+                Log.d("EditFridge", "Ingredient has uid :$newIngredient")
+                // Download the Ingredient to the local database for offline use
+                ingredientViewModel.downloadIngredient(
+                    newIngredient,
+                    context,
+                    Dispatchers.IO,
+                    onSuccess = { Log.d("EditFridge", "Ingredient downloaded : $newIngredient") },
+                    onFailure = { Log.d("EditFridge", "Ingredient download failed") })
               }
-              // Download the Ingredient to the local database for offline use
-              ingredientViewModel.downloadIngredient(
-                  newIngredient,
-                  context,
-                  Dispatchers.IO,
-                  onSuccess = { Log.d("EditFridge", "Ingredient downloaded : $newIngredient") },
-                  onFailure = { Log.d("EditFridge", "Ingredient download failed") })
-              val fridgeItem =
-                  FridgeItem(newIngredient.barCode.toString(), quantity, expirationDate)
-              userViewModel.updateLocalFridgeItem(fridgeItem)
+              userViewModel.updateLocalFridgeItem(
+                  FridgeItem(newIngredient.barCode.toString(), quantity, expirationDate))
 
               navigationActions.navigateTo(Screen.FRIDGE)
             })

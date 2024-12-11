@@ -148,18 +148,31 @@ class UserViewModel(
     } else {
       fridgeItemRepository.getAll(
           onSuccess = { fridgeItems ->
+            val fetchedItems = mutableListOf<Pair<FridgeItem, Ingredient>>()
+            var remainingItems = fridgeItems.size
             fridgeItems.forEach { fridgeItem ->
               Log.d(LOG_TAG, "Updating ingredient from local database: $fridgeItem")
               ingredientRepository.getByBarcode(
                   fridgeItem.id.toLong(),
                   onSuccess = { ingredient ->
                     if (ingredient != null) {
-                      updateList(_fridgeItems, Pair(fridgeItem, ingredient), add = true)
+                      Log.d(LOG_TAG, "Getting ingredient from local DB : $ingredient")
+                      synchronized(fetchedItems) { fetchedItems.add(Pair(fridgeItem, ingredient)) }
                     } else {
                       throw Exception(NOT_FOUND_INGREDIENT_IN_DATABASE_ERROR)
                     }
+                    synchronized(fetchedItems) {
+                      remainingItems--
+                      if (remainingItems == 0) {
+                        _fridgeItems.value = fetchedItems
+                        Log.d(LOG_TAG, "Final fridge items: $fetchedItems")
+                      }
+                    }
                   },
-                  onFailure = { e -> throw e })
+                  onFailure = { e ->
+                    Log.e(LOG_TAG, "Error fetching ingredient for barcode: ${fridgeItem.id}", e)
+                    throw e
+                  })
             }
           },
           onFailure = { e -> throw e })
@@ -286,6 +299,7 @@ class UserViewModel(
     }
 
     list.value = newList
+    Log.d("Userviewmodel", "new list: $newList")
     return newList
   }
 
