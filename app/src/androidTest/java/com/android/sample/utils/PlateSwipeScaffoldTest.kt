@@ -8,7 +8,7 @@ import androidx.compose.ui.test.performClick
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.navigation.TopLevelDestinations
-import com.android.sample.ui.theme.SampleAppTheme
+import com.android.sample.ui.theme.PlateSwipeTheme
 import com.android.sample.ui.utils.PlateSwipeScaffold
 import org.junit.Before
 import org.junit.Rule
@@ -66,7 +66,7 @@ class PlateSwipeScaffoldTest {
   @Test
   fun testBottomNavigationMenuCallsNavigationWhenClicked() {
     composeTestRule.setContent {
-      SampleAppTheme {
+      PlateSwipeTheme {
         PlateSwipeScaffold(mockNavigationActions, selectedItem = "Fridge", content = {})
       }
     }

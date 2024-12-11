@@ -40,7 +40,7 @@ import com.android.sample.ui.account.AccountScreen
 import com.android.sample.ui.account.EditAccountScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
-import com.android.sample.ui.theme.SampleAppTheme
+import com.android.sample.ui.theme.PlateSwipeTheme
 import com.android.sample.ui.utils.testUsers
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
@@ -122,7 +122,7 @@ class EditAccountScreenTest {
   @Test
   fun editAccountIsAccessibleTest() {
     composeTestRule.setContent {
-      SampleAppTheme {
+      PlateSwipeTheme {
         AccountScreen(mockNavigationActions, userViewModel, recipeViewModel, createRecipeViewModel)
       }
     }
@@ -136,7 +136,7 @@ class EditAccountScreenTest {
   @Test
   fun accountEditScreenIsDisplayedCorrectlyTest() {
     composeTestRule.setContent {
-      SampleAppTheme {
+      PlateSwipeTheme {
         EditAccountScreen(
             mockNavigationActions, userViewModel, mockFirebaseAuth, imageRepositoryFirebase)
       }
@@ -168,7 +168,7 @@ class EditAccountScreenTest {
   @Test
   fun returnToAccountScreenTest() {
     composeTestRule.setContent {
-      SampleAppTheme {
+      PlateSwipeTheme {
         EditAccountScreen(
             mockNavigationActions, userViewModel, mockFirebaseAuth, imageRepositoryFirebase)
       }
@@ -183,7 +183,7 @@ class EditAccountScreenTest {
   @Test
   fun saveWithoutModifyingTest() {
     composeTestRule.setContent {
-      SampleAppTheme {
+      PlateSwipeTheme {
         EditAccountScreen(
             mockNavigationActions, userViewModel, mockFirebaseAuth, imageRepositoryFirebase)
       }
@@ -203,7 +203,7 @@ class EditAccountScreenTest {
   @Test
   fun modifyUsernameAndSaveTest() {
     composeTestRule.setContent {
-      SampleAppTheme {
+      PlateSwipeTheme {
         EditAccountScreen(
             mockNavigationActions, userViewModel, mockFirebaseAuth, imageRepositoryFirebase)
       }
@@ -229,7 +229,7 @@ class EditAccountScreenTest {
   @Test
   fun cannotModifyEmailTest() {
     composeTestRule.setContent {
-      SampleAppTheme {
+      PlateSwipeTheme {
         EditAccountScreen(
             mockNavigationActions, userViewModel, mockFirebaseAuth, imageRepositoryFirebase)
       }
@@ -248,7 +248,7 @@ class EditAccountScreenTest {
   @Test
   fun datePickerPopUpIsDisplayedTest() {
     composeTestRule.setContent {
-      SampleAppTheme {
+      PlateSwipeTheme {
         EditAccountScreen(
             mockNavigationActions, userViewModel, mockFirebaseAuth, imageRepositoryFirebase)
       }
@@ -270,7 +270,7 @@ class EditAccountScreenTest {
   fun datePickerPopUpCancelTest() {
     userViewModel.changeDateOfBirth("12/12/2024")
     composeTestRule.setContent {
-      SampleAppTheme {
+      PlateSwipeTheme {
         EditAccountScreen(
             mockNavigationActions, userViewModel, mockFirebaseAuth, imageRepositoryFirebase)
       }
@@ -300,7 +300,7 @@ class EditAccountScreenTest {
   fun datePickerPopUpConfirmNoDateSelectedTest() {
     userViewModel.changeDateOfBirth("12/12/2024")
     composeTestRule.setContent {
-      SampleAppTheme {
+      PlateSwipeTheme {
         EditAccountScreen(
             mockNavigationActions, userViewModel, mockFirebaseAuth, imageRepositoryFirebase)
       }
@@ -335,7 +335,7 @@ class EditAccountScreenTest {
         "app/src/androidTest/res/drawable/scoobygourmand_normal.jpg")
 
     composeTestRule.setContent {
-      SampleAppTheme {
+      PlateSwipeTheme {
         EditAccountScreen(
             mockNavigationActions, userViewModel, mockFirebaseAuth, imageRepositoryFirebase)
       }
@@ -347,7 +347,7 @@ class EditAccountScreenTest {
   @Test
   fun modifyDateOfBirthAndSaveTest() {
     composeTestRule.setContent {
-      SampleAppTheme {
+      PlateSwipeTheme {
         EditAccountScreen(
             mockNavigationActions, userViewModel, mockFirebaseAuth, imageRepositoryFirebase)
       }
@@ -386,7 +386,7 @@ class EditAccountScreenTest {
     `when`(mockDownload.exception).thenReturn(Exception("Failed to fetch user profile picture"))
 
     composeTestRule.setContent {
-      SampleAppTheme {
+      PlateSwipeTheme {
         EditAccountScreen(
             mockNavigationActions, userViewModel, mockFirebaseAuth, imageRepositoryFirebase)
       }
