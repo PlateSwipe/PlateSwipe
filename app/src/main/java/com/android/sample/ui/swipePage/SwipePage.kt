@@ -65,6 +65,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.rememberAsyncImagePainter
 import com.android.sample.R
 import com.android.sample.model.filter.Difficulty
 import com.android.sample.model.recipe.Recipe
@@ -145,9 +146,7 @@ import com.android.sample.ui.theme.greenSwipe
 import com.android.sample.ui.theme.jungleGreen
 import com.android.sample.ui.theme.redSwipe
 import com.android.sample.ui.utils.PlateSwipeScaffold
-import com.android.sample.ui.utils.RecipeImage
 import com.android.sample.ui.utils.Tag
-import com.android.sample.utils.NetworkUtils
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -211,8 +210,6 @@ fun RecipeDisplay(
   val currentRecipe by recipesViewModel.currentRecipe.collectAsState()
   val nextRecipe by recipesViewModel.nextRecipe.collectAsState()
   val filter by recipesViewModel.filter.collectAsState()
-  val context = LocalContext.current
-  val isConnected = NetworkUtils().isNetworkAvailable(context)
 
   val fridgeIngredients =
       if (currentRecipe != null) {
@@ -381,12 +378,16 @@ fun RecipeDisplay(
                       Column(
                           modifier =
                               Modifier.background(color = MaterialTheme.colorScheme.onPrimary)) {
-                            RecipeImage(
-                                displayCard1,
-                                currentRecipe,
-                                nextRecipe,
-                                isConnected,
-                                RECIPE_IMAGE_1)
+                            Image(
+                                painter =
+                                    rememberAsyncImagePainter(
+                                        model =
+                                            if (displayCard1) currentRecipe?.url
+                                            else nextRecipe?.url),
+                                contentDescription = stringResource(R.string.recipe_image),
+                                modifier = Modifier.fillMaxSize().testTag(RECIPE_IMAGE_1),
+                                contentScale = ContentScale.Crop,
+                            )
                           }
                     }
 
@@ -402,12 +403,16 @@ fun RecipeDisplay(
                       Column(
                           modifier =
                               Modifier.background(color = MaterialTheme.colorScheme.onPrimary)) {
-                            RecipeImage(
-                                displayCard1,
-                                currentRecipe,
-                                nextRecipe,
-                                isConnected,
-                                RECIPE_IMAGE_2)
+                            Image(
+                                painter =
+                                    rememberAsyncImagePainter(
+                                        model =
+                                            if (!displayCard1) currentRecipe?.url
+                                            else nextRecipe?.url),
+                                contentDescription = stringResource(R.string.recipe_image),
+                                modifier = Modifier.fillMaxSize().testTag(RECIPE_IMAGE_2),
+                                contentScale = ContentScale.Crop,
+                            )
                           }
                     }
               }
