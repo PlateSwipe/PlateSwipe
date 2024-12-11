@@ -13,7 +13,7 @@ import com.android.sample.resources.C.Tag.MINUTES_PER_HOUR
 @Composable
 fun reformatTime(time: Float): String {
   val timeInt = time.toInt()
-  return if (timeInt > MINUTES_PER_HOUR) {
+  return if (timeInt >= MINUTES_PER_HOUR) {
     val hours = timeInt / MINUTES_PER_HOUR
     val minutes = timeInt % MINUTES_PER_HOUR
     "$hours h $minutes ${stringResource(id = R.string.time_unit)}"
