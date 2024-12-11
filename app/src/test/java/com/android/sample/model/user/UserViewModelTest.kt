@@ -35,6 +35,7 @@ import com.android.sample.ui.utils.testRecipes
 import com.android.sample.ui.utils.testUsers
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import java.time.LocalDate
 import junit.framework.TestCase
 import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertTrue
@@ -1080,5 +1081,56 @@ class UserViewModelTest {
   fun deleteLocalFridgeItemTest() {
     userViewModel.deleteLocalFridgeItem(fridgeItemExample)
     verify(mockFridgeItemRepository).delete(any())
+  }
+
+  @Test
+  fun editFridgeItemAlreadyDefinedQuantity() {
+    userViewModel.addIngredient(testIngredients[0])
+
+    userViewModel.setEditingIngredient(
+        Pair(FridgeItem("1", 1, LocalDate.of(2000, 1, 1)), testIngredients[0]))
+
+    userViewModel.updateIngredientFromFridge(testIngredients[0], 2, LocalDate.of(2000, 1, 1), false)
+
+    assert(userViewModel.fridgeItems.value.size == 1)
+    assert(userViewModel.fridgeItems.value[0].first.quantity == 2)
+  }
+
+  @Test
+  fun editFridgeItemAlreadyDefinedDate() {
+    userViewModel.addIngredient(testIngredients[0])
+
+    userViewModel.setEditingIngredient(
+        Pair(FridgeItem("1", 1, LocalDate.of(2000, 1, 1)), testIngredients[0]))
+
+    userViewModel.updateIngredientFromFridge(testIngredients[0], 1, LocalDate.of(2000, 1, 2), false)
+
+    assert(userViewModel.fridgeItems.value.size == 1)
+    assert(userViewModel.fridgeItems.value[0].first.expirationDate == LocalDate.of(2000, 1, 2))
+  }
+
+  @Test
+  fun editFridgeItemNotAlreadyDefined() {
+    userViewModel.addIngredient(testIngredients[0])
+
+    userViewModel.setEditingIngredient(
+        Pair(FridgeItem("1", 1, LocalDate.of(2000, 1, 1)), testIngredients[1]))
+
+    userViewModel.updateIngredientFromFridge(testIngredients[1], 1, LocalDate.of(2000, 1, 2), false)
+
+    assert(userViewModel.fridgeItems.value.size == 1)
+    assert(userViewModel.fridgeItems.value[0].second == testIngredients[1])
+  }
+
+  @Test
+  fun editFridgeItemZeroQuantity() {
+    userViewModel.addIngredient(testIngredients[0])
+
+    userViewModel.setEditingIngredient(
+        Pair(FridgeItem("1", 1, LocalDate.of(2000, 1, 1)), testIngredients[0]))
+
+    userViewModel.updateIngredientFromFridge(testIngredients[0], 0, LocalDate.of(2000, 1, 2), false)
+
+    assert(userViewModel.fridgeItems.value.isEmpty())
   }
 }

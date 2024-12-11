@@ -100,9 +100,17 @@ fun EditComposable(
     ingredientViewModel: IngredientViewModel
 ) {
 
-  val ingredient = userViewModel.ingredientList.collectAsState().value[0].first
-  var quantity by remember { mutableIntStateOf(1) }
-  var expirationDate by remember { mutableStateOf(LocalDate.now()) }
+  val ingredient = userViewModel.ingredientList.collectAsState()
+  Log.e("FridgeScreen", "Edit ${ingredient.value.first().first.name} Quantity")
+
+  var quantity by remember {
+    mutableIntStateOf(userViewModel.currentEditingFridgeIngredient.value?.first?.quantity ?: 1)
+  }
+  var expirationDate by remember {
+    mutableStateOf(
+        userViewModel.currentEditingFridgeIngredient.value?.first?.expirationDate
+            ?: LocalDate.now())
+  }
 
   val showDatePickerDialog = remember { mutableStateOf(false) }
   val context = LocalContext.current
@@ -112,7 +120,7 @@ fun EditComposable(
         // Ingredient Name
         Box(modifier = Modifier.fillMaxWidth().align(Alignment.CenterHorizontally)) {
           Text(
-              text = ingredient.name,
+              text = ingredient.value[0].first.name,
               modifier = Modifier.padding(PADDING_16.dp),
               style = MaterialTheme.typography.titleLarge,
               lineHeight = TITLE_LINE_HEIGHT.sp,
@@ -124,7 +132,7 @@ fun EditComposable(
         Image(
             painter =
                 rememberAsyncImagePainter(
-                    model = ingredient.images[PRODUCT_FRONT_IMAGE_THUMBNAIL_URL]),
+                    model = ingredient.value[0].first.images[PRODUCT_FRONT_IMAGE_THUMBNAIL_URL]),
             contentDescription = stringResource(R.string.recipe_image),
             alignment = Alignment.Center,
             modifier =
@@ -141,7 +149,7 @@ fun EditComposable(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(PADDING_16.dp)) {
               Text(
-                  text = "Quantity (x ${ingredient.quantity}):",
+                  text = "Quantity (x ${ingredient.value[0].first.quantity}):",
                   modifier = Modifier.weight(1f),
                   style = MaterialTheme.typography.bodyMedium,
                   fontSize = TEXT_FONT_SIZE.sp,
@@ -183,17 +191,22 @@ fun EditComposable(
 
         // Save Button
         PlateSwipeButton(
-            stringResource(R.string.save),
+            stringResource(
+                // Specify the button name depends on the screen mode
+                if (userViewModel.currentEditingFridgeIngredient.collectAsState().value != null)
+                    R.string.save
+                else R.string.add),
             modifier = Modifier.align(Alignment.CenterHorizontally).zIndex(1f),
             onClick = {
-              userViewModel.updateIngredientFromFridge(ingredient, quantity, expirationDate, true)
+              userViewModel.updateIngredientFromFridge(
+                  ingredient.value[0].first, quantity, expirationDate, true)
               Log.d("EditFridge", "Ingredient updated : $ingredient")
 
-              var newIngredient = ingredient.copy()
-              if (ingredient.uid == null && ingredient.barCode != null) {
+              var newIngredient = ingredient.value[0].first.copy()
+              if (newIngredient.uid == null && newIngredient.barCode != null) {
                 Log.d("EditFridge", "Ingredient has no uid")
                 ingredientViewModel.getIngredient(
-                    ingredient.barCode,
+                    newIngredient.barCode,
                     onSuccess = { ingre ->
                       Log.d("EditFridge", "getIngredient: $ingre")
                       ingredientViewModel.downloadIngredient(
