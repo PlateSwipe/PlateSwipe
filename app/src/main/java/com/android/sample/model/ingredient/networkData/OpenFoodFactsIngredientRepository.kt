@@ -157,6 +157,12 @@ class OpenFoodFactsIngredientRepository(private val client: OkHttpClient) :
             })
   }
 
+    /**
+     * Parses the product name from the JSON object.
+     *
+     * @param json The JSON object corresponding to the OFF message content
+     * @return The product name for the ingredient.
+     */
   private fun parseProductName(json: JSONObject): String? {
 
     val suffixes: Array<String> = PRODUCT_NAME_OFF_SUFFIXES
@@ -177,6 +183,12 @@ class OpenFoodFactsIngredientRepository(private val client: OkHttpClient) :
   }
 }
 
+/**
+ * Parses the categories from the JSON object.
+ *
+ * @param json The JSON object corresponding to the OFF message content
+ * @return The list of categories for the ingredient.
+ */
 private fun parseCategories(json: JSONObject): List<String> {
   return json.getJSONArray(PRODUCT_CATEGORIES).let { categories ->
     (0 until categories.length()).mapNotNull { i ->
