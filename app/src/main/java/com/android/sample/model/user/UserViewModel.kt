@@ -306,8 +306,9 @@ class UserViewModel(
     if (_currentEditingFridgeIngredient.value != null) {
       _fridgeItems.value =
           _fridgeItems.value.filter { it.first != _currentEditingFridgeIngredient.value!!.first }
-      if (quantity != 0) addIngredientToUserFridge(ingredient, quantity, expirationDate)
       clearEditingIngredient()
+      if (quantity != 0)
+          updateIngredientFromFridge(ingredient, quantity, expirationDate, scannedItem)
     } else {
       // add new ingredient case
       val changedIngredient =
