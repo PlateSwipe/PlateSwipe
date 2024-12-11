@@ -33,18 +33,20 @@ import com.android.sample.ui.utils.PlateSwipeScaffold
 fun PublishRecipeScreen(
     navigationActions: NavigationActions,
     createRecipeViewModel: CreateRecipeViewModel,
-    userViewModel: UserViewModel
+    userViewModel: UserViewModel,
+    isEditing: Boolean = false
 ) {
   PlateSwipeScaffold(
       navigationActions = navigationActions,
-      selectedItem = Route.CREATE_RECIPE,
+      selectedItem = if (isEditing) Route.ACCOUNT else Route.CREATE_RECIPE,
       showBackArrow = true,
       content = { paddingValues ->
         PublishRecipeContent(
             navigationActions,
             createRecipeViewModel,
             userViewModel,
-            modifier = Modifier.padding(paddingValues).fillMaxSize())
+            modifier = Modifier.padding(paddingValues).fillMaxSize(),
+            isEditing)
       })
 }
 
@@ -60,7 +62,8 @@ fun PublishRecipeContent(
     navigationActions: NavigationActions,
     createRecipeViewModel: CreateRecipeViewModel,
     userViewModel: UserViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isEditing: Boolean
 ) {
   // Get the current context
   val context = LocalContext.current
@@ -102,8 +105,14 @@ fun PublishRecipeContent(
         Button(
             onClick = {
               createRecipeViewModel.publishRecipe(
+                  isEditing,
                   onSuccess = { recipe ->
-                    userViewModel.addRecipeToUserCreatedRecipes(recipe)
+                    if (isEditing) {
+                      userViewModel.replaceRecipeInUserCreatedRecipes(
+                          createRecipeViewModel.getId(), recipe)
+                    } else {
+                      userViewModel.addRecipeToUserCreatedRecipes(recipe)
+                    }
                     navigationActions.navigateTo(Screen.SWIPE)
                   },
                   onFailure = { exception ->

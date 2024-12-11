@@ -6,6 +6,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.sample.feature.camera.rotateBitmap
 import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.recipe.networkData.FirestoreRecipesRepository
+import com.android.sample.resources.C.Tag.RECIPE_UPDATED_SUCCESS_MESSAGE
 import com.android.sample.ui.utils.testRecipes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -172,7 +173,7 @@ class CreateRecipeViewModelTest {
     // Check that the exception is thrown with the correct message
     `when`(mockRepository.getNewUid()).thenReturn(defaultRecipe.uid)
 
-    createRecipeViewModel.publishRecipe(onSuccess = {}, onFailure = {})
+    createRecipeViewModel.publishRecipe(isEditing = false, onSuccess = {}, onFailure = {})
 
     assertEquals("Image is null", createRecipeViewModel.publishStatus.value)
   }
@@ -184,7 +185,7 @@ class CreateRecipeViewModelTest {
     `when`(mockRepository.getNewUid()).thenReturn(defaultRecipe.uid)
     val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
     createRecipeViewModel.setBitmap(bitmap, 90)
-    createRecipeViewModel.publishRecipe(onSuccess = {}, onFailure = {})
+    createRecipeViewModel.publishRecipe(isEditing = false, onSuccess = {}, onFailure = {})
     verify(mockImageRepository, times(1))
         .uploadImage(any(), any(), any(), any(), onSuccess = any(), onFailure = any())
   }
@@ -202,7 +203,7 @@ class CreateRecipeViewModelTest {
         .thenAnswer {
           (it.arguments[5] as (Exception) -> Unit).invoke(Exception("Failed to upload image"))
         }
-    createRecipeViewModel.publishRecipe(onSuccess = {}, onFailure = {})
+    createRecipeViewModel.publishRecipe(isEditing = false, onSuccess = {}, onFailure = {})
     assertEquals(
         "Failed to publish recipe: Failed to upload image",
         createRecipeViewModel.publishStatus.value)
@@ -229,7 +230,7 @@ class CreateRecipeViewModelTest {
           onSuccessCallback()
         }
 
-    createRecipeViewModel.publishRecipe(onSuccess = {}, onFailure = {})
+    createRecipeViewModel.publishRecipe(isEditing = false, onSuccess = {}, onFailure = {})
 
     // Ensure all coroutines have completed
     advanceUntilIdle()
@@ -279,6 +280,7 @@ class CreateRecipeViewModelTest {
     // Define the onSuccess callback to validate if it was called correctly
     var onSuccessCalled = false
     createRecipeViewModel.publishRecipe(
+        isEditing = false,
         onSuccess = { recipe -> onSuccessCalled = true },
         onFailure = { fail("Expected onSuccess, but onFailure was called instead.") })
 
@@ -329,7 +331,7 @@ class CreateRecipeViewModelTest {
           (it.arguments[4] as (Exception) -> Unit).invoke(Exception("Failed to get Image Url"))
         }
 
-    createRecipeViewModel.publishRecipe(onSuccess = {}, onFailure = {})
+    createRecipeViewModel.publishRecipe(isEditing = false, onSuccess = {}, onFailure = {})
     assertEquals(
         "Failed to publish recipe: Failed to get Image Url",
         createRecipeViewModel.publishStatus.value)
@@ -352,6 +354,7 @@ class CreateRecipeViewModelTest {
     // Define the onFailure callback to validate if it was called correctly
     var onFailureCalled = false
     createRecipeViewModel.publishRecipe(
+        isEditing = false,
         onSuccess = { fail("Expected onFailure, but onSuccess was called instead.") },
         onFailure = { errorMessage ->
           onFailureCalled = true
@@ -381,7 +384,7 @@ class CreateRecipeViewModelTest {
       (it.arguments[2] as (Exception) -> Unit).invoke(Exception("Failed to add Recipe"))
     }
 
-    createRecipeViewModel.publishRecipe(onSuccess = {}, onFailure = {})
+    createRecipeViewModel.publishRecipe(isEditing = false, onSuccess = {}, onFailure = {})
     assertEquals(
         "Failed to publish recipe: Failed to add Recipe", createRecipeViewModel.publishStatus.value)
   }
@@ -392,6 +395,7 @@ class CreateRecipeViewModelTest {
 
     // Call publishRecipe with onSuccess and onFailure callbacks
     createRecipeViewModel.publishRecipe(
+        isEditing = false,
         onSuccess = {
           fail(
               "Expected onFailure to be called due to invalid recipe, but onSuccess was called instead.")
@@ -526,6 +530,7 @@ class CreateRecipeViewModelTest {
     // Define the onFailure callback to validate if it was called correctly
     var onFailureCalled = false
     createRecipeViewModel.publishRecipe(
+        isEditing = false,
         onSuccess = { fail("Expected onFailure, but onSuccess was called instead.") },
         onFailure = { errorMessage ->
           onFailureCalled = true
@@ -551,7 +556,7 @@ class CreateRecipeViewModelTest {
           onSuccessCallback(Uri.EMPTY)
         }
 
-    createRecipeViewModel.publishRecipe(onSuccess = {}, onFailure = {})
+    createRecipeViewModel.publishRecipe(isEditing = false, onSuccess = {}, onFailure = {})
     assertEquals("At least one ingredient is required.", createRecipeViewModel.publishStatus.value)
   }
 
@@ -631,5 +636,66 @@ class CreateRecipeViewModelTest {
     assertTrue(createRecipeViewModel.getRecipeListOfInstructions().isEmpty())
     assertTrue(createRecipeViewModel.getIngredientsAndMeasurements().isEmpty())
     assertFalse(createRecipeViewModel.isRecipeInitialized)
+  }
+
+  @Test
+  fun `test publishRecipe on edit mode updates the recipe successfully`() = runTest {
+    // Arrange
+    val defaultRecipe = createDefaultRecipe()
+    val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+
+    // Mock existing recipe details in the recipeBuilder
+    createRecipeViewModel.initializeRecipeForEditing(defaultRecipe)
+    createRecipeViewModel.setBitmap(bitmap, 90)
+
+    `when`(
+            mockImageRepository.uploadImage(
+                any(), any(), any(), any(), onSuccess = any(), onFailure = any()))
+        .thenAnswer { invocation ->
+          val onSuccessCallback = invocation.arguments[4] as () -> Unit
+          onSuccessCallback()
+        }
+
+    `when`(
+            mockImageRepository.getImageUrl(
+                any(), any(), any(), onSuccess = any(), onFailure = any()))
+        .thenAnswer { invocation ->
+          val onSuccessCallback = invocation.arguments[3] as (Uri) -> Unit
+          onSuccessCallback(Uri.EMPTY)
+        }
+
+    `when`(mockRepository.updateRecipe(any(), onSuccess = any(), onFailure = any())).thenAnswer {
+        invocation ->
+      val onSuccessCallback = invocation.arguments[1] as () -> Unit
+      onSuccessCallback()
+    }
+
+    // Act
+    var onSuccessCalled = false
+    createRecipeViewModel.publishRecipe(
+        isEditing = true,
+        onSuccess = { onSuccessCalled = true },
+        onFailure = { fail("Expected onSuccess, but onFailure was called instead.") })
+
+    // Ensure all coroutines complete
+    advanceUntilIdle()
+
+    // Assert
+    assertTrue(onSuccessCalled)
+    assertEquals(RECIPE_UPDATED_SUCCESS_MESSAGE, createRecipeViewModel.publishStatus.value)
+    verify(mockRepository).updateRecipe(any(), any(), any())
+  }
+
+  @Test
+  fun `test getId returns correct recipe ID`() {
+    // Arrange
+    val recipeId = "test-recipe-id"
+    createRecipeViewModel.recipeBuilder.setId(recipeId)
+
+    // Act
+    val retrievedId = createRecipeViewModel.getId()
+
+    // Assert
+    assertEquals(recipeId, retrievedId)
   }
 }
