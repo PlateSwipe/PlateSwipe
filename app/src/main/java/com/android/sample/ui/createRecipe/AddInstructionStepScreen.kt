@@ -1,5 +1,6 @@
 package com.android.sample.ui.createRecipe
 
+import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -356,7 +357,14 @@ fun confirmAndAssignStep(
   }
 }
 
-fun navigateAfterDelete(
+/**
+ * Navigates to the appropriate screen after a delete action based on the editing mode.
+ *
+ * @param isEditing True if editing an existing recipe, false if creating a new one.
+ * @param navigationActions Handles the navigation logic.
+ */
+@VisibleForTesting
+internal fun navigateAfterDelete(
     isEditing: Boolean,
     navigationActions: NavigationActions,
 ) {
@@ -368,7 +376,14 @@ fun navigateAfterDelete(
   navigationActions.navigateToPop(targetScreen, popUpTo = popUpToScreen, inclusive = false)
 }
 
-fun navigateAfterValidation(
+/**
+ * Navigates to the appropriate screen after input validation based on the editing mode.
+ *
+ * @param isEditing True if editing an existing recipe, false if creating a new one.
+ * @param navigationActions Handles the navigation logic.
+ */
+@VisibleForTesting
+internal fun navigateAfterValidation(
     isEditing: Boolean,
     navigationActions: NavigationActions,
 ) {

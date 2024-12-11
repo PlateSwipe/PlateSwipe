@@ -18,6 +18,7 @@ import com.android.sample.resources.C.TestTag.RecipeList.CONFIRMATION_BUTTON
 import com.android.sample.resources.C.TestTag.RecipeList.CONFIRMATION_POP_UP
 import com.android.sample.ui.createRecipe.AddInstructionStepScreen
 import com.android.sample.ui.createRecipe.navigateAfterDelete
+import com.android.sample.ui.createRecipe.navigateAfterValidation
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.google.firebase.firestore.FirebaseFirestore
@@ -366,6 +367,32 @@ class AddInstructionStepScreenTest {
 
     // Test when isEditing is false
     navigateAfterDelete(false, navigationActions)
+    verify {
+      navigationActions.navigateToPop(
+          targetScreenCreating, popUpTo = popUpToScreenCreating, inclusive = false)
+    }
+  }
+
+  /**
+   * Verifies that navigateAfterValidation calls navigateToPop with the correct parameters based on
+   * isEditing.
+   */
+  @Test
+  fun navigateAfterValidation_callsNavigateToPopCorrectly() {
+    val targetScreenEditing = Screen.EDIT_RECIPE_LIST_INSTRUCTIONS
+    val popUpToScreenEditing = Screen.EDIT_CATEGORY_SCREEN
+    val targetScreenCreating = Screen.CREATE_RECIPE_LIST_INSTRUCTIONS
+    val popUpToScreenCreating = Screen.CREATE_RECIPE_LIST_INGREDIENTS
+
+    // Test when isEditing is true
+    navigateAfterValidation(true, navigationActions)
+    verify {
+      navigationActions.navigateToPop(
+          targetScreenEditing, popUpTo = popUpToScreenEditing, inclusive = false)
+    }
+
+    // Test when isEditing is false
+    navigateAfterValidation(false, navigationActions)
     verify {
       navigationActions.navigateToPop(
           targetScreenCreating, popUpTo = popUpToScreenCreating, inclusive = false)
