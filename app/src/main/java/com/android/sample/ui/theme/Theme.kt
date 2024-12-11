@@ -31,6 +31,7 @@ private val LightColorScheme =
         onTertiary = Color.Gray,
         onPrimaryContainer = lightCream,
         onSecondaryContainer = goldenBronze,
+        onTertiaryContainer = Color.LightGray,
         onBackground = goldenBronze
 
         /* Other default colors to override

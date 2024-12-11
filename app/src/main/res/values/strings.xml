@@ -167,6 +167,8 @@
     <string name="pop_up_title_fridge">Add to fridge?</string>
     <string name="pop_up_description_fridge">Do you want to add this ingredient to your fridge?</string>
     <string name="pop_up_confirmation_fridge">Add to fridge</string>
+    <string name="expired">Expired</string>
+
 
 
 
