@@ -1008,7 +1008,7 @@ class UserViewModelTest {
 
   @Test
   fun handleFridgeITemTestWithoutConnectionFailure() {
-    var ex = false
+    var ex = true
     `when`(mockFridgeItemRepository.getAll(any(), any())).thenAnswer { invocation ->
       val onFailure: (Exception) -> Unit = invocation.getArgument(1)
       onFailure(Exception("Error"))
@@ -1016,7 +1016,7 @@ class UserViewModelTest {
     try {
       userViewModel.handleFridgeItem(false, userExample)
     } catch (e: Exception) {
-      ex = true
+      ex = false
       assertEquals("Error", e.message)
     }
     assert(ex)
@@ -1024,7 +1024,7 @@ class UserViewModelTest {
 
   @Test
   fun handleFridgeITemTestWithoutConnectionFailureGet() {
-    var ex = false
+    var ex = true
     `when`(mockFridgeItemRepository.getAll(any(), any())).thenAnswer { invocation ->
       val onSuccess: (List<FridgeItem>) -> Unit = invocation.getArgument(0)
       onSuccess(listOf(fridgeItemExample))
@@ -1037,7 +1037,7 @@ class UserViewModelTest {
     try {
       userViewModel.handleFridgeItem(false, userExample)
     } catch (e: Exception) {
-      ex = true
+      ex = false
       assertEquals("Error", e.message)
     }
     assert(ex)
@@ -1045,7 +1045,7 @@ class UserViewModelTest {
 
   @Test
   fun handleFridgeItemTestWithoutConnectionIngredientNull() {
-    var ex = false
+    var ex = true
     `when`(mockFridgeItemRepository.getAll(any(), any())).thenAnswer { invocation ->
       val onSuccess: (List<FridgeItem>) -> Unit = invocation.getArgument(0)
       onSuccess(listOf(fridgeItemExample))
@@ -1058,7 +1058,7 @@ class UserViewModelTest {
     try {
       userViewModel.handleFridgeItem(false, userExample)
     } catch (e: Exception) {
-      ex = true
+      ex = false
       assertEquals("Ingredient not found in the database.", e.message)
     }
     assert(ex)

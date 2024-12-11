@@ -159,7 +159,7 @@ class UserViewModel(
                       Log.d(LOG_TAG, "Getting ingredient from local DB : $ingredient")
                       synchronized(fetchedItems) { fetchedItems.add(Pair(fridgeItem, ingredient)) }
                     } else {
-                      throw Exception(NOT_FOUND_INGREDIENT_IN_DATABASE_ERROR)
+                      Log.e(LOG_TAG, NOT_FOUND_INGREDIENT_IN_DATABASE_ERROR)
                     }
                     synchronized(fetchedItems) {
                       remainingItems--
@@ -171,11 +171,10 @@ class UserViewModel(
                   },
                   onFailure = { e ->
                     Log.e(LOG_TAG, "Error fetching ingredient for barcode: ${fridgeItem.id}", e)
-                    throw e
                   })
             }
           },
-          onFailure = { e -> throw e })
+          onFailure = { e -> Log.e(LOG_TAG, "$e.message") })
     }
   }
   /**
