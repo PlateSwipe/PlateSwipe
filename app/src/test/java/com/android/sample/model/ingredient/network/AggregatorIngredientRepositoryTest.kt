@@ -58,7 +58,7 @@ class AggregatorIngredientRepositoryTest {
 
     `when`(mockFirestoreIngredientRepository.getNewUid()).thenReturn("1")
     whenever(mockImageRepository.urlToBitmap(any())).thenReturn(bitmap)
-      `when`(mockFirestoreIngredientRepository.getNewUid()).thenReturn("1")
+    `when`(mockFirestoreIngredientRepository.getNewUid()).thenReturn("1")
     doNothing()
         .`when`(mockFirestoreIngredientRepository)
         .get(any(), capture(onSuccessSingleCapture), capture(onFailureCapture))
@@ -208,7 +208,6 @@ class AggregatorIngredientRepositoryTest {
       val onFailure = invocation.arguments[2] as (Exception) -> Unit
       onFailure(Exception("Error"))
     }
-
 
     aggregatorIngredientRepository.get(
         barCode = 12345L,

@@ -281,26 +281,6 @@ class IngredientViewModel(
         })
   }
 
-  fun getIngredient(
-      barCode: Long,
-      onSuccess: (Ingredient) -> Unit,
-      onFailure: (Exception) -> Unit
-  ) {
-    repository.get(
-        barCode,
-        { ingredient ->
-          if (ingredient != null) {
-            onSuccess(ingredient)
-          } else {
-            onFailure(Exception("Ingredient not found"))
-          }
-        },
-        onFailure = { e ->
-          Log.e(INGREDIENT_VIEWMODEL_LOG_TAG, "Error getting ingredient", e)
-          onFailure(e)
-        })
-  }
-
   companion object {
     fun provideFactory(context: Context): ViewModelProvider.Factory {
       val appContext = context.applicationContext
