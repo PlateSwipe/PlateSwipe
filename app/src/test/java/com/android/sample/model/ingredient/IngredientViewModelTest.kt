@@ -13,6 +13,7 @@ import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
+import junit.framework.TestCase.fail
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -691,5 +692,46 @@ class IngredientViewModelTest {
     val ingredient = testIngredients[0]
     ingredientViewModel.deleteDownloadedIngredient(ingredient)
     verify(ingredientRepository).deleteDownload(ingredient)
+  }
+
+  @Test
+  fun getIngredientTestSuccess() {
+    var ingredient = testIngredients[0]
+    `when`(ingredientRepository.get(eq(testIngredients[2].barCode!!), any(), any())).thenAnswer {
+        invocation ->
+      val onSuccess: (Ingredient?) -> Unit = invocation.getArgument(1)
+      onSuccess(testIngredients[2])
+    }
+    ingredientViewModel.getIngredient(
+        testIngredients[2].barCode!!,
+        onSuccess = { ingredient = it },
+        onFailure = { fail(it.message) })
+    assertEquals(testIngredients[2], ingredient)
+  }
+
+  @Test
+  fun getIngredientTestIngrNull() {
+    var exception = false
+    `when`(ingredientRepository.get(eq(testIngredients[2].barCode!!), any(), any())).thenAnswer {
+        invocation ->
+      val onSuccess: (Ingredient?) -> Unit = invocation.getArgument(1)
+      onSuccess(null)
+    }
+    ingredientViewModel.getIngredient(
+        testIngredients[2].barCode!!, onSuccess = { fail() }, onFailure = { exception = true })
+    assert(exception)
+  }
+
+  @Test
+  fun getIngredientTestRepoFail() {
+    var exception = false
+    `when`(ingredientRepository.get(eq(testIngredients[2].barCode!!), any(), any())).thenAnswer {
+        invocation ->
+      val onFailure: (Exception) -> Unit = invocation.getArgument(2)
+      onFailure(Exception("Error"))
+    }
+    ingredientViewModel.getIngredient(
+        testIngredients[2].barCode!!, onSuccess = { fail() }, onFailure = { exception = true })
+    assert(exception)
   }
 }

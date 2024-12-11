@@ -98,7 +98,7 @@ class FirestoreIngredientRepository(private val db: FirebaseFirestore) :
       onFailure: (Exception) -> Unit,
       count: Int = 20
   ) {
-    db.collection(C.Tag.FIRESTORE_INGREDIENT_COLLECTION_NAME_TEST)
+    db.collection(FIRESTORE_INGREDIENT_COLLECTION_NAME_TEST)
         .where(filter)
         .limit(count.toLong())
         .get()
@@ -131,40 +131,15 @@ class FirestoreIngredientRepository(private val db: FirebaseFirestore) :
     var addedIngredient = ingredient
 
     if (ingredient.uid.isNullOrEmpty()) {
-      addedIngredient =
-          ingredient.copy(
-              uid = db.collection(C.Tag.FIRESTORE_INGREDIENT_COLLECTION_NAME_TEST).document().id)
+      addedIngredient = ingredient.copy(uid = getNewUid())
     }
 
-    db.collection(C.Tag.FIRESTORE_INGREDIENT_COLLECTION_NAME_TEST)
+    db.collection(FIRESTORE_INGREDIENT_COLLECTION_NAME_TEST)
         .document(addedIngredient.uid!!)
         .set(addedIngredient)
         .addOnCompleteListener { result ->
           if (result.isSuccessful) {
             onSuccess()
-          } else {
-            onFailure(result.exception!!)
-          }
-        }
-  }
-
-  fun add2(
-      ingredient: Ingredient,
-      onSuccess: (Ingredient) -> Unit,
-      onFailure: (Exception) -> Unit
-  ) {
-    var addedIngredient = ingredient
-
-    if (ingredient.uid.isNullOrEmpty()) {
-      addedIngredient = ingredient.copy(uid = getNewUid())
-    }
-
-    db.collection(C.Tag.FIRESTORE_INGREDIENT_COLLECTION_NAME_TEST)
-        .document(addedIngredient.uid!!)
-        .set(addedIngredient)
-        .addOnCompleteListener { result ->
-          if (result.isSuccessful) {
-            onSuccess(addedIngredient)
           } else {
             onFailure(result.exception!!)
           }
@@ -182,6 +157,11 @@ class FirestoreIngredientRepository(private val db: FirebaseFirestore) :
     ingredient.forEach { i -> add(i, onSuccess, onFailure) }
   }
 
+  /**
+   * Generates a new unique identifier (UID) for an ingredient document.
+   *
+   * @return A new UID as a String.
+   */
   fun getNewUid(): String {
     return db.collection(FIRESTORE_INGREDIENT_COLLECTION_NAME_TEST).document().id
   }
