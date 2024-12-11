@@ -157,12 +157,12 @@ class OpenFoodFactsIngredientRepository(private val client: OkHttpClient) :
             })
   }
 
-    /**
-     * Parses the product name from the JSON object.
-     *
-     * @param json The JSON object corresponding to the OFF message content
-     * @return The product name for the ingredient.
-     */
+  /**
+   * Parses the product name from the JSON object.
+   *
+   * @param json The JSON object corresponding to the OFF message content
+   * @return The product name for the ingredient.
+   */
   private fun parseProductName(json: JSONObject): String? {
 
     val suffixes: Array<String> = PRODUCT_NAME_OFF_SUFFIXES
