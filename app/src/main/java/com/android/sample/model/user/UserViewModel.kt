@@ -5,6 +5,9 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.android.sample.model.fridge.FridgeItem
+import com.android.sample.model.fridge.localData.FridgeItemDatabase
+import com.android.sample.model.fridge.localData.FridgeItemLocalRepository
+import com.android.sample.model.fridge.localData.RoomFridgeItemRepository
 import com.android.sample.model.image.ImageDirectoryType
 import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.image.ImageUploader
@@ -52,7 +55,8 @@ class UserViewModel(
     private val recipesRepository: FirestoreRecipesRepository =
         FirestoreRecipesRepository(Firebase.firestore),
     private val imageRepositoryFirebase: ImageRepositoryFirebase =
-        ImageRepositoryFirebase(Firebase.storage)
+        ImageRepositoryFirebase(Firebase.storage),
+    private val fridgeItemRepository: FridgeItemLocalRepository
 ) : ViewModel(), RecipeOverviewViewModel, SearchIngredientViewModel {
 
   private val _userName: MutableStateFlow<String?> = MutableStateFlow(null)
@@ -115,21 +119,71 @@ class UserViewModel(
           val ingredientDao = appDatabase.ingredientDao()
           val localRepository = RoomIngredientRepository(ingredientDao, Dispatchers.IO)
           val defaultRepository = DefaultIngredientRepository(localRepository, networkRepository)
+          val fridgeLocalDB = FridgeItemDatabase.getDatabase(appContext)
+          val fridgeItemDao = fridgeLocalDB.fridgeItemDao()
+          val fridgeItemLocalRepository = RoomFridgeItemRepository(fridgeItemDao, Dispatchers.IO)
           return UserViewModel(
               userRepository = UserRepositoryFirestore(Firebase.firestore),
-              ingredientRepository = defaultRepository)
+              ingredientRepository = defaultRepository,
+              fridgeItemRepository = fridgeItemLocalRepository)
               as T
         }
       }
     }
   }
-
+  /**
+   * Handles the fridge items for the user based on the connection status.
+   *
+   * @param isConnected Boolean indicating if the device is connected to the internet.
+   * @param user The user whose fridge items are to be handled.
+   */
+  internal fun handleFridgeItem(isConnected: Boolean, user: User) {
+    if (isConnected) {
+      user.fridge.forEach { fridgeItem ->
+        Log.d(LOG_TAG, "Fetching ingredient from database: $fridgeItem")
+        fetchIngredientInFridge(fridgeItem)
+        // Update the local database with the fridge items
+        fridgeItemRepository.add(fridgeItem)
+      }
+    } else {
+      fridgeItemRepository.getAll(
+          onSuccess = { fridgeItems ->
+            val fetchedItems = mutableListOf<Pair<FridgeItem, Ingredient>>()
+            var remainingItems = fridgeItems.size
+            fridgeItems.forEach { fridgeItem ->
+              Log.d(LOG_TAG, "Updating ingredient from local database: $fridgeItem")
+              ingredientRepository.getByBarcode(
+                  fridgeItem.id.toLong(),
+                  onSuccess = { ingredient ->
+                    if (ingredient != null) {
+                      Log.d(LOG_TAG, "Getting ingredient from local DB : $ingredient")
+                      synchronized(fetchedItems) { fetchedItems.add(Pair(fridgeItem, ingredient)) }
+                    } else {
+                      throw Exception(NOT_FOUND_INGREDIENT_IN_DATABASE_ERROR)
+                    }
+                    synchronized(fetchedItems) {
+                      remainingItems--
+                      if (remainingItems == 0) {
+                        _fridgeItems.value = fetchedItems
+                        Log.d(LOG_TAG, "Final fridge items: $fetchedItems")
+                      }
+                    }
+                  },
+                  onFailure = { e ->
+                    Log.e(LOG_TAG, "Error fetching ingredient for barcode: ${fridgeItem.id}", e)
+                    throw e
+                  })
+            }
+          },
+          onFailure = { e -> throw e })
+    }
+  }
   /**
    * Gets the current user from the database and updates the view model with the values. If the user
    * does not exist, it creates a new user with the current user id. If no user is logged in, it
    * does nothing.
    */
-  fun getCurrentUser() {
+  fun getCurrentUser(isConnected: Boolean) {
     val userId: String = firebaseAuth.currentUser?.uid ?: return
     val displayName: String = firebaseAuth.currentUser?.displayName ?: "User"
 
@@ -138,7 +192,11 @@ class UserViewModel(
         onSuccess = { user ->
           _userName.value = user.userName
           _profilePictureUrl.value = user.profilePictureUrl
-          user.fridge.forEach { fridgeItem -> fetchIngredientInFridge(fridgeItem) }
+          try {
+            handleFridgeItem(isConnected, user)
+          } catch (e: Exception) {
+            Log.e(LOG_TAG, FAILED_TO_FETCH_INGREDIENT_FROM_DATABASE_ERROR, e)
+          }
           user.likedRecipes.forEach { uid ->
             fetchRecipe(
                 uid,
@@ -168,7 +226,7 @@ class UserViewModel(
                       likedRecipes = _likedRecipes.value.map { it.uid },
                       createdRecipes = _createdRecipes.value.map { it.uid },
                       dateOfBirth = ""),
-              onSuccess = { getCurrentUser() },
+              onSuccess = { getCurrentUser(isConnected) },
               onFailure = { e -> throw e })
         })
   }
@@ -241,6 +299,7 @@ class UserViewModel(
     }
 
     list.value = newList
+    Log.d("Userviewmodel", "new list: $newList")
     return newList
   }
 
@@ -435,6 +494,7 @@ class UserViewModel(
         fridgeItem.id.toLong(),
         onSuccess = { ingredient ->
           if (ingredient != null) {
+            Log.d(LOG_TAG, "Updating ingredient from fridge: $ingredient")
             updateIngredientFromFridge(
                 ingredient, fridgeItem.quantity, fridgeItem.expirationDate, false)
           } else {
@@ -503,5 +563,17 @@ class UserViewModel(
         ingredientRepository,
         { _isSearching.value = true },
         { _isSearching.value = false })
+  }
+
+  fun updateLocalFridgeItem(fridgeItem: FridgeItem) {
+    if (fridgeItem.quantity <= 0) {
+      deleteLocalFridgeItem(fridgeItem)
+    } else {
+      fridgeItemRepository.add(fridgeItem)
+    }
+  }
+
+  fun deleteLocalFridgeItem(fridgeItem: FridgeItem) {
+    fridgeItemRepository.delete(fridgeItem)
   }
 }

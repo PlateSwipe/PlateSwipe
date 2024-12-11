@@ -82,6 +82,7 @@ class IngredientViewModel(
         { _isFetchingByBarcode.value = true },
         { _isFetchingByBarcode.value = false })
   }
+
   /**
    * Add bar code ingredient
    *
@@ -165,6 +166,7 @@ class IngredientViewModel(
         dispatcher,
         onSuccess = {
           repository.addDownload(ingredient)
+          Log.d(INGREDIENT_VIEWMODEL_LOG_TAG, "Ingredient downloaded successfully : $ingredient")
           onSuccess()
         },
         onFailure = {
@@ -216,13 +218,15 @@ class IngredientViewModel(
         val imageFormats = ingredient.images.keys
         val deferredUri =
             imageFormats.map { format ->
-              val fileName = ingredient.name + format
+              val fileName = ingredient.uid + format
               val url = ingredient.images[format]
               async {
                 try {
                   if (url != null) {
-                    val uri = imgDownload.downloadAndSaveImage(context, fileName, url, dispatcher)
-                    println("Image downloaded successfully for format: $format, uri: $uri")
+                    val uri = imgDownload.downloadAndSaveImage(context, url, fileName, dispatcher)
+                    Log.d(
+                        INGREDIENT_VIEWMODEL_LOG_TAG,
+                        "Image downloaded successfully for format: $format, uri: $uri")
                     format to uri!!
                   } else {
                     null
