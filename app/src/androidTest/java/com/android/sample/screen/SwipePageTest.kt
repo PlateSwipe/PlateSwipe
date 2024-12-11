@@ -10,6 +10,7 @@ import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeLeft
 import androidx.compose.ui.test.swipeRight
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.sample.model.filter.Difficulty
 import com.android.sample.model.image.ImageDownload
@@ -23,11 +24,11 @@ import com.android.sample.resources.C.TestTag.SwipePage.DIFFICULTY_CHIP
 import com.android.sample.resources.C.TestTag.SwipePage.DRAGGABLE_ITEM
 import com.android.sample.resources.C.TestTag.SwipePage.FILTER
 import com.android.sample.resources.C.TestTag.SwipePage.FILTER_ROW
+import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_FRIDGE_INGREDIENTS
+import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_FRIDGE_INGREDIENTS_TEXT
 import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_IMAGE_1
 import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_IMAGE_2
 import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_NAME
-import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_RATE
-import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_STAR
 import com.android.sample.resources.C.TestTag.SwipePage.TIME_RANGE_CHIP
 import com.android.sample.resources.C.TestTag.SwipePage.VIEW_RECIPE_BUTTON
 import com.android.sample.resources.C.TestTag.Utils.BOTTOM_BAR
@@ -36,8 +37,10 @@ import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.swipePage.SwipePage
+import com.android.sample.ui.utils.testIngredients
 import com.android.sample.ui.utils.testRecipes
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
+import java.time.LocalDate
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -62,6 +65,10 @@ class SwipePageTest : TestCase() {
 
   private val mockedRecipesList = testRecipes
 
+  private val mockedIngredient =
+      testIngredients[0].copy(
+          categories = listOf(mockedRecipesList[0].ingredientsAndMeasurements[0].first.lowercase()))
+
   @get:Rule val composeTestRule = createComposeRule()
 
   /** This method runs before the test execution. */
@@ -85,6 +92,12 @@ class SwipePageTest : TestCase() {
     }
 
     recipesViewModel = RecipesViewModel(mockRepository, ImageDownload())
+
+    userViewModel =
+        UserViewModel.provideFactory(ApplicationProvider.getApplicationContext())
+            .create(UserViewModel::class.java)
+
+    userViewModel.updateIngredientFromFridge(mockedIngredient, 1, LocalDate.now(), false)
     advanceUntilIdle()
 
     `when`(mockNavigationActions.currentRoute()).thenReturn(Route.SWIPE)
@@ -98,7 +111,10 @@ class SwipePageTest : TestCase() {
     recipesViewModel.applyChanges()
 
     composeTestRule.setContent {
-      SwipePage(mockNavigationActions, recipesViewModel) // Set up the SignInScreen directly
+      SwipePage(
+          mockNavigationActions,
+          recipesViewModel,
+          userViewModel) // Set up the SignInScreen directly
     }
   }
 
@@ -116,8 +132,12 @@ class SwipePageTest : TestCase() {
   @Test
   fun recipeAndDescriptionAreCorrectlyDisplayed() = runTest {
     composeTestRule.onNodeWithTag(RECIPE_NAME, useUnmergedTree = true).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(RECIPE_STAR, useUnmergedTree = true).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(RECIPE_RATE, useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(RECIPE_FRIDGE_INGREDIENTS, useUnmergedTree = true)
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(RECIPE_FRIDGE_INGREDIENTS_TEXT, useUnmergedTree = true)
+        .assertIsDisplayed()
 
     composeTestRule.onNodeWithTag(RECIPE_IMAGE_1, useUnmergedTree = true).assertIsDisplayed()
     composeTestRule.onNodeWithTag(RECIPE_IMAGE_2, useUnmergedTree = true).assertIsDisplayed()

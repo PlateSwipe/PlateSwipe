@@ -352,6 +352,30 @@ class UserViewModelTest {
   }
 
   @Test
+  fun `test maps fridge ingredients to the correct values`() {
+    val fridgeItems = testIngredients
+    val category1 = fridgeItems[0].categories[0]
+    val category2 = fridgeItems[1].categories[0]
+    val category3 = fridgeItems[1].categories[1]
+    val category4 = "Inexistent category"
+    val categories = listOf(category1, category2, category3, category4)
+
+    userViewModel.updateIngredientFromFridge(fridgeItems[0], 1, LocalDate.now(), false)
+    userViewModel.updateIngredientFromFridge(fridgeItems[1], 1, LocalDate.now(), false)
+
+    val map: Map<String, List<Pair<FridgeItem, Ingredient>>> =
+        userViewModel.mapFridgeIngredientsToCategories(categories)
+
+    assertEquals(map[category1]?.count(), 1)
+    assertEquals(map[category1]?.get(0)?.second, fridgeItems[0])
+    assertEquals(map[category2]?.count(), 1)
+    assertEquals(map[category2]?.get(0)?.second, fridgeItems[1])
+    assertEquals(map[category3]?.count(), 1)
+    assertEquals(map[category3]?.get(0)?.second, fridgeItems[1])
+    assert(!map.containsKey(category4))
+  }
+
+  @Test
   fun `test parsing of each element in fridge`() {
     val onSuccessCaptor: ArgumentCaptor<Function1<User, Unit>> =
         ArgumentCaptor.forClass(onSuccessClass)
