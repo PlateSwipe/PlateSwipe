@@ -4,6 +4,7 @@ import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.ingredient.IngredientRepository
 import com.android.sample.resources.C
 import com.android.sample.resources.C.Tag.FIRESTORE_INGREDIENT_CATEGORIES
+import com.android.sample.resources.C.Tag.FIRESTORE_INGREDIENT_COLLECTION_NAME_TEST
 import com.android.sample.resources.C.Tag.FIRESTORE_INGREDIENT_IMAGES
 import com.android.sample.resources.C.Tag.FIRESTORE_INGREDIENT_QUANTITY
 import com.google.firebase.firestore.DocumentSnapshot
@@ -147,6 +148,29 @@ class FirestoreIngredientRepository(private val db: FirebaseFirestore) :
         }
   }
 
+  fun add2(
+      ingredient: Ingredient,
+      onSuccess: (Ingredient) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    var addedIngredient = ingredient
+
+    if (ingredient.uid.isNullOrEmpty()) {
+      addedIngredient = ingredient.copy(uid = getNewUid())
+    }
+
+    db.collection(C.Tag.FIRESTORE_INGREDIENT_COLLECTION_NAME_TEST)
+        .document(addedIngredient.uid!!)
+        .set(addedIngredient)
+        .addOnCompleteListener { result ->
+          if (result.isSuccessful) {
+            onSuccess(addedIngredient)
+          } else {
+            onFailure(result.exception!!)
+          }
+        }
+  }
+
   /**
    * Add a list of ingredients. If the ingredients exist, they will be updated.
    *
@@ -156,5 +180,9 @@ class FirestoreIngredientRepository(private val db: FirebaseFirestore) :
    */
   fun add(ingredient: List<Ingredient>, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     ingredient.forEach { i -> add(i, onSuccess, onFailure) }
+  }
+
+  fun getNewUid(): String {
+    return db.collection(FIRESTORE_INGREDIENT_COLLECTION_NAME_TEST).document().id
   }
 }

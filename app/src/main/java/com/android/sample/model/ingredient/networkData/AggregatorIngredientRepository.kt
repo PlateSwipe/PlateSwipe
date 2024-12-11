@@ -53,9 +53,15 @@ open class AggregatorIngredientRepository(
                 onSuccess = { ingredientOpenFoodFacts ->
                   if (ingredientOpenFoodFacts != null) {
                     // Immediately return the ingredient from OpenFoodFacts
-                    onSuccess(ingredientOpenFoodFacts)
-                    // Start the background upload and update process
-                    uploadAndSaveIngredientImages(ingredientOpenFoodFacts, Dispatchers.IO)
+                    Log.d(
+                        AGGREGATOR_LOG_TAG,
+                        "Ingredient from OpenFoodFacts: $ingredientOpenFoodFacts")
+                    val finalIngredient =
+                        ingredientOpenFoodFacts.copy(
+                            uid = firestoreIngredientRepository.getNewUid())
+                    Log.d(AGGREGATOR_LOG_TAG, "Ingredient with new UID: $finalIngredient")
+                    onSuccess(finalIngredient)
+                    uploadAndSaveIngredientImages(finalIngredient, Dispatchers.IO)
                   } else {
                     Log.e(AGGREGATOR_LOG_TAG, AGGREGATOR_ERROR_OPENFOOD_INGR_NOT_FOUND)
                     onFailure(Exception(C.Tag.INGREDIENT_NOT_FOUND_MESSAGE))
