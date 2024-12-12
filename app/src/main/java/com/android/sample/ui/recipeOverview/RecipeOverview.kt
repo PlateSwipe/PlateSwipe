@@ -1,6 +1,5 @@
 package com.android.sample.ui.recipeOverview
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -121,8 +120,6 @@ fun RecipeOverview(
       } else {
         null
       }
-
-  Log.d("dsad", "RecipeDescription: $fridgeIngredientsMap , $currentRecipe")
 
   PlateSwipeScaffold(
       navigationActions = navigationActions,
