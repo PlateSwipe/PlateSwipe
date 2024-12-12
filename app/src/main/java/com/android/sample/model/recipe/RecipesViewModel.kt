@@ -178,8 +178,7 @@ class RecipesViewModel(
 
     if (_filter.value.timeRange.min != UNINITIALIZED_BORN_VALUE &&
         _filter.value.timeRange.max != UNINITIALIZED_BORN_VALUE) {
-      _tmpFilter.value.timeRange.update(UNINITIALIZED_BORN_VALUE, UNINITIALIZED_BORN_VALUE)
-      _filter.value.timeRange.update(UNINITIALIZED_BORN_VALUE, UNINITIALIZED_BORN_VALUE)
+      _tmpFilter.value.timeRange.update(_filter.value.timeRange.min, _filter.value.timeRange.max)
     }
     _tmpFilter.value.difficulty = _filter.value.difficulty
     _tmpFilter.value.category = _filter.value.category
