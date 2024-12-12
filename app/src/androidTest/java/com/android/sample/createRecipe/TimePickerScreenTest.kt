@@ -185,4 +185,49 @@ class TimePickerScreenTest {
         .onNodeWithTag(MINUTE_PICKER)
         .assertContentDescriptionEquals("5") // Initial value: 5
   }
+
+  @Test
+  fun testTimePickerScreenComponentsAreDisplayedInEditMode() {
+    composeTestRule.setContent {
+      TimePickerScreen(
+          navigationActions = mockNavigationActions,
+          createRecipeViewModel = createRecipeViewModel,
+          isEditing = true)
+    }
+
+    // Verify title is displayed
+    composeTestRule.onNodeWithTag(TIME_PICKER_TITLE).assertExists().assertIsDisplayed()
+
+    // Verify description is displayed
+    composeTestRule.onNodeWithTag(TIME_PICKER_DESCRIPTION).assertExists().assertIsDisplayed()
+
+    // Verify "Hours" label is displayed
+    composeTestRule.onNodeWithTag(HOURS_LABEL).assertExists().assertIsDisplayed()
+
+    // Verify "Minutes" label is displayed
+    composeTestRule.onNodeWithTag(MINUTES_LABEL).assertExists().assertIsDisplayed()
+
+    // Verify hour and minute pickers are displayed
+    composeTestRule.onNodeWithTag(HOUR_PICKER).assertExists().assertIsDisplayed()
+    composeTestRule.onNodeWithTag(MINUTE_PICKER).assertExists().assertIsDisplayed()
+
+    // Verify Next button is displayed
+    composeTestRule.onNodeWithTag(NEXT_BUTTON).assertExists().assertIsDisplayed()
+  }
+
+  @Test
+  fun testNextStepButtonNavigatesToNextScreenInEditMode() {
+    composeTestRule.setContent {
+      TimePickerScreen(
+          navigationActions = mockNavigationActions,
+          createRecipeViewModel = createRecipeViewModel,
+          isEditing = true)
+    }
+
+    // Click the "Next Step" button
+    composeTestRule.onNodeWithTag(NEXT_BUTTON).assertExists().performClick()
+
+    // Verify navigation to the next screen
+    verify { mockNavigationActions.navigateTo(Screen.PUBLISH_EDITED_RECIPE) }
+  }
 }

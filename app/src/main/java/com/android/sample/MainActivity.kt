@@ -106,7 +106,9 @@ fun PlateSwipeApp() {
           OfflineScreen(navigationActions)
         }
       }
-      composable(Screen.OVERVIEW_RECIPE) { RecipeOverview(navigationActions, recipesViewModel) }
+      composable(Screen.OVERVIEW_RECIPE) {
+        RecipeOverview(navigationActions, recipesViewModel, userViewModel)
+      }
       composable(Screen.FILTER) { FilterPage(navigationActions, recipesViewModel) }
     }
     navigation(
@@ -234,7 +236,7 @@ fun PlateSwipeApp() {
         AccountScreen(navigationActions, userViewModel, recipesViewModel, createRecipeViewModel)
       }
       composable(Screen.OVERVIEW_RECIPE_ACCOUNT) {
-        RecipeOverview(navigationActions, userViewModel)
+        RecipeOverview(navigationActions, userViewModel, userViewModel)
       }
       composable(Screen.EDIT_RECIPE) {
         CreateRecipeScreen(
@@ -245,11 +247,27 @@ fun PlateSwipeApp() {
       composable(Screen.EDIT_CATEGORY_SCREEN) {
         OptionalInformationScreen(navigationActions, createRecipeViewModel, isEditing = true)
       }
-      composable(Screen.EDIT_RECIPE_LIST_INGREDIENTS) {
-        IngredientListScreen(
+      composable(Screen.EDIT_RECIPE_ADD_INSTRUCTION) {
+        AddInstructionStepScreen(
             navigationActions = navigationActions,
-            ingredientViewModel = ingredientViewModel,
-            createRecipeViewModel = createRecipeViewModel)
+            createRecipeViewModel = createRecipeViewModel,
+            true)
+      }
+      composable(Screen.EDIT_RECIPE_LIST_INSTRUCTIONS) {
+        RecipeListInstructionsScreen(
+            navigationActions = navigationActions,
+            createRecipeViewModel = createRecipeViewModel,
+            isEditing = true)
+      }
+      composable(Screen.EDIT_RECIPE_TIME_PICKER) {
+        TimePickerScreen(navigationActions, createRecipeViewModel, isEditing = true)
+      }
+      composable(Screen.PUBLISH_EDITED_RECIPE) {
+        PublishRecipeScreen(
+            navigationActions = navigationActions,
+            createRecipeViewModel = createRecipeViewModel,
+            userViewModel = userViewModel,
+            isEditing = true)
       }
       composable(Screen.EDIT_ACCOUNT) { EditAccountScreen(navigationActions, userViewModel) }
     }

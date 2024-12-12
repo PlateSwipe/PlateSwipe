@@ -306,8 +306,9 @@ class UserViewModel(
     if (_currentEditingFridgeIngredient.value != null) {
       _fridgeItems.value =
           _fridgeItems.value.filter { it.first != _currentEditingFridgeIngredient.value!!.first }
-      if (quantity != 0) addIngredientToUserFridge(ingredient, quantity, expirationDate)
       clearEditingIngredient()
+      if (quantity != 0)
+          updateIngredientFromFridge(ingredient, quantity, expirationDate, scannedItem)
     } else {
       // add new ingredient case
       val changedIngredient =
@@ -338,6 +339,37 @@ class UserViewModel(
       }
     }
     updateCurrentUser()
+  }
+
+  /**
+   * Method that returns the ingredients in the fridge that have a specific category
+   *
+   * @param category the category of the ingredients
+   * @return a list of pairs of [FridgeItem] and [Ingredient] that belong to the category
+   */
+  private fun getIngredientsByCategoryInFridge(
+      category: String
+  ): List<Pair<FridgeItem, Ingredient>> {
+    return _fridgeItems.value.filter { it.second.categories.contains(category.lowercase()) }
+  }
+
+  /**
+   * Method that maps each category in categories to a list of ingredients that have this category
+   * If a category doesn't have any ingredients, it isn't included into the mapping
+   *
+   * Example: Map: "Beef":
+   * - (FridgeItem,Ingredient with category "Beef")
+   *
+   * @param categories the list of categories
+   * @return a map that maps the categories to the ingredients in the fridge that belong to the
+   *   category
+   */
+  fun mapFridgeIngredientsToCategories(
+      categories: List<String>
+  ): Map<String, List<Pair<FridgeItem, Ingredient>>> {
+    return categories
+        .associateWith { category -> getIngredientsByCategoryInFridge(category) }
+        .filterValues { it.isNotEmpty() }
   }
 
   /**
@@ -387,6 +419,21 @@ class UserViewModel(
         ImageDirectoryType.RECIPE,
         { Log.i(LOG_TAG, IMAGE_DELETION_SUCCESSFULY) },
         { e -> Log.e(LOG_TAG, FAILED_TO_DELETE_IMAGE, e) })
+    updateCurrentUser()
+  }
+
+  /**
+   * Replaces an existing recipe in the user created recipes without deleting it.
+   *
+   * @param oldRecipeId The ID of the recipe to be replaced.
+   * @param newRecipe The updated recipe.
+   */
+  fun replaceRecipeInUserCreatedRecipes(oldRecipeId: String, newRecipe: Recipe) {
+    // Remove the old recipe from the list
+    _createdRecipes.value = _createdRecipes.value.filterNot { it.uid == oldRecipeId }
+    // Add the new recipe
+    _createdRecipes.value = _createdRecipes.value.plus(newRecipe)
+    // Update the current user data
     updateCurrentUser()
   }
 
