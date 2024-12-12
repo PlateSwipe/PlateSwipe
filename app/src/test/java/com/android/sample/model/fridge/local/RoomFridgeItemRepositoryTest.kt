@@ -90,7 +90,7 @@ class RoomFridgeItemRepositoryTest {
   fun testUpdateFridgeItem() =
       runTest(testDispatcher) {
         val id = fridgeItem.id
-        val currentExpirationDate = LocalDate.of(2021, 10, 10)
+        val currentExpirationDate = LocalDate.of(2020, 10, 10)
         val newExpirationDate = fridgeItem.expirationDate
         val newQuantity = 5
 
@@ -109,7 +109,7 @@ class RoomFridgeItemRepositoryTest {
   fun testUpdateFridgeItemI() =
       runTest(testDispatcher) {
         val id = fridgeItem.id
-        val currentExpirationDate = LocalDate.of(2021, 10, 10)
+        val currentExpirationDate = LocalDate.of(2020, 10, 10)
         val newExpirationDate = fridgeItem.expirationDate
         val newQuantity = 5
 
