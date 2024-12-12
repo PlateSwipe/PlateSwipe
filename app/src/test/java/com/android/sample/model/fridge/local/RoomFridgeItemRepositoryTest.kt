@@ -16,6 +16,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
+import org.mockito.Mockito.times
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
@@ -140,5 +141,21 @@ class RoomFridgeItemRepositoryTest {
         roomFridgeItemRepository.upsertFridgeItem(fridgeItem)
         testScheduler.advanceUntilIdle()
         verify(mockFridgeItemDAO).insert(any())
+      }
+
+  @Test
+  fun testUpdateFridge() =
+      runTest(testDispatcher) {
+        `when`(mockFridgeItemDAO.getByIdAndExpirationDate(any(), any())).thenReturn(null)
+        `when`(mockFridgeItemDAO.update(any())).thenAnswer { it.arguments[0] }
+        roomFridgeItemRepository.updateFridgeItem(
+            fridgeItem.id,
+            fridgeItem.expirationDate,
+            fridgeItem.expirationDate,
+            fridgeItem.quantity)
+
+        testScheduler.advanceUntilIdle()
+        verify(mockFridgeItemDAO).update(any())
+        verify(mockFridgeItemDAO, times(0)).delete(any())
       }
 }

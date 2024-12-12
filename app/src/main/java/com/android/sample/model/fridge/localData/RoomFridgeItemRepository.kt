@@ -37,6 +37,10 @@ class RoomFridgeItemRepository(
       newQuantity: Int
   ) {
     CoroutineScope(dispatcher).launch {
+      if (currentExpirationDate == newExpirationDate) {
+        fridgeItemDao.update(FridgeItemEntity(id, newQuantity, newExpirationDate))
+        return@launch
+      }
       val existingItem = fridgeItemDao.getByIdAndExpirationDate(id, newExpirationDate)
 
       if (existingItem != null) {
