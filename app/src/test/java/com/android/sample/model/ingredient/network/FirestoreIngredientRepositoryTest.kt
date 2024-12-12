@@ -214,4 +214,11 @@ class FirestoreIngredientRepositoryTest {
 
     assertNotNull(resultingException)
   }
+
+  @Test
+  fun getNewUid() {
+    `when`(mockDocumentReference.id).thenReturn("1")
+    val uid = firestoreIngredientRepository.getNewUid()
+    assert(uid == "1")
+  }
 }
