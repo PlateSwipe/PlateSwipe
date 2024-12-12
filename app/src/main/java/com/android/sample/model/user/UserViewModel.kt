@@ -557,7 +557,6 @@ class UserViewModel(
           if (ingredient != null) {
             updateIngredientFromFridge(
                 ingredient, fridgeItem.quantity, fridgeItem.expirationDate, false)
-            // ingredientRepository.addDownload(ingredient)
           } else {
             Log.e(LOG_TAG, NOT_FOUND_INGREDIENT_IN_DATABASE_ERROR)
           }
