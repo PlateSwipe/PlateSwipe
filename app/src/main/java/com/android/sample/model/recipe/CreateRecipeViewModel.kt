@@ -438,14 +438,6 @@ class CreateRecipeViewModel(
       onFailure: (Exception) -> Unit
   ) {
     try {
-      // Hardcode ingredients if editing
-      if (isEditing) {
-        listOf("Flour" to "200g", "Sugar" to "100g", "Butter" to "50g").forEach {
-            (ingredient, measurement) ->
-          recipeBuilder.addIngredientAndMeasurement(ingredient, measurement)
-        }
-      }
-
       // Build the recipe
       val recipe = recipeBuilder.build()
 

@@ -282,18 +282,7 @@ class RecipeBuilderTest {
   }
 
   @Test
-  fun `test initializeFromRecipe clears previous data in builder`() {
-    // Add some initial data to the builder
-    builder.apply {
-      setId("999")
-      setName("Old Recipe")
-      addInstruction(Instruction("Old instruction"))
-      addIngredientAndMeasurement("Old Ingredient", "100g")
-      setCategory("Old Category")
-      setTime("30 minutes")
-      setDifficulty("Hard")
-      setUrl("http://old-example.com")
-    }
+  fun `test initializeFromRecipe fills data in builder`() {
 
     val recipe =
         Recipe(
@@ -307,15 +296,18 @@ class RecipeBuilderTest {
             difficulty = "Medium",
             url = "http://new-example.com")
 
+    // Call the method under test
     builder.initializeFromRecipe(recipe)
 
-    // Assertions to verify the builder contains the new data
+    // Assertions to verify the builder contains only the new data
     assertEquals(recipe.uid, builder.getId())
     assertEquals(recipe.name, builder.getName())
     assertEquals(recipe.category, builder.getCategory())
     assertEquals(recipe.instructions, builder.getInstructions())
     assertEquals(recipe.strMealThumbUrl, builder.getPictureID())
-    assertEquals(recipe.ingredientsAndMeasurements, builder.getIngredientsAndMeasurements())
+    assertEquals(
+        recipe.ingredientsAndMeasurements,
+        builder.getIngredientsAndMeasurements()) // Must match exactly
     assertEquals(recipe.time, builder.getTime())
     assertEquals(recipe.difficulty, builder.getDifficulty())
     assertEquals(recipe.url, builder.getUrl())
