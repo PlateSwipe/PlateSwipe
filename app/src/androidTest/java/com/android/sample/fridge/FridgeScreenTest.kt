@@ -11,6 +11,9 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.test.core.app.ApplicationProvider
+import com.android.sample.model.image.ImageDownload
+import com.android.sample.model.ingredient.IngredientRepository
+import com.android.sample.model.ingredient.IngredientViewModel
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C.TestTag.Fridge.GREEN
 import com.android.sample.resources.C.TestTag.Fridge.ORANGE
@@ -33,21 +36,28 @@ class FridgeScreenTest {
   private lateinit var navigationActions: NavigationActions
 
   private lateinit var userViewModel: UserViewModel
+  private lateinit var ingredientViewModel: IngredientViewModel
+  private lateinit var mockIngredientRepository: IngredientRepository
   private val userName: String = "John Doe"
 
   @get:Rule val composeTestRule = createComposeRule()
 
   @Before
   fun setUp() {
+    mockIngredientRepository = mock(IngredientRepository::class.java)
     navigationActions = mock(NavigationActions::class.java)
     userViewModel =
         UserViewModel.provideFactory(ApplicationProvider.getApplicationContext())
             .create(UserViewModel::class.java)
     userViewModel.changeUserName(userName)
+    ingredientViewModel = IngredientViewModel(mockIngredientRepository, ImageDownload())
 
     `when`(navigationActions.currentRoute()).thenReturn(Screen.FRIDGE)
     composeTestRule.setContent {
-      FridgeScreen(navigationActions = navigationActions, userViewModel = userViewModel)
+      FridgeScreen(
+          navigationActions = navigationActions,
+          userViewModel = userViewModel,
+          ingredientViewModel = ingredientViewModel)
     }
   }
 

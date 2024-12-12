@@ -111,7 +111,9 @@ fun PlateSwipeApp() {
         startDestination = Screen.FRIDGE,
         route = Route.FRIDGE,
     ) {
-      composable(Screen.FRIDGE) { FridgeScreen(navigationActions, userViewModel) }
+      composable(Screen.FRIDGE) {
+        FridgeScreen(navigationActions, userViewModel, ingredientViewModel)
+      }
       composable(Screen.FRIDGE_SEARCH_ITEM) {
         SearchIngredientScreen(
             navigationActions = navigationActions,
@@ -125,7 +127,9 @@ fun PlateSwipeApp() {
             },
             onSearchFinished = { navigationActions.navigateTo(Screen.FRIDGE_SCAN_CODE_BAR) })
       }
-      composable(Screen.FRIDGE_EDIT) { EditFridgeItemScreen(navigationActions, userViewModel) }
+      composable(Screen.FRIDGE_EDIT) {
+        EditFridgeItemScreen(navigationActions, userViewModel, ingredientViewModel)
+      }
       composable(Screen.FRIDGE_SCAN_CODE_BAR) {
         CameraScanCodeBarScreen(
             navigationActions = navigationActions,

@@ -3,6 +3,7 @@ package com.android.sample.createRecipe
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.android.sample.model.fridge.localData.FridgeItemLocalRepository
 import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.ingredient.IngredientRepository
 import com.android.sample.model.recipe.CreateRecipeViewModel
@@ -46,6 +47,7 @@ class PublishRecipeScreenTest {
   private lateinit var mockFirebaseAuth: FirebaseAuth
   private lateinit var mockCurrentUser: FirebaseUser
   private lateinit var mockIngredientRepository: IngredientRepository
+  private lateinit var mockFridgeItemRepository: FridgeItemLocalRepository
 
   private lateinit var mockCall: Call
 
@@ -65,12 +67,18 @@ class PublishRecipeScreenTest {
     mockFirebaseAuth = mock(FirebaseAuth::class.java)
     mockCurrentUser = mock(FirebaseUser::class.java)
     mockIngredientRepository = mock(IngredientRepository::class.java)
+    mockFridgeItemRepository = mock(FridgeItemLocalRepository::class.java)
 
     `when`(mockFirebaseAuth.currentUser).thenReturn(mockCurrentUser)
     `when`(mockCurrentUser.uid).thenReturn("001")
 
     // Initialize UserViewModel with mocked dependencies
-    userViewModel = UserViewModel(mockUserRepository, mockFirebaseAuth, mockIngredientRepository)
+    userViewModel =
+        UserViewModel(
+            mockUserRepository,
+            mockFirebaseAuth,
+            mockIngredientRepository,
+            fridgeItemRepository = mockFridgeItemRepository)
 
     every { repository.getNewUid() } returns "valid-id"
   }
