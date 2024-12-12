@@ -148,7 +148,7 @@ class UserViewModel(
         Log.d(LOG_TAG, "Fetching ingredient from database: $fridgeItem")
         fetchIngredientInFridge(fridgeItem)
         // Update the local database with the fridge items
-        fridgeItemRepository.add(fridgeItem)
+        // fridgeItemRepository.add(fridgeItem)
       }
     } else {
       fridgeItemRepository.getAll(
@@ -504,6 +504,7 @@ class UserViewModel(
           if (ingredient != null) {
             updateIngredientFromFridge(
                 ingredient, fridgeItem.quantity, fridgeItem.expirationDate, false)
+            // ingredientRepository.addDownload(ingredient)
           } else {
             Log.e(LOG_TAG, NOT_FOUND_INGREDIENT_IN_DATABASE_ERROR)
           }
@@ -586,15 +587,20 @@ class UserViewModel(
     _currentEditingFridgeIngredient.value = null
   }
 
-  fun updateLocalFridgeItem(fridgeItem: FridgeItem) {
-    if (fridgeItem.quantity <= 0) {
-      deleteLocalFridgeItem(fridgeItem)
-    } else {
-      fridgeItemRepository.add(fridgeItem)
-    }
+  fun updateLocalFridgeItem(
+      id: String,
+      newQuantity: Int,
+      oldExpirationDate: LocalDate,
+      newExpirationDate: LocalDate
+  ) {
+    fridgeItemRepository.updateFridgeItem(id, oldExpirationDate, newExpirationDate, newQuantity)
   }
 
   fun deleteLocalFridgeItem(fridgeItem: FridgeItem) {
     fridgeItemRepository.delete(fridgeItem)
+  }
+
+  fun addLocalFridgeItem(fridgeItem: FridgeItem) {
+    fridgeItemRepository.upsertFridgeItem(fridgeItem)
   }
 }

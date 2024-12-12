@@ -111,7 +111,9 @@ fun EditComposable(
         userViewModel.currentEditingFridgeIngredient.value?.first?.expirationDate
             ?: LocalDate.now())
   }
-
+  val oldExpirationDate =
+      userViewModel.currentEditingFridgeIngredient.value?.first?.expirationDate ?: LocalDate.now()
+  val isEdit = userViewModel.currentEditingFridgeIngredient.collectAsState().value != null
   val showDatePickerDialog = remember { mutableStateOf(false) }
   val context = LocalContext.current
   Column(
@@ -200,13 +202,12 @@ fun EditComposable(
             onClick = {
               userViewModel.updateIngredientFromFridge(
                   ingredient.value[0].first, quantity, expirationDate, true)
-              Log.d("EditFridge", "Ingredient updated : $ingredient")
 
               var newIngredient = ingredient.value[0].first.copy()
               if (newIngredient.uid == null && newIngredient.barCode != null) {
                 Log.d("EditFridge", "Ingredient has no uid")
                 ingredientViewModel.getIngredient(
-                    newIngredient.barCode,
+                    newIngredient.barCode!!,
                     onSuccess = { ingre ->
                       Log.d("EditFridge", "getIngredient: $ingre")
                       ingredientViewModel.downloadIngredient(
@@ -227,8 +228,15 @@ fun EditComposable(
                     onSuccess = { Log.d("EditFridge", "Ingredient downloaded : $newIngredient") },
                     onFailure = { Log.d("EditFridge", "Ingredient download failed") })
               }
-              userViewModel.updateLocalFridgeItem(
-                  FridgeItem(newIngredient.barCode.toString(), quantity, expirationDate))
+              if (isEdit) {
+                Log.d("EditFridge", "Update existing ingredient in local fridge")
+                userViewModel.updateLocalFridgeItem(
+                    newIngredient.barCode.toString(), quantity, oldExpirationDate, expirationDate)
+              } else {
+                Log.d("EditFridge", "Add new ingredient to local fridge")
+                userViewModel.addLocalFridgeItem(
+                    FridgeItem(newIngredient.barCode.toString(), quantity, expirationDate))
+              }
 
               navigationActions.navigateTo(Screen.FRIDGE)
             })
