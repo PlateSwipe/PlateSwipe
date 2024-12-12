@@ -1,7 +1,6 @@
 package com.android.sample.ui.fridge
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -109,7 +108,11 @@ import kotlin.math.max
  * @see IngredientViewModel: Class to handle ingredient view model
  */
 @Composable
-fun FridgeScreen(navigationActions: NavigationActions, userViewModel: UserViewModel) {
+fun FridgeScreen(
+    navigationActions: NavigationActions,
+    userViewModel: UserViewModel,
+    ingredientViewModel: IngredientViewModel
+) {
 
   PlateSwipeScaffold(
       navigationActions = navigationActions,
@@ -119,7 +122,8 @@ fun FridgeScreen(navigationActions: NavigationActions, userViewModel: UserViewMo
         if (listFridgeItem.isEmpty()) {
           EmptyFridge(paddingValues, navigationActions, userViewModel)
         } else {
-          FridgeContent(navigationActions, paddingValues, userViewModel, listFridgeItem)
+          FridgeContent(
+              navigationActions, paddingValues, userViewModel, listFridgeItem, ingredientViewModel)
         }
       },
       showBackArrow = true)
@@ -198,7 +202,8 @@ private fun FridgeContent(
     navigationActions: NavigationActions,
     paddingValues: PaddingValues,
     userViewModel: UserViewModel,
-    listFridgeItem: List<Pair<FridgeItem, Ingredient>>
+    listFridgeItem: List<Pair<FridgeItem, Ingredient>>,
+    ingredientViewModel: IngredientViewModel
 ) {
   Column(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
     Column(
@@ -253,13 +258,21 @@ private fun FridgeContent(
                                 // First card in the chunk
                                 chunk.getOrNull(0)?.let { card1 ->
                                   ItemCard(
-                                      Modifier.weight(1f), card1, userViewModel, navigationActions)
+                                      Modifier.weight(1f),
+                                      card1,
+                                      userViewModel,
+                                      navigationActions,
+                                      ingredientViewModel)
                                 }
 
                                 // Second card in the chunk (if present)
                                 chunk.getOrNull(1)?.let { card2 ->
                                   ItemCard(
-                                      Modifier.weight(1f), card2, userViewModel, navigationActions)
+                                      Modifier.weight(1f),
+                                      card2,
+                                      userViewModel,
+                                      navigationActions,
+                                      ingredientViewModel)
                                 }
 
                                 // Add an empty spacer if only one card exists in the chunk
@@ -303,7 +316,8 @@ private fun ItemCard(
     modifier: Modifier,
     card: Pair<FridgeItem, Ingredient>,
     userViewModel: UserViewModel,
-    navigationActions: NavigationActions
+    navigationActions: NavigationActions,
+    ingredientViewModel: IngredientViewModel
 ) {
 
   val confirmationRemoveDisplay = remember { mutableStateOf(false) }
@@ -412,6 +426,7 @@ private fun ItemCard(
     ConfirmationPopUp(
         onConfirm = {
           userViewModel.removeIngredientFromUserFridge(card.second, card.first.expirationDate)
+          userViewModel.deleteLocalFridgeItem(card.first)
           confirmationRemoveDisplay.value = false
         },
         onDismiss = { confirmationRemoveDisplay.value = false },

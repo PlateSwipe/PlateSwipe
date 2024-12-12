@@ -5,10 +5,10 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ApplicationProvider
+import com.android.sample.model.fridge.FridgeItem
 import com.android.sample.model.image.ImageDownload
 import com.android.sample.model.ingredient.IngredientRepository
 import com.android.sample.model.ingredient.IngredientViewModel
-import com.android.sample.model.fridge.FridgeItem
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.ui.fridge.EditFridgeItemScreen
 import com.android.sample.ui.navigation.NavigationActions

@@ -532,7 +532,9 @@ class EndToEndTest {
           startDestination = Screen.FRIDGE,
           route = Route.FRIDGE,
       ) {
-        composable(Screen.FRIDGE) { FridgeScreen(navigationActions, userViewModel) }
+        composable(Screen.FRIDGE) {
+          FridgeScreen(navigationActions, userViewModel, ingredientViewModel)
+        }
       }
       navigation(
           startDestination = Screen.SEARCH,
