@@ -41,6 +41,7 @@ import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertTrue
 import okhttp3.Call
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
@@ -359,6 +360,30 @@ class UserViewModelTest {
         ingredientExample, ingredientExpirationDateModifiedExample)
     assert(userViewModel.fridgeItems.value.size == 1)
     assertEquals(Pair(fridgeItemExample, ingredientExample), userViewModel.fridgeItems.value[0])
+  }
+
+  @Test
+  fun `test maps fridge ingredients to the correct values`() {
+    val fridgeItems = testIngredients
+    val category1 = fridgeItems[0].categories[0]
+    val category2 = fridgeItems[1].categories[0]
+    val category3 = fridgeItems[1].categories[1]
+    val category4 = "Inexistent category"
+    val categories = listOf(category1, category2, category3, category4)
+
+    userViewModel.updateIngredientFromFridge(fridgeItems[0], 1, LocalDate.now(), false)
+    userViewModel.updateIngredientFromFridge(fridgeItems[1], 1, LocalDate.now(), false)
+
+    val map: Map<String, List<Pair<FridgeItem, Ingredient>>> =
+        userViewModel.mapFridgeIngredientsToCategories(categories)
+
+    assertEquals(map[category1]?.count(), 1)
+    assertEquals(map[category1]?.get(0)?.second, fridgeItems[0])
+    assertEquals(map[category2]?.count(), 1)
+    assertEquals(map[category2]?.get(0)?.second, fridgeItems[1])
+    assertEquals(map[category3]?.count(), 1)
+    assertEquals(map[category3]?.get(0)?.second, fridgeItems[1])
+    assert(!map.containsKey(category4))
   }
 
   @Test
@@ -1062,6 +1087,25 @@ class UserViewModelTest {
   fun deleteLocalFridgeItemTest() {
     userViewModel.deleteLocalFridgeItem(fridgeItemExample)
     verify(mockFridgeItemRepository).delete(any())
+  }
+
+  @Test
+  fun `test replaceRecipeInUserCreatedRecipes replaces the correct recipe`() {
+    // Arrange
+    val oldRecipe = createdRecipeExample.copy(uid = "old-recipe-id")
+    val newRecipe = createdRecipeExample.copy(uid = "new-recipe-id")
+    userViewModel.addRecipeToUserCreatedRecipes(oldRecipe) // add the old recipe first
+
+    // Act
+    userViewModel.replaceRecipeInUserCreatedRecipes(
+        oldRecipeId = oldRecipe.uid, newRecipe = newRecipe)
+
+    // Assert
+    val createdRecipes = userViewModel.createdRecipes.value
+    assertNotNull(createdRecipes)
+    assertTrue(createdRecipes.contains(newRecipe))
+    assertFalse(createdRecipes.contains(oldRecipe))
+    assertEquals(1, createdRecipes.size) // ensure there is only one recipe
   }
 
   @Test

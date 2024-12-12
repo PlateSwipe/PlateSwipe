@@ -112,10 +112,11 @@ val ingredientQuantities = arrayOf("1 apple", "200 g", null)
 
 val ingredientFridgeItemQuantities = arrayOf(1, 200, 0)
 
+// these are expected to be lower case
 val ingredientCategories =
     arrayOf(
-        listOf("Healthy", "Fruit", "Vegan"),
-        listOf("Gourmandise", "Chocolate", "Snack", "Dessert"),
+        listOf("healthy", "fruit", "vegan"),
+        listOf("gourmandise", "chocolate", "snack", "dessert"),
         emptyList(),
     )
 

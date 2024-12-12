@@ -8,12 +8,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -34,6 +37,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -50,9 +54,12 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.android.sample.R
 import com.android.sample.animation.LoadingCook
+import com.android.sample.model.fridge.FridgeItem
+import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.recipe.Instruction
 import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.recipe.RecipeOverviewViewModel
+import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScreen.CARD_BORDER_ROUND
 import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScreen.CARD_SHADOW_ELEVATION
 import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScreen.ICON_SIZE
@@ -62,6 +69,7 @@ import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScre
 import com.android.sample.resources.C.Dimension.RecipeOverview.IMAGE_ROUND_CORNER
 import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_CHECKBOX_SIZE
 import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_FONT_SIZE_MEDIUM
+import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_FRIDGE_INGREDIENT_THUMBNAIL_SIZE
 import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_INSTRUCTION_BOTTOM
 import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_INSTRUCTION_END
 import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_INSTRUCTION_START
@@ -74,8 +82,8 @@ import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_RECIPE_R
 import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_RECIPE_STAR_SIZE
 import com.android.sample.resources.C.Dimension.RecipeOverview.OVERVIEW_TIME_DISPLAY_RATE
 import com.android.sample.resources.C.Tag.PADDING
+import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_THUMBNAIL_URL
 import com.android.sample.resources.C.Tag.SMALL_PADDING
-import com.android.sample.resources.C.Tag.SwipePage.RATE_VALUE
 import com.android.sample.resources.C.TestTag.RecipeOverview.COOK_TIME_TEXT
 import com.android.sample.resources.C.TestTag.RecipeOverview.DRAGGABLE_ITEM
 import com.android.sample.resources.C.TestTag.RecipeOverview.INGREDIENTS_VIEW
@@ -83,17 +91,16 @@ import com.android.sample.resources.C.TestTag.RecipeOverview.INGREDIENT_CHECKBOX
 import com.android.sample.resources.C.TestTag.RecipeOverview.INGREDIENT_PREFIX
 import com.android.sample.resources.C.TestTag.RecipeOverview.INSTRUCTIONS_VIEW
 import com.android.sample.resources.C.TestTag.RecipeOverview.PREP_TIME_TEXT
-import com.android.sample.resources.C.TestTag.RecipeOverview.RATING_ICON
+import com.android.sample.resources.C.TestTag.RecipeOverview.RECIPE_FRIDGE_INGREDIENTS
+import com.android.sample.resources.C.TestTag.RecipeOverview.RECIPE_FRIDGE_INGREDIENTS_TEXT
 import com.android.sample.resources.C.TestTag.RecipeOverview.RECIPE_IMAGE
-import com.android.sample.resources.C.TestTag.RecipeOverview.RECIPE_RATE
-import com.android.sample.resources.C.TestTag.RecipeOverview.RECIPE_STAR
 import com.android.sample.resources.C.TestTag.RecipeOverview.RECIPE_TITLE
 import com.android.sample.resources.C.TestTag.RecipeOverview.SLIDING_BUTTON_INGREDIENTS
 import com.android.sample.resources.C.TestTag.RecipeOverview.SLIDING_BUTTON_INSTRUCTIONS
 import com.android.sample.resources.C.TestTag.RecipeOverview.TOTAL_TIME_TEXT
 import com.android.sample.resources.C.Values.RecipeOverview.INITIAL_NUMBER_PERSON_PER_RECIPE
 import com.android.sample.ui.navigation.NavigationActions
-import com.android.sample.ui.theme.starColor
+import com.android.sample.ui.theme.graySlate
 import com.android.sample.ui.utils.Counter
 import com.android.sample.ui.utils.PlateSwipeScaffold
 import com.android.sample.ui.utils.Tag
@@ -101,10 +108,18 @@ import com.android.sample.ui.utils.Tag
 @Composable
 fun RecipeOverview(
     navigationActions: NavigationActions,
-    recipeOverviewViewModel: RecipeOverviewViewModel
+    recipeOverviewViewModel: RecipeOverviewViewModel,
+    userViewModel: UserViewModel
 ) {
 
   val currentRecipe by recipeOverviewViewModel.currentRecipe.collectAsState()
+  val fridgeIngredientsMap =
+      if (currentRecipe != null) {
+        userViewModel.mapFridgeIngredientsToCategories(
+            currentRecipe!!.ingredientsAndMeasurements.map { it.first })
+      } else {
+        null
+      }
 
   PlateSwipeScaffold(
       navigationActions = navigationActions,
@@ -130,9 +145,9 @@ fun RecipeOverview(
               } else {
                 currentRecipe?.let { recipe ->
                   RecipeImage(recipe)
-                  RecipeDescription(recipe)
+                  RecipeDescription(recipe, fridgeIngredientsMap?.count() ?: 0)
                   PrepareCookTotalTimeDisplay()
-                  RecipeInformation(recipe)
+                  RecipeInformation(recipe, fridgeIngredientsMap)
                 }
               }
             }
@@ -145,7 +160,10 @@ fun RecipeOverview(
  * @param currentRecipe: The recipe to display
  */
 @Composable
-private fun RecipeInformation(currentRecipe: Recipe) {
+private fun RecipeInformation(
+    currentRecipe: Recipe,
+    fridgeIngredientsMap: Map<String, List<Pair<FridgeItem, Ingredient>>>?
+) {
   Column(
       modifier =
           Modifier.background(
@@ -181,7 +199,7 @@ private fun RecipeInformation(currentRecipe: Recipe) {
             }
 
         // Display the appropriate view based on the toggle state
-        IngredientInstructionView(isInstructionDisplay, currentRecipe)
+        IngredientInstructionView(isInstructionDisplay, currentRecipe, fridgeIngredientsMap)
       }
 }
 
@@ -254,9 +272,10 @@ private fun RecipeImage(currentRecipe: Recipe) {
  * Display of the recipe title, rating and category
  *
  * @param currentRecipe: The recipe to display
+ * @param fridgeIngredientsCount: The number of ingredients in the recipe that are in the fridge
  */
 @Composable
-private fun RecipeDescription(currentRecipe: Recipe) {
+private fun RecipeDescription(currentRecipe: Recipe, fridgeIngredientsCount: Int) {
   Column(horizontalAlignment = Alignment.Start, modifier = Modifier.padding(start = PADDING.dp)) {
     Text(
         text = currentRecipe.name,
@@ -267,26 +286,30 @@ private fun RecipeDescription(currentRecipe: Recipe) {
     Spacer(modifier = Modifier.size(SMALL_PADDING.dp))
     currentRecipe.category?.let { Tag(it) }
     Spacer(modifier = Modifier.size(SMALL_PADDING.dp))
-    Row(
-        horizontalArrangement = Arrangement.Start,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.testTag(RATING_ICON)) {
-          // Display of the rating Icon
-          Icon(
-              painter = painterResource(R.drawable.star_rate),
-              contentDescription = stringResource(R.string.star_rate_description),
-              modifier = Modifier.testTag(RECIPE_STAR).size(OVERVIEW_RECIPE_STAR_SIZE.dp),
-              tint = starColor)
 
-          Spacer(modifier = Modifier.size(SMALL_PADDING.dp))
+    if (fridgeIngredientsCount > 0) {
+      Row(
+          horizontalArrangement = Arrangement.Start,
+          verticalAlignment = Alignment.CenterVertically,
+          modifier = Modifier.testTag(RECIPE_FRIDGE_INGREDIENTS)) {
+            // Display of the rating Icon
+            Icon(
+                painter = painterResource(R.drawable.fridgeicon),
+                contentDescription = stringResource(R.string.fridge_ingredients_description),
+                modifier = Modifier.size(OVERVIEW_RECIPE_STAR_SIZE.dp),
+                tint = graySlate)
 
-          // Rating Text
-          Text(
-              text = RATE_VALUE,
-              modifier = Modifier.testTag(RECIPE_RATE),
-              style = MaterialTheme.typography.bodyMedium,
-              color = MaterialTheme.colorScheme.onSecondary)
-        }
+            Spacer(modifier = Modifier.size(SMALL_PADDING.dp))
+
+            // Rating Text
+            Text(
+                text =
+                    "$fridgeIngredientsCount/${currentRecipe.ingredientsAndMeasurements.count()}",
+                modifier = Modifier.testTag(RECIPE_FRIDGE_INGREDIENTS_TEXT),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSecondary)
+          }
+    }
   }
 }
 
@@ -346,13 +369,14 @@ private fun RecipePropertyRowText(title: String, time: String, testTag: String) 
 private fun IngredientInstructionView(
     ingredientsView: Boolean,
     currentRecipe: Recipe,
+    fridgeIngredientsMap: Map<String, List<Pair<FridgeItem, Ingredient>>>?
 ) {
 
   Column(
       modifier = Modifier.fillMaxSize(),
       verticalArrangement = Arrangement.spacedBy(SMALL_PADDING.dp)) {
         if (ingredientsView) {
-          IngredientView(currentRecipe)
+          IngredientView(currentRecipe, fridgeIngredientsMap)
         } else {
           InstructionView(currentRecipe)
         }
@@ -363,6 +387,7 @@ private fun IngredientInstructionView(
 @Composable
 private fun IngredientView(
     currentRecipe: Recipe,
+    fridgeIngredientsMap: Map<String, List<Pair<FridgeItem, Ingredient>>>?,
     initialServings: Int = INITIAL_NUMBER_PERSON_PER_RECIPE
 ) {
   var servingsCount by remember { mutableIntStateOf(initialServings) }
@@ -387,7 +412,7 @@ private fun IngredientView(
             count = servingsCount, onCounterChange = { newCounter -> servingsCount = newCounter })
       }
 
-  IngredientsList(currentRecipe, servingsCount)
+  IngredientsList(currentRecipe, servingsCount, fridgeIngredientsMap)
 }
 
 /**
@@ -416,34 +441,52 @@ private fun scaleFirstIntByServings(measurement: String, servingsCount: Int): St
  * @param servingsCount: The number of servings
  */
 @Composable
-private fun IngredientsList(currentRecipe: Recipe, servingsCount: Int) {
-  Column(verticalArrangement = Arrangement.spacedBy((PADDING).dp)) {
+private fun IngredientsList(
+    currentRecipe: Recipe,
+    servingsCount: Int,
+    fridgeIngredientsMap: Map<String, List<Pair<FridgeItem, Ingredient>>>?
+) {
+  Column(verticalArrangement = Arrangement.spacedBy(SMALL_PADDING.dp)) {
+
+    // this is to make sure the height of each ingredients line is the same and don't overlap
+    // each-other
+    val lineHeight = maxOf(OVERVIEW_FRIDGE_INGREDIENT_THUMBNAIL_SIZE, OVERVIEW_CHECKBOX_SIZE)
+
     currentRecipe.ingredientsAndMeasurements.forEach { (ingredient, measurement) ->
-      var ticked by remember { mutableStateOf(false) }
+      val hasIngredientsInFridge = fridgeIngredientsMap?.containsKey(ingredient) ?: false
+      var ticked by remember { mutableStateOf(hasIngredientsInFridge) }
       val modifiedMeasurement = scaleFirstIntByServings(measurement, servingsCount)
 
       Row(
-          modifier = Modifier.padding(start = (PADDING * 3).dp),
-          verticalAlignment = Alignment.CenterVertically) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(SMALL_PADDING.dp)) {
-                  Checkbox(
-                      checked = ticked,
-                      onCheckedChange = { ticked = it },
-                      modifier =
-                          Modifier.size(OVERVIEW_CHECKBOX_SIZE.dp).testTag(INGREDIENT_CHECKBOX))
+          modifier = Modifier.height(lineHeight.dp),
+          verticalAlignment = Alignment.CenterVertically,
+          horizontalArrangement = Arrangement.spacedBy(SMALL_PADDING.dp)) {
+            if (hasIngredientsInFridge) {
+              Row(
+                  modifier = Modifier.width((PADDING * 3).dp),
+                  verticalAlignment = Alignment.CenterVertically,
+                  horizontalArrangement = Arrangement.Absolute.Right) {
+                    DisplayIngredientThumbnails(
+                        fridgeIngredientsMap!![ingredient]!!.map { it.second })
+                  }
+            } else {
+              Spacer(modifier = Modifier.width((PADDING * 3).dp))
+            }
 
-                  Text(
-                      text = "$ingredient: $modifiedMeasurement",
-                      textAlign = TextAlign.Left,
-                      style = MaterialTheme.typography.bodyMedium,
-                      color = MaterialTheme.colorScheme.onPrimary,
-                      modifier =
-                          Modifier.testTag("$INGREDIENT_PREFIX$ingredient").semantics {
-                            contentDescription = "$ingredient, $modifiedMeasurement"
-                          })
-                }
+            Checkbox(
+                checked = ticked,
+                onCheckedChange = { ticked = it },
+                modifier = Modifier.size(OVERVIEW_CHECKBOX_SIZE.dp).testTag(INGREDIENT_CHECKBOX))
+
+            Text(
+                text = "$ingredient: $modifiedMeasurement",
+                textAlign = TextAlign.Left,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onPrimary,
+                modifier =
+                    Modifier.testTag("$INGREDIENT_PREFIX$ingredient").semantics {
+                      contentDescription = "$ingredient, $modifiedMeasurement"
+                    })
           }
     }
   }
@@ -532,4 +575,48 @@ fun InstructionValue(instruction: Instruction, index: Int) {
         style = MaterialTheme.typography.bodyMedium,
         modifier = Modifier.padding(SMALL_PADDING.dp).testTag("InstructionText"))
   }
+}
+
+/**
+ * Display of the ingredient thumbnails. If there are more than one ingredient, a plus sign is added
+ * to the second thumbnail. If there is one extra it has "+1", if there are 3 extra it has "+3",
+ * etc.
+ *
+ * @param ingredients: The ingredients to display
+ */
+@Composable
+private fun DisplayIngredientThumbnails(ingredients: List<Ingredient>) {
+  if (ingredients.isEmpty()) return
+
+  val first = ingredients.first()
+
+  Box(
+      modifier =
+          Modifier.height(OVERVIEW_FRIDGE_INGREDIENT_THUMBNAIL_SIZE.dp)
+              .width(OVERVIEW_FRIDGE_INGREDIENT_THUMBNAIL_SIZE.dp * 1.9f)) {
+        if (ingredients.size > 1) {
+          Box(
+              modifier =
+                  Modifier.background(MaterialTheme.colorScheme.secondary, CircleShape)
+                      .size(OVERVIEW_FRIDGE_INGREDIENT_THUMBNAIL_SIZE.dp)
+                      .align(Alignment.CenterStart)) {
+                Text(
+                    text = "+${ingredients.size - 1}",
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.align(Alignment.Center))
+              }
+        }
+
+        Image(
+            painter =
+                rememberAsyncImagePainter(model = first.images[PRODUCT_FRONT_IMAGE_THUMBNAIL_URL]),
+            contentDescription = first.name,
+            modifier =
+                Modifier.height(OVERVIEW_FRIDGE_INGREDIENT_THUMBNAIL_SIZE.dp)
+                    .aspectRatio(1f, true)
+                    .clip(CircleShape)
+                    .align(Alignment.CenterEnd),
+            contentScale = ContentScale.Crop)
+      }
 }

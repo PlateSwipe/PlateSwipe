@@ -15,12 +15,14 @@ import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen
 import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.RECIPE_NAME_TEXT
 import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.SCREEN_COLUMN
 import com.android.sample.ui.createRecipe.RecipeListInstructionsScreen
+import com.android.sample.ui.createRecipe.toAddInstructionScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
 import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -78,5 +80,83 @@ class RecipeListInstructionsScreenTest {
 
     // Verify that the navigateTo function was called with the correct parameter
     verify { navigationActions.navigateTo(Screen.CREATE_RECIPE_TIME_PICKER) }
+  }
+
+  @Test
+  fun recipeListInstructionsScreen_allFieldsDisplayed_InEditMode() {
+    composeTestRule.setContent {
+      RecipeListInstructionsScreen(
+          navigationActions = navigationActions,
+          createRecipeViewModel = createRecipeViewModel,
+          isEditing = true)
+    }
+
+    composeTestRule.onNodeWithTag(SCREEN_COLUMN).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(RECIPE_NAME_TEXT).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(INSTRUCTION_TEXT).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(ADD_INSTRUCTION_BUTTON).assertIsDisplayed()
+  }
+
+  // Check if everything is clickable and verify navigation action
+  @Test
+  fun recipeListInstructionsScreen_allFieldsClickable_and_navigatesCorrectly_InEditMode() {
+    composeTestRule.setContent {
+      RecipeListInstructionsScreen(
+          navigationActions = navigationActions,
+          createRecipeViewModel = createRecipeViewModel,
+          isEditing = true)
+    }
+
+    // Perform clicks on items
+    composeTestRule.onNodeWithTag(INSTRUCTION_LIST_ITEM).assertIsDisplayed().performClick()
+    composeTestRule.onNodeWithTag(NEXT_STEP_BUTTON).assertIsDisplayed().performClick()
+
+    // Verify that the navigateTo function was called with the correct parameter
+    verify { navigationActions.navigateTo(Screen.EDIT_RECIPE_TIME_PICKER) }
+  }
+
+  @Test
+  fun toAddInstructionScreen_returnsCorrectScreen() {
+    // Test when isEditing is true
+    val editScreen = toAddInstructionScreen(isEditing = true)
+    assertEquals(Screen.EDIT_RECIPE_ADD_INSTRUCTION, editScreen)
+
+    // Test when isEditing is false
+    val createScreen = toAddInstructionScreen(isEditing = false)
+    assertEquals(Screen.CREATE_RECIPE_ADD_INSTRUCTION, createScreen)
+  }
+
+  @Test
+  fun recipeListInstructionsScreen_addInstructionButton_navigatesCorrectly() {
+    composeTestRule.setContent {
+      RecipeListInstructionsScreen(
+          navigationActions = navigationActions,
+          createRecipeViewModel = createRecipeViewModel,
+          isEditing = false // Test for non-editing mode
+          )
+    }
+
+    // Perform a click on the "Add Instruction" button
+    composeTestRule.onNodeWithTag(ADD_INSTRUCTION_BUTTON).assertIsDisplayed().performClick()
+
+    // Verify navigation action
+    verify { navigationActions.navigateTo(Screen.CREATE_RECIPE_ADD_INSTRUCTION) }
+  }
+
+  @Test
+  fun recipeListInstructionsScreen_addInstructionButton_navigatesCorrectly_InEditMode() {
+    composeTestRule.setContent {
+      RecipeListInstructionsScreen(
+          navigationActions = navigationActions,
+          createRecipeViewModel = createRecipeViewModel,
+          isEditing = true // Test for editing mode
+          )
+    }
+
+    // Perform a click on the "Add Instruction" button
+    composeTestRule.onNodeWithTag(ADD_INSTRUCTION_BUTTON).assertIsDisplayed().performClick()
+
+    // Verify navigation action
+    verify { navigationActions.navigateTo(Screen.EDIT_RECIPE_ADD_INSTRUCTION) }
   }
 }

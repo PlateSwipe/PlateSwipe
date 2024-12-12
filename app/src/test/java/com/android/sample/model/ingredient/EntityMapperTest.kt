@@ -14,7 +14,7 @@ class EntityMapperTest {
   @Test
   fun testIngredientToEntity() {
     val ingredientEntity = ingredient.toEntity()
-    val categories = "[\"Healthy\",\"Fruit\",\"Vegan\"]"
+    val categories = "[\"healthy\",\"fruit\",\"vegan\"]"
     val images =
         "{\"image_front_url\":\"https://display_normal\",\"image_front_thumb_url\":\"https://display_thumbnail\",\"image_front_small_url\":\"https://display_small\"}"
     assertEquals(ingredient.uid, ingredientEntity.uid)

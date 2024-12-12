@@ -525,7 +525,9 @@ class EndToEndTest {
           route = Route.SWIPE,
       ) {
         composable(Screen.SWIPE) { SwipePage(navigationActions, recipesViewModel, userViewModel) }
-        composable(Screen.OVERVIEW_RECIPE) { RecipeOverview(navigationActions, recipesViewModel) }
+        composable(Screen.OVERVIEW_RECIPE) {
+          RecipeOverview(navigationActions, recipesViewModel, userViewModel)
+        }
         composable(Screen.FILTER) { FilterPage(navigationActions, recipesViewModel) }
       }
       navigation(
@@ -624,7 +626,7 @@ class EndToEndTest {
           AccountScreen(navigationActions, userViewModel, recipesViewModel, createRecipeViewModel)
         }
         composable(Screen.OVERVIEW_RECIPE_ACCOUNT) {
-          RecipeOverview(navigationActions, userViewModel)
+          RecipeOverview(navigationActions, userViewModel, userViewModel)
         }
       }
     }
