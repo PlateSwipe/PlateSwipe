@@ -423,6 +423,21 @@ class UserViewModel(
   }
 
   /**
+   * Replaces an existing recipe in the user created recipes without deleting it.
+   *
+   * @param oldRecipeId The ID of the recipe to be replaced.
+   * @param newRecipe The updated recipe.
+   */
+  fun replaceRecipeInUserCreatedRecipes(oldRecipeId: String, newRecipe: Recipe) {
+    // Remove the old recipe from the list
+    _createdRecipes.value = _createdRecipes.value.filterNot { it.uid == oldRecipeId }
+    // Add the new recipe
+    _createdRecipes.value = _createdRecipes.value.plus(newRecipe)
+    // Update the current user data
+    updateCurrentUser()
+  }
+
+  /**
    * Selects a specific recipe to be shown on the overview screen of the account
    *
    * @param recipe the recipe to select

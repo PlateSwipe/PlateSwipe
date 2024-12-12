@@ -31,7 +31,6 @@ class RecipeBuilder {
     this.category = recipe.category
     this.instructions = recipe.instructions.toMutableList()
     this.strMealThumbUrl = recipe.strMealThumbUrl
-    this.ingredientsAndMeasurements.clear()
     this.ingredientsAndMeasurements.addAll(recipe.ingredientsAndMeasurements)
     this.time = recipe.time
     this.difficulty = recipe.difficulty

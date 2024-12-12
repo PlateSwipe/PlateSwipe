@@ -37,6 +37,7 @@ import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertTrue
 import okhttp3.Call
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
@@ -967,6 +968,25 @@ class UserViewModelTest {
 
     userViewModel.clearIngredient()
     TestCase.assertEquals(Pair(null, null), userViewModel.ingredient.value)
+  }
+
+  @Test
+  fun `test replaceRecipeInUserCreatedRecipes replaces the correct recipe`() {
+    // Arrange
+    val oldRecipe = createdRecipeExample.copy(uid = "old-recipe-id")
+    val newRecipe = createdRecipeExample.copy(uid = "new-recipe-id")
+    userViewModel.addRecipeToUserCreatedRecipes(oldRecipe) // add the old recipe first
+
+    // Act
+    userViewModel.replaceRecipeInUserCreatedRecipes(
+        oldRecipeId = oldRecipe.uid, newRecipe = newRecipe)
+
+    // Assert
+    val createdRecipes = userViewModel.createdRecipes.value
+    assertNotNull(createdRecipes)
+    assertTrue(createdRecipes.contains(newRecipe))
+    assertFalse(createdRecipes.contains(oldRecipe))
+    assertEquals(1, createdRecipes.size) // ensure there is only one recipe
   }
 
   @Test
