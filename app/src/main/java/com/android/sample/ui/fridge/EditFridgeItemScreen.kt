@@ -1,7 +1,6 @@
 package com.android.sample.ui.fridge
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -65,7 +64,6 @@ import com.android.sample.ui.utils.PlateSwipeButton
 import com.android.sample.ui.utils.PlateSwipeScaffold
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import kotlinx.coroutines.Dispatchers
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
@@ -101,7 +99,6 @@ fun EditComposable(
 ) {
 
   val ingredient = userViewModel.ingredientList.collectAsState()
-  Log.e("FridgeScreen", "Edit ${ingredient.value.first().first.name} Quantity")
 
   var quantity by remember {
     mutableIntStateOf(userViewModel.currentEditingFridgeIngredient.value?.first?.quantity ?: 1)
@@ -203,37 +200,16 @@ fun EditComposable(
               userViewModel.updateIngredientFromFridge(
                   ingredient.value[0].first, quantity, expirationDate, true)
 
-              var newIngredient = ingredient.value[0].first.copy()
-              if (newIngredient.uid == null && newIngredient.barCode != null) {
-                Log.d("EditFridge", "Ingredient has no uid")
-                ingredientViewModel.getIngredient(
-                    newIngredient.barCode!!,
-                    onSuccess = { ingre ->
-                      Log.d("EditFridge", "getIngredient: $ingre")
-                      ingredientViewModel.downloadIngredient(
-                          ingre,
-                          context,
-                          Dispatchers.IO,
-                          onSuccess = { Log.d("EditFridge", "Ingredient downloaded : $ingre") },
-                          onFailure = { Log.d("EditFridge", "Ingredient download failed") })
-                    },
-                    onFailure = { Log.d("EditFridge", "Ingredient download failed") })
-              } else {
-                Log.d("EditFridge", "Ingredient has uid :$newIngredient")
-                // Download the Ingredient to the local database for offline use
-                ingredientViewModel.downloadIngredient(
-                    newIngredient,
-                    context,
-                    Dispatchers.IO,
-                    onSuccess = { Log.d("EditFridge", "Ingredient downloaded : $newIngredient") },
-                    onFailure = { Log.d("EditFridge", "Ingredient download failed") })
-              }
+              // Update or download the ingredient locally
+              val newIngredient = ingredient.value[0].first.copy()
+              ingredientViewModel.updateLocalIngredient(newIngredient, context)
+
+              // Update/Download the local fridge item
               if (isEdit) {
-                Log.d("EditFridge", "Update existing ingredient in local fridge")
                 userViewModel.updateLocalFridgeItem(
                     newIngredient.barCode.toString(), quantity, oldExpirationDate, expirationDate)
               } else {
-                Log.d("EditFridge", "Add new ingredient to local fridge")
+
                 userViewModel.addLocalFridgeItem(
                     FridgeItem(newIngredient.barCode.toString(), quantity, expirationDate))
               }

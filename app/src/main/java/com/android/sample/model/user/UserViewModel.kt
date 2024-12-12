@@ -144,40 +144,48 @@ class UserViewModel(
    */
   internal fun handleFridgeItem(isConnected: Boolean, user: User) {
     if (isConnected) {
-      user.fridge.forEach { fridgeItem ->
-        Log.d(LOG_TAG, "Fetching ingredient from database: $fridgeItem")
-        fetchIngredientInFridge(fridgeItem)
-      }
+      // Fetch the ingredients from the Firestore/Openfoodfact database
+      user.fridge.forEach { fridgeItem -> fetchIngredientInFridge(fridgeItem) }
     } else {
+      // Fetch the ingredients from the local database
       fridgeItemRepository.getAll(
           onSuccess = { fridgeItems ->
             val fetchedItems = mutableListOf<Pair<FridgeItem, Ingredient>>()
             var remainingItems = fridgeItems.size
+            // For each FridgeItem look for the corresponding Ingredient in the local database and
+            // add it to the fetchedItems list
             fridgeItems.forEach { fridgeItem ->
-              Log.d(LOG_TAG, "Updating ingredient from local database: $fridgeItem")
               ingredientRepository.getByBarcode(
                   fridgeItem.id.toLong(),
                   onSuccess = { ingredient ->
                     if (ingredient != null) {
-                      Log.d(LOG_TAG, "Getting ingredient from local DB : $ingredient")
+                      // Add the pair of FridgeItem and Ingredient to the fetchedItems list, need to
+                      // be carefull about race conditions since getByBarcode is async
                       synchronized(fetchedItems) { fetchedItems.add(Pair(fridgeItem, ingredient)) }
                     } else {
                       Log.e(LOG_TAG, NOT_FOUND_INGREDIENT_IN_DATABASE_ERROR)
                     }
+                    // Decrement the remainingItems counter and update the _fridgeItems value if all
+                    // items have been fetched
                     synchronized(fetchedItems) {
                       remainingItems--
                       if (remainingItems == 0) {
                         _fridgeItems.value = fetchedItems
-                        Log.d(LOG_TAG, "Final fridge items: $fetchedItems")
                       }
                     }
                   },
                   onFailure = { e ->
-                    Log.e(LOG_TAG, "Error fetching ingredient for barcode: ${fridgeItem.id}", e)
+                    synchronized(fetchedItems) {
+                      remainingItems--
+                      Log.e(
+                          LOG_TAG,
+                          FAILED_TO_FETCH_INGREDIENT_FROM_DATABASE_ERROR + fridgeItem.id,
+                          e)
+                    }
                   })
             }
           },
-          onFailure = { e -> Log.e(LOG_TAG, "$e.message") })
+          onFailure = { e -> Log.e(LOG_TAG, "${e.message}") })
     }
   }
   /**
@@ -631,7 +639,14 @@ class UserViewModel(
   private fun clearEditingIngredient() {
     _currentEditingFridgeIngredient.value = null
   }
-
+  /**
+   * Updates a local fridge item in the repository.
+   *
+   * @param id The ID of the fridge item to be updated.
+   * @param newQuantity The new quantity of the fridge item.
+   * @param oldExpirationDate The old expiration date of the fridge item.
+   * @param newExpirationDate The new expiration date of the fridge item.
+   */
   fun updateLocalFridgeItem(
       id: String,
       newQuantity: Int,
@@ -640,11 +655,20 @@ class UserViewModel(
   ) {
     fridgeItemRepository.updateFridgeItem(id, oldExpirationDate, newExpirationDate, newQuantity)
   }
-
+  /**
+   * Deletes a local fridge item from the repository.
+   *
+   * @param fridgeItem The fridge item to be deleted.
+   */
   fun deleteLocalFridgeItem(fridgeItem: FridgeItem) {
     fridgeItemRepository.delete(fridgeItem)
   }
 
+  /**
+   * Adds a local fridge item to the repository.
+   *
+   * @param fridgeItem The fridge item to be added.
+   */
   fun addLocalFridgeItem(fridgeItem: FridgeItem) {
     fridgeItemRepository.upsertFridgeItem(fridgeItem)
   }

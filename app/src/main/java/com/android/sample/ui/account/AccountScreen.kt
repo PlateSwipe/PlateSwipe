@@ -65,9 +65,6 @@ fun AccountScreen(
     recipeViewModel: RecipesViewModel,
     createRecipeViewModel: CreateRecipeViewModel
 ) {
-  val context = LocalContext.current
-  val isConnected = NetworkUtils().isNetworkAvailable(context)
-
   PlateSwipeScaffold(
       navigationActions = navigationActions,
       selectedItem = TopLevelDestinations.ACCOUNT.route,
