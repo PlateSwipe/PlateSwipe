@@ -342,6 +342,37 @@ class UserViewModel(
   }
 
   /**
+   * Method that returns the ingredients in the fridge that have a specific category
+   *
+   * @param category the category of the ingredients
+   * @return a list of pairs of [FridgeItem] and [Ingredient] that belong to the category
+   */
+  private fun getIngredientsByCategoryInFridge(
+      category: String
+  ): List<Pair<FridgeItem, Ingredient>> {
+    return _fridgeItems.value.filter { it.second.categories.contains(category.lowercase()) }
+  }
+
+  /**
+   * Method that maps each category in categories to a list of ingredients that have this category
+   * If a category doesn't have any ingredients, it isn't included into the mapping
+   *
+   * Example: Map: "Beef":
+   * - (FridgeItem,Ingredient with category "Beef")
+   *
+   * @param categories the list of categories
+   * @return a map that maps the categories to the ingredients in the fridge that belong to the
+   *   category
+   */
+  fun mapFridgeIngredientsToCategories(
+      categories: List<String>
+  ): Map<String, List<Pair<FridgeItem, Ingredient>>> {
+    return categories
+        .associateWith { category -> getIngredientsByCategoryInFridge(category) }
+        .filterValues { it.isNotEmpty() }
+  }
+
+  /**
    * Adds a recipe to the user saved recipes.
    *
    * @param recipe the recipe to be added
