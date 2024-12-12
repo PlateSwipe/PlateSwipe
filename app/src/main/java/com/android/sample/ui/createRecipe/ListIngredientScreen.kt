@@ -309,11 +309,7 @@ private fun IngredientPreview(
         Row(
             modifier = Modifier.fillMaxWidth().padding(PADDING_8.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center) {
-              // Add Image to display the ingredient
-              IngredientImageBox(ingredient.first)
-
-              Column(
+            horizontalArrangement = Arrangement.Center) {             Column(
                   verticalArrangement = Arrangement.SpaceBetween,
                   horizontalAlignment = Alignment.Start,
                   modifier =
