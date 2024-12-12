@@ -12,6 +12,7 @@ import com.android.sample.model.ingredient.localData.RoomIngredientRepository
 import com.android.sample.model.ingredient.networkData.AggregatorIngredientRepository
 import com.android.sample.model.ingredient.networkData.FirestoreIngredientRepository
 import com.android.sample.model.ingredient.networkData.OpenFoodFactsIngredientRepository
+import com.android.sample.resources.C.Tag.INGREDIENT_NOT_FOUND_MESSAGE
 import com.android.sample.resources.C.Tag.INGREDIENT_VIEWMODEL_LOG_TAG
 import com.android.sample.resources.C.Tag.INGR_DOWNLOAD_ERROR_DOWNLOAD_IMAGE
 import com.android.sample.resources.C.Tag.INGR_DOWNLOAD_ERROR_GET_ING
@@ -247,6 +248,33 @@ class IngredientViewModel(
         onFailure(e)
       }
     }
+  }
+  /**
+   * Retrieves an ingredient by its barcode.
+   *
+   * @param barCode The barcode of the ingredient to retrieve.
+   * @param onSuccess Callback function to be invoked with the retrieved ingredient if found.
+   * @param onFailure Callback function to be invoked with an exception if an error occurs or the
+   *   ingredient is not found.
+   */
+  fun getIngredient(
+      barCode: Long,
+      onSuccess: (Ingredient) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    repository.get(
+        barCode,
+        { ingredient ->
+          if (ingredient != null) {
+            onSuccess(ingredient)
+          } else {
+            onFailure(Exception(INGREDIENT_NOT_FOUND_MESSAGE))
+          }
+        },
+        onFailure = { e ->
+          Log.e(INGREDIENT_VIEWMODEL_LOG_TAG, INGR_DOWNLOAD_ERROR_GET_ING, e)
+          onFailure(e)
+        })
   }
 
   companion object {
