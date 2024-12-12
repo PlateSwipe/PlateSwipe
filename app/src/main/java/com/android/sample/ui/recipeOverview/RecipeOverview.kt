@@ -577,6 +577,13 @@ fun InstructionValue(instruction: Instruction, index: Int) {
   }
 }
 
+/**
+ * Display of the ingredient thumbnails. If there are more than one ingredient, a plus sign is
+ * added to the second thumbnail.
+ * If there is one extra it has "+1", if there are 3 extra it has "+3", etc.
+ *
+ * @param ingredients: The ingredients to display
+ */
 @Composable
 private fun DisplayIngredientThumbnails(ingredients: List<Ingredient>) {
   if (ingredients.isEmpty()) return
