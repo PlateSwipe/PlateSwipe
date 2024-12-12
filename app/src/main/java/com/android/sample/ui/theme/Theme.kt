@@ -46,7 +46,7 @@ private val LightColorScheme =
         )
 
 @Composable
-fun SampleAppTheme(
+fun PlateSwipeTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = false, // true to enable dynamic color when Dark theme is enabled
