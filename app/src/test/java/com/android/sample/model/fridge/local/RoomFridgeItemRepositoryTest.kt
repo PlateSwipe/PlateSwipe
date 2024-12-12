@@ -18,6 +18,7 @@ import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
+import org.mockito.kotlin.any
 import org.mockito.kotlin.verify
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -82,5 +83,62 @@ class RoomFridgeItemRepositoryTest {
         testScheduler.advanceUntilIdle()
         verify(mockFridgeItemDAO).getAll()
         assert(onFailure)
+      }
+
+  @Test
+  fun testUpdateFridgeItem() =
+      runTest(testDispatcher) {
+        val id = fridgeItem.id
+        val currentExpirationDate = LocalDate.of(2021, 10, 10)
+        val newExpirationDate = fridgeItem.expirationDate
+        val newQuantity = 5
+
+        `when`(mockFridgeItemDAO.getByIdAndExpirationDate(id, newExpirationDate))
+            .thenReturn(fridgeItem.toFridgeItemEntity())
+        `when`(mockFridgeItemDAO.update(any())).thenAnswer { it.arguments[0] }
+        `when`(mockFridgeItemDAO.delete(any())).thenAnswer { it.arguments[0] }
+        roomFridgeItemRepository.updateFridgeItem(
+            id, currentExpirationDate, newExpirationDate, newQuantity)
+        testScheduler.advanceUntilIdle()
+        verify(mockFridgeItemDAO).update(any())
+        verify(mockFridgeItemDAO).delete(any())
+      }
+
+  @Test
+  fun testUpdateFridgeItemI() =
+      runTest(testDispatcher) {
+        val id = fridgeItem.id
+        val currentExpirationDate = LocalDate.of(2021, 10, 10)
+        val newExpirationDate = fridgeItem.expirationDate
+        val newQuantity = 5
+
+        `when`(mockFridgeItemDAO.updateExpirationDate(any(), any(), any(), any())).thenAnswer {
+          it.arguments[0]
+        }
+        roomFridgeItemRepository.updateFridgeItem(
+            id, currentExpirationDate, newExpirationDate, newQuantity)
+        testScheduler.advanceUntilIdle()
+        verify(mockFridgeItemDAO).updateExpirationDate(any(), any(), any(), any())
+      }
+
+  @Test
+  fun testUpsetFridge() =
+      runTest(testDispatcher) {
+        `when`(mockFridgeItemDAO.getByIdAndExpirationDate(any(), any()))
+            .thenReturn(fridgeItem.toFridgeItemEntity())
+        `when`(mockFridgeItemDAO.update(any())).thenAnswer { it.arguments[0] }
+        roomFridgeItemRepository.upsertFridgeItem(fridgeItem)
+        testScheduler.advanceUntilIdle()
+        verify(mockFridgeItemDAO).update(any())
+      }
+
+  @Test
+  fun testUpsetFridgeI() =
+      runTest(testDispatcher) {
+        `when`(mockFridgeItemDAO.getByIdAndExpirationDate(any(), any())).thenReturn(null)
+        `when`(mockFridgeItemDAO.insert(any())).thenAnswer { it.arguments[0] }
+        roomFridgeItemRepository.upsertFridgeItem(fridgeItem)
+        testScheduler.advanceUntilIdle()
+        verify(mockFridgeItemDAO).insert(any())
       }
 }

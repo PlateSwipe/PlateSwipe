@@ -39,7 +39,9 @@ class RoomFridgeItemRepository(
   ) {
     CoroutineScope(dispatcher).launch {
       val existingItem = fridgeItemDao.getByIdAndExpirationDate(id, newExpirationDate)
+
       if (existingItem != null) {
+        println("existingItem: $existingItem")
         val updatedItem = existingItem.copy(quantity = newQuantity + existingItem.quantity)
         fridgeItemDao.update(updatedItem)
         fridgeItemDao.delete(FridgeItemEntity(id, newQuantity, currentExpirationDate))

@@ -72,4 +72,32 @@ class FridgeItemRoomDBTest {
     val allFridgeItems = fridgeItemDao.getAll()
     assert(allFridgeItems.isNotEmpty())
   }
+
+  @Test
+  @Throws(Exception::class)
+  fun testupdateExpirationDate() = runBlocking {
+    fridgeItemDao.insert(fridgeItem)
+    fridgeItemDao.updateExpirationDate(
+        fridgeItem.id, fridgeItem.expirationDate, LocalDate.of(2021, 10, 11), 10)
+    val list = fridgeItemDao.getAll()
+    assert(list[0].quantity == 10)
+    assert(list[0].expirationDate == LocalDate.of(2021, 10, 11))
+  }
+
+  @Test
+  @Throws(Exception::class)
+  fun testUpdate() = runBlocking {
+    fridgeItemDao.insert(fridgeItem)
+    fridgeItemDao.update(fridgeItem.copy(quantity = 10))
+    val list = fridgeItemDao.getAll()
+    assert(list[0].quantity == 10)
+  }
+
+  @Test
+  @Throws(Exception::class)
+  fun testGetByIdAndExpirationDate() = runBlocking {
+    fridgeItemDao.insert(fridgeItem)
+    val result = fridgeItemDao.getByIdAndExpirationDate(fridgeItem.id, fridgeItem.expirationDate)
+    assert(result == fridgeItem)
+  }
 }

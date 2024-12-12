@@ -147,8 +147,6 @@ class UserViewModel(
       user.fridge.forEach { fridgeItem ->
         Log.d(LOG_TAG, "Fetching ingredient from database: $fridgeItem")
         fetchIngredientInFridge(fridgeItem)
-        // Update the local database with the fridge items
-        // fridgeItemRepository.add(fridgeItem)
       }
     } else {
       fridgeItemRepository.getAll(

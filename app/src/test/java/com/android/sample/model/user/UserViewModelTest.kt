@@ -980,13 +980,6 @@ class UserViewModelTest {
   }
 
   @Test
-  fun handleFridgeItemTestWithConnection() {
-    userViewModel.handleFridgeItem(true, userExample)
-    verify(mockFridgeItemRepository, times(userExample.fridge.size)).add(any())
-    verify(mockIngredientRepository, times(userExample.fridge.size)).get(any(), any(), any())
-  }
-
-  @Test
   fun handleFridgeItemTestWithoutConnection() {
     `when`(mockFridgeItemRepository.getAll(any(), any())).thenAnswer { invocation ->
       val onSuccess: (List<FridgeItem>) -> Unit = invocation.getArgument(0)
@@ -1066,18 +1059,6 @@ class UserViewModelTest {
   }
 
   @Test
-  fun updateLocalFridgeItemTestCallUpdate() {
-    userViewModel.updateLocalFridgeItem(fridgeItemExample)
-    verify(mockFridgeItemRepository).add(any())
-  }
-
-  @Test
-  fun updateLocalFridgeItemTestCallDelete() {
-    userViewModel.updateLocalFridgeItem(fridgeItemExample.copy(quantity = 0))
-    verify(mockFridgeItemRepository).delete(any())
-  }
-
-  @Test
   fun deleteLocalFridgeItemTest() {
     userViewModel.deleteLocalFridgeItem(fridgeItemExample)
     verify(mockFridgeItemRepository).delete(any())
@@ -1132,5 +1113,24 @@ class UserViewModelTest {
     userViewModel.updateIngredientFromFridge(testIngredients[0], 0, LocalDate.of(2000, 1, 2), false)
 
     assert(userViewModel.fridgeItems.value.isEmpty())
+  }
+
+  @Test
+  fun testUpdateLocalTestItem() {
+    val id = "1"
+    val quantity = 1
+    val newExpirationDate = LocalDate.of(2000, 1, 2)
+    val oldExpirationDate = LocalDate.of(2000, 1, 1)
+    userViewModel.updateLocalFridgeItem(id, quantity, newExpirationDate, oldExpirationDate)
+    // `when`(mockFridgeItemRepository.updateFridgeItem(id, oldExpirationDate,
+    // newExpirationDate,quantity))
+    verify(mockFridgeItemRepository)
+        .updateFridgeItem(id, newExpirationDate, oldExpirationDate, quantity)
+  }
+
+  @Test
+  fun testAddLocalFridgeItem() {
+    userViewModel.addLocalFridgeItem(fridgeItemExample)
+    verify(mockFridgeItemRepository).upsertFridgeItem(fridgeItemExample)
   }
 }
