@@ -594,15 +594,15 @@ class EndToEndTest {
         }
 
         composable(Screen.CREATE_RECIPE_SEARCH_INGREDIENTS) {
-            val createRecipePopUpInformation: PopUpInformation =
-                PopUpInformation(
-                    title = stringResource(R.string.pop_up_title),
-                    confirmationText = stringResource(R.string.pop_up_description),
-                    confirmationButtonText = stringResource(R.string.pop_up_confirmation),
-                    onConfirmation = {
-                        ingredientViewModel.addIngredient(it)
-                        navigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
-                    })
+          val createRecipePopUpInformation: PopUpInformation =
+              PopUpInformation(
+                  title = stringResource(R.string.pop_up_title),
+                  confirmationText = stringResource(R.string.pop_up_description),
+                  confirmationButtonText = stringResource(R.string.pop_up_confirmation),
+                  onConfirmation = {
+                    ingredientViewModel.addIngredient(it)
+                    navigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
+                  })
 
           SearchIngredientScreen(
               navigationActions = navigationActions,

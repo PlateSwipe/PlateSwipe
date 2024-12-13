@@ -66,14 +66,14 @@ class SearchIngredientScreenTest {
     searchIngredientViewModel = IngredientViewModel(aggregatorIngredientRepository, ImageDownload())
 
     val popUpInformation: PopUpInformation =
-      PopUpInformation(
-        title = "Title",
-        confirmationText = "Description",
-        confirmationButtonText = "Confirm",
-        onConfirmation = {
-          mockNavigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
-          searchIngredientViewModel.addIngredient(it)
-        })
+        PopUpInformation(
+            title = "Title",
+            confirmationText = "Description",
+            confirmationButtonText = "Confirm",
+            onConfirmation = {
+              mockNavigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
+              searchIngredientViewModel.addIngredient(it)
+            })
 
     composeTestRule.setContent {
       SearchIngredientScreen(
