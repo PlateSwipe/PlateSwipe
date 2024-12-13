@@ -34,10 +34,22 @@ class CategoryIngredientSearchViewModel(private val repository: CategoryIngredie
   override val isFetchingByName: StateFlow<Boolean>
     get() = _isSearching
 
+  /**
+   * Do not call this method from a CategoryIngredientSearchViewModel It's only made to search by
+   * name
+   *
+   * @param barCode is unused in this case
+   * @throws NotImplementedError
+   */
   override fun fetchIngredient(barCode: Long) {
     throw NotImplementedError()
   }
 
+  /**
+   * Because there is no searching by barcode in this ViewModel, this method is not implemented
+   *
+   * @throws NotImplementedError
+   */
   override fun clearIngredient() {
     throw NotImplementedError()
   }
