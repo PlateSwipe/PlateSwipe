@@ -37,7 +37,7 @@ class LocalCategoryIngredientRepositoryTest {
           foundFirst = it[0]
         },
         onFailure = { exception = it },
-      20)
+        20)
 
     // we need to check these after otherwise we have
     // no guarantee that the callbacks have been called
