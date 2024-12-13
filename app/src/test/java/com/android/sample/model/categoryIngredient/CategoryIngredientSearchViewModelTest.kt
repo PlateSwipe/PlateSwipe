@@ -1,6 +1,7 @@
 package com.android.sample.model.categoryIngredient
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.android.sample.ui.utils.testIngredients
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -85,5 +86,35 @@ class CategoryIngredientSearchViewModelTest {
     onFailureCapture.value.invoke(Exception("Error searching for category"))
 
     categoryIngredientSearchViewModel.searchingIngredientList.value.let { assert(it.isEmpty()) }
+  }
+
+  @Test
+  fun testClearSearchingIngredientList() {
+    val query = "beef"
+    // add an ingredient to check if it is cleared
+    categoryIngredientSearchViewModel.fetchIngredientByName(query)
+
+    onSuccessCollectionCapture.value.invoke(listOf(query))
+
+    categoryIngredientSearchViewModel.searchingIngredientList.value.let { assert(it.isNotEmpty()) }
+
+    // clear the list
+    categoryIngredientSearchViewModel.clearSearchingIngredientList()
+    categoryIngredientSearchViewModel.searchingIngredientList.value.let { assert(it.isEmpty()) }
+  }
+
+  @Test
+  fun testHandlingIngredientList() {
+    val testIngredient = testIngredients[0]
+
+    categoryIngredientSearchViewModel.ingredientList.value.let { assert(it.isEmpty()) }
+
+    categoryIngredientSearchViewModel.addIngredient(testIngredient)
+
+    categoryIngredientSearchViewModel.ingredientList.value.let { assert(it.isNotEmpty()) }
+
+    categoryIngredientSearchViewModel.clearIngredientList()
+
+    categoryIngredientSearchViewModel.ingredientList.value.let { assert(it.isEmpty()) }
   }
 }
