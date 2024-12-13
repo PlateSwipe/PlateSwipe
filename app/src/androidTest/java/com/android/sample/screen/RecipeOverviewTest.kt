@@ -377,7 +377,7 @@ class RecipeOverviewTest {
         .assertCountEquals(allInstructionsLength)
         .apply {
           for (i in 0 until displayedinstructionsLength) {
-            get(i).assertIsDisplayed()
+            get(i).performScrollTo().assertIsDisplayed()
           }
         }
 
@@ -386,7 +386,7 @@ class RecipeOverviewTest {
         .assertCountEquals(allInstructionsLength)
         .apply {
           for (i in 0 until displayedinstructionsLength) {
-            get(i).assertIsDisplayed()
+            get(i).performScrollTo().assertIsDisplayed()
           }
         }
     composeTestRule
@@ -394,7 +394,7 @@ class RecipeOverviewTest {
         .assertCountEquals(allInstructionsLength)
         .apply {
           for (i in 0 until displayedinstructionsLength) {
-            get(i).assertIsDisplayed()
+            get(i).performScrollTo().assertIsDisplayed()
           }
         }
     composeTestRule
@@ -402,7 +402,7 @@ class RecipeOverviewTest {
         .assertCountEquals(allInstructionsLength)
         .apply {
           for (i in 0 until displayedinstructionsLength) {
-            get(i).assertIsDisplayed()
+            get(i).performScrollTo().assertIsDisplayed()
           }
         }
     composeTestRule
@@ -410,7 +410,7 @@ class RecipeOverviewTest {
         .assertCountEquals(allInstructionsLength)
         .apply {
           for (i in 0 until displayedinstructionsLength) {
-            get(i).assertIsDisplayed()
+            get(i).performScrollTo().assertIsDisplayed()
           }
         }
   }
