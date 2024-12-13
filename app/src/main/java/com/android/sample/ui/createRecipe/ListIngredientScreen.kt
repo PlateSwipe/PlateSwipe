@@ -82,7 +82,6 @@ import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.Typography
 import com.android.sample.ui.theme.lightCream
 import com.android.sample.ui.theme.lightGrayInput
-import com.android.sample.ui.utils.IngredientImageBox
 import com.android.sample.ui.utils.PlateSwipeScaffold
 import kotlinx.coroutines.delay
 
@@ -309,7 +308,8 @@ private fun IngredientPreview(
         Row(
             modifier = Modifier.fillMaxWidth().padding(PADDING_8.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center) {             Column(
+            horizontalArrangement = Arrangement.Center) {
+              Column(
                   verticalArrangement = Arrangement.SpaceBetween,
                   horizontalAlignment = Alignment.Start,
                   modifier =

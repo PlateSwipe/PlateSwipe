@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -198,14 +197,13 @@ private fun SearchDisplay(
           Icon(
               painter = painterResource(id = R.drawable.scanner),
               modifier =
-              Modifier.weight(ICON_SCANNER_WEIGHT)
-                  .size(ICON_SCANNER_SIZE.dp)
-                  .testTag(SCANNER_ICON)
-                  .clickable { onFinished() },
+                  Modifier.weight(ICON_SCANNER_WEIGHT)
+                      .size(ICON_SCANNER_SIZE.dp)
+                      .testTag(SCANNER_ICON)
+                      .clickable { onFinished() },
               tint = MaterialTheme.colorScheme.onPrimary,
               contentDescription = stringResource(R.string.scanner_instruction))
         }
-
       }
 }
 

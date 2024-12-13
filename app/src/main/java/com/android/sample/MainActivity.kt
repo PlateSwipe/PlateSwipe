@@ -80,7 +80,7 @@ fun PlateSwipeApp() {
       viewModel(factory = RecipesViewModel.provideFactory(context = context))
   val ingredientViewModel: IngredientViewModel =
       viewModel(factory = IngredientViewModel.provideFactory(context = context))
-    val categoryIngredientSearchViewModel: CategoryIngredientSearchViewModel =
+  val categoryIngredientSearchViewModel: CategoryIngredientSearchViewModel =
       viewModel(factory = CategoryIngredientSearchViewModel.provideFactory(context))
 
   val userViewModel: UserViewModel =
@@ -119,14 +119,15 @@ fun PlateSwipeApp() {
         FridgeScreen(navigationActions, userViewModel, ingredientViewModel)
       }
       composable(Screen.FRIDGE_SEARCH_ITEM) {
-          val fridgeIngredientSearchPopUpInformation: PopUpInformation = PopUpInformation(
-              title = stringResource(R.string.pop_up_title_fridge),
-              confirmationText = stringResource(R.string.pop_up_description_fridge),
-              confirmationButtonText = stringResource(R.string.pop_up_confirmation_fridge),
-              onConfirmation = {
-                userViewModel.addIngredient(it)
-                navigationActions.navigateTo(Screen.FRIDGE_EDIT)
-              })
+        val fridgeIngredientSearchPopUpInformation: PopUpInformation =
+            PopUpInformation(
+                title = stringResource(R.string.pop_up_title_fridge),
+                confirmationText = stringResource(R.string.pop_up_description_fridge),
+                confirmationButtonText = stringResource(R.string.pop_up_confirmation_fridge),
+                onConfirmation = {
+                  userViewModel.addIngredient(it)
+                  navigationActions.navigateTo(Screen.FRIDGE_EDIT)
+                })
 
         SearchIngredientScreen(
             navigationActions = navigationActions,
@@ -200,14 +201,15 @@ fun PlateSwipeApp() {
       }
 
       composable(Screen.CREATE_RECIPE_SEARCH_INGREDIENTS) {
-          val createRecipePopUpInformation: PopUpInformation = PopUpInformation(
-              title = stringResource(R.string.pop_up_title),
-              confirmationText = stringResource(R.string.pop_up_description),
-              confirmationButtonText = stringResource(R.string.pop_up_confirmation),
-              onConfirmation = {
-                ingredientViewModel.addIngredient(it)
-                navigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
-              })
+        val createRecipePopUpInformation: PopUpInformation =
+            PopUpInformation(
+                title = stringResource(R.string.pop_up_title),
+                confirmationText = stringResource(R.string.pop_up_description),
+                confirmationButtonText = stringResource(R.string.pop_up_confirmation),
+                onConfirmation = {
+                  ingredientViewModel.addIngredient(it)
+                  navigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
+                })
 
         SearchIngredientScreen(
             navigationActions = navigationActions,
