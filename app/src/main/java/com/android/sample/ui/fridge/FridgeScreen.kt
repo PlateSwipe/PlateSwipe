@@ -75,7 +75,7 @@ import com.android.sample.resources.C.Dimension.PADDING_32
 import com.android.sample.resources.C.Dimension.PADDING_4
 import com.android.sample.resources.C.Dimension.PADDING_8
 import com.android.sample.resources.C.Tag.BASE_PADDING
-import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_THUMBNAIL_URL
+import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_SMALL_URL
 import com.android.sample.resources.C.TestTag.Fridge.GREEN
 import com.android.sample.resources.C.TestTag.Fridge.ORANGE
 import com.android.sample.resources.C.TestTag.Fridge.RED
@@ -108,11 +108,7 @@ import kotlin.math.max
  * @see IngredientViewModel: Class to handle ingredient view model
  */
 @Composable
-fun FridgeScreen(
-    navigationActions: NavigationActions,
-    userViewModel: UserViewModel,
-    ingredientViewModel: IngredientViewModel
-) {
+fun FridgeScreen(navigationActions: NavigationActions, userViewModel: UserViewModel) {
 
   PlateSwipeScaffold(
       navigationActions = navigationActions,
@@ -122,8 +118,7 @@ fun FridgeScreen(
         if (listFridgeItem.isEmpty()) {
           EmptyFridge(paddingValues, navigationActions, userViewModel)
         } else {
-          FridgeContent(
-              navigationActions, paddingValues, userViewModel, listFridgeItem, ingredientViewModel)
+          FridgeContent(navigationActions, paddingValues, userViewModel, listFridgeItem)
         }
       },
       showBackArrow = true)
@@ -202,8 +197,7 @@ private fun FridgeContent(
     navigationActions: NavigationActions,
     paddingValues: PaddingValues,
     userViewModel: UserViewModel,
-    listFridgeItem: List<Pair<FridgeItem, Ingredient>>,
-    ingredientViewModel: IngredientViewModel
+    listFridgeItem: List<Pair<FridgeItem, Ingredient>>
 ) {
   Column(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
     Column(
@@ -258,21 +252,13 @@ private fun FridgeContent(
                                 // First card in the chunk
                                 chunk.getOrNull(0)?.let { card1 ->
                                   ItemCard(
-                                      Modifier.weight(1f),
-                                      card1,
-                                      userViewModel,
-                                      navigationActions,
-                                      ingredientViewModel)
+                                      Modifier.weight(1f), card1, userViewModel, navigationActions)
                                 }
 
                                 // Second card in the chunk (if present)
                                 chunk.getOrNull(1)?.let { card2 ->
                                   ItemCard(
-                                      Modifier.weight(1f),
-                                      card2,
-                                      userViewModel,
-                                      navigationActions,
-                                      ingredientViewModel)
+                                      Modifier.weight(1f), card2, userViewModel, navigationActions)
                                 }
 
                                 // Add an empty spacer if only one card exists in the chunk
@@ -316,8 +302,7 @@ private fun ItemCard(
     modifier: Modifier,
     card: Pair<FridgeItem, Ingredient>,
     userViewModel: UserViewModel,
-    navigationActions: NavigationActions,
-    ingredientViewModel: IngredientViewModel
+    navigationActions: NavigationActions
 ) {
 
   val confirmationRemoveDisplay = remember { mutableStateOf(false) }
@@ -374,7 +359,7 @@ private fun ItemCard(
                       Image(
                           painter =
                               rememberAsyncImagePainter(
-                                  model = card.second.images[PRODUCT_FRONT_IMAGE_THUMBNAIL_URL]),
+                                  model = card.second.images[PRODUCT_FRONT_IMAGE_SMALL_URL]),
                           contentDescription = stringResource(R.string.recipe_image),
                           modifier =
                               Modifier.size(INGREDIENT_IMAGE_SIZE.dp)
