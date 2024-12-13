@@ -52,14 +52,14 @@ import com.android.sample.ui.recipeOverview.RecipeOverview
 import com.android.sample.ui.searchIngredient.PopUpInformation
 import com.android.sample.ui.searchIngredient.SearchIngredientScreen
 import com.android.sample.ui.swipePage.SwipePage
-import com.android.sample.ui.theme.SampleAppTheme
+import com.android.sample.ui.theme.PlateSwipeTheme
 import com.android.sample.utils.NetworkUtils
 
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContent {
-      SampleAppTheme {
+      PlateSwipeTheme {
         Surface(
             modifier = Modifier.fillMaxSize().semantics { testTag = C.Tag.main_screen_container },
             color = MaterialTheme.colorScheme.background) {
@@ -115,7 +115,9 @@ fun PlateSwipeApp() {
         startDestination = Screen.FRIDGE,
         route = Route.FRIDGE,
     ) {
-      composable(Screen.FRIDGE) { FridgeScreen(navigationActions, userViewModel) }
+      composable(Screen.FRIDGE) {
+        FridgeScreen(navigationActions, userViewModel, ingredientViewModel)
+      }
       composable(Screen.FRIDGE_SEARCH_ITEM) {
           val fridgeIngredientSearchPopUpInformation: PopUpInformation = PopUpInformation(
               title = stringResource(R.string.pop_up_title_fridge),
@@ -132,7 +134,9 @@ fun PlateSwipeApp() {
             popUpInformation = fridgeIngredientSearchPopUpInformation,
             onSearchFinished = { navigationActions.navigateTo(Screen.FRIDGE_SCAN_CODE_BAR) })
       }
-      composable(Screen.FRIDGE_EDIT) { EditFridgeItemScreen(navigationActions, userViewModel) }
+      composable(Screen.FRIDGE_EDIT) {
+        EditFridgeItemScreen(navigationActions, userViewModel, ingredientViewModel)
+      }
       composable(Screen.FRIDGE_SCAN_CODE_BAR) {
         CameraScanCodeBarScreen(
             navigationActions = navigationActions,

@@ -17,6 +17,8 @@ import com.android.sample.resources.C.Tag.INGREDIENT_VIEWMODEL_LOG_TAG
 import com.android.sample.resources.C.Tag.INGR_DOWNLOAD_ERROR_DOWNLOAD_IMAGE
 import com.android.sample.resources.C.Tag.INGR_DOWNLOAD_ERROR_GET_ING
 import com.android.sample.resources.C.Tag.INGR_DOWNLOAD_ERROR_NULL_POINTER
+import com.android.sample.resources.C.Tag.INGR_DOWNLOAD_FAILED
+import com.android.sample.resources.C.Tag.INGR_DOWNLOAD_SUCCESS
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.storage
@@ -82,6 +84,7 @@ class IngredientViewModel(
         { _isFetchingByBarcode.value = true },
         { _isFetchingByBarcode.value = false })
   }
+
   /**
    * Add bar code ingredient
    *
@@ -165,6 +168,7 @@ class IngredientViewModel(
         dispatcher,
         onSuccess = {
           repository.addDownload(ingredient)
+          Log.d(INGREDIENT_VIEWMODEL_LOG_TAG, "Ingredient downloaded successfully : $ingredient")
           onSuccess()
         },
         onFailure = {
@@ -216,13 +220,15 @@ class IngredientViewModel(
         val imageFormats = ingredient.images.keys
         val deferredUri =
             imageFormats.map { format ->
-              val fileName = ingredient.name + format
+              val fileName = ingredient.uid + format
               val url = ingredient.images[format]
               async {
                 try {
                   if (url != null) {
-                    val uri = imgDownload.downloadAndSaveImage(context, fileName, url, dispatcher)
-                    println("Image downloaded successfully for format: $format, uri: $uri")
+                    val uri = imgDownload.downloadAndSaveImage(context, url, fileName, dispatcher)
+                    Log.d(
+                        INGREDIENT_VIEWMODEL_LOG_TAG,
+                        "Image downloaded successfully for format: $format, uri: $uri")
                     format to uri!!
                   } else {
                     null
@@ -275,6 +281,30 @@ class IngredientViewModel(
           Log.e(INGREDIENT_VIEWMODEL_LOG_TAG, INGR_DOWNLOAD_ERROR_GET_ING, e)
           onFailure(e)
         })
+  }
+
+  fun updateLocalIngredient(ingredient: Ingredient, context: Context) {
+    if (ingredient.uid == null && ingredient.barCode != null) {
+      getIngredient(
+          ingredient.barCode,
+          onSuccess = { ingre ->
+            downloadIngredient(
+                ingre,
+                context,
+                Dispatchers.IO,
+                onSuccess = { Log.i(INGREDIENT_VIEWMODEL_LOG_TAG, INGR_DOWNLOAD_SUCCESS + ingre) },
+                onFailure = { Log.e(INGREDIENT_VIEWMODEL_LOG_TAG, INGR_DOWNLOAD_FAILED) })
+          },
+          onFailure = { Log.d(INGREDIENT_VIEWMODEL_LOG_TAG, INGR_DOWNLOAD_FAILED) })
+    } else {
+      // Download the Ingredient to the local database for offline use
+      downloadIngredient(
+          ingredient,
+          context,
+          Dispatchers.IO,
+          onSuccess = { Log.i(INGREDIENT_VIEWMODEL_LOG_TAG, INGR_DOWNLOAD_SUCCESS + ingredient) },
+          onFailure = { Log.e(INGREDIENT_VIEWMODEL_LOG_TAG, INGR_DOWNLOAD_FAILED) })
+    }
   }
 
   companion object {

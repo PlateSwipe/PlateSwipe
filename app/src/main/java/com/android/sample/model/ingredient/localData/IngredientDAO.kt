@@ -52,5 +52,5 @@ interface IngredientDAO {
    * @return The `IngredientEntity` object with the given barcode.
    */
   @Query("SELECT * FROM ingredient WHERE barcode = :barcode")
-  suspend fun get(barcode: Long): IngredientEntity
+  suspend fun get(barcode: Long): IngredientEntity?
 }

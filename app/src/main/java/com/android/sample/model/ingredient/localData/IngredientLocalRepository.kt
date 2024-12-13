@@ -39,5 +39,5 @@ interface IngredientLocalRepository {
    * @param onSuccess callback with the ingredient
    * @param onFailure callback with an exception
    */
-  fun get(barCode: Long, onSuccess: (Ingredient?) -> Unit, onFailure: (Exception) -> Unit)
+  fun getByBarcode(barCode: Long, onSuccess: (Ingredient?) -> Unit, onFailure: (Exception) -> Unit)
 }

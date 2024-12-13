@@ -222,6 +222,9 @@ object C {
     const val INGR_DOWNLOAD_ERROR_GET_ING = "Error getting ingredient"
     const val INGR_DOWNLOAD_ERROR_DOWNLOAD_IMAGE = "Error downloading image"
     const val INGR_DOWNLOAD_ERROR_NULL_POINTER = "Error getting URI"
+    const val INGR_ROOM_NOT_FOUND = "Ingredient not found in Room"
+    const val INGR_DOWNLOAD_FAILED = "Ingredient download failed"
+    const val INGR_DOWNLOAD_SUCCESS = "Ingredient downloaded: "
 
     // OpenFoodFactsIngredientRepository
     const val OPEN_FOOD_FACTS_URL = "https://world.openfoodfacts.org"
@@ -272,6 +275,12 @@ object C {
     const val INGR_DB_COL_NAME_CATEGORIES = "categories"
     const val INGR_DB_COL_NAME_IMAGES = "images"
     const val INGR_DB_COL_NAME_TABLE = "ingredient"
+
+    const val FRIDGE_DB_COL_NAME_TABLE = "fridge"
+    const val FRIDGE_DB_COL_NAME_ID = "id"
+    const val FRIDGE_DB_COL_NAME_QTY = "quantity"
+    const val FRIDGE_DB_COL_NAME_EXPIRATION_DATE = "expirationDate"
+    const val FRIDGE_DATABASE_NAME = "fridge_database"
     // EXCEPTION MESSAGES
     const val LIMIT_MUST_BE_POSITIVE_MESSAGE = "Limit must be greater than 0"
     const val UNSUPPORTED_MESSAGE = "Operation not supported"

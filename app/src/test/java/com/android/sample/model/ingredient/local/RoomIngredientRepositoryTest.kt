@@ -80,9 +80,45 @@ class RoomIngredientRepositoryTest {
   @Test
   fun getCallIngredientDAO() =
       runTest(testDispatcher) {
-        roomIngredientRepository.get(ingredient.barCode!!, { assert(true) }, { fail("Fail") })
+        roomIngredientRepository.getByBarcode(
+            ingredient.barCode!!, { assert(true) }, { fail("Fail") })
         `when`(mockIngredientDAO.get(ingredient.barCode!!)).thenReturn(ingredient.toEntity())
         testScheduler.advanceUntilIdle()
         verify(mockIngredientDAO).get(ingredient.barCode!!)
+      }
+
+  @Test
+  fun getByBarcodeError() =
+      runTest(testDispatcher) {
+        var exc = false
+        val exception = Exception()
+        roomIngredientRepository.getByBarcode(
+            ingredient.barCode!!,
+            { fail("Fail") },
+            {
+              exc = true
+              assert(true)
+            })
+        `when`(mockIngredientDAO.get(ingredient.barCode!!)).thenThrow(RuntimeException(exception))
+        testScheduler.advanceUntilIdle()
+        verify(mockIngredientDAO).get(ingredient.barCode!!)
+        assert(exc)
+      }
+
+  @Test
+  fun getByBarcodeToIngredientError() =
+      runTest(testDispatcher) {
+        var exc = false
+        roomIngredientRepository.getByBarcode(
+            ingredient.barCode!!,
+            { fail("Fail") },
+            {
+              exc = true
+              assert(true)
+            })
+        `when`(mockIngredientDAO.get(ingredient.barCode!!)).thenReturn(null)
+        testScheduler.advanceUntilIdle()
+        verify(mockIngredientDAO).get(ingredient.barCode!!)
+        assert(exc)
       }
 }
