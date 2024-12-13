@@ -125,6 +125,7 @@ fun PlateSwipeApp() {
                 confirmationText = stringResource(R.string.pop_up_description_fridge),
                 confirmationButtonText = stringResource(R.string.pop_up_confirmation_fridge),
                 onConfirmation = {
+                  userViewModel.clearIngredientList()
                   userViewModel.addIngredient(it)
                   navigationActions.navigateTo(Screen.FRIDGE_EDIT)
                 })
