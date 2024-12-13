@@ -14,25 +14,21 @@ class CategoryIngredientSearchViewModel(private val repository: CategoryIngredie
     ViewModel(), SearchIngredientViewModel {
 
   private val _ingredient = MutableStateFlow<Pair<Ingredient?, String?>>(Pair(null, null))
-  override val ingredient: StateFlow<Pair<Ingredient?, String?>>
-    get() = _ingredient
+  override val ingredient: StateFlow<Pair<Ingredient?, String?>> = _ingredient
 
   private val _isFetchingByBarcode = MutableStateFlow(false)
-  override val isFetchingByBarcode: StateFlow<Boolean>
-    get() = _isFetchingByBarcode
+  override val isFetchingByBarcode: StateFlow<Boolean> = _isFetchingByBarcode
 
   private val _ingredientList = MutableStateFlow<List<Pair<Ingredient, String?>>>(emptyList())
-  override val ingredientList: StateFlow<List<Pair<Ingredient, String?>>>
-    get() = _ingredientList
+  override val ingredientList: StateFlow<List<Pair<Ingredient, String?>>> = _ingredientList
 
   private val _searchingIngredientList =
       MutableStateFlow<List<Pair<Ingredient, String?>>>(emptyList())
-  override val searchingIngredientList: StateFlow<List<Pair<Ingredient, String?>>>
-    get() = _searchingIngredientList
+  override val searchingIngredientList: StateFlow<List<Pair<Ingredient, String?>>> =
+      _searchingIngredientList
 
   private val _isSearching = MutableStateFlow(false)
-  override val isFetchingByName: StateFlow<Boolean>
-    get() = _isSearching
+  override val isFetchingByName: StateFlow<Boolean> = _isSearching
 
   /**
    * Do not call this method from a CategoryIngredientSearchViewModel It's only made to search by
