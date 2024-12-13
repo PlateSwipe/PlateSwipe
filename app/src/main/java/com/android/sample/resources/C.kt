@@ -418,7 +418,6 @@ object C {
     const val PADDING_4 = 4
     const val PADDING_8 = 8
     const val PADDING_16 = 16
-    const val PADDING_24 = 24
     const val PADDING_32 = 32
 
     object SwipePage {
@@ -493,8 +492,8 @@ object C {
       const val MIN_VALUE = 1
       const val MAX_VALUE = 99
       const val COUNTER_MIN_MAX_SIZE = 38
-      const val COUNTER_TEXT_SIZE = 28
-      const val COUNTER_FONT_SIZE = 20
+      const val COUNTER_TEXT_SIZE = 24
+      const val COUNTER_FONT_SIZE = 17
       const val RECIPE_COUNTER_PADDING = 0
       const val REMOVE = "removeServings"
       const val NUMBER = "numberServings"
