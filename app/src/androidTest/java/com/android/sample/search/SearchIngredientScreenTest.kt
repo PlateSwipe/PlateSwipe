@@ -20,6 +20,7 @@ import com.android.sample.resources.C.TestTag.Utils.SEARCH_BAR
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
+import com.android.sample.ui.searchIngredient.PopUpInformation
 import com.android.sample.ui.searchIngredient.SearchIngredientScreen
 import com.android.sample.ui.utils.testIngredients
 import org.junit.Assert.assertEquals
@@ -64,17 +65,21 @@ class SearchIngredientScreenTest {
     }
     searchIngredientViewModel = IngredientViewModel(aggregatorIngredientRepository, ImageDownload())
 
+    val popUpInformation: PopUpInformation =
+      PopUpInformation(
+        title = "Title",
+        confirmationText = "Description",
+        confirmationButtonText = "Confirm",
+        onConfirmation = {
+          mockNavigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
+          searchIngredientViewModel.addIngredient(it)
+        })
+
     composeTestRule.setContent {
       SearchIngredientScreen(
           navigationActions = mockNavigationActions,
           searchIngredientViewModel = searchIngredientViewModel,
-          popUpTitle = "Title",
-          popUpConfirmationText = "Description",
-          popUpConfirmationButtonText = "Confirm",
-          onConfirmation = {
-            mockNavigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
-            searchIngredientViewModel.addIngredient(it)
-          },
+          popUpInformation = popUpInformation,
           onSearchFinished = { mockNavigationActions.navigateTo(Screen.CAMERA_SCAN_CODE_BAR) })
     }
   }
