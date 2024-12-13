@@ -76,8 +76,7 @@ class CategoryIngredientSearchViewModel(private val repository: CategoryIngredie
           _searchingIngredientList.value = emptyList()
           _isSearching.value = false
         },
-      20
-    )
+        20)
   }
 
   companion object {
