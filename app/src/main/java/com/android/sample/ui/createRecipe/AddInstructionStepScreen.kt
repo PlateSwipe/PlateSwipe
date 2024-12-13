@@ -2,13 +2,30 @@ package com.android.sample.ui.createRecipe
 
 import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -39,7 +56,7 @@ import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.Typography
 import com.android.sample.ui.theme.lightCream
-import com.android.sample.ui.utils.PlateSwipeAlertBox
+import com.android.sample.ui.utils.ConfirmationPopUp
 import com.android.sample.ui.utils.PlateSwipeButton
 import com.android.sample.ui.utils.PlateSwipeScaffold
 
@@ -224,18 +241,17 @@ fun AddInstructionStepContent(
         Spacer(modifier = Modifier.height(SPACE_BETWEEN_ELEMENTS.dp))
 
         if (isDeleting) {
-          PlateSwipeAlertBox(
-              popUpMessage = stringResource(R.string.u_sure_u_want_to_delete),
-              confirmMessage = stringResource(R.string.delete),
+          ConfirmationPopUp(
               onConfirm = {
                 createRecipeViewModel.deleteRecipeInstruction(
                     createRecipeViewModel.getSelectedInstruction()!!)
                 createRecipeViewModel.resetSelectedInstruction()
                 navigateAfterDelete(isEditing, navigationActions)
               },
-              dismissMessage = stringResource(R.string.cancel),
               onDismiss = { isDeleting = false },
-          )
+              titleText = stringResource(R.string.u_sure_u_want_to_delete),
+              confirmationButtonText = stringResource(R.string.delete),
+              dismissButtonText = stringResource(R.string.cancel))
         }
       }
 }

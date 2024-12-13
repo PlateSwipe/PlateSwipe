@@ -614,6 +614,11 @@ object C {
       const val BUTTON_PADDING = 0.05f
     }
 
+    object ConfirmationPopUp {
+      const val TEXT_LINE_HEIGHT = 20
+      const val TEXT_FONT_SIZE = 18
+    }
+
     object RecipeAddImageScreen {
       const val CONTENT_WIDTH = 0.8f
       const val TEXT_HEIGHT = 0.05f
@@ -648,7 +653,6 @@ object C {
       const val LOADING_COOK_WEIGHT = 1f
       const val LOADING_COOK_SIZE = 150
       const val POP_UP_ELEVATION = 4
-      const val POP_UP_CLIP = true
       const val INGREDIENT_ITEM_ELEVATION = 4
       const val INGREDIENT_ITEM_CORNER = 8
       const val INGREDIENT_ITEM_MAX_LINE = 2
@@ -670,9 +674,6 @@ object C {
     }
 
     object RecipeList {
-      const val POP_UP_ELEVATION = 4
-      const val POP_UP_CLIP = true
-      const val POP_UP_DESCRIPTION_FONT_SIZE = 16
       const val EDIT_ICON_SIZE = 24
     }
 
