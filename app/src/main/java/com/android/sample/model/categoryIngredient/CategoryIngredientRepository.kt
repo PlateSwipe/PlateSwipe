@@ -1,6 +1,6 @@
 package com.android.sample.model.categoryIngredient
 
-interface CategoryIngredientRepository {
+fun interface CategoryIngredientRepository {
 
   /**
    * Search for categories by name.
@@ -12,6 +12,6 @@ interface CategoryIngredientRepository {
       query: String,
       onSuccess: (List<String>) -> Unit,
       onFailure: (Exception) -> Unit,
-      count: Int = 10
+      count: Int
   )
 }
