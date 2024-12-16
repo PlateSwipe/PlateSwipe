@@ -14,6 +14,8 @@ import com.android.sample.resources.C
 import com.android.sample.resources.C.Tag.ERROR_NULL_IMAGE
 import com.android.sample.resources.C.Tag.RECIPE_PUBLISHED_SUCCESS_MESSAGE
 import com.android.sample.resources.C.Tag.RECIPE_PUBLISH_ERROR_MESSAGE
+import com.android.sample.resources.C.Tag.RECIPE_UPDATED_SUCCESS_MESSAGE
+import com.android.sample.resources.C.Tag.RECIPE_UPDATE_ERROR_MESSAGE
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.storage
@@ -352,79 +354,122 @@ class CreateRecipeViewModel(
   }
 
   /**
-   * Publishes the recipe to the repository.
+   * Gets the ID of the recipe.
    *
-   * This function generates a new unique ID for the recipe, sets the ID in the recipe builder, and
-   * uploads the photo associated with the recipe to the image repository. Once the image is
-   * successfully uploaded, it retrieves the image URL and sets it in the recipe builder. Finally,
-   * it adds the recipe to the repository and updates the publish status accordingly.
-   *
-   * If the photo is not set or if any error occurs during the process, it updates the publish
-   * status with the appropriate error message.
-   *
-   * @throws IllegalArgumentException if the recipe ID is blank or if the image upload fails.
+   * @return The ID of the recipe.
    */
-  fun publishRecipe(onSuccess: (Recipe) -> Unit, onFailure: (Exception) -> Unit) {
-    val newUid = repository.getNewUid()
-    recipeBuilder.setId(newUid)
+  fun getId(): String {
+    return recipeBuilder.getId()
+  }
+
+  /**
+   * Publishes a recipe to the repository, handling both creation and editing modes.
+   *
+   * For new recipes, generates a unique ID, uploads a photo if provided, and saves the recipe. For
+   * edited recipes, updates the recipe with a new photo if provided, or reuses the existing image
+   * URL. Calls `finalizeRecipePublish` to save or update the recipe in the repository.
+   *
+   * @param isEditing Whether the recipe is being edited (true) or newly created (false).
+   * @param onSuccess Callback invoked on successful publishing.
+   * @param onFailure Callback invoked on publishing failure.
+   * @throws NullPointerException If no photo is provided and no existing image URL is available.
+   */
+  fun publishRecipe(
+      isEditing: Boolean,
+      onSuccess: (Recipe) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    if (!isEditing && recipeBuilder.getId().isBlank()) {
+      val newUid = repository.getNewUid()
+      recipeBuilder.setId(newUid)
+    }
+
     try {
       if (_photo.value != null) {
-        // Upload the image to the Image Repository with Name FIRESTORE_RECIPE_IMAGE_NAME and the
-        // generated UID
+        // Upload the new image
         repoImg.uploadImage(
-            newUid,
+            recipeBuilder.getId(),
             C.Tag.FIRESTORE_RECIPE_IMAGE_NAME,
             ImageDirectoryType.RECIPE,
             _photo.value!!.asImageBitmap(),
             onSuccess = {
-              // Set the Image UID to the Builder
-              recipeBuilder.setPictureID(newUid)
-
-              // Get the Image URL from the Image Repository
+              recipeBuilder.setPictureID(recipeBuilder.getId())
               repoImg.getImageUrl(
-                  newUid,
+                  recipeBuilder.getId(),
                   C.Tag.FIRESTORE_RECIPE_IMAGE_NAME,
                   ImageDirectoryType.RECIPE,
                   onSuccess = { uri ->
-                    // Set the URL to the Builder
-                    val url = uri.toString()
-                    recipeBuilder.setUrl(url)
-
-                    try {
-                      // Build the Recipe
-                      val recipe = recipeBuilder.build()
-
-                      // Add the Recipe to the Repository
-                      repository.addRecipe(
-                          recipe,
-                          onSuccess = {
-                            onSuccess(recipe)
-                            _publishStatus.value = RECIPE_PUBLISHED_SUCCESS_MESSAGE
-                            recipeBuilder.clear()
-                          },
-                          onFailure = { exception ->
-                            _publishStatus.value =
-                                RECIPE_PUBLISH_ERROR_MESSAGE.format(exception.message)
-                            onFailure(exception)
-                          })
-                    } catch (e: IllegalArgumentException) {
-                      _publishStatus.value = e.message
-                      onFailure(e)
-                    }
+                    recipeBuilder.setUrl(uri.toString())
+                    finalizeRecipePublish(isEditing, onSuccess, onFailure)
                   },
                   onFailure = { exception ->
                     _publishStatus.value = RECIPE_PUBLISH_ERROR_MESSAGE.format(exception.message)
                   })
             },
             onFailure = { exception ->
-              // Throw an error if the image upload fails
               _publishStatus.value = RECIPE_PUBLISH_ERROR_MESSAGE.format(exception.message)
             })
+      } else if (isEditing && recipeBuilder.getUrl() != null) {
+        // Use the existing image URL in edit mode
+        finalizeRecipePublish(isEditing, onSuccess, onFailure)
       } else {
         throw NullPointerException(ERROR_NULL_IMAGE)
       }
     } catch (e: NullPointerException) {
       _publishStatus.value = e.message
+    }
+  }
+
+  /**
+   * Saves the recipe to the repository, handling both creation and editing.
+   *
+   * Builds the recipe from the recipe builder and either adds it to the repository (for new
+   * recipes) or updates it (for edited recipes). Invokes the appropriate callback on success or
+   * failure.
+   *
+   * @param isEditing Whether the recipe is being edited (true) or newly created (false).
+   * @param onSuccess Callback invoked on successful save or update.
+   * @param onFailure Callback invoked on failure.
+   * @throws IllegalArgumentException If the recipe builder fails to create a valid recipe.
+   */
+  private fun finalizeRecipePublish(
+      isEditing: Boolean,
+      onSuccess: (Recipe) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    try {
+      // Build the recipe
+      val recipe = recipeBuilder.build()
+
+      if (isEditing) {
+        // Update the existing recipe
+        repository.updateRecipe(
+            recipe,
+            onSuccess = {
+              onSuccess(recipe)
+              _publishStatus.value = RECIPE_UPDATED_SUCCESS_MESSAGE
+            },
+            onFailure = { exception ->
+              _publishStatus.value = RECIPE_UPDATE_ERROR_MESSAGE.format(exception.message)
+              onFailure(exception)
+            })
+      } else {
+        // Add the new recipe
+        repository.addRecipe(
+            recipe,
+            onSuccess = {
+              onSuccess(recipe)
+              _publishStatus.value = RECIPE_PUBLISHED_SUCCESS_MESSAGE
+              recipeBuilder.clear()
+            },
+            onFailure = { exception ->
+              _publishStatus.value = RECIPE_PUBLISH_ERROR_MESSAGE.format(exception.message)
+              onFailure(exception)
+            })
+      }
+    } catch (e: IllegalArgumentException) {
+      _publishStatus.value = e.message
+      onFailure(e)
     }
   }
 

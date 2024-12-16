@@ -6,6 +6,7 @@ import com.android.sample.resources.C.Tag.OPENFOODFACT_REPO_IMAGE_ULR_INVALID
 import com.android.sample.resources.C.Tag.OPEN_FOOD_FACTS_URL
 import com.android.sample.resources.C.Tag.PRODUCT_BRAND
 import com.android.sample.resources.C.Tag.PRODUCT_CATEGORIES
+import com.android.sample.resources.C.Tag.PRODUCT_CATEGORIES_PREFIX
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_NORMAL_URL
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_SMALL_URL
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_THUMBNAIL_URL
@@ -43,7 +44,8 @@ class OpenFoodFactsIngredientRepository(private val client: OkHttpClient) :
     val brands = json.getString(PRODUCT_BRAND) ?: null
     val barcode = json.getLong(PRODUCT_ID)
     val quantity = json.getString(PRODUCT_QUANTITY) ?: null
-    val categories = json.getString(PRODUCT_CATEGORIES).split(", ")
+    val categories = parseCategories(json)
+
     val displayNormal = json.getString(PRODUCT_FRONT_IMAGE_NORMAL_URL)
     val displayThumbnail = json.getString(PRODUCT_FRONT_IMAGE_THUMBNAIL_URL)
     val displaySmall = json.getString(PRODUCT_FRONT_IMAGE_SMALL_URL)
@@ -155,6 +157,12 @@ class OpenFoodFactsIngredientRepository(private val client: OkHttpClient) :
             })
   }
 
+  /**
+   * Parses the product name from the JSON object.
+   *
+   * @param json The JSON object corresponding to the OFF message content
+   * @return The product name for the ingredient.
+   */
   private fun parseProductName(json: JSONObject): String? {
 
     val suffixes: Array<String> = PRODUCT_NAME_OFF_SUFFIXES
@@ -172,5 +180,23 @@ class OpenFoodFactsIngredientRepository(private val client: OkHttpClient) :
     }
 
     return null
+  }
+}
+
+/**
+ * Parses the categories from the JSON object.
+ *
+ * @param json The JSON object corresponding to the OFF message content
+ * @return The list of categories for the ingredient.
+ */
+private fun parseCategories(json: JSONObject): List<String> {
+  return json.getJSONArray(PRODUCT_CATEGORIES).let { categories ->
+    (0 until categories.length()).mapNotNull { i ->
+      try {
+        categories.getString(i).removePrefix(PRODUCT_CATEGORIES_PREFIX).lowercase()
+      } catch (e: JSONException) {
+        null
+      }
+    }
   }
 }

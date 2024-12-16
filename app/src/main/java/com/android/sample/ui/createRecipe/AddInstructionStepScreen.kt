@@ -1,5 +1,6 @@
 package com.android.sample.ui.createRecipe
 
+import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -45,17 +46,19 @@ import com.android.sample.ui.utils.PlateSwipeScaffold
 @Composable
 fun AddInstructionStepScreen(
     navigationActions: NavigationActions,
-    createRecipeViewModel: CreateRecipeViewModel
+    createRecipeViewModel: CreateRecipeViewModel,
+    isEditing: Boolean = false
 ) {
   PlateSwipeScaffold(
       navigationActions = navigationActions,
-      selectedItem = Route.CREATE_RECIPE,
+      selectedItem = if (isEditing) Route.ACCOUNT else Route.CREATE_RECIPE,
       showBackArrow = true,
       content = { paddingValues ->
         AddInstructionStepContent(
             paddingValues = paddingValues,
             createRecipeViewModel = createRecipeViewModel,
-            navigationActions = navigationActions)
+            navigationActions = navigationActions,
+            isEditing = isEditing)
       })
 }
 
@@ -73,7 +76,8 @@ fun AddInstructionStepContent(
     paddingValues: PaddingValues,
     createRecipeViewModel: CreateRecipeViewModel,
     navigationActions: NavigationActions,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isEditing: Boolean
 ) {
   var stepDescription by remember {
     mutableStateOf(
@@ -212,7 +216,8 @@ fun AddInstructionStepContent(
                     selectedIcon = selectedIcon,
                     createRecipeViewModel = createRecipeViewModel,
                     navigationActions = navigationActions,
-                    setShowError = { showError = it })
+                    setShowError = { showError = it },
+                    isEditing)
               })
         }
 
@@ -226,10 +231,7 @@ fun AddInstructionStepContent(
                 createRecipeViewModel.deleteRecipeInstruction(
                     createRecipeViewModel.getSelectedInstruction()!!)
                 createRecipeViewModel.resetSelectedInstruction()
-                navigationActions.navigateToPop(
-                    Screen.CREATE_RECIPE_LIST_INSTRUCTIONS,
-                    popUpTo = Screen.CREATE_RECIPE_LIST_INGREDIENTS,
-                    inclusive = false)
+                navigateAfterDelete(isEditing, navigationActions)
               },
               dismissMessage = stringResource(R.string.cancel),
               onDismiss = { isDeleting = false },
@@ -254,7 +256,8 @@ private fun processValidInstruction(
     selectedIcon: IconType?,
     createRecipeViewModel: CreateRecipeViewModel,
     navigationActions: NavigationActions,
-    setShowError: (Boolean) -> Unit
+    setShowError: (Boolean) -> Unit,
+    isEditing: Boolean
 ) {
   if (stepDescription.isBlank()) {
     setShowError(true) // Trigger the error state if the instruction is blank
@@ -266,10 +269,7 @@ private fun processValidInstruction(
         createRecipeViewModel,
         onSuccess = {
           createRecipeViewModel.resetSelectedInstruction()
-          navigationActions.navigateToPop(
-              Screen.CREATE_RECIPE_LIST_INSTRUCTIONS,
-              popUpTo = Screen.CREATE_RECIPE_LIST_INGREDIENTS,
-              inclusive = false)
+          navigateAfterValidation(isEditing, navigationActions)
         })
   }
 }
@@ -355,4 +355,42 @@ fun confirmAndAssignStep(
             description = stepDescription, time = stepTime, iconType = selectedIcon?.iconName))
     onSuccess()
   }
+}
+
+/**
+ * Navigates to the appropriate screen after a delete action based on the editing mode.
+ *
+ * @param isEditing True if editing an existing recipe, false if creating a new one.
+ * @param navigationActions Handles the navigation logic.
+ */
+@VisibleForTesting
+internal fun navigateAfterDelete(
+    isEditing: Boolean,
+    navigationActions: NavigationActions,
+) {
+  val targetScreen =
+      if (isEditing) Screen.EDIT_RECIPE_LIST_INSTRUCTIONS
+      else Screen.CREATE_RECIPE_LIST_INSTRUCTIONS
+  val popUpToScreen =
+      if (isEditing) Screen.EDIT_CATEGORY_SCREEN else Screen.CREATE_RECIPE_LIST_INGREDIENTS
+  navigationActions.navigateToPop(targetScreen, popUpTo = popUpToScreen, inclusive = false)
+}
+
+/**
+ * Navigates to the appropriate screen after input validation based on the editing mode.
+ *
+ * @param isEditing True if editing an existing recipe, false if creating a new one.
+ * @param navigationActions Handles the navigation logic.
+ */
+@VisibleForTesting
+internal fun navigateAfterValidation(
+    isEditing: Boolean,
+    navigationActions: NavigationActions,
+) {
+  val targetScreen =
+      if (isEditing) Screen.EDIT_RECIPE_LIST_INSTRUCTIONS
+      else Screen.CREATE_RECIPE_LIST_INSTRUCTIONS
+  val popUpToScreen =
+      if (isEditing) Screen.EDIT_CATEGORY_SCREEN else Screen.CREATE_RECIPE_LIST_INGREDIENTS
+  navigationActions.navigateToPop(targetScreen, popUpTo = popUpToScreen, inclusive = false)
 }

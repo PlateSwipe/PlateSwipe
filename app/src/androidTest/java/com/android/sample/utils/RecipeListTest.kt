@@ -8,6 +8,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import com.android.sample.model.fridge.localData.FridgeItemLocalRepository
 import com.android.sample.model.image.ImageDownload
 import com.android.sample.model.ingredient.IngredientRepository
 import com.android.sample.model.recipe.Instruction
@@ -46,6 +47,7 @@ class RecipeListTest {
   private lateinit var mockFirebaseAuth: FirebaseAuth
   private lateinit var mockRecipeRepository: FirestoreRecipesRepository
   private lateinit var mockIngredientRepository: IngredientRepository
+  private lateinit var mockFridgeItemLocalRepository: FridgeItemLocalRepository
 
   private lateinit var userViewModel: UserViewModel
   private lateinit var recipesViewModel: RecipesViewModel
@@ -122,11 +124,16 @@ class RecipeListTest {
     mockFirebaseAuth = mock(FirebaseAuth::class.java)
     mockIngredientRepository = mock(IngredientRepository::class.java)
     mockRecipeRepository = FirestoreRecipesRepository(mockFirebaseFirestore)
+    mockFridgeItemLocalRepository = mock(FridgeItemLocalRepository::class.java)
     recipeRepository = mock(RecipesRepository::class.java)
 
     userViewModel =
         UserViewModel(
-            mockUserRepository, mockFirebaseAuth, mockIngredientRepository, mockRecipeRepository)
+            mockUserRepository,
+            mockFirebaseAuth,
+            mockIngredientRepository,
+            mockRecipeRepository,
+            fridgeItemRepository = mockFridgeItemLocalRepository)
     recipesViewModel = RecipesViewModel(recipeRepository, ImageDownload())
 
     `when`(mockNavigationActions.currentRoute()).thenReturn(Screen.ACCOUNT)

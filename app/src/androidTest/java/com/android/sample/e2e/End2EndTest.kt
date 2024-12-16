@@ -26,6 +26,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.sample.R
+import com.android.sample.model.fridge.localData.FridgeItemLocalRepository
 import com.android.sample.model.image.ImageDownload
 import com.android.sample.model.image.ImageRepositoryFirebase
 import com.android.sample.model.ingredient.DefaultIngredientRepository
@@ -134,6 +135,7 @@ class EndToEndTest {
   private lateinit var recipesViewModel: RecipesViewModel
   private lateinit var ingredientViewModel: IngredientViewModel
   private lateinit var mockIngredientRepository: IngredientRepository
+  private lateinit var mockFridgeItemRepository: FridgeItemLocalRepository
 
   @get:Rule val composeTestRule = createComposeRule()
 
@@ -146,6 +148,7 @@ class EndToEndTest {
     mockRepository = mock(RecipesRepository::class.java)
     mockIngredientRepository = mock(IngredientRepository::class.java)
     aggregatorIngredientRepository = mock(DefaultIngredientRepository::class.java)
+    mockFridgeItemRepository = mock(FridgeItemLocalRepository::class.java)
 
     `when`(aggregatorIngredientRepository.search(any(), any(), any(), any())).thenAnswer {
         invocation ->
@@ -167,7 +170,12 @@ class EndToEndTest {
       null
     }
 
-    userViewModel = UserViewModel(mockUserRepository, mockFirebaseAuth, mockIngredientRepository)
+    userViewModel =
+        UserViewModel(
+            mockUserRepository,
+            mockFirebaseAuth,
+            mockIngredientRepository,
+            fridgeItemRepository = mockFridgeItemRepository)
 
     val firestore = mockk<FirebaseFirestore>(relaxed = true)
     val repository = FirestoreRecipesRepository(firestore)
@@ -517,14 +525,18 @@ class EndToEndTest {
           route = Route.SWIPE,
       ) {
         composable(Screen.SWIPE) { SwipePage(navigationActions, recipesViewModel, userViewModel) }
-        composable(Screen.OVERVIEW_RECIPE) { RecipeOverview(navigationActions, recipesViewModel) }
+        composable(Screen.OVERVIEW_RECIPE) {
+          RecipeOverview(navigationActions, recipesViewModel, userViewModel)
+        }
         composable(Screen.FILTER) { FilterPage(navigationActions, recipesViewModel) }
       }
       navigation(
           startDestination = Screen.FRIDGE,
           route = Route.FRIDGE,
       ) {
-        composable(Screen.FRIDGE) { FridgeScreen(navigationActions, userViewModel) }
+        composable(Screen.FRIDGE) {
+          FridgeScreen(navigationActions, userViewModel, ingredientViewModel)
+        }
       }
       navigation(
           startDestination = Screen.SEARCH,
@@ -614,7 +626,7 @@ class EndToEndTest {
           AccountScreen(navigationActions, userViewModel, recipesViewModel, createRecipeViewModel)
         }
         composable(Screen.OVERVIEW_RECIPE_ACCOUNT) {
-          RecipeOverview(navigationActions, userViewModel)
+          RecipeOverview(navigationActions, userViewModel, userViewModel)
         }
       }
     }

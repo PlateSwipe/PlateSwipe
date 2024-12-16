@@ -69,6 +69,18 @@ object Screen {
   const val EDIT_CATEGORY_SCREEN = "Edit Category Screen"
 
   const val EDIT_RECIPE_LIST_INGREDIENTS = "Edit List Ingredients Screen"
+
+  const val EDIT_RECIPE_INGREDIENTS = "Edit Recipe Ingredients"
+
+  const val EDIT_RECIPE_SEARCH_INGREDIENTS = "Edit Search Ingredient Screen"
+
+  const val EDIT_RECIPE_ADD_INSTRUCTION = "Edit One Recipe Instruction"
+
+  const val EDIT_RECIPE_LIST_INSTRUCTIONS = "Edit List Recipe Instructions"
+
+  const val EDIT_RECIPE_TIME_PICKER = "Edit Time Picker Screen"
+
+  const val PUBLISH_EDITED_RECIPE = "Publish Edited Recipe"
 }
 
 data class TopLevelDestination(val route: String, val iconId: Int, val textId: String)

@@ -50,14 +50,14 @@ import com.android.sample.ui.recipe.SearchRecipeScreen
 import com.android.sample.ui.recipeOverview.RecipeOverview
 import com.android.sample.ui.searchIngredient.SearchIngredientScreen
 import com.android.sample.ui.swipePage.SwipePage
-import com.android.sample.ui.theme.SampleAppTheme
+import com.android.sample.ui.theme.PlateSwipeTheme
 import com.android.sample.utils.NetworkUtils
 
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContent {
-      SampleAppTheme {
+      PlateSwipeTheme {
         Surface(
             modifier = Modifier.fillMaxSize().semantics { testTag = C.Tag.main_screen_container },
             color = MaterialTheme.colorScheme.background) {
@@ -102,14 +102,18 @@ fun PlateSwipeApp() {
           OfflineScreen(navigationActions)
         }
       }
-      composable(Screen.OVERVIEW_RECIPE) { RecipeOverview(navigationActions, recipesViewModel) }
+      composable(Screen.OVERVIEW_RECIPE) {
+        RecipeOverview(navigationActions, recipesViewModel, userViewModel)
+      }
       composable(Screen.FILTER) { FilterPage(navigationActions, recipesViewModel) }
     }
     navigation(
         startDestination = Screen.FRIDGE,
         route = Route.FRIDGE,
     ) {
-      composable(Screen.FRIDGE) { FridgeScreen(navigationActions, userViewModel) }
+      composable(Screen.FRIDGE) {
+        FridgeScreen(navigationActions, userViewModel, ingredientViewModel)
+      }
       composable(Screen.FRIDGE_SEARCH_ITEM) {
         SearchIngredientScreen(
             navigationActions = navigationActions,
@@ -123,7 +127,9 @@ fun PlateSwipeApp() {
             },
             onSearchFinished = { navigationActions.navigateTo(Screen.FRIDGE_SCAN_CODE_BAR) })
       }
-      composable(Screen.FRIDGE_EDIT) { EditFridgeItemScreen(navigationActions, userViewModel) }
+      composable(Screen.FRIDGE_EDIT) {
+        EditFridgeItemScreen(navigationActions, userViewModel, ingredientViewModel)
+      }
       composable(Screen.FRIDGE_SCAN_CODE_BAR) {
         CameraScanCodeBarScreen(
             navigationActions = navigationActions,
@@ -223,7 +229,7 @@ fun PlateSwipeApp() {
         AccountScreen(navigationActions, userViewModel, recipesViewModel, createRecipeViewModel)
       }
       composable(Screen.OVERVIEW_RECIPE_ACCOUNT) {
-        RecipeOverview(navigationActions, userViewModel)
+        RecipeOverview(navigationActions, userViewModel, userViewModel)
       }
       composable(Screen.EDIT_RECIPE) {
         CreateRecipeScreen(
@@ -234,11 +240,27 @@ fun PlateSwipeApp() {
       composable(Screen.EDIT_CATEGORY_SCREEN) {
         OptionalInformationScreen(navigationActions, createRecipeViewModel, isEditing = true)
       }
-      composable(Screen.EDIT_RECIPE_LIST_INGREDIENTS) {
-        IngredientListScreen(
+      composable(Screen.EDIT_RECIPE_ADD_INSTRUCTION) {
+        AddInstructionStepScreen(
             navigationActions = navigationActions,
-            ingredientViewModel = ingredientViewModel,
-            createRecipeViewModel = createRecipeViewModel)
+            createRecipeViewModel = createRecipeViewModel,
+            true)
+      }
+      composable(Screen.EDIT_RECIPE_LIST_INSTRUCTIONS) {
+        RecipeListInstructionsScreen(
+            navigationActions = navigationActions,
+            createRecipeViewModel = createRecipeViewModel,
+            isEditing = true)
+      }
+      composable(Screen.EDIT_RECIPE_TIME_PICKER) {
+        TimePickerScreen(navigationActions, createRecipeViewModel, isEditing = true)
+      }
+      composable(Screen.PUBLISH_EDITED_RECIPE) {
+        PublishRecipeScreen(
+            navigationActions = navigationActions,
+            createRecipeViewModel = createRecipeViewModel,
+            userViewModel = userViewModel,
+            isEditing = true)
       }
       composable(Screen.EDIT_ACCOUNT) { EditAccountScreen(navigationActions, userViewModel) }
     }

@@ -1,10 +1,10 @@
 <resources>
-    <string name="app_name">SampleApp</string>
-    <string name="title_activity_main">MainActivity</string>
+    <string name="app_name">Plate Swipe</string>
+    <string name="title_activity_main">Plate Swipe</string>
     <string name="title_activity_second">SecondActivity</string>
     <string name="default_web_client_id">308109588643-14cdmrd4mgdqns8sn27i9p25cm2b0mlq.apps.googleusercontent.com</string>
     <string name="recipe_image">Recipe Image</string>
-    <string name="star_rate_description">Star rate</string>
+    <string name="fridge_ingredients_description">Fridge Ingredients description</string>
 
     <string name="plate_swipe_title">Plate Swipe</string>
 
@@ -167,6 +167,8 @@
     <string name="pop_up_title_fridge">Add to fridge?</string>
     <string name="pop_up_description_fridge">Do you want to add this ingredient to your fridge?</string>
     <string name="pop_up_confirmation_fridge">Add to fridge</string>
+    <string name="expired">Expired</string>
+
 
 
 

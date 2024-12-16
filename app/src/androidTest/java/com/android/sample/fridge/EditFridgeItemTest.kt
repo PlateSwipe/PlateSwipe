@@ -5,6 +5,10 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ApplicationProvider
+import com.android.sample.model.fridge.FridgeItem
+import com.android.sample.model.image.ImageDownload
+import com.android.sample.model.ingredient.IngredientRepository
+import com.android.sample.model.ingredient.IngredientViewModel
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.ui.fridge.EditFridgeItemScreen
 import com.android.sample.ui.navigation.NavigationActions
@@ -21,6 +25,8 @@ import org.mockito.kotlin.verify
 
 class EditFridgeItemTest {
   private lateinit var navigationActions: NavigationActions
+  private lateinit var ingredientViewModel: IngredientViewModel
+  private lateinit var mockIngredientRepository: IngredientRepository
 
   private lateinit var userViewModel: UserViewModel
   private val userName: String = "John Doe"
@@ -29,6 +35,8 @@ class EditFridgeItemTest {
 
   @Before
   fun setUp() {
+    mockIngredientRepository = mock(IngredientRepository::class.java)
+    ingredientViewModel = IngredientViewModel(mockIngredientRepository, ImageDownload())
     navigationActions = mock(NavigationActions::class.java)
     userViewModel =
         UserViewModel.provideFactory(ApplicationProvider.getApplicationContext())
@@ -39,7 +47,10 @@ class EditFridgeItemTest {
     `when`(navigationActions.currentRoute()).thenReturn(Screen.FRIDGE)
     userViewModel.addIngredient(testIngredients[0])
     composeTestRule.setContent {
-      EditFridgeItemScreen(navigationActions = navigationActions, userViewModel = userViewModel)
+      EditFridgeItemScreen(
+          navigationActions = navigationActions,
+          userViewModel = userViewModel,
+          ingredientViewModel = ingredientViewModel)
     }
   }
 
@@ -58,7 +69,7 @@ class EditFridgeItemTest {
     composeTestRule.onNodeWithText("+", useUnmergedTree = true).assertIsDisplayed()
     composeTestRule.onNodeWithText("-", useUnmergedTree = true).assertIsDisplayed()
     composeTestRule.onNodeWithText("1", useUnmergedTree = true).assertIsDisplayed()
-    composeTestRule.onNodeWithText("Save", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithText("Add", useUnmergedTree = true).assertIsDisplayed()
   }
 
   @Test
@@ -121,12 +132,29 @@ class EditFridgeItemTest {
   }
 
   @Test
-  fun testSaveButtonNavigation() {
-    composeTestRule
-        .onNodeWithText("Save", useUnmergedTree = true)
-        .assertIsDisplayed()
-        .performClick()
+  fun testAddButtonNavigation() {
+    composeTestRule.onNodeWithText("Add", useUnmergedTree = true).assertIsDisplayed().performClick()
     assert(userViewModel.ingredientList.value.map { it.first }.contains(testIngredients[0]))
     verify(navigationActions).navigateTo(Screen.FRIDGE)
+  }
+
+  @Test
+  fun editModeDisplay() {
+    userViewModel.setEditingIngredient(
+        Pair(FridgeItem("1", 1, LocalDate.of(2000, 1, 1)), testIngredients[0]))
+    composeTestRule
+        .onNodeWithText(testIngredients[0].name, useUnmergedTree = true)
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithText("Quantity (x ${testIngredients[0].quantity}):", useUnmergedTree = true)
+        .assertIsDisplayed()
+    composeTestRule.onNodeWithText("Expiration Date:", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule
+        .onNodeWithText(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
+        .assertIsDisplayed()
+    composeTestRule.onNodeWithText("+", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithText("-", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithText("1", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithText("Save", useUnmergedTree = true).assertIsDisplayed()
   }
 }

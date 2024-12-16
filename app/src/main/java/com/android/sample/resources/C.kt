@@ -40,7 +40,6 @@ object C {
       const val INITIAL_IS_CLICKING = false
       const val INITIAL_DISPLAY_LIKE = false
       const val INITIAL_DISPLAY_DISLIKE = false
-      const val RATE_VALUE = "4.5"
       const val HAT = "Chef's hat"
       const val LIKE = "Like"
       const val DISLIKE = "Dislike"
@@ -74,17 +73,12 @@ object C {
 
     object Filter {
       const val MIN_SHOULD_NOT_BE_GREATER_THAN_MAX = "min should not be greater than max"
-      const val NEW_MIN_SHOULD_NOT_EXCEED_MAX = "newMin should not exceed max"
-      const val NEW_MAX_SHOULD_NOT_BE_NEGATIVE = "newMax should not be negative"
-      const val NEW_MIN_SHOULD_NOT_BE_NEGATIVE = "newMin should not be negative"
       const val MIN_SHOULD_NOT_BE_NEGATIVE = "Min should not be negative or different from -1"
       const val MAX_SHOULD_NOT_BE_NEGATIVE = "Max should not be negative or different from -1"
       const val MIN_BORN_SHOULD_NOT_BE_NEGATIVE =
           "Born min should not be negative or different from -1"
       const val MAX_BORN_SHOULD_NOT_BE_NEGATIVE =
           "Born max should not be negative or different from -1"
-      const val NEW_MIN_AND_NEW_MAX_SHOULD_BE_WITHIN_RANGE =
-          "newMin and newMax should be within range"
       const val UNINITIALIZED_BORN_VALUE = -1f
     }
 
@@ -228,6 +222,9 @@ object C {
     const val INGR_DOWNLOAD_ERROR_GET_ING = "Error getting ingredient"
     const val INGR_DOWNLOAD_ERROR_DOWNLOAD_IMAGE = "Error downloading image"
     const val INGR_DOWNLOAD_ERROR_NULL_POINTER = "Error getting URI"
+    const val INGR_ROOM_NOT_FOUND = "Ingredient not found in Room"
+    const val INGR_DOWNLOAD_FAILED = "Ingredient download failed"
+    const val INGR_DOWNLOAD_SUCCESS = "Ingredient downloaded: "
 
     // OpenFoodFactsIngredientRepository
     const val OPEN_FOOD_FACTS_URL = "https://world.openfoodfacts.org"
@@ -235,7 +232,7 @@ object C {
     const val PRODUCT_BRAND = "brands"
     const val PRODUCT_ID = "_id"
     const val PRODUCT_QUANTITY = "quantity"
-    const val PRODUCT_CATEGORIES = "categories"
+    const val PRODUCT_CATEGORIES = "categories_tags"
     const val PRODUCT_FRONT_IMAGE_NORMAL_URL = "image_front_url"
     const val PRODUCT_FRONT_IMAGE_NORMAL = "display_normal"
     const val PRODUCT_FRONT_IMAGE_THUMBNAIL_URL = "image_front_thumb_url"
@@ -268,6 +265,7 @@ object C {
             "_bg",
             "_ro",
             "_el")
+    const val PRODUCT_CATEGORIES_PREFIX = "en:"
 
     const val INGR_DB_COL_NAME_UID = "uid"
     const val INGR_DB_COL_NAME_BARCODE = "barcode"
@@ -277,6 +275,12 @@ object C {
     const val INGR_DB_COL_NAME_CATEGORIES = "categories"
     const val INGR_DB_COL_NAME_IMAGES = "images"
     const val INGR_DB_COL_NAME_TABLE = "ingredient"
+
+    const val FRIDGE_DB_COL_NAME_TABLE = "fridge"
+    const val FRIDGE_DB_COL_NAME_ID = "id"
+    const val FRIDGE_DB_COL_NAME_QTY = "quantity"
+    const val FRIDGE_DB_COL_NAME_EXPIRATION_DATE = "expirationDate"
+    const val FRIDGE_DATABASE_NAME = "fridge_database"
     // EXCEPTION MESSAGES
     const val LIMIT_MUST_BE_POSITIVE_MESSAGE = "Limit must be greater than 0"
     const val UNSUPPORTED_MESSAGE = "Operation not supported"
@@ -345,6 +349,8 @@ object C {
     // CreateRecipeViewModel
     const val RECIPE_PUBLISHED_SUCCESS_MESSAGE = "Recipe published successfully!"
     const val RECIPE_PUBLISH_ERROR_MESSAGE = "Failed to publish recipe: %1\$s"
+    const val RECIPE_UPDATED_SUCCESS_MESSAGE = "Recipe updated successfully!"
+    const val RECIPE_UPDATE_ERROR_MESSAGE = "Failed to update recipe: %1\$s"
 
     // Offline Screen
     const val TEST_TAG_OFFLINE_SCREEN_TITLE = "offlineScreenTitle"
@@ -442,8 +448,8 @@ object C {
       const val SCREEN_MIN = 0f
       const val DESCRIPTION_WEIGHT = 3f
       const val DESCRIPTION_FONT_SIZE = 20
-      const val STAR_WEIGHT = 1f
-      const val STAR_SIZE = 24
+      const val FRIDGE_INGREDIENTS_WEIGHT = 1f
+      const val FRIDGE_INGREDIENT_SIZE = 24
       const val LIKE_DISLIKE_ANIMATION_PADDING_RATE = 2f / 11f
       const val LIKE_DISLIKE_ANIMATION_ICON_SCALE_MIN = 0.8f
       const val LIKE_DISLIKE_ANIMATION_ICON_SCALE_MAX = 1.5f
@@ -469,6 +475,7 @@ object C {
       const val COUNTER_ROUND_CORNER = 25
       const val OVERVIEW_RECIPE_STAR_SIZE = 24
       const val OVERVIEW_TIME_DISPLAY_RATE = 1f / 12f
+      const val OVERVIEW_FRIDGE_INGREDIENT_THUMBNAIL_SIZE = 25
       const val OVERVIEW_CHECKBOX_SIZE = 15
       const val OVERVIEW_RECIPE_ROUND = 5
       const val OVERVIEW_RECIPE_ROUND_ROW = 10
@@ -692,12 +699,6 @@ object C {
       const val MIN_PROPORTION = 0.1f
       const val BAR_HEIGHT = 10
       const val BAR_ROUND_CORNER = 4
-      const val DIALOG_CORNER = 12
-      const val DIALOG_ELEVATION = 8
-      const val DIALOG_TITLE_LINE_HEIGHT = 28
-      const val DIALOG_TITLE_FONT_SIZE = 22
-      const val DIALOG_TITLE_ALPHA = 0.6f
-      const val MIN_VALUE = 0
       const val ITEM_ALPHA = 0.7f
       const val INGREDIENT_MAX_LINE = 3
       const val INGREDIENT_NAME_FONT_SIZE = 16
@@ -707,6 +708,7 @@ object C {
       const val CARD_ELEVATION = 4
       const val EMPTY_FRIDGE_FONT_SIZE = 40
       const val NUMBER_CARD_IN_A_ROW = 2
+      const val BORDER_FRIDGE_WIDTH = 2.5
     }
   }
 
@@ -742,15 +744,14 @@ object C {
       const val FILTER = "filter"
       const val FILTER_ROW = "filterRow"
       const val TIME_RANGE_CHIP = "timeRangeChip"
-      const val PRICE_RANGE_CHIP = "priceRangeChip"
       const val DIFFICULTY_CHIP = "difficultyChip"
       const val CATEGORY_CHIP = "categoryChip"
       const val RECIPE_IMAGE_1 = "recipeImage1"
       const val RECIPE_IMAGE_2 = "recipeImage2"
       const val DRAGGABLE_ITEM = "draggableItem"
       const val RECIPE_NAME = "recipeName"
-      const val RECIPE_STAR = "recipeStar"
-      const val RECIPE_RATE = "recipeRate"
+      const val RECIPE_FRIDGE_INGREDIENTS = "recipeFridgeIngredients"
+      const val RECIPE_FRIDGE_INGREDIENTS_TEXT = "recipeFridgeIngredientsText"
       const val VIEW_RECIPE_BUTTON = "viewRecipeButton"
       const val DELETE_SUFFIX = "Delete"
     }
@@ -759,9 +760,8 @@ object C {
       const val DRAGGABLE_ITEM = "draggableItem"
       const val RECIPE_IMAGE = "recipeImage"
       const val RECIPE_TITLE = "recipeTitle"
-      const val RATING_ICON = "ratingIcon"
-      const val RECIPE_STAR = "recipeStar"
-      const val RECIPE_RATE = "recipeRate"
+      const val RECIPE_FRIDGE_INGREDIENTS = "recipeFridgeIngredients"
+      const val RECIPE_FRIDGE_INGREDIENTS_TEXT = "recipeFridgeIngredientsText"
       const val INGREDIENTS_VIEW = "ingredientsView"
       const val INSTRUCTIONS_VIEW = "instructionsView"
       const val INGREDIENT_CHECKBOX = "checkboxIngredient"
@@ -881,7 +881,6 @@ object C {
 
     object FilterPage {
       const val TEST_TAG_TIME_RANGE_SLIDER = "timeRangeSlider"
-      const val TEST_TAG_PRICE_RANGE_SLIDER = "priceRangeSlider"
       const val TEST_TAG_DIFFICULTY = "difficulty"
       const val TEST_TAG_CATEGORY = "category"
     }

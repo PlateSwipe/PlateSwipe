@@ -65,6 +65,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.rememberAsyncImagePainter
 import com.android.sample.R
 import com.android.sample.model.filter.Difficulty
 import com.android.sample.model.recipe.Recipe
@@ -91,6 +92,8 @@ import com.android.sample.resources.C.Dimension.SwipePage.DISPLAY_CARD_FRONT
 import com.android.sample.resources.C.Dimension.SwipePage.DURATION_ICON_SCALE
 import com.android.sample.resources.C.Dimension.SwipePage.FILTER_ICON_SIZE
 import com.android.sample.resources.C.Dimension.SwipePage.FILTER_ICON_WEIGHT
+import com.android.sample.resources.C.Dimension.SwipePage.FRIDGE_INGREDIENTS_WEIGHT
+import com.android.sample.resources.C.Dimension.SwipePage.FRIDGE_INGREDIENT_SIZE
 import com.android.sample.resources.C.Dimension.SwipePage.INITIAL_OFFSET_X
 import com.android.sample.resources.C.Dimension.SwipePage.LIKE_DISLIKE_ANIMATION_ICON_SCALE_MAX
 import com.android.sample.resources.C.Dimension.SwipePage.LIKE_DISLIKE_ANIMATION_ICON_SCALE_MIN
@@ -105,8 +108,6 @@ import com.android.sample.resources.C.Dimension.SwipePage.SCALE_MAX_TIME
 import com.android.sample.resources.C.Dimension.SwipePage.SCALE_UP
 import com.android.sample.resources.C.Dimension.SwipePage.SCALE_UP_TIME
 import com.android.sample.resources.C.Dimension.SwipePage.SCREEN_MIN
-import com.android.sample.resources.C.Dimension.SwipePage.STAR_SIZE
-import com.android.sample.resources.C.Dimension.SwipePage.STAR_WEIGHT
 import com.android.sample.resources.C.Dimension.SwipePage.SWIPE_THRESHOLD
 import com.android.sample.resources.C.Dimension.SwipePage.THRESHOLD_INTENSITY
 import com.android.sample.resources.C.Tag.Filter.UNINITIALIZED_BORN_VALUE
@@ -123,7 +124,6 @@ import com.android.sample.resources.C.Tag.SwipePage.INITIAL_IS_CLICKING
 import com.android.sample.resources.C.Tag.SwipePage.INITIAL_RETRIEVE_NEXT_RECIPE
 import com.android.sample.resources.C.Tag.SwipePage.LIKE
 import com.android.sample.resources.C.Tag.SwipePage.OPACITY_LABEL
-import com.android.sample.resources.C.Tag.SwipePage.RATE_VALUE
 import com.android.sample.resources.C.Tag.SwipePage.SCALE_LABEL
 import com.android.sample.resources.C.TestTag.SwipePage.CATEGORY_CHIP
 import com.android.sample.resources.C.TestTag.SwipePage.DELETE_SUFFIX
@@ -131,11 +131,11 @@ import com.android.sample.resources.C.TestTag.SwipePage.DIFFICULTY_CHIP
 import com.android.sample.resources.C.TestTag.SwipePage.DRAGGABLE_ITEM
 import com.android.sample.resources.C.TestTag.SwipePage.FILTER
 import com.android.sample.resources.C.TestTag.SwipePage.FILTER_ROW
+import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_FRIDGE_INGREDIENTS
+import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_FRIDGE_INGREDIENTS_TEXT
 import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_IMAGE_1
 import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_IMAGE_2
 import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_NAME
-import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_RATE
-import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_STAR
 import com.android.sample.resources.C.TestTag.SwipePage.TIME_RANGE_CHIP
 import com.android.sample.resources.C.TestTag.SwipePage.VIEW_RECIPE_BUTTON
 import com.android.sample.ui.navigation.NavigationActions
@@ -145,11 +145,8 @@ import com.android.sample.ui.theme.graySlate
 import com.android.sample.ui.theme.greenSwipe
 import com.android.sample.ui.theme.jungleGreen
 import com.android.sample.ui.theme.redSwipe
-import com.android.sample.ui.theme.starColor
 import com.android.sample.ui.utils.PlateSwipeScaffold
-import com.android.sample.ui.utils.RecipeImage
 import com.android.sample.ui.utils.Tag
-import com.android.sample.utils.NetworkUtils
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -213,8 +210,15 @@ fun RecipeDisplay(
   val currentRecipe by recipesViewModel.currentRecipe.collectAsState()
   val nextRecipe by recipesViewModel.nextRecipe.collectAsState()
   val filter by recipesViewModel.filter.collectAsState()
-  val context = LocalContext.current
-  val isConnected = NetworkUtils().isNetworkAvailable(context)
+
+  val fridgeIngredients =
+      if (currentRecipe != null) {
+        userViewModel.mapFridgeIngredientsToCategories(
+            currentRecipe!!.ingredientsAndMeasurements.map { it.first })
+      } else {
+        null
+      }
+
   Box(
       modifier =
           Modifier.fillMaxSize()
@@ -374,12 +378,16 @@ fun RecipeDisplay(
                       Column(
                           modifier =
                               Modifier.background(color = MaterialTheme.colorScheme.onPrimary)) {
-                            RecipeImage(
-                                displayCard1,
-                                currentRecipe,
-                                nextRecipe,
-                                isConnected,
-                                RECIPE_IMAGE_1)
+                            Image(
+                                painter =
+                                    rememberAsyncImagePainter(
+                                        model =
+                                            if (displayCard1) currentRecipe?.url
+                                            else nextRecipe?.url),
+                                contentDescription = stringResource(R.string.recipe_image),
+                                modifier = Modifier.fillMaxSize().testTag(RECIPE_IMAGE_1),
+                                contentScale = ContentScale.Crop,
+                            )
                           }
                     }
 
@@ -395,18 +403,26 @@ fun RecipeDisplay(
                       Column(
                           modifier =
                               Modifier.background(color = MaterialTheme.colorScheme.onPrimary)) {
-                            RecipeImage(
-                                displayCard1,
-                                currentRecipe,
-                                nextRecipe,
-                                isConnected,
-                                RECIPE_IMAGE_2)
+                            Image(
+                                painter =
+                                    rememberAsyncImagePainter(
+                                        model =
+                                            if (!displayCard1) currentRecipe?.url
+                                            else nextRecipe?.url),
+                                contentDescription = stringResource(R.string.recipe_image),
+                                modifier = Modifier.fillMaxSize().testTag(RECIPE_IMAGE_2),
+                                contentScale = ContentScale.Crop,
+                            )
                           }
                     }
               }
 
               // Image Description
-              ImageDescription(currentRecipe?.name ?: LOADING, currentRecipe?.category ?: LOADING)
+              ImageDescription(
+                  currentRecipe?.name ?: LOADING,
+                  currentRecipe?.category ?: LOADING,
+                  currentRecipe?.ingredientsAndMeasurements?.count() ?: 0,
+                  fridgeIngredients?.count() ?: 0)
 
               Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                 ShawRecipeButton(navigationActions)
@@ -639,9 +655,15 @@ private fun getBackgroundColor(offsetX: Float, screenWidth: Float): Brush {
  *
  * @param name - Recipe Name
  * @param tag - Recipe Tag
+ * @param fridgeIngredientsCount: The number of ingredients in the recipe that are in the fridge
  */
 @Composable
-private fun ImageDescription(name: String, tag: String) {
+private fun ImageDescription(
+    name: String,
+    tag: String,
+    ingredientsCount: Int,
+    fridgeIngredientsCount: Int
+) {
   Column(modifier = Modifier.padding(PADDING.dp)) {
     Row(
         modifier =
@@ -660,35 +682,39 @@ private fun ImageDescription(name: String, tag: String) {
               maxLines = 1,
               overflow = TextOverflow.Ellipsis)
 
-          // Row for the star and rate text
-          Row(
-              horizontalArrangement = Arrangement.End,
-              verticalAlignment = Alignment.CenterVertically,
-              modifier =
-                  Modifier.weight(STAR_WEIGHT) // Takes 1 part of the space for icon and rating
-              ) {
-                // Star Icon (fixed size, no weight needed)
-                Icon(
-                    painter = painterResource(R.drawable.star_rate),
-                    contentDescription = stringResource(R.string.star_rate_description),
-                    modifier =
-                        Modifier.testTag(RECIPE_STAR)
-                            .size(STAR_SIZE.dp), // Use fixed size for the icon
-                    tint = starColor)
+          if (fridgeIngredientsCount > 0) {
 
-                Spacer(
-                    modifier =
-                        Modifier.width(SMALL_PADDING.dp)) // Add spacing between icon and rate
+            // Row for the ingredients from the recipe that are in the fridge
+            Row(
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier =
+                    Modifier.weight(
+                        FRIDGE_INGREDIENTS_WEIGHT) // Takes 1 part of the space for icon and rating
+                ) {
+                  // Fridge Icon (fixed size, no weight needed)
+                  Icon(
+                      painter = painterResource(R.drawable.fridgeicon),
+                      contentDescription = stringResource(R.string.fridge_ingredients_description),
+                      modifier =
+                          Modifier.testTag(RECIPE_FRIDGE_INGREDIENTS)
+                              .size(FRIDGE_INGREDIENT_SIZE.dp), // Use fixed size for the icon
+                      tint = MaterialTheme.colorScheme.onTertiary)
 
-                // Rating Text
-                Text(
-                    text = RATE_VALUE,
-                    modifier = Modifier.testTag(RECIPE_RATE),
-                    style =
-                        MaterialTheme.typography.bodyLarge.copy(
-                            fontSize = DESCRIPTION_FONT_SIZE.sp),
-                    color = MaterialTheme.colorScheme.onSecondary)
-              }
+                  Spacer(
+                      modifier =
+                          Modifier.width(SMALL_PADDING.dp)) // Add spacing between icon and rate
+
+                  // Fridge Text
+                  Text(
+                      text = "$fridgeIngredientsCount/$ingredientsCount",
+                      modifier = Modifier.testTag(RECIPE_FRIDGE_INGREDIENTS_TEXT),
+                      style =
+                          MaterialTheme.typography.bodyLarge.copy(
+                              fontSize = DESCRIPTION_FONT_SIZE.sp),
+                      color = MaterialTheme.colorScheme.onSecondary)
+                }
+          }
         }
 
     Spacer(modifier = Modifier.padding((SMALL_PADDING / 4).dp))

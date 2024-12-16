@@ -56,8 +56,9 @@ class AggregatorIngredientRepositoryTest {
   fun setUp() {
     MockitoAnnotations.openMocks(this)
 
+    `when`(mockFirestoreIngredientRepository.getNewUid()).thenReturn("1")
     whenever(mockImageRepository.urlToBitmap(any())).thenReturn(bitmap)
-
+    `when`(mockFirestoreIngredientRepository.getNewUid()).thenReturn("1")
     doNothing()
         .`when`(mockFirestoreIngredientRepository)
         .get(any(), capture(onSuccessSingleCapture), capture(onFailureCapture))

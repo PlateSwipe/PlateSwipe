@@ -3,6 +3,7 @@ package com.android.sample.ui.fridge
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,39 +15,34 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.zIndex
 import coil.compose.rememberAsyncImagePainter
 import com.android.sample.R
@@ -55,17 +51,12 @@ import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.ingredient.IngredientViewModel
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C.Dimension.CameraScanCodeBarScreen.INGREDIENT_DISPLAY_IMAGE_BORDER_RADIUS
-import com.android.sample.resources.C.Dimension.Counter.MAX_VALUE
 import com.android.sample.resources.C.Dimension.CreateRecipeListInstructionsScreen.CARD_BORDER_ROUND
 import com.android.sample.resources.C.Dimension.FridgeScreen.ALL_BAR
 import com.android.sample.resources.C.Dimension.FridgeScreen.BAR_HEIGHT
 import com.android.sample.resources.C.Dimension.FridgeScreen.BAR_ROUND_CORNER
+import com.android.sample.resources.C.Dimension.FridgeScreen.BORDER_FRIDGE_WIDTH
 import com.android.sample.resources.C.Dimension.FridgeScreen.CARD_ELEVATION
-import com.android.sample.resources.C.Dimension.FridgeScreen.DIALOG_CORNER
-import com.android.sample.resources.C.Dimension.FridgeScreen.DIALOG_ELEVATION
-import com.android.sample.resources.C.Dimension.FridgeScreen.DIALOG_TITLE_ALPHA
-import com.android.sample.resources.C.Dimension.FridgeScreen.DIALOG_TITLE_FONT_SIZE
-import com.android.sample.resources.C.Dimension.FridgeScreen.DIALOG_TITLE_LINE_HEIGHT
 import com.android.sample.resources.C.Dimension.FridgeScreen.EDIT_ICON_SIZE
 import com.android.sample.resources.C.Dimension.FridgeScreen.EMPTY_FRIDGE_FONT_SIZE
 import com.android.sample.resources.C.Dimension.FridgeScreen.FRIDGE_TAG_CORNER
@@ -77,7 +68,7 @@ import com.android.sample.resources.C.Dimension.FridgeScreen.MAX_ORANGE_DAY
 import com.android.sample.resources.C.Dimension.FridgeScreen.MAX_PROPORTION
 import com.android.sample.resources.C.Dimension.FridgeScreen.MIN_ORANGE_DAY
 import com.android.sample.resources.C.Dimension.FridgeScreen.MIN_PROPORTION
-import com.android.sample.resources.C.Dimension.FridgeScreen.MIN_VALUE
+import com.android.sample.resources.C.Dimension.FridgeScreen.NUMBER_CARD_IN_A_ROW
 import com.android.sample.resources.C.Dimension.FridgeScreen.TITLE_FONT_SIZE
 import com.android.sample.resources.C.Dimension.PADDING_16
 import com.android.sample.resources.C.Dimension.PADDING_32
@@ -93,14 +84,13 @@ import com.android.sample.ui.createRecipe.ChefImage
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.firebrickRed
+import com.android.sample.ui.theme.grayBorder
 import com.android.sample.ui.theme.jungleGreen
 import com.android.sample.ui.theme.orangeExpirationBar
-import com.android.sample.ui.theme.tagBackground
-import com.android.sample.ui.utils.Counter
+import com.android.sample.ui.utils.ConfirmationPopUp
 import com.android.sample.ui.utils.PlateSwipeButton
 import com.android.sample.ui.utils.PlateSwipeScaffold
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import kotlin.math.max
 
@@ -118,7 +108,11 @@ import kotlin.math.max
  * @see IngredientViewModel: Class to handle ingredient view model
  */
 @Composable
-fun FridgeScreen(navigationActions: NavigationActions, userViewModel: UserViewModel) {
+fun FridgeScreen(
+    navigationActions: NavigationActions,
+    userViewModel: UserViewModel,
+    ingredientViewModel: IngredientViewModel
+) {
 
   PlateSwipeScaffold(
       navigationActions = navigationActions,
@@ -128,7 +122,8 @@ fun FridgeScreen(navigationActions: NavigationActions, userViewModel: UserViewMo
         if (listFridgeItem.isEmpty()) {
           EmptyFridge(paddingValues, navigationActions, userViewModel)
         } else {
-          FridgeContent(navigationActions, paddingValues, userViewModel, listFridgeItem)
+          FridgeContent(
+              navigationActions, paddingValues, userViewModel, listFridgeItem, ingredientViewModel)
         }
       },
       showBackArrow = true)
@@ -207,7 +202,8 @@ private fun FridgeContent(
     navigationActions: NavigationActions,
     paddingValues: PaddingValues,
     userViewModel: UserViewModel,
-    listFridgeItem: List<Pair<FridgeItem, Ingredient>>
+    listFridgeItem: List<Pair<FridgeItem, Ingredient>>,
+    ingredientViewModel: IngredientViewModel
 ) {
   Column(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
     Column(
@@ -236,35 +232,58 @@ private fun FridgeContent(
                     color = MaterialTheme.colorScheme.onPrimary)
               }
 
-          // Lazy Column to display the fridge items
-          LazyColumn(modifier = Modifier.fillMaxSize()) {
-            item {
-              listFridgeItem
-                  .sortedBy { it.first.expirationDate }
-                  .chunked(2)
-                  .forEach { chunk ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center // Distribute cards evenly
-                        ) {
-                          // First card in the chunk
-                          chunk.getOrNull(0)?.let { card1 ->
-                            ItemCard(Modifier.weight(1f), card1, userViewModel)
-                          }
+          // Card that represents the fridge
+          Card(
+              modifier =
+                  Modifier.fillMaxSize()
+                      .padding(PADDING_16.dp)
+                      .border(
+                          width = BORDER_FRIDGE_WIDTH.dp,
+                          color = grayBorder,
+                          shape = RoundedCornerShape(CARD_BORDER_ROUND.dp)),
+              shape = RoundedCornerShape(CARD_BORDER_ROUND.dp),
+              elevation = CardDefaults.cardElevation(defaultElevation = CARD_ELEVATION.dp),
+              colors = CardDefaults.cardColors(MaterialTheme.colorScheme.secondary)) {
+                // Lazy Column to display the fridge items
+                LazyColumn(modifier = Modifier.fillMaxSize().background(Color.Transparent)) {
+                  item {
+                    listFridgeItem
+                        .sortedBy { it.first.expirationDate }
+                        .chunked(NUMBER_CARD_IN_A_ROW)
+                        .forEach { chunk ->
+                          Row(
+                              modifier = Modifier.fillMaxWidth(),
+                              horizontalArrangement = Arrangement.Center // Distribute cards evenly
+                              ) {
+                                // First card in the chunk
+                                chunk.getOrNull(0)?.let { card1 ->
+                                  ItemCard(
+                                      Modifier.weight(1f),
+                                      card1,
+                                      userViewModel,
+                                      navigationActions,
+                                      ingredientViewModel)
+                                }
 
-                          // Second card in the chunk (if present)
-                          chunk.getOrNull(1)?.let { card2 ->
-                            ItemCard(Modifier.weight(1f), card2, userViewModel)
-                          }
+                                // Second card in the chunk (if present)
+                                chunk.getOrNull(1)?.let { card2 ->
+                                  ItemCard(
+                                      Modifier.weight(1f),
+                                      card2,
+                                      userViewModel,
+                                      navigationActions,
+                                      ingredientViewModel)
+                                }
 
-                          // Add an empty spacer if only one card exists in the chunk
-                          if (chunk.size == 1) {
-                            Spacer(modifier = Modifier.weight(1f).padding(PADDING_16.dp))
-                          }
+                                // Add an empty spacer if only one card exists in the chunk
+                                if (chunk.size == 1) {
+                                  Spacer(modifier = Modifier.weight(1f).padding(PADDING_16.dp))
+                                }
+                              }
                         }
                   }
-            }
-          }
+                }
+              }
         }
     // button to add ingredient
     Row(
@@ -296,24 +315,30 @@ private fun FridgeContent(
 private fun ItemCard(
     modifier: Modifier,
     card: Pair<FridgeItem, Ingredient>,
-    userViewModel: UserViewModel
+    userViewModel: UserViewModel,
+    navigationActions: NavigationActions,
+    ingredientViewModel: IngredientViewModel
 ) {
-  var showEditDialog by remember { mutableStateOf(false) }
-  var updatedQuantity by remember { mutableIntStateOf(card.first.quantity) }
 
+  val confirmationRemoveDisplay = remember { mutableStateOf(false) }
   Column(
       modifier = modifier.padding(PADDING_8.dp),
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.Center) {
         Card(
             modifier = Modifier.padding(PADDING_8.dp),
-            colors = CardDefaults.cardColors(MaterialTheme.colorScheme.secondary),
+            colors = CardDefaults.cardColors(Color.White),
             shape = RoundedCornerShape(CARD_BORDER_ROUND.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = CARD_ELEVATION.dp)) {
               Box(modifier = Modifier.fillMaxSize()) {
                 // Pencil Icon - Positioned at Top Right
                 IconButton(
-                    onClick = { showEditDialog = true },
+                    onClick = {
+                      userViewModel.setEditingIngredient(card)
+                      userViewModel.clearIngredientList()
+                      userViewModel.addIngredient(card.second)
+                      navigationActions.navigateTo(Screen.FRIDGE_EDIT)
+                    },
                     modifier =
                         Modifier.align(Alignment.TopEnd)
                             .padding(PADDING_8.dp)
@@ -322,13 +347,27 @@ private fun ItemCard(
                   Icon(
                       imageVector = Icons.Default.Edit,
                       contentDescription = "Edit ${card.second.name} Quantity",
-                      tint = MaterialTheme.colorScheme.onSecondary,
+                      tint = MaterialTheme.colorScheme.onTertiary,
                   )
                 }
 
+                IconButton(
+                    onClick = { confirmationRemoveDisplay.value = true },
+                    modifier =
+                        Modifier.align(Alignment.TopStart)
+                            .padding(PADDING_8.dp)
+                            .size(EDIT_ICON_SIZE.dp)) {
+                      Icon(
+                          painter = painterResource(R.drawable.close),
+                          contentDescription =
+                              "Remove ${card.second.name} that expired ${card.first.expirationDate} from fridge",
+                          tint = MaterialTheme.colorScheme.error,
+                      )
+                    }
+
                 // Column to display the image, quantity, and expiration bar
                 Column(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.fillMaxSize().padding(vertical = PADDING_8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally) {
                       Spacer(Modifier.size(EDIT_ICON_SIZE.dp).padding(PADDING_8.dp))
 
@@ -352,7 +391,7 @@ private fun ItemCard(
                               Modifier.padding(
                                       PADDING_8.dp, PADDING_8.dp, PADDING_8.dp, PADDING_8.dp)
                                   .background(
-                                      color = tagBackground,
+                                      color = MaterialTheme.colorScheme.onTertiaryContainer,
                                       shape = RoundedCornerShape(FRIDGE_TAG_CORNER.dp)),
                           verticalAlignment = Alignment.CenterVertically,
                           horizontalArrangement = Arrangement.Center) {
@@ -362,8 +401,7 @@ private fun ItemCard(
                                         horizontal = PADDING_16.dp, vertical = PADDING_4.dp),
                                 text = "${card.first.quantity} x ${card.second.quantity}",
                                 fontSize = 14.sp,
-                                color = Color.White // Text color
-                                )
+                                color = Color.White)
                           }
 
                       ExpirationBar(
@@ -372,125 +410,29 @@ private fun ItemCard(
                     }
               }
             }
-        Text(
-            modifier = Modifier.padding(vertical = (PADDING_4 / 2).dp, horizontal = PADDING_8.dp),
-            text = card.second.name,
-            style = MaterialTheme.typography.titleMedium,
-            fontSize = INGREDIENT_NAME_FONT_SIZE.sp,
-            color = MaterialTheme.colorScheme.onPrimary,
-            maxLines = INGREDIENT_MAX_LINE,
-            overflow = TextOverflow.Ellipsis)
-
-        val formattedDate =
-            card.first.expirationDate.format(
-                DateTimeFormatter.ofPattern(stringResource(R.string.date_pattern)))
-
-        Text(
-            modifier = Modifier.padding(vertical = (PADDING_4 / 2).dp, horizontal = PADDING_8.dp),
-            text = formattedDate,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onPrimary.copy(alpha = ITEM_ALPHA))
-
-        // Edit Quantity Popup Dialog
-        if (showEditDialog) {
-          UpdateQuantityDialog(
-              fridgeIngredientPair = card,
-              updatedQuantity = updatedQuantity,
-              hiddeEditDialog = { showEditDialog = false },
-              setUpdatedQuantity = { updatedQuantity = it },
-              userViewModel = userViewModel)
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+          Text(
+              modifier = Modifier.padding(horizontal = PADDING_16.dp),
+              text = card.second.name,
+              style = MaterialTheme.typography.titleMedium,
+              fontSize = INGREDIENT_NAME_FONT_SIZE.sp,
+              color = MaterialTheme.colorScheme.onPrimary,
+              maxLines = INGREDIENT_MAX_LINE,
+              overflow = TextOverflow.Ellipsis)
         }
       }
-}
 
-/**
- * Update Quantity Dialog
- *
- * @param fridgeIngredientPair: Pair<FridgeItem, Ingredient> object to hold the fridge item and
- *   ingredient
- * @param updatedQuantity: Int object to hold the updated quantity
- * @param hiddeEditDialog: Function to hide the edit dialog
- * @param setUpdatedQuantity: Function to set the updated quantity
- * @param userViewModel: UserViewModel object to handle user view model
- */
-@Composable
-private fun UpdateQuantityDialog(
-    fridgeIngredientPair: Pair<FridgeItem, Ingredient>,
-    updatedQuantity: Int,
-    hiddeEditDialog: () -> Unit,
-    setUpdatedQuantity: (Int) -> Unit,
-    userViewModel: UserViewModel
-) {
-  Dialog(onDismissRequest = hiddeEditDialog) {
-    Card(
-        shape = RoundedCornerShape(DIALOG_CORNER.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = DIALOG_ELEVATION.dp),
-        modifier = Modifier.padding(PADDING_16.dp),
-        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.secondary)) {
-          Column(
-              modifier = Modifier.padding(PADDING_16.dp),
-              horizontalAlignment = Alignment.CenterHorizontally) {
-                // Dialog Title with the ingredient name and quantity
-                Text(
-                    text =
-                        "Update Quantity: ${fridgeIngredientPair.second.name} (${fridgeIngredientPair.second.quantity})",
-                    style = MaterialTheme.typography.titleMedium,
-                    lineHeight = DIALOG_TITLE_LINE_HEIGHT.sp,
-                    fontSize = DIALOG_TITLE_FONT_SIZE.sp,
-                    color = MaterialTheme.colorScheme.onPrimary.copy(alpha = DIALOG_TITLE_ALPHA),
-                    modifier = Modifier.padding(bottom = PADDING_16.dp))
-                // Quantity Adjust Buttons
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = PADDING_16.dp),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically) {
-                      Counter(
-                          count = updatedQuantity,
-                          minValue = MIN_VALUE,
-                          maxValue = MAX_VALUE,
-                          onCounterChange = { setUpdatedQuantity(it) })
-                    }
-
-                Spacer(modifier = Modifier.height(PADDING_16.dp))
-
-                // Cancel Button
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-                  TextButton(
-                      onClick = {
-                        setUpdatedQuantity(fridgeIngredientPair.first.quantity)
-                        hiddeEditDialog()
-                      }) {
-                        Text(
-                            text = stringResource(R.string.cancel),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSecondaryContainer,
-                        )
-                      }
-
-                  Spacer(modifier = Modifier.width(PADDING_8.dp))
-
-                  // Save Button
-                  Button(
-                      onClick = {
-                        userViewModel.updateIngredientFromFridge(
-                            fridgeIngredientPair.second,
-                            updatedQuantity,
-                            fridgeIngredientPair.first.expirationDate,
-                            false)
-                        hiddeEditDialog()
-                      },
-                      colors =
-                          ButtonDefaults.buttonColors(
-                              MaterialTheme.colorScheme.onSecondaryContainer)) {
-                        Text(
-                            text = stringResource(R.string.save),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = Color.White,
-                        )
-                      }
-                }
-              }
-        }
+  if (confirmationRemoveDisplay.value) {
+    ConfirmationPopUp(
+        onConfirm = {
+          userViewModel.removeIngredientFromUserFridge(card.second, card.first.expirationDate)
+          userViewModel.deleteLocalFridgeItem(card.first)
+          confirmationRemoveDisplay.value = false
+        },
+        onDismiss = { confirmationRemoveDisplay.value = false },
+        titleText = "Remove ${card.second.name}",
+        confirmationText = "Are you sure you want to remove ${card.second.name} from your fridge?",
+    )
   }
 }
 
@@ -544,11 +486,29 @@ private fun ExpirationBar(expirationDate: LocalDate, testTag: String) {
                             .zIndex(1f))
               }
         }
+    if (daysLeft > 0) {
+      Text(
+          text = "${max(daysLeft, 0)} ${if (daysLeft == 1) "day" else "days"} left",
+          modifier = Modifier.padding(PADDING_8.dp),
+          style = MaterialTheme.typography.bodySmall,
+          color = MaterialTheme.colorScheme.onPrimary.copy(alpha = ITEM_ALPHA))
+    } else {
+      Row(
+          modifier = Modifier.fillMaxSize(),
+          horizontalArrangement = Arrangement.Center,
+          verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                imageVector = Icons.Default.Block,
+                contentDescription = stringResource(R.string.expired),
+                tint = MaterialTheme.colorScheme.error,
+            )
 
-    Text(
-        text = "${max(daysLeft, 0)} day left",
-        modifier = Modifier.padding(PADDING_8.dp),
-        style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = ITEM_ALPHA))
+            Text(
+                text = stringResource(R.string.expired),
+                modifier = Modifier.padding(PADDING_8.dp),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.error)
+          }
+    }
   }
 }

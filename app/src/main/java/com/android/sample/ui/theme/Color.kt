@@ -8,6 +8,7 @@ val Pink80 = Color(0xFFEFB8C8)
 
 val lightCream = Color(0xFFEFE5D8)
 val graySlate = Color(0xFF6E6E6E)
+val grayBorder = Color(0xFFCCCCCC)
 val goldenBronze = Color(0xFFD6A55C)
 
 val starColor = Color(0xFFFFAC4B)
