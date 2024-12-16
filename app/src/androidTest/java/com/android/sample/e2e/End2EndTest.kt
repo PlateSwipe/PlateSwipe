@@ -8,9 +8,9 @@ import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -83,6 +83,7 @@ import com.android.sample.ui.createRecipe.RecipeInstructionsScreen
 import com.android.sample.ui.createRecipe.RecipeListInstructionsScreen
 import com.android.sample.ui.createRecipe.TimePickerScreen
 import com.android.sample.ui.filter.FilterPage
+import com.android.sample.ui.fridge.EditFridgeItemScreen
 import com.android.sample.ui.fridge.FridgeScreen
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
@@ -96,6 +97,7 @@ import com.android.sample.ui.utils.testRecipes
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import io.mockk.mockk
+import java.time.LocalDate
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Before
@@ -152,6 +154,11 @@ class EndToEndTest {
 
     `when`(aggregatorIngredientRepository.search(any(), any(), any(), any())).thenAnswer {
         invocation ->
+      val onSuccess = invocation.getArgument<(List<Ingredient>) -> Unit>(1)
+      onSuccess(listOf(ingredient1))
+      null
+    }
+    `when`(mockIngredientRepository.search(any(), any(), any(), any())).thenAnswer { invocation ->
       val onSuccess = invocation.getArgument<(List<Ingredient>) -> Unit>(1)
       onSuccess(listOf(ingredient1))
       null
@@ -312,7 +319,7 @@ class EndToEndTest {
 
     composeTestRule.onNodeWithTag("tabAccount", useUnmergedTree = true).performClick()
 
-    composeTestRule.onNodeWithTag(RECIPE_CARD_TEST_TAG, useUnmergedTree = true).isDisplayed()
+    composeTestRule.onNodeWithTag(RECIPE_CARD_TEST_TAG, useUnmergedTree = true).assertIsDisplayed()
 
     composeTestRule
         .onNodeWithTag(RECIPE_FAVORITE_ICON_TEST_TAG, useUnmergedTree = true)
@@ -510,6 +517,66 @@ class EndToEndTest {
     io.mockk.verify { mockImageRepo.uploadImage(any(), any(), any(), any(), any(), any()) }
   }
 
+  @Test
+  fun fridgeScreenTest() {
+    composeTestRule.setContent {
+      val navController = rememberNavController()
+      FakeNavHost(navController, userViewModel, createRecipeViewModel, recipesViewModel)
+    }
+
+    composeTestRule.onNodeWithTag("tabSwipe", useUnmergedTree = true).performClick()
+
+    composeTestRule.onNodeWithTag("tabFridge", useUnmergedTree = true).performClick()
+
+    composeTestRule.onNodeWithText("Add Ingredient", useUnmergedTree = true).performClick()
+    composeTestRule.onNodeWithTag("searchBar").performTextInput("ingredient")
+
+    composeTestRule.waitUntil(
+        5000, condition = { userViewModel.searchingIngredientList.value.isNotEmpty() })
+    composeTestRule.waitForIdle()
+
+    // select the ingredient
+    composeTestRule.onNodeWithTag("ingredientItem${ingredient1.name}").performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithTag(CONFIRMATION_BUTTON).performClick()
+
+    // return to ingredient search list
+    composeTestRule.onNodeWithTag(BACK_ARROW_ICON, useUnmergedTree = true).performClick()
+
+    // select the ingredient
+    composeTestRule.onNodeWithTag("ingredientItem${ingredient1.name}").performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithTag(CONFIRMATION_BUTTON).performClick()
+
+    // add ingredient
+    composeTestRule.onNodeWithText("+", useUnmergedTree = true).performClick()
+    composeTestRule.onNodeWithText("+", useUnmergedTree = true).performClick()
+    composeTestRule.onNodeWithText("-", useUnmergedTree = true).performClick()
+
+    // confirm addition of ingredient
+    composeTestRule.onNodeWithText("Add", useUnmergedTree = true).performClick()
+
+    // edit ingredient
+    composeTestRule
+        .onNodeWithContentDescription("Edit ${ingredient1.name} Quantity", useUnmergedTree = true)
+        .performClick()
+    composeTestRule.onNodeWithText("-", useUnmergedTree = true).performClick()
+    composeTestRule.onNodeWithText("Save", useUnmergedTree = true).performClick()
+
+    // switch to another screen
+    composeTestRule.onNodeWithTag("tabAccount", useUnmergedTree = true).performClick()
+
+    // switch back to fridge screen
+    composeTestRule.onNodeWithTag("tabFridge", useUnmergedTree = true).performClick()
+
+    // delete ingredient
+    val expirationDate = LocalDate.now()
+    composeTestRule
+        .onNodeWithContentDescription(
+            "Remove ${ingredient1.name} that expired $expirationDate from fridge")
+        .performClick()
+  }
+
   @Composable
   fun FakeNavHost(
       navController: NavHostController,
@@ -536,6 +603,28 @@ class EndToEndTest {
       ) {
         composable(Screen.FRIDGE) {
           FridgeScreen(navigationActions, userViewModel, ingredientViewModel)
+        }
+        composable(Screen.FRIDGE_SEARCH_ITEM) {
+          SearchIngredientScreen(
+              navigationActions = navigationActions,
+              searchIngredientViewModel = userViewModel,
+              popUpTitle = stringResource(R.string.pop_up_title_fridge),
+              popUpConfirmationText = stringResource(R.string.pop_up_description_fridge),
+              popUpConfirmationButtonText = stringResource(R.string.pop_up_confirmation_fridge),
+              onConfirmation = {
+                userViewModel.addIngredient(it)
+                navigationActions.navigateTo(Screen.FRIDGE_EDIT)
+              },
+              onSearchFinished = { navigationActions.navigateTo(Screen.FRIDGE_SCAN_CODE_BAR) })
+        }
+        composable(Screen.FRIDGE_EDIT) {
+          EditFridgeItemScreen(navigationActions, userViewModel, ingredientViewModel)
+        }
+        composable(Screen.FRIDGE_SCAN_CODE_BAR) {
+          CameraScanCodeBarScreen(
+              navigationActions = navigationActions,
+              searchIngredientViewModel = userViewModel,
+              navigateToNextPage = { navigationActions.navigateTo(Screen.FRIDGE_EDIT) })
         }
       }
       navigation(
