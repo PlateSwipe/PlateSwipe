@@ -1,5 +1,6 @@
 package com.android.sample.model.categoryIngredient
 
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.sample.ui.utils.testIngredients
 import kotlinx.coroutines.test.runTest
@@ -116,5 +117,14 @@ class CategoryIngredientSearchViewModelTest {
     categoryIngredientSearchViewModel.clearIngredientList()
 
     categoryIngredientSearchViewModel.ingredientList.value.let { assert(it.isEmpty()) }
+  }
+
+  @Test
+  fun testFactoryCreated() {
+    val factory =
+        CategoryIngredientSearchViewModel.provideFactory(
+            ApplicationProvider.getApplicationContext())
+
+    assertNotNull(factory)
   }
 }
