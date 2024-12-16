@@ -162,7 +162,7 @@ object C {
 
     // FirestoreRecipeRepository
     object FirestoreRecipesRepository {
-      const val FIRESTORE_COLLECTION_NAME = "Recipes with new Instructions"
+      const val FIRESTORE_COLLECTION_NAME = "Recipes with difficulty and time"
       const val MAX_FIRESTORE_FETCH = 5
       const val NO_RECIPE_FOUND_MSG = "No recipes found"
       const val NOT_ENOUGH_RECIPE_MSG = "Not enough recipes found"
