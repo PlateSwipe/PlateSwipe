@@ -349,6 +349,12 @@ private fun IngredientPreview(
                                 disabledIndicatorColor = Color.Transparent,
                                 unfocusedIndicatorColor = Color.Transparent,
                             ),
+                        placeholder = {
+                          Text(
+                              text = stringResource(R.string.quantity),
+                              style = MaterialTheme.typography.bodyMedium,
+                              color = MaterialTheme.colorScheme.onPrimary)
+                        },
                         textStyle = MaterialTheme.typography.bodyMedium,
                         maxLines = INPUT_MAX_LINE,
                     )
