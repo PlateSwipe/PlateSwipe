@@ -50,18 +50,30 @@ class CategoryIngredientSearchViewModel(private val repository: CategoryIngredie
     throw NotImplementedError()
   }
 
+  /** Clear list of results from the search */
   override fun clearSearchingIngredientList() {
     _searchingIngredientList.update { emptyList() }
   }
 
+  /** Clear the list of ingredients used by the recipe */
   override fun clearIngredientList() {
     _ingredientList.update { emptyList() }
   }
 
+  /**
+   * Add an ingredient to the list of ingredients used by the recipe
+   *
+   * @param ingredient The ingredient to add
+   */
   override fun addIngredient(ingredient: Ingredient) {
     addIngredientToList(ingredient, _ingredientList)
   }
 
+  /**
+   * Search for an ingredient using it's name
+   *
+   * @param name The name of the ingredient to search for
+   */
   override fun fetchIngredientByName(name: String) {
     _isSearching.value = true
     repository.searchCategory(
