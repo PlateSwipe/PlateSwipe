@@ -18,6 +18,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -76,10 +77,13 @@ fun SearchIngredientScreen(
     onSearchFinished: () -> Unit,
     showScanner: Boolean = true
 ) {
+
   val listIngredient = searchIngredientViewModel.searchingIngredientList.collectAsState()
   val isSearching = searchIngredientViewModel.isFetchingByName.collectAsState()
   var showConfirmation by remember { mutableStateOf(DO_NOT_SHOW_CONFIRMATION) }
   var selectedIngredient by remember { mutableStateOf<Ingredient?>(null) }
+
+  LaunchedEffect(navigationActions) { searchIngredientViewModel.clearSearchingIngredientList() }
 
   PlateSwipeScaffold(
       navigationActions = navigationActions,
