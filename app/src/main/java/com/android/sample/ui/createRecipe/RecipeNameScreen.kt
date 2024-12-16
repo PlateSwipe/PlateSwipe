@@ -264,7 +264,7 @@ private fun handleOnClick(
     onUpdateRecipeName: (String) -> Unit,
     onNavigateToNextScreen: () -> Unit
 ) {
-  if (recipeName.text.isEmpty()) {
+  if (recipeName.text.isBlank()) {
     onShowErrorChange(true)
   } else {
     onUpdateRecipeName(recipeName.text)
