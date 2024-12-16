@@ -22,8 +22,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -56,7 +54,6 @@ import com.android.sample.R
 import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.ingredient.IngredientViewModel
 import com.android.sample.model.recipe.CreateRecipeViewModel
-import com.android.sample.resources.C.Dimension.IngredientListScreen.BUTTON_ROUND
 import com.android.sample.resources.C.Dimension.IngredientListScreen.BUTTON_Z
 import com.android.sample.resources.C.Dimension.IngredientListScreen.INGREDIENT_LIST_SIZE
 import com.android.sample.resources.C.Dimension.IngredientListScreen.INGREDIENT_LIST_WEIGHT
@@ -79,7 +76,6 @@ import com.android.sample.resources.C.TestTag.IngredientListScreen.RECIPE_NAME
 import com.android.sample.resources.C.TestTag.IngredientSearchScreen.DRAGGABLE_ITEM
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
-import com.android.sample.ui.theme.Typography
 import com.android.sample.ui.theme.lightCream
 import com.android.sample.ui.theme.lightGrayInput
 import com.android.sample.ui.utils.PlateSwipeButton
@@ -209,10 +205,8 @@ private fun SaveButton(
             },
             width = BUTTON_WIDTH,
             height = BUTTON_HEIGHT,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .zIndex(BUTTON_Z)
-                .testTag(NEXT_STEP_BUTTON),
+            modifier =
+                Modifier.align(Alignment.BottomCenter).zIndex(BUTTON_Z).testTag(NEXT_STEP_BUTTON),
             backgroundColor = lightCream,
             contentColor = MaterialTheme.colorScheme.onPrimary,
         )
