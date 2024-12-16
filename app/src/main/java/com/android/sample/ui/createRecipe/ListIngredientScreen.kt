@@ -82,6 +82,7 @@ import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.Typography
 import com.android.sample.ui.theme.lightCream
 import com.android.sample.ui.theme.lightGrayInput
+import com.android.sample.ui.utils.PlateSwipeButton
 import com.android.sample.ui.utils.PlateSwipeScaffold
 import kotlinx.coroutines.delay
 
@@ -182,11 +183,12 @@ private fun SaveButton(
   Box(
       modifier = Modifier.fillMaxWidth().padding(PADDING_16.dp),
       contentAlignment = Alignment.Center) {
-        Button(
+        PlateSwipeButton(
+            text = stringResource(R.string.next_step),
             onClick = {
               if (ingredientList.isEmpty()) {
                 displayErrorIngredientMessage.value = true
-                return@Button
+                return@PlateSwipeButton
               }
               ingredientList.forEach { (ingredient, quantity) ->
                 if (!quantity.isNullOrEmpty()) {
@@ -195,7 +197,7 @@ private fun SaveButton(
                 } else {
                   // Display an error message if an ingredient has no quantity
                   displayErrorIngredientMessage.value = true
-                  return@Button
+                  return@PlateSwipeButton
                 }
               }
               if (!displayErrorIngredientMessage.value) {
@@ -205,22 +207,15 @@ private fun SaveButton(
                     else Screen.CREATE_RECIPE_LIST_INSTRUCTIONS)
               }
             },
-            modifier =
-                Modifier.width(BUTTON_WIDTH)
-                    .height(BUTTON_HEIGHT)
-                    .background(
-                        color = lightCream, shape = RoundedCornerShape(size = BUTTON_ROUND.dp))
-                    .align(Alignment.BottomCenter)
-                    .zIndex(BUTTON_Z)
-                    .testTag(NEXT_STEP_BUTTON),
-            shape = RoundedCornerShape(BUTTON_ROUND.dp),
-            colors =
-                ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-        ) {
-          Text(
-              text = stringResource(R.string.next_step),
-              style = Typography.bodyMedium.copy(fontWeight = FontWeight.Bold))
-        }
+            width = BUTTON_WIDTH,
+            height = BUTTON_HEIGHT,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .zIndex(BUTTON_Z)
+                .testTag(NEXT_STEP_BUTTON),
+            backgroundColor = lightCream,
+            contentColor = MaterialTheme.colorScheme.onPrimary,
+        )
       }
 }
 
