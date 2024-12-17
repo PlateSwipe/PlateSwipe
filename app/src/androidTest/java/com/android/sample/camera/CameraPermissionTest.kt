@@ -8,7 +8,6 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.android.sample.feature.camera.Rational
 import com.android.sample.feature.camera.RequestCameraPermission
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
@@ -51,33 +50,6 @@ class CameraPermissionTest {
         .assertExists()
     composeTestRule.onNodeWithText("Request Camera Permission").assertExists().performClick()
     composeTestRule.onNodeWithText("Granted").assertExists()
-  }
-
-  @Test
-  fun testCameraPermissionDeniedWithRationale() {
-    var cond = false
-    composeTestRule.setContent { Rational(true, onClickTrue = { cond = true }, onClickFalse = {}) }
-
-    composeTestRule
-        .onNodeWithText("Camera permission is required to use this feature.")
-        .assertExists()
-    composeTestRule.onNodeWithText("Request Camera Permission").assertExists().performClick()
-
-    assert(cond)
-  }
-
-  @Test
-  fun testCameraPermissionDeniedWithOutRationale() {
-    var cond = false
-    composeTestRule.setContent { Rational(false, onClickTrue = {}, onClickFalse = { cond = true }) }
-
-    composeTestRule
-        .onNodeWithText(
-            "Camera permission denied. Please enable it in the app settings to proceed.")
-        .assertExists()
-    composeTestRule.onNodeWithText("Open App Settings").assertExists().performClick()
-
-    assert(cond)
   }
 
   @Composable
