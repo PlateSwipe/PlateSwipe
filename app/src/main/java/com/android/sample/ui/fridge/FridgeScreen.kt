@@ -416,7 +416,7 @@ private fun ItemCard(
         },
         onDismiss = { confirmationRemoveDisplay.value = false },
         titleText = "Remove ${card.second.name}",
-        confirmationText = "Are you sure you want to remove ${card.second.name} from your fridge?",
+        bodyText = "Are you sure you want to remove ${card.second.name} from your fridge?",
     )
   }
 }

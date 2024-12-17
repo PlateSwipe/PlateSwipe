@@ -120,7 +120,7 @@ fun SearchIngredientScreen(
                       showConfirmation = false
                     },
                     titleText = popUpTitle,
-                    confirmationText = popUpConfirmationText,
+                    bodyText = popUpConfirmationText,
                     confirmationButtonText = popUpConfirmationButtonText,
                     dismissButtonText = stringResource(R.string.pop_up_cancel))
               }

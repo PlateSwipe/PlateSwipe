@@ -32,7 +32,7 @@ fun ConfirmationPopUp(
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
     titleText: String,
-    confirmationText: String = "",
+    bodyText: String = "",
     confirmationButtonText: String = stringResource(R.string.pop_up_confirm_removal_liked_recipe),
     dismissButtonText: String = stringResource(R.string.pop_up_confirm_cancel_removal_liked_recipe)
 ) {
@@ -50,9 +50,9 @@ fun ConfirmationPopUp(
             color = MaterialTheme.colorScheme.onPrimary)
       },
       text = {
-        if (confirmationText.isNotEmpty()) {
+        if (bodyText.isNotEmpty()) {
           Text(
-              text = confirmationText,
+              text = bodyText,
               style = MaterialTheme.typography.bodySmall,
               color = MaterialTheme.colorScheme.onPrimary)
         }
