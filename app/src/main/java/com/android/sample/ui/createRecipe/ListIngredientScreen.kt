@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,8 +21,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -56,7 +53,6 @@ import com.android.sample.R
 import com.android.sample.model.ingredient.Ingredient
 import com.android.sample.model.ingredient.IngredientViewModel
 import com.android.sample.model.recipe.CreateRecipeViewModel
-import com.android.sample.resources.C.Dimension.IngredientListScreen.BUTTON_ROUND
 import com.android.sample.resources.C.Dimension.IngredientListScreen.BUTTON_Z
 import com.android.sample.resources.C.Dimension.IngredientListScreen.INGREDIENT_LIST_SIZE
 import com.android.sample.resources.C.Dimension.IngredientListScreen.INGREDIENT_LIST_WEIGHT
@@ -79,10 +75,9 @@ import com.android.sample.resources.C.TestTag.IngredientListScreen.RECIPE_NAME
 import com.android.sample.resources.C.TestTag.IngredientSearchScreen.DRAGGABLE_ITEM
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
-import com.android.sample.ui.theme.Typography
 import com.android.sample.ui.theme.lightCream
 import com.android.sample.ui.theme.lightGrayInput
-import com.android.sample.ui.utils.IngredientImageBox
+import com.android.sample.ui.utils.PlateSwipeButton
 import com.android.sample.ui.utils.PlateSwipeScaffold
 import kotlinx.coroutines.delay
 
@@ -183,11 +178,12 @@ private fun SaveButton(
   Box(
       modifier = Modifier.fillMaxWidth().padding(PADDING_16.dp),
       contentAlignment = Alignment.Center) {
-        Button(
+        PlateSwipeButton(
+            text = stringResource(R.string.next_step),
             onClick = {
               if (ingredientList.isEmpty()) {
                 displayErrorIngredientMessage.value = true
-                return@Button
+                return@PlateSwipeButton
               }
               ingredientList.forEach { (ingredient, quantity) ->
                 if (!quantity.isNullOrEmpty()) {
@@ -196,7 +192,7 @@ private fun SaveButton(
                 } else {
                   // Display an error message if an ingredient has no quantity
                   displayErrorIngredientMessage.value = true
-                  return@Button
+                  return@PlateSwipeButton
                 }
               }
               if (!displayErrorIngredientMessage.value) {
@@ -206,22 +202,13 @@ private fun SaveButton(
                     else Screen.CREATE_RECIPE_LIST_INSTRUCTIONS)
               }
             },
+            width = BUTTON_WIDTH,
+            height = BUTTON_HEIGHT,
             modifier =
-                Modifier.width(BUTTON_WIDTH)
-                    .height(BUTTON_HEIGHT)
-                    .background(
-                        color = lightCream, shape = RoundedCornerShape(size = BUTTON_ROUND.dp))
-                    .align(Alignment.BottomCenter)
-                    .zIndex(BUTTON_Z)
-                    .testTag(NEXT_STEP_BUTTON),
-            shape = RoundedCornerShape(BUTTON_ROUND.dp),
-            colors =
-                ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-        ) {
-          Text(
-              text = stringResource(R.string.next_step),
-              style = Typography.bodyMedium.copy(fontWeight = FontWeight.Bold))
-        }
+                Modifier.align(Alignment.BottomCenter).zIndex(BUTTON_Z).testTag(NEXT_STEP_BUTTON),
+            backgroundColor = lightCream,
+            contentColor = MaterialTheme.colorScheme.onPrimary,
+        )
       }
 }
 
@@ -310,9 +297,6 @@ private fun IngredientPreview(
             modifier = Modifier.fillMaxWidth().padding(PADDING_8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center) {
-              // Add Image to display the ingredient
-              IngredientImageBox(ingredient.first)
-
               Column(
                   verticalArrangement = Arrangement.SpaceBetween,
                   horizontalAlignment = Alignment.Start,
@@ -353,6 +337,12 @@ private fun IngredientPreview(
                                 disabledIndicatorColor = Color.Transparent,
                                 unfocusedIndicatorColor = Color.Transparent,
                             ),
+                        placeholder = {
+                          Text(
+                              text = stringResource(R.string.quantity),
+                              style = MaterialTheme.typography.bodyMedium,
+                              color = MaterialTheme.colorScheme.onPrimary)
+                        },
                         textStyle = MaterialTheme.typography.bodyMedium,
                         maxLines = INPUT_MAX_LINE,
                     )
