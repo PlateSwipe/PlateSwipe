@@ -27,6 +27,7 @@ import com.android.sample.R
 import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.resources.C.Dimension.PADDING_16
 import com.android.sample.resources.C.Dimension.PADDING_32
+import com.android.sample.resources.C.Dimension.PADDING_8
 import com.android.sample.resources.C.Tag.HOUR_RANGE_END
 import com.android.sample.resources.C.Tag.HOUR_RANGE_START
 import com.android.sample.resources.C.Tag.MINUTES_PER_HOUR
@@ -90,7 +91,7 @@ fun TimePickerContent(
   val hours = remember { mutableIntStateOf(initialHours) }
   val minutes = remember { mutableIntStateOf(initialMinutes) }
 
-  Box(modifier = modifier.padding(PADDING_16.dp), contentAlignment = Alignment.TopCenter) {
+  Box(modifier = modifier.padding(PADDING_8.dp), contentAlignment = Alignment.TopCenter) {
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -107,7 +108,7 @@ fun TimePickerContent(
               color = MaterialTheme.colorScheme.onPrimary,
               modifier =
                   Modifier.fillMaxWidth()
-                      .padding(horizontal = PADDING_32.dp)
+                      .padding(horizontal = PADDING_16.dp)
                       .testTag(TIME_PICKER_TITLE),
               textAlign = TextAlign.Center)
 

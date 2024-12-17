@@ -8,8 +8,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import com.android.sample.resources.C.Tag.BASE_PADDING
+import com.android.sample.resources.C.Dimension.PADDING_16
+import com.android.sample.resources.C.Dimension.PADDING_32
+import com.android.sample.resources.C.Dimension.PADDING_8
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Route
 import com.android.sample.ui.utils.PlateSwipeButton
@@ -43,7 +46,7 @@ fun RecipeStepScreen(
       selectedItem = if (isEditing) Route.ACCOUNT else Route.CREATE_RECIPE,
       showBackArrow = true,
       content = { paddingValues ->
-        Box(modifier = modifier.fillMaxSize().padding(paddingValues).padding(BASE_PADDING)) {
+        Box(modifier = modifier.fillMaxSize().padding(paddingValues).padding(PADDING_8.dp)) {
           Column(
               horizontalAlignment = Alignment.CenterHorizontally,
               verticalArrangement = Arrangement.Top,
@@ -58,7 +61,7 @@ fun RecipeStepScreen(
                     text = title,
                     style = MaterialTheme.typography.displayLarge,
                     color = MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = BASE_PADDING * 2),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = PADDING_16.dp),
                     textAlign = TextAlign.Center)
 
                 Spacer(modifier = Modifier.weight(0.05f))
@@ -68,7 +71,7 @@ fun RecipeStepScreen(
                     text = subtitle,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier.padding(horizontal = BASE_PADDING * 2).zIndex(1f),
+                    modifier = Modifier.padding(horizontal = PADDING_32.dp).zIndex(1f),
                     textAlign = TextAlign.Center)
 
                 Spacer(modifier = Modifier.weight(0.05f))
