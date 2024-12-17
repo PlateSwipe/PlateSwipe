@@ -8,14 +8,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.sample.R
-import com.android.sample.resources.C.Dimension.EditFridgeItemScreen.TITLE_LINE_HEIGHT
-import com.android.sample.resources.C.Dimension.IngredientSearchScreen.POP_UP_CLIP
+import com.android.sample.resources.C.Dimension.ConfirmationPopUp.TEXT_FONT_SIZE
+import com.android.sample.resources.C.Dimension.ConfirmationPopUp.TEXT_LINE_HEIGHT
 import com.android.sample.resources.C.Dimension.IngredientSearchScreen.POP_UP_ELEVATION
 import com.android.sample.resources.C.Dimension.PADDING_16
 import com.android.sample.resources.C.TestTag.IngredientSearchScreen.CANCEL_BUTTON
@@ -33,32 +32,30 @@ fun ConfirmationPopUp(
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
     titleText: String,
-    confirmationText: String,
+    bodyText: String = "",
     confirmationButtonText: String = stringResource(R.string.pop_up_confirm_removal_liked_recipe),
     dismissButtonText: String = stringResource(R.string.pop_up_confirm_cancel_removal_liked_recipe)
 ) {
   AlertDialog(
       onDismissRequest = onDismiss,
-      modifier =
-          Modifier.fillMaxWidth()
-              .padding(PADDING_16.dp)
-              .shadow(
-                  elevation = POP_UP_ELEVATION.dp, // Adjust elevation as desired
-                  clip = POP_UP_CLIP // Ensures background respects the shadow's rounded corners
-                  )
-              .testTag(CONFIRMATION_POPUP),
+      modifier = Modifier.fillMaxWidth().padding(PADDING_16.dp).testTag(CONFIRMATION_POPUP),
+      shape = MaterialTheme.shapes.medium,
+      tonalElevation = POP_UP_ELEVATION.dp,
       title = {
         Text(
             text = titleText,
             style = MaterialTheme.typography.titleMedium,
-            lineHeight = TITLE_LINE_HEIGHT.sp,
+            lineHeight = TEXT_LINE_HEIGHT.sp,
+            fontSize = TEXT_FONT_SIZE.sp,
             color = MaterialTheme.colorScheme.onPrimary)
       },
       text = {
-        Text(
-            text = confirmationText,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onPrimary)
+        if (bodyText.isNotEmpty()) {
+          Text(
+              text = bodyText,
+              style = MaterialTheme.typography.bodySmall,
+              color = MaterialTheme.colorScheme.onPrimary)
+        }
       },
       confirmButton = {
         TextButton(onClick = onConfirm, modifier = Modifier.testTag(CONFIRMATION_BUTTON)) {

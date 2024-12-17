@@ -30,11 +30,9 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.rounded.FileDownload
 import androidx.compose.material.icons.rounded.FileDownloadOff
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -52,7 +50,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.android.sample.R
 import com.android.sample.model.recipe.Recipe
@@ -60,18 +57,11 @@ import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C.Dimension.PADDING_4
 import com.android.sample.resources.C.Dimension.RecipeList.EDIT_ICON_SIZE
-import com.android.sample.resources.C.Dimension.RecipeList.POP_UP_CLIP
-import com.android.sample.resources.C.Dimension.RecipeList.POP_UP_DESCRIPTION_FONT_SIZE
-import com.android.sample.resources.C.Dimension.RecipeList.POP_UP_ELEVATION
-import com.android.sample.resources.C.Tag.PADDING
 import com.android.sample.resources.C.Tag.RECIPE_DELETE_ICON_CONTENT_DESCRIPTION
 import com.android.sample.resources.C.Tag.RECIPE_FAVORITE_ICON_CONTENT_DESCRIPTION
 import com.android.sample.resources.C.Tag.RECIPE_LIST_CORNER_RADIUS
 import com.android.sample.resources.C.Tag.RECIPE_LIST_DOWNLOAD
 import com.android.sample.resources.C.Tag.RECIPE_RATING_CONTENT_DESCRIPTION
-import com.android.sample.resources.C.TestTag.RecipeList.CANCEL_BUTTON
-import com.android.sample.resources.C.TestTag.RecipeList.CONFIRMATION_BUTTON
-import com.android.sample.resources.C.TestTag.RecipeList.CONFIRMATION_POP_UP
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_CARD_TEST_TAG
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_CATEGORIES_TEST_TAG
 import com.android.sample.resources.C.TestTag.RecipeList.RECIPE_DELETE_ICON_TEST_TAG
@@ -160,7 +150,7 @@ private fun RecipeCard(
                     horizontalArrangement = Arrangement.SpaceBetween) {
                       RecipeCategories(recipe)
 
-                      RecipePrice(cost = 3, recipe = recipe)
+                      RecipePrice(cost = 3)
                     }
               }
         }
@@ -168,7 +158,7 @@ private fun RecipeCard(
 }
 
 @Composable
-private fun RecipePrice(maxDollars: Int = 3, cost: Int, recipe: Recipe) {
+private fun RecipePrice(maxDollars: Int = 3, cost: Int) {
   Row(
       verticalAlignment = Alignment.CenterVertically,
       modifier = Modifier.testTag(RECIPE_PRICE_RATING_TEST_TAG)) {
@@ -286,7 +276,7 @@ fun TopCornerDownloadAndLikeButton(
   var unDownload: Boolean by remember { mutableStateOf(false) }
   val context = LocalContext.current
   Row(
-      horizontalArrangement = Arrangement.spacedBy(4.dp),
+      horizontalArrangement = Arrangement.spacedBy(PADDING_4.dp),
       verticalAlignment = Alignment.CenterVertically) {
         Icon(
             imageVector =
@@ -295,7 +285,7 @@ fun TopCornerDownloadAndLikeButton(
                 if (!recipeDownload) Icons.Rounded.FileDownload else Icons.Rounded.FileDownloadOff,
             contentDescription = RECIPE_LIST_DOWNLOAD,
             modifier =
-                Modifier.padding(4.dp)
+                Modifier.padding(PADDING_4.dp)
                     .size(30.dp)
                     .testTag(RECIPE_DOWNLOAD_ICON_TEST_TAG)
                     .clickable {
@@ -315,7 +305,7 @@ fun TopCornerDownloadAndLikeButton(
             imageVector = if (!recipeUnlike) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
             contentDescription = RECIPE_FAVORITE_ICON_CONTENT_DESCRIPTION,
             modifier =
-                Modifier.padding(4.dp)
+                Modifier.padding(PADDING_4.dp)
                     .size(30.dp)
                     .testTag(RECIPE_FAVORITE_ICON_TEST_TAG)
                     .clickable { recipeUnlike = true },
@@ -324,19 +314,19 @@ fun TopCornerDownloadAndLikeButton(
 
   if (recipeUnlike) {
     ConfirmationPopUp(
-        {
+        onConfirm = {
           userViewModel.removeRecipeFromUserLikedRecipes(recipe)
           // If the user unlike a recipe, also remove it from download
           recipeViewModel.deleteDownload(recipe)
           recipeUnlike = false
         },
-        { recipeUnlike = false },
-        stringResource(R.string.message_pop_up_remove_liked))
+        onDismiss = { recipeUnlike = false },
+        titleText = stringResource(R.string.message_pop_up_remove_liked))
   }
   // Confirmation Pop Up for download recipe
   if (download) {
     ConfirmationPopUp(
-        {
+        onConfirm = {
           recipeViewModel.downloadRecipe(
               recipe,
               onSuccess = {
@@ -360,24 +350,24 @@ fun TopCornerDownloadAndLikeButton(
               context)
           download = false
         },
-        {
+        onDismiss = {
           download = false
           recipeDownload = false
         },
-        stringResource(R.string.do_you_want_to_download_this_recipe))
+        titleText = stringResource(R.string.do_you_want_to_download_this_recipe))
   }
   // confirmation Pop up to remove a recipe from the download
   if (unDownload) {
     ConfirmationPopUp(
-        {
+        onConfirm = {
           recipeViewModel.deleteDownload(recipe)
           unDownload = false
         },
-        {
+        onDismiss = {
           unDownload = false
           recipeDownload = true
         },
-        stringResource(R.string.do_you_want_to_remove_this_recipe_from_your_downloads))
+        titleText = stringResource(R.string.do_you_want_to_remove_this_recipe_from_your_downloads))
   }
 }
 
@@ -395,52 +385,18 @@ fun TopCornerDeleteButton(recipe: Recipe, userViewModel: UserViewModel) {
       imageVector = Icons.Filled.Delete,
       contentDescription = RECIPE_DELETE_ICON_CONTENT_DESCRIPTION,
       modifier =
-          Modifier.padding(4.dp).size(24.dp).testTag(RECIPE_DELETE_ICON_TEST_TAG).clickable {
-            recipeDelete = true
-          },
+          Modifier.padding(PADDING_4.dp)
+              .size(24.dp)
+              .testTag(RECIPE_DELETE_ICON_TEST_TAG)
+              .clickable { recipeDelete = true },
       tint = valencia)
   if (recipeDelete) {
     ConfirmationPopUp(
-        {
+        onConfirm = {
           userViewModel.removeRecipeFromUserCreatedRecipes(recipe)
           recipeDelete = false
         },
-        { recipeDelete = false },
-        stringResource(R.string.message_pop_up_delete_created))
+        onDismiss = { recipeDelete = false },
+        titleText = stringResource(R.string.message_pop_up_delete_created))
   }
-}
-
-@Composable
-private fun ConfirmationPopUp(onConfirm: () -> Unit, onDismiss: () -> Unit, popUpMessage: String) {
-  AlertDialog(
-      onDismissRequest = onDismiss,
-      modifier =
-          Modifier.fillMaxWidth()
-              .padding(PADDING.dp)
-              .shadow(elevation = POP_UP_ELEVATION.dp, clip = POP_UP_CLIP)
-              .testTag(CONFIRMATION_POP_UP),
-      title = {
-        Text(
-            text = popUpMessage,
-            style = MaterialTheme.typography.titleSmall,
-            fontSize = POP_UP_DESCRIPTION_FONT_SIZE.sp,
-            color = MaterialTheme.colorScheme.onPrimary)
-      },
-      confirmButton = {
-        TextButton(onClick = onConfirm, modifier = Modifier.testTag(CONFIRMATION_BUTTON)) {
-          Text(
-              text = stringResource(R.string.pop_up_confirm_removal_liked_recipe),
-              style = MaterialTheme.typography.titleSmall,
-              color = MaterialTheme.colorScheme.onPrimary)
-        }
-      },
-      dismissButton = {
-        TextButton(onClick = onDismiss, modifier = Modifier.testTag(CANCEL_BUTTON)) {
-          Text(
-              text = stringResource(R.string.pop_up_confirm_cancel_removal_liked_recipe),
-              style = MaterialTheme.typography.titleSmall,
-              color = MaterialTheme.colorScheme.onPrimary)
-        }
-      },
-      containerColor = MaterialTheme.colorScheme.onPrimaryContainer)
 }

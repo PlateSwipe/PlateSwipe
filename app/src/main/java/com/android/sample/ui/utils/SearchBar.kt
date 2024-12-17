@@ -1,6 +1,8 @@
 package com.android.sample.ui.utils
 
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
@@ -17,11 +19,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.android.sample.R
+import com.android.sample.resources.C.Dimension.IngredientSearchScreen.RESULT_FONT_SIZE
+import com.android.sample.resources.C.Dimension.PADDING_8
 import com.android.sample.resources.C.Tag.SEARCH_BAR_CORNER_RADIUS
 import kotlinx.coroutines.delay
 
@@ -42,6 +49,7 @@ fun SearchBar(
     debounceTime: Long = 1000L
 ) {
   var searchText by remember { mutableStateOf("") }
+  val focusManager = LocalFocusManager.current
 
   LaunchedEffect(searchText) {
     val lastSearchText = searchText
@@ -63,10 +71,12 @@ fun SearchBar(
           modifier
               .testTag("searchBar")
               .shadow(
-                  elevation = 8.dp,
+                  elevation = PADDING_8.dp,
                   shape = RoundedCornerShape(SEARCH_BAR_CORNER_RADIUS.dp),
               ),
       shape = RoundedCornerShape(SEARCH_BAR_CORNER_RADIUS.dp),
+      keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+      keyboardActions = KeyboardActions(onNext = { focusManager.clearFocus() }),
       leadingIcon = {
         Icon(
             imageVector = Icons.Filled.Search,
@@ -77,11 +87,14 @@ fun SearchBar(
         Text(
             text = stringResource(R.string.search_bar_place_holder),
             color = MaterialTheme.colorScheme.onPrimary,
-            style = MaterialTheme.typography.bodySmall)
+            style = MaterialTheme.typography.bodySmall.copy(fontSize = RESULT_FONT_SIZE.sp))
       },
+      textStyle = MaterialTheme.typography.bodySmall.copy(fontSize = RESULT_FONT_SIZE.sp),
       colors =
           TextFieldDefaults.colors(
-              focusedContainerColor = MaterialTheme.colorScheme.onSecondary,
+              focusedTextColor = MaterialTheme.colorScheme.onPrimary,
+              unfocusedTextColor = MaterialTheme.colorScheme.onPrimary,
+              focusedContainerColor = MaterialTheme.colorScheme.onTertiaryContainer,
               unfocusedContainerColor = MaterialTheme.colorScheme.secondary,
 
               // we need to make these transparent or a weird line appears

@@ -54,10 +54,7 @@ class FridgeScreenTest {
 
     `when`(navigationActions.currentRoute()).thenReturn(Screen.FRIDGE)
     composeTestRule.setContent {
-      FridgeScreen(
-          navigationActions = navigationActions,
-          userViewModel = userViewModel,
-          ingredientViewModel = ingredientViewModel)
+      FridgeScreen(navigationActions = navigationActions, userViewModel = userViewModel)
     }
   }
 
