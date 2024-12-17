@@ -1,10 +1,8 @@
 package com.android.sample.ui.utils
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -35,8 +33,6 @@ import com.android.sample.resources.C.Dimension.Counter.NUMBER
 import com.android.sample.resources.C.Dimension.Counter.RECIPE_COUNTER_PADDING
 import com.android.sample.resources.C.Dimension.Counter.REMOVE
 import com.android.sample.resources.C.Dimension.RecipeOverview.COUNTER_ROUND_CORNER
-import com.android.sample.resources.C.Tag.PADDING
-import com.android.sample.resources.C.Tag.SMALL_PADDING
 
 /**
  * Display of the counter to change the number of servings.
@@ -55,13 +51,10 @@ fun Counter(
   var counter by remember { mutableIntStateOf(count) }
   Row(
       modifier =
-          modifier
-              .background(
-                  MaterialTheme.colorScheme.onSecondaryContainer,
-                  shape = RoundedCornerShape(COUNTER_ROUND_CORNER.dp))
-              .padding(horizontal = SMALL_PADDING.dp, vertical = (PADDING / 4).dp),
-      verticalAlignment = Alignment.CenterVertically,
-      horizontalArrangement = Arrangement.spacedBy(SMALL_PADDING.dp)) {
+          modifier.background(
+              MaterialTheme.colorScheme.onSecondaryContainer,
+              shape = RoundedCornerShape(COUNTER_ROUND_CORNER.dp)),
+      verticalAlignment = Alignment.CenterVertically) {
         // - button
         Button(
             onClick = {

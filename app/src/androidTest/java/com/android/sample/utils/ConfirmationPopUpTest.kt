@@ -27,7 +27,7 @@ class ConfirmationPopUpTest {
           onConfirm = onConfirm,
           onDismiss = onDismiss,
           titleText = "Confirm Action",
-          confirmationText = "Are you sure you want to proceed?")
+          bodyText = "Are you sure you want to proceed?")
     }
     // Assert
     // Assert
@@ -46,7 +46,7 @@ class ConfirmationPopUpTest {
           onConfirm = onConfirm,
           onDismiss = onDismiss,
           titleText = "Confirm Action",
-          confirmationText = "Are you sure you want to proceed?",
+          bodyText = "Are you sure you want to proceed?",
           confirmationButtonText = "Confirm",
           dismissButtonText = "Cancel")
     }
@@ -64,7 +64,7 @@ class ConfirmationPopUpTest {
           onConfirm = onConfirm,
           onDismiss = onDismiss,
           titleText = "Confirm Action",
-          confirmationText = "Are you sure you want to proceed?",
+          bodyText = "Are you sure you want to proceed?",
           confirmationButtonText = "Confirm",
           dismissButtonText = "Cancel")
     }
@@ -82,7 +82,7 @@ class ConfirmationPopUpTest {
           onConfirm = onConfirm,
           onDismiss = onDismiss,
           titleText = "Confirm Action",
-          confirmationText = "Are you sure you want to proceed?",
+          bodyText = "Are you sure you want to proceed?",
           confirmationButtonText = "Confirm",
           dismissButtonText = "Cancel")
     }
@@ -104,7 +104,7 @@ class ConfirmationPopUpTest {
           onConfirm = onConfirm,
           onDismiss = onDismiss,
           titleText = "Confirm Action",
-          confirmationText = "Are you sure you want to proceed?",
+          bodyText = "Are you sure you want to proceed?",
           confirmationButtonText = "Confirm",
           dismissButtonText = "Cancel")
     }
@@ -120,7 +120,7 @@ class ConfirmationPopUpTest {
           onConfirm = onConfirm,
           onDismiss = onDismiss,
           titleText = "Confirm Action",
-          confirmationText = "Are you sure you want to proceed?",
+          bodyText = "Are you sure you want to proceed?",
           confirmationButtonText = "Confirm",
           dismissButtonText = "Cancel")
     }
