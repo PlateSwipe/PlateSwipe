@@ -84,6 +84,7 @@
     <string name="list_ingredients">List the ingredients needed for your recipe. Add as many as you need.</string>
     <string name="add_ingredient">Add Ingredient</string>
     <string name="no_ingredients">No Ingredients</string>
+    <string name="quantity">Quantity</string>
 
     //RecipeInstructionsScreen
     <string name="add_instructions">Add Instructions</string>

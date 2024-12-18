@@ -162,7 +162,7 @@ object C {
 
     // FirestoreRecipeRepository
     object FirestoreRecipesRepository {
-      const val FIRESTORE_COLLECTION_NAME = "Recipes with new Instructions"
+      const val FIRESTORE_COLLECTION_NAME = "Recipes with difficulty and time"
       const val MAX_FIRESTORE_FETCH = 5
       const val NO_RECIPE_FOUND_MSG = "No recipes found"
       const val NOT_ENOUGH_RECIPE_MSG = "Not enough recipes found"
@@ -418,7 +418,6 @@ object C {
     const val PADDING_4 = 4
     const val PADDING_8 = 8
     const val PADDING_16 = 16
-    const val PADDING_24 = 24
     const val PADDING_32 = 32
 
     object SwipePage {
@@ -493,8 +492,8 @@ object C {
       const val MIN_VALUE = 1
       const val MAX_VALUE = 99
       const val COUNTER_MIN_MAX_SIZE = 38
-      const val COUNTER_TEXT_SIZE = 28
-      const val COUNTER_FONT_SIZE = 20
+      const val COUNTER_TEXT_SIZE = 24
+      const val COUNTER_FONT_SIZE = 17
       const val RECIPE_COUNTER_PADDING = 0
       const val REMOVE = "removeServings"
       const val NUMBER = "numberServings"
@@ -615,6 +614,11 @@ object C {
       const val BUTTON_PADDING = 0.05f
     }
 
+    object ConfirmationPopUp {
+      const val TEXT_LINE_HEIGHT = 20
+      const val TEXT_FONT_SIZE = 18
+    }
+
     object RecipeAddImageScreen {
       const val CONTENT_WIDTH = 0.8f
       const val TEXT_HEIGHT = 0.05f
@@ -649,7 +653,6 @@ object C {
       const val LOADING_COOK_WEIGHT = 1f
       const val LOADING_COOK_SIZE = 150
       const val POP_UP_ELEVATION = 4
-      const val POP_UP_CLIP = true
       const val INGREDIENT_ITEM_ELEVATION = 4
       const val INGREDIENT_ITEM_CORNER = 8
       const val INGREDIENT_ITEM_MAX_LINE = 2
@@ -671,9 +674,6 @@ object C {
     }
 
     object RecipeList {
-      const val POP_UP_ELEVATION = 4
-      const val POP_UP_CLIP = true
-      const val POP_UP_DESCRIPTION_FONT_SIZE = 16
       const val EDIT_ICON_SIZE = 24
     }
 

@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -19,6 +18,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -64,26 +64,26 @@ import com.android.sample.ui.utils.SearchBar
  *
  * @param navigationActions the navigation actions.
  * @param searchIngredientViewModel the view model for the ingredient.
- * @param popUpTitle the title of the confirmation pop-up.
- * @param popUpConfirmationText the confirmation text of the confirmation pop-up.
- * @param popUpConfirmationButtonText the confirmation button text of the confirmation pop-up.
- * @param onConfirmation the callback to invoke when the user confirms the selection.
+ * @param popUpInformation the information for the confirmation pop-up.
+ * @param onSearchFinished the callback to invoke when the user finishes searching.
+ * @param showScanner whether to show the scanner icon.
  */
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun SearchIngredientScreen(
     navigationActions: NavigationActions,
     searchIngredientViewModel: SearchIngredientViewModel,
-    popUpTitle: String,
-    popUpConfirmationText: String,
-    popUpConfirmationButtonText: String,
-    onConfirmation: (Ingredient) -> Unit,
-    onSearchFinished: () -> Unit
+    popUpInformation: PopUpInformation,
+    onSearchFinished: () -> Unit,
+    showScanner: Boolean = true
 ) {
+
   val listIngredient = searchIngredientViewModel.searchingIngredientList.collectAsState()
   val isSearching = searchIngredientViewModel.isFetchingByName.collectAsState()
   var showConfirmation by remember { mutableStateOf(DO_NOT_SHOW_CONFIRMATION) }
   var selectedIngredient by remember { mutableStateOf<Ingredient?>(null) }
+
+  LaunchedEffect(navigationActions) { searchIngredientViewModel.clearSearchingIngredientList() }
 
   PlateSwipeScaffold(
       navigationActions = navigationActions,
@@ -96,7 +96,8 @@ fun SearchIngredientScreen(
             modifier = Modifier.testTag(DRAGGABLE_ITEM).fillMaxSize().padding(paddingValues)) {
               SearchDisplay(
                   searchIngredientViewModel = searchIngredientViewModel,
-                  onFinished = onSearchFinished)
+                  onFinished = onSearchFinished,
+                  showScanner = showScanner)
 
               // Display the result text
               ResultDisplay()
@@ -111,7 +112,7 @@ fun SearchIngredientScreen(
               if (showConfirmation && selectedIngredient != null) {
                 ConfirmationPopUp(
                     onConfirm = {
-                      onConfirmation(selectedIngredient!!)
+                      popUpInformation.onConfirmation(selectedIngredient!!)
                       selectedIngredient = null
                       showConfirmation = false
                     },
@@ -119,9 +120,9 @@ fun SearchIngredientScreen(
                       selectedIngredient = null
                       showConfirmation = false
                     },
-                    titleText = popUpTitle,
-                    confirmationText = popUpConfirmationText,
-                    confirmationButtonText = popUpConfirmationButtonText,
+                    titleText = popUpInformation.title,
+                    bodyText = popUpInformation.confirmationText,
+                    confirmationButtonText = popUpInformation.confirmationButtonText,
                     dismissButtonText = stringResource(R.string.pop_up_cancel))
               }
             }
@@ -179,14 +180,14 @@ private fun DisplayListIngredients(
 @Composable
 private fun SearchDisplay(
     searchIngredientViewModel: SearchIngredientViewModel,
-    onFinished: () -> Unit
+    onFinished: () -> Unit,
+    showScanner: Boolean = true
 ) {
   Row(
       modifier = Modifier.fillMaxWidth().padding(PADDING_16.dp),
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.Center) {
         // Display the search bar and scanner icon
-        Spacer(modifier = Modifier.width(PADDING_16.dp).weight(SPACER_WEIGHT))
         SearchBar(
             modifier = Modifier.padding(PADDING_16.dp).weight(IMAGE_WEIGHT),
             onDebounce = { query ->
@@ -194,15 +195,18 @@ private fun SearchDisplay(
                 searchIngredientViewModel.fetchIngredientByName(query)
               }
             })
-        Icon(
-            painter = painterResource(id = R.drawable.scanner),
-            modifier =
-                Modifier.weight(ICON_SCANNER_WEIGHT)
-                    .size(ICON_SCANNER_SIZE.dp)
-                    .testTag(SCANNER_ICON)
-                    .clickable { onFinished() },
-            tint = MaterialTheme.colorScheme.onPrimary,
-            contentDescription = stringResource(R.string.scanner_instruction))
+
+        if (showScanner) {
+          Icon(
+              painter = painterResource(id = R.drawable.scanner),
+              modifier =
+                  Modifier.weight(ICON_SCANNER_WEIGHT)
+                      .size(ICON_SCANNER_SIZE.dp)
+                      .testTag(SCANNER_ICON)
+                      .clickable { onFinished() },
+              tint = MaterialTheme.colorScheme.onPrimary,
+              contentDescription = stringResource(R.string.scanner_instruction))
+        }
       }
 }
 
@@ -261,3 +265,10 @@ private fun IngredientItem(ingredient: Ingredient, onClick: () -> Unit) {
             }
       }
 }
+
+data class PopUpInformation(
+    val title: String,
+    val confirmationText: String,
+    val confirmationButtonText: String,
+    val onConfirmation: (Ingredient) -> Unit
+)

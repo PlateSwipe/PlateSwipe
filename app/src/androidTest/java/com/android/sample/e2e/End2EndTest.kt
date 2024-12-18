@@ -105,6 +105,7 @@ import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.navigation.TopLevelDestinations
 import com.android.sample.ui.recipe.SearchRecipeScreen
 import com.android.sample.ui.recipeOverview.RecipeOverview
+import com.android.sample.ui.searchIngredient.PopUpInformation
 import com.android.sample.ui.searchIngredient.SearchIngredientScreen
 import com.android.sample.ui.swipePage.SwipePage
 import com.android.sample.ui.theme.PlateSwipeTheme
@@ -705,7 +706,7 @@ class EndToEndTest {
           route = Route.FRIDGE,
       ) {
         composable(Screen.FRIDGE) {
-          FridgeScreen(navigationActions, userViewModel, ingredientViewModel)
+          FridgeScreen(navigationActions, userViewModel)
         }
         composable(Screen.FRIDGE_SEARCH_ITEM) {
           SearchIngredientScreen(
@@ -785,16 +786,20 @@ class EndToEndTest {
         }
 
         composable(Screen.CREATE_RECIPE_SEARCH_INGREDIENTS) {
+          val createRecipePopUpInformation: PopUpInformation =
+              PopUpInformation(
+                  title = stringResource(R.string.pop_up_title),
+                  confirmationText = stringResource(R.string.pop_up_description),
+                  confirmationButtonText = stringResource(R.string.pop_up_confirmation),
+                  onConfirmation = {
+                    ingredientViewModel.addIngredient(it)
+                    navigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
+                  })
+
           SearchIngredientScreen(
               navigationActions = navigationActions,
               searchIngredientViewModel = ingredientViewModel,
-              popUpTitle = stringResource(R.string.pop_up_title),
-              popUpConfirmationText = stringResource(R.string.pop_up_description),
-              popUpConfirmationButtonText = stringResource(R.string.pop_up_confirmation),
-              onConfirmation = {
-                ingredientViewModel.addIngredient(it)
-                navigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
-              },
+              popUpInformation = createRecipePopUpInformation,
               onSearchFinished = { navigationActions.navigateTo(Screen.CAMERA_SCAN_CODE_BAR) })
         }
 

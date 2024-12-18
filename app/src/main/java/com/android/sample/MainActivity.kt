@@ -17,6 +17,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
+import com.android.sample.model.categoryIngredient.CategoryIngredientSearchViewModel
 import com.android.sample.model.ingredient.IngredientViewModel
 import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.model.recipe.RecipesViewModel
@@ -48,6 +49,7 @@ import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.offline.OfflineScreen
 import com.android.sample.ui.recipe.SearchRecipeScreen
 import com.android.sample.ui.recipeOverview.RecipeOverview
+import com.android.sample.ui.searchIngredient.PopUpInformation
 import com.android.sample.ui.searchIngredient.SearchIngredientScreen
 import com.android.sample.ui.swipePage.SwipePage
 import com.android.sample.ui.theme.PlateSwipeTheme
@@ -78,6 +80,8 @@ fun PlateSwipeApp() {
       viewModel(factory = RecipesViewModel.provideFactory(context = context))
   val ingredientViewModel: IngredientViewModel =
       viewModel(factory = IngredientViewModel.provideFactory(context = context))
+  val categoryIngredientSearchViewModel: CategoryIngredientSearchViewModel =
+      viewModel(factory = CategoryIngredientSearchViewModel.provideFactory(context))
 
   val userViewModel: UserViewModel =
       viewModel(factory = UserViewModel.provideFactory(context = context))
@@ -111,20 +115,23 @@ fun PlateSwipeApp() {
         startDestination = Screen.FRIDGE,
         route = Route.FRIDGE,
     ) {
-      composable(Screen.FRIDGE) {
-        FridgeScreen(navigationActions, userViewModel, ingredientViewModel)
-      }
+      composable(Screen.FRIDGE) { FridgeScreen(navigationActions, userViewModel) }
       composable(Screen.FRIDGE_SEARCH_ITEM) {
+        val fridgeIngredientSearchPopUpInformation: PopUpInformation =
+            PopUpInformation(
+                title = stringResource(R.string.pop_up_title_fridge),
+                confirmationText = stringResource(R.string.pop_up_description_fridge),
+                confirmationButtonText = stringResource(R.string.pop_up_confirmation_fridge),
+                onConfirmation = {
+                  userViewModel.clearIngredientList()
+                  userViewModel.addIngredient(it)
+                  navigationActions.navigateTo(Screen.FRIDGE_EDIT)
+                })
+
         SearchIngredientScreen(
             navigationActions = navigationActions,
             searchIngredientViewModel = userViewModel,
-            popUpTitle = stringResource(R.string.pop_up_title_fridge),
-            popUpConfirmationText = stringResource(R.string.pop_up_description_fridge),
-            popUpConfirmationButtonText = stringResource(R.string.pop_up_confirmation_fridge),
-            onConfirmation = {
-              userViewModel.addIngredient(it)
-              navigationActions.navigateTo(Screen.FRIDGE_EDIT)
-            },
+            popUpInformation = fridgeIngredientSearchPopUpInformation,
             onSearchFinished = { navigationActions.navigateTo(Screen.FRIDGE_SCAN_CODE_BAR) })
       }
       composable(Screen.FRIDGE_EDIT) {
@@ -193,17 +200,22 @@ fun PlateSwipeApp() {
       }
 
       composable(Screen.CREATE_RECIPE_SEARCH_INGREDIENTS) {
+        val createRecipePopUpInformation: PopUpInformation =
+            PopUpInformation(
+                title = stringResource(R.string.pop_up_title),
+                confirmationText = stringResource(R.string.pop_up_description),
+                confirmationButtonText = stringResource(R.string.pop_up_confirmation),
+                onConfirmation = {
+                  ingredientViewModel.addIngredient(it)
+                  navigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
+                })
+
         SearchIngredientScreen(
             navigationActions = navigationActions,
-            searchIngredientViewModel = ingredientViewModel,
-            popUpTitle = stringResource(R.string.pop_up_title),
-            popUpConfirmationText = stringResource(R.string.pop_up_description),
-            popUpConfirmationButtonText = stringResource(R.string.pop_up_confirmation),
-            onConfirmation = {
-              ingredientViewModel.addIngredient(it)
-              navigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
-            },
-            onSearchFinished = { navigationActions.navigateTo(Screen.CAMERA_SCAN_CODE_BAR) })
+            searchIngredientViewModel = categoryIngredientSearchViewModel,
+            popUpInformation = createRecipePopUpInformation,
+            onSearchFinished = { navigationActions.navigateTo(Screen.CAMERA_SCAN_CODE_BAR) },
+            showScanner = false)
       }
 
       composable(Screen.CREATE_RECIPE_LIST_INGREDIENTS) {

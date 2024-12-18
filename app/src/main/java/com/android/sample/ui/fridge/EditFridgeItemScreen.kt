@@ -55,7 +55,7 @@ import com.android.sample.resources.C.Dimension.EditFridgeItemScreen.TITLE_LINE_
 import com.android.sample.resources.C.Dimension.PADDING_16
 import com.android.sample.resources.C.Dimension.PADDING_32
 import com.android.sample.resources.C.Dimension.RecipeOverview.COUNTER_ROUND_CORNER
-import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_THUMBNAIL_URL
+import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_NORMAL_URL
 import com.android.sample.resources.C.TestTag.SwipePage.RECIPE_IMAGE_1
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
@@ -131,7 +131,7 @@ fun EditComposable(
         Image(
             painter =
                 rememberAsyncImagePainter(
-                    model = ingredient.value[0].first.images[PRODUCT_FRONT_IMAGE_THUMBNAIL_URL]),
+                    model = ingredient.value[0].first.images[PRODUCT_FRONT_IMAGE_NORMAL_URL]),
             contentDescription = stringResource(R.string.recipe_image),
             alignment = Alignment.Center,
             modifier =
