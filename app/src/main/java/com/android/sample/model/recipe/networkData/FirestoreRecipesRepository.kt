@@ -39,6 +39,8 @@ import com.google.firebase.firestore.Query
 class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipeNetworkRepository {
   /** ****************************************** */
 
+    var idCount: Long = 0L
+
   /**
    * Generates a new unique identifier for a recipe.
    *
@@ -178,13 +180,11 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipeNetw
       recipes: MutableList<Recipe>,
       iterationNumber: Int
   ) {
-    // Generate a random UID
-    val randomUID = generateRandomUID()
 
-    Log.d(REPOSITORY_TAG_MSG, "randomFetch: $randomUID")
+    Log.d(REPOSITORY_TAG_MSG, "randomFetch:")
     // Query for UIDs greater than or equal to the random UID
     db.collection(FIRESTORE_COLLECTION_NAME)
-        .whereGreaterThanOrEqualTo(FieldPath.documentId(), randomUID)
+        .whereGreaterThanOrEqualTo(FIRESTORE_RECIPE_AREA, " ")
         .limit(nbOfElements.toLong() - recipes.size)
         .get()
         .addOnCompleteListener { task ->
