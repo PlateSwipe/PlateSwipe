@@ -10,6 +10,8 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.click
+import androidx.compose.ui.test.hasAnySibling
+import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
@@ -42,13 +44,13 @@ import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.recipe.RecipesRepository
 import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.model.recipe.networkData.FirestoreRecipesRepository
-import com.android.sample.model.user.User
 import com.android.sample.model.user.UserRepository
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_NORMAL_URL
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_SMALL_URL
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_THUMBNAIL_URL
 import com.android.sample.resources.C.Tag.SAVE_BUTTON_TAG
+import com.android.sample.resources.C.TestTag.AccountScreen.CREATED_RECIPES_BUTTON_TEST_TAG
 import com.android.sample.resources.C.TestTag.AccountScreen.USERNAME_TEST_TAG
 import com.android.sample.resources.C.TestTag.Category.BUTTON_TEST_TAG
 import com.android.sample.resources.C.TestTag.Category.CATEGORY_DROPDOWN
@@ -142,7 +144,7 @@ class EndToEndTest {
                   PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
                   PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
 
-  private val testUser = testUsers[0]
+  private var testUser = testUsers[0]
 
   private val mockedRecipesList = testRecipes
 
@@ -200,11 +202,11 @@ class EndToEndTest {
       null
     }
 
-    `when`(mockUserRepository.getUserById(any(), any(), any())).thenAnswer { invocation ->
+    /*`when`(mockUserRepository.getUserById(any(), any(), any())).thenAnswer { invocation ->
       val onSuccess = invocation.getArgument<(User) -> Unit>(1)
       onSuccess(testUser)
       null
-    }
+    }*/
     doNothing().`when`(mockUserRepository).updateUser(any(), any(), any())
 
     `when`(mockFirebaseAuth.currentUser).thenReturn(mockFirebaseUser)
@@ -681,6 +683,71 @@ class EndToEndTest {
         .assert(!hasText(testUser.dateOfBirth))
   }
 
+  @Test
+  fun editCreatedRecipeTest() {
+    composeTestRule.setContent {
+      PlateSwipeTheme {
+        val navController = rememberNavController()
+        FakeNavHost(navController, userViewModel, createRecipeViewModel, recipesViewModel)
+      }
+    }
+    userViewModel.addRecipeToUserCreatedRecipes(mockedRecipesList[0])
+
+    composeTestRule.onNodeWithTag("tabAccount", useUnmergedTree = true).performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule
+        .onNodeWithTag(CREATED_RECIPES_BUTTON_TEST_TAG, useUnmergedTree = true)
+        .performClick()
+    composeTestRule.waitForIdle()
+
+    composeTestRule
+        .onNode(
+            hasAnySibling(hasText(mockedRecipesList[0].name))
+                .and(hasContentDescription("Edit Recipe")),
+            useUnmergedTree = true)
+        .performClick()
+    composeTestRule.waitForIdle()
+
+    composeTestRule.onNodeWithTag("recipeNameTextField").performTextClearance()
+    composeTestRule.onNodeWithTag("recipeNameTextField").performTextInput("Pasta")
+    composeTestRule.onNodeWithTag("NextStepButton").performClick()
+    composeTestRule.waitForIdle()
+
+    composeTestRule.onNodeWithTag(CATEGORY_DROPDOWN).performClick()
+    composeTestRule.onNodeWithText("No category", useUnmergedTree = true).performScrollTo()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithText("No category").performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule
+        .onAllNodesWithTag(DROPDOWN_TITLE, useUnmergedTree = true)
+        .assertCountEquals(2)
+        .assertAny(hasText("No category"))
+
+    // choose a difficulty
+    composeTestRule.onNodeWithTag(DIFFICULTY_DROPDOWN).performClick()
+    composeTestRule.onNodeWithText("No difficulty", useUnmergedTree = true).performScrollTo()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithText("No difficulty").performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule
+        .onAllNodesWithTag(DROPDOWN_TITLE, useUnmergedTree = true)
+        .assertCountEquals(2)
+        .assertAny(hasText("No difficulty"))
+
+    // get to ingredients step page
+    composeTestRule.onNodeWithTag(BUTTON_TEST_TAG).performClick()
+    composeTestRule.waitForIdle()
+
+    composeTestRule.onNodeWithText("Next Step").performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithTag(MINUTE_PICKER).performClick()
+    composeTestRule.onNodeWithTag(NEXT_BUTTON).performClick()
+    composeTestRule.waitForIdle()
+
+    composeTestRule.onNodeWithTag("PublishButton", useUnmergedTree = true).performClick()
+    composeTestRule.waitForIdle()
+  }
+
   @Composable
   fun FakeNavHost(
       navController: NavHostController,
@@ -705,20 +772,23 @@ class EndToEndTest {
           startDestination = Screen.FRIDGE,
           route = Route.FRIDGE,
       ) {
-        composable(Screen.FRIDGE) {
-          FridgeScreen(navigationActions, userViewModel)
-        }
+        composable(Screen.FRIDGE) { FridgeScreen(navigationActions, userViewModel) }
         composable(Screen.FRIDGE_SEARCH_ITEM) {
+          val fridgeIngredientSearchPopUpInformation =
+              PopUpInformation(
+                  title = stringResource(R.string.pop_up_title_fridge),
+                  confirmationText = stringResource(R.string.pop_up_description_fridge),
+                  confirmationButtonText = stringResource(R.string.pop_up_confirmation_fridge),
+                  onConfirmation = {
+                    userViewModel.clearIngredientList()
+                    userViewModel.addIngredient(it)
+                    navigationActions.navigateTo(Screen.FRIDGE_EDIT)
+                  })
+
           SearchIngredientScreen(
               navigationActions = navigationActions,
               searchIngredientViewModel = userViewModel,
-              popUpTitle = stringResource(R.string.pop_up_title_fridge),
-              popUpConfirmationText = stringResource(R.string.pop_up_description_fridge),
-              popUpConfirmationButtonText = stringResource(R.string.pop_up_confirmation_fridge),
-              onConfirmation = {
-                userViewModel.addIngredient(it)
-                navigationActions.navigateTo(Screen.FRIDGE_EDIT)
-              },
+              popUpInformation = fridgeIngredientSearchPopUpInformation,
               onSearchFinished = { navigationActions.navigateTo(Screen.FRIDGE_SCAN_CODE_BAR) })
         }
         composable(Screen.FRIDGE_EDIT) {
@@ -786,7 +856,7 @@ class EndToEndTest {
         }
 
         composable(Screen.CREATE_RECIPE_SEARCH_INGREDIENTS) {
-          val createRecipePopUpInformation: PopUpInformation =
+          val createRecipePopUpInformation =
               PopUpInformation(
                   title = stringResource(R.string.pop_up_title),
                   confirmationText = stringResource(R.string.pop_up_description),
