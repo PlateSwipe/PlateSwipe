@@ -3,10 +3,13 @@ package com.android.sample.e2e
 import android.graphics.Bitmap
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertAny
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.click
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
@@ -15,6 +18,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeLeft
@@ -38,17 +42,25 @@ import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.recipe.RecipesRepository
 import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.model.recipe.networkData.FirestoreRecipesRepository
+import com.android.sample.model.user.User
 import com.android.sample.model.user.UserRepository
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_NORMAL_URL
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_SMALL_URL
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_THUMBNAIL_URL
 import com.android.sample.resources.C.Tag.SAVE_BUTTON_TAG
+import com.android.sample.resources.C.TestTag.AccountScreen.USERNAME_TEST_TAG
 import com.android.sample.resources.C.TestTag.Category.BUTTON_TEST_TAG
 import com.android.sample.resources.C.TestTag.Category.CATEGORY_DROPDOWN
 import com.android.sample.resources.C.TestTag.Category.DIFFICULTY_DROPDOWN
 import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen
 import com.android.sample.resources.C.TestTag.CreateRecipeListInstructionsScreen.INSTRUCTION_LIST_ITEM
+import com.android.sample.resources.C.TestTag.EditAccountScreen.DATE_OF_BIRTH_CHANGE_BUTTON_TAG
+import com.android.sample.resources.C.TestTag.EditAccountScreen.DATE_OF_BIRTH_TEXT_FIELD_TAG
+import com.android.sample.resources.C.TestTag.EditAccountScreen.DATE_PICKER_POP_UP_CONFIRM_TAG
+import com.android.sample.resources.C.TestTag.EditAccountScreen.DATE_PICKER_POP_UP_TAG
+import com.android.sample.resources.C.TestTag.EditAccountScreen.SAVE_CHANGES_BUTTON_TAG
+import com.android.sample.resources.C.TestTag.EditAccountScreen.USERNAME_FIELD_TAG
 import com.android.sample.resources.C.TestTag.IngredientListScreen.ADD_INGREDIENT_ICON
 import com.android.sample.resources.C.TestTag.IngredientListScreen.NEXT_STEP_BUTTON
 import com.android.sample.resources.C.TestTag.IngredientSearchScreen.CANCEL_BUTTON
@@ -69,7 +81,9 @@ import com.android.sample.resources.C.TestTag.TimePicker.NEXT_BUTTON
 import com.android.sample.resources.C.TestTag.TimePicker.TIME_PICKER_DESCRIPTION
 import com.android.sample.resources.C.TestTag.TimePicker.TIME_PICKER_TITLE
 import com.android.sample.resources.C.TestTag.Utils.BACK_ARROW_ICON
+import com.android.sample.resources.C.TestTag.Utils.EDIT_ACCOUNT_ICON
 import com.android.sample.ui.account.AccountScreen
+import com.android.sample.ui.account.EditAccountScreen
 import com.android.sample.ui.camera.CameraScanCodeBarScreen
 import com.android.sample.ui.camera.CameraTakePhotoScreen
 import com.android.sample.ui.createRecipe.AddInstructionStepScreen
@@ -93,8 +107,11 @@ import com.android.sample.ui.recipe.SearchRecipeScreen
 import com.android.sample.ui.recipeOverview.RecipeOverview
 import com.android.sample.ui.searchIngredient.SearchIngredientScreen
 import com.android.sample.ui.swipePage.SwipePage
+import com.android.sample.ui.theme.PlateSwipeTheme
 import com.android.sample.ui.utils.testRecipes
+import com.android.sample.ui.utils.testUsers
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import io.mockk.mockk
 import java.time.LocalDate
@@ -108,6 +125,7 @@ import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
+import org.mockito.kotlin.doNothing
 
 @RunWith(AndroidJUnit4::class)
 class EndToEndTest {
@@ -123,11 +141,14 @@ class EndToEndTest {
                   PRODUCT_FRONT_IMAGE_THUMBNAIL_URL to "https://display_thumbnail",
                   PRODUCT_FRONT_IMAGE_SMALL_URL to "https://display_small"))
 
+  private val testUser = testUsers[0]
+
   private val mockedRecipesList = testRecipes
 
   private lateinit var navigationActions: NavigationActions
   private lateinit var mockUserRepository: UserRepository
   private lateinit var mockFirebaseAuth: FirebaseAuth
+  private lateinit var mockFirebaseUser: FirebaseUser
   private lateinit var aggregatorIngredientRepository: DefaultIngredientRepository
 
   private lateinit var mockRepository: RecipesRepository
@@ -146,6 +167,7 @@ class EndToEndTest {
     navigationActions = mock(NavigationActions::class.java)
     mockUserRepository = mock(UserRepository::class.java)
     mockFirebaseAuth = mock(FirebaseAuth::class.java)
+    mockFirebaseUser = mock(FirebaseUser::class.java)
     mockImageRepo = mockk<ImageRepositoryFirebase>(relaxed = true)
     mockRepository = mock(RecipesRepository::class.java)
     mockIngredientRepository = mock(IngredientRepository::class.java)
@@ -177,12 +199,26 @@ class EndToEndTest {
       null
     }
 
+    `when`(mockUserRepository.getUserById(any(), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.getArgument<(User) -> Unit>(1)
+      onSuccess(testUser)
+      null
+    }
+    doNothing().`when`(mockUserRepository).updateUser(any(), any(), any())
+
+    `when`(mockFirebaseAuth.currentUser).thenReturn(mockFirebaseUser)
+    `when`(mockFirebaseUser.uid).thenReturn(testUser.uid)
+    `when`(mockFirebaseUser.email).thenReturn("example@mail.ch")
     userViewModel =
         UserViewModel(
             mockUserRepository,
             mockFirebaseAuth,
             mockIngredientRepository,
             fridgeItemRepository = mockFridgeItemRepository)
+
+    userViewModel.changeUserName(testUser.userName)
+    userViewModel.changeDateOfBirth(testUser.dateOfBirth)
+    userViewModel.changeProfilePictureUrl(testUser.profilePictureUrl)
 
     val firestore = mockk<FirebaseFirestore>(relaxed = true)
     val repository = FirestoreRecipesRepository(firestore)
@@ -524,9 +560,8 @@ class EndToEndTest {
       FakeNavHost(navController, userViewModel, createRecipeViewModel, recipesViewModel)
     }
 
-    composeTestRule.onNodeWithTag("tabSwipe", useUnmergedTree = true).performClick()
-
     composeTestRule.onNodeWithTag("tabFridge", useUnmergedTree = true).performClick()
+    composeTestRule.onNodeWithText("Empty Fridge").assertIsDisplayed()
 
     composeTestRule.onNodeWithText("Add Ingredient", useUnmergedTree = true).performClick()
     composeTestRule.onNodeWithTag("searchBar").performTextInput("ingredient")
@@ -555,6 +590,8 @@ class EndToEndTest {
 
     // confirm addition of ingredient
     composeTestRule.onNodeWithText("Add", useUnmergedTree = true).performClick()
+    composeTestRule.onNodeWithText("Fridge").assertIsDisplayed()
+    assertEquals(1, userViewModel.fridgeItems.value.size)
 
     // edit ingredient
     composeTestRule
@@ -562,6 +599,7 @@ class EndToEndTest {
         .performClick()
     composeTestRule.onNodeWithText("-", useUnmergedTree = true).performClick()
     composeTestRule.onNodeWithText("Save", useUnmergedTree = true).performClick()
+    assertEquals(1, userViewModel.fridgeItems.value.size)
 
     // switch to another screen
     composeTestRule.onNodeWithTag("tabAccount", useUnmergedTree = true).performClick()
@@ -575,6 +613,71 @@ class EndToEndTest {
         .onNodeWithContentDescription(
             "Remove ${ingredient1.name} that expired $expirationDate from fridge")
         .performClick()
+    composeTestRule.onNodeWithText("Yes").performClick()
+    composeTestRule.onNodeWithText("Empty Fridge").assertIsDisplayed()
+    assertEquals(0, userViewModel.fridgeItems.value.size)
+  }
+
+  @Test
+  fun editAccountTest() {
+    composeTestRule.setContent {
+      PlateSwipeTheme {
+        val navController = rememberNavController()
+        FakeNavHost(navController, userViewModel, createRecipeViewModel, recipesViewModel)
+      }
+    }
+
+    composeTestRule.onNodeWithTag("tabAccount", useUnmergedTree = true).performClick()
+    composeTestRule.waitForIdle()
+
+    composeTestRule.onNodeWithTag(EDIT_ACCOUNT_ICON, useUnmergedTree = true).performClick()
+    composeTestRule.waitForIdle()
+
+    composeTestRule.onNodeWithTag(BACK_ARROW_ICON, useUnmergedTree = true).performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule
+        .onNodeWithTag(USERNAME_TEST_TAG, useUnmergedTree = true)
+        .assertTextEquals(testUser.userName)
+
+    composeTestRule.onNodeWithTag(EDIT_ACCOUNT_ICON, useUnmergedTree = true).performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithTag(USERNAME_FIELD_TAG, useUnmergedTree = true).performTextClearance()
+    composeTestRule
+        .onNodeWithTag(USERNAME_FIELD_TAG, useUnmergedTree = true)
+        .performTextInput("Trump")
+    composeTestRule.onNodeWithTag(SAVE_CHANGES_BUTTON_TAG, useUnmergedTree = true).performClick()
+    composeTestRule.waitForIdle()
+
+    composeTestRule.onNodeWithTag(USERNAME_TEST_TAG).assertTextEquals("Trump")
+
+    composeTestRule.onNodeWithTag(EDIT_ACCOUNT_ICON, useUnmergedTree = true).performClick()
+    composeTestRule.waitForIdle()
+
+    composeTestRule
+        .onNodeWithTag(DATE_OF_BIRTH_TEXT_FIELD_TAG, useUnmergedTree = true)
+        .assertTextContains(testUser.dateOfBirth)
+
+    composeTestRule
+        .onNodeWithTag(DATE_OF_BIRTH_CHANGE_BUTTON_TAG, useUnmergedTree = true)
+        .performClick()
+    composeTestRule.waitForIdle()
+
+    composeTestRule
+        .onNodeWithTag(DATE_PICKER_POP_UP_TAG, useUnmergedTree = true)
+        .performTouchInput { click(center) }
+
+    composeTestRule
+        .onNodeWithTag(DATE_PICKER_POP_UP_CONFIRM_TAG, useUnmergedTree = true)
+        .performClick()
+
+    composeTestRule.onNodeWithTag(SAVE_CHANGES_BUTTON_TAG, useUnmergedTree = true).performClick()
+    composeTestRule.waitForIdle()
+
+    composeTestRule.onNodeWithTag(EDIT_ACCOUNT_ICON, useUnmergedTree = true).performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule
+        .onNodeWithTag(DATE_OF_BIRTH_TEXT_FIELD_TAG, useUnmergedTree = true)
+        .assert(!hasText(testUser.dateOfBirth))
   }
 
   @Composable
@@ -716,6 +819,40 @@ class EndToEndTest {
         }
         composable(Screen.OVERVIEW_RECIPE_ACCOUNT) {
           RecipeOverview(navigationActions, userViewModel, userViewModel)
+        }
+        composable(Screen.EDIT_RECIPE) {
+          CreateRecipeScreen(
+              navigationActions = navigationActions,
+              createRecipeViewModel = createRecipeViewModel,
+              isEditing = true)
+        }
+        composable(Screen.EDIT_CATEGORY_SCREEN) {
+          OptionalInformationScreen(navigationActions, createRecipeViewModel, isEditing = true)
+        }
+        composable(Screen.EDIT_RECIPE_ADD_INSTRUCTION) {
+          AddInstructionStepScreen(
+              navigationActions = navigationActions,
+              createRecipeViewModel = createRecipeViewModel,
+              true)
+        }
+        composable(Screen.EDIT_RECIPE_LIST_INSTRUCTIONS) {
+          RecipeListInstructionsScreen(
+              navigationActions = navigationActions,
+              createRecipeViewModel = createRecipeViewModel,
+              isEditing = true)
+        }
+        composable(Screen.EDIT_RECIPE_TIME_PICKER) {
+          TimePickerScreen(navigationActions, createRecipeViewModel, isEditing = true)
+        }
+        composable(Screen.PUBLISH_EDITED_RECIPE) {
+          PublishRecipeScreen(
+              navigationActions = navigationActions,
+              createRecipeViewModel = createRecipeViewModel,
+              userViewModel = userViewModel,
+              isEditing = true)
+        }
+        composable(Screen.EDIT_ACCOUNT) {
+          EditAccountScreen(navigationActions, userViewModel, mockFirebaseAuth, mockImageRepo)
         }
       }
     }
