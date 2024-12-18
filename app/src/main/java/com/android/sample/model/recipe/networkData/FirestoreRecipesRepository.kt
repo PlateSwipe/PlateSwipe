@@ -180,11 +180,12 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipeNetw
       recipes: MutableList<Recipe>,
       iterationNumber: Int
   ) {
+      val ids = listOf("Steak and Kidney Pie","Summer Pudding","Japanese Katsudon", "Pumpkin Pie", "French Onion Soup", "Lamb and Potato pie", "Salmon Avocado Salad")
 
     Log.d(REPOSITORY_TAG_MSG, "randomFetch:")
     // Query for UIDs greater than or equal to the random UID
     db.collection(FIRESTORE_COLLECTION_NAME)
-        .whereGreaterThanOrEqualTo(FIRESTORE_RECIPE_AREA, " ")
+        .whereIn(FIRESTORE_RECIPE_NAME, ids)
         .limit(nbOfElements.toLong() - recipes.size)
         .get()
         .addOnCompleteListener { task ->
@@ -197,13 +198,13 @@ class FirestoreRecipesRepository(private val db: FirebaseFirestore) : RecipeNetw
             }
             when {
               recipes.size == nbOfElements -> {
-                recipes.shuffle()
+                recipes.sortBy { ids.indexOf(it.name) }
                 onSuccess(recipes)
               }
               iterationNumber == MAX_FIRESTORE_FETCH -> {
                 if (recipes.isNotEmpty()) {
                   Log.e(REPOSITORY_TAG_MSG, NOT_ENOUGH_RECIPE_MSG)
-                  recipes.shuffle()
+                    recipes.sortBy { ids.indexOf(it.name) }
                   onSuccess(recipes)
                 } else {
                   Log.e(REPOSITORY_TAG_MSG, NO_RECIPE_FOUND_MSG)
