@@ -44,6 +44,7 @@ import com.android.sample.model.recipe.Recipe
 import com.android.sample.model.recipe.RecipesRepository
 import com.android.sample.model.recipe.RecipesViewModel
 import com.android.sample.model.recipe.networkData.FirestoreRecipesRepository
+import com.android.sample.model.user.User
 import com.android.sample.model.user.UserRepository
 import com.android.sample.model.user.UserViewModel
 import com.android.sample.resources.C.Tag.PRODUCT_FRONT_IMAGE_NORMAL_URL
@@ -202,11 +203,11 @@ class EndToEndTest {
       null
     }
 
-    /*`when`(mockUserRepository.getUserById(any(), any(), any())).thenAnswer { invocation ->
+    `when`(mockUserRepository.getUserById(any(), any(), any())).thenAnswer { invocation ->
       val onSuccess = invocation.getArgument<(User) -> Unit>(1)
       onSuccess(testUser)
       null
-    }*/
+    }
     doNothing().`when`(mockUserRepository).updateUser(any(), any(), any())
 
     `when`(mockFirebaseAuth.currentUser).thenReturn(mockFirebaseUser)
@@ -580,7 +581,12 @@ class EndToEndTest {
 
     // return to ingredient search list
     composeTestRule.onNodeWithTag(BACK_ARROW_ICON, useUnmergedTree = true).performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithTag("searchBar").performTextInput("ingredient")
 
+    composeTestRule.waitUntil(
+        5000, condition = { userViewModel.searchingIngredientList.value.isNotEmpty() })
+    composeTestRule.waitForIdle()
     // select the ingredient
     composeTestRule.onNodeWithTag("ingredientItem${ingredient1.name}").performClick()
     composeTestRule.waitForIdle()
