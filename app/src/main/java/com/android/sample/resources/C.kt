@@ -309,7 +309,6 @@ object C {
 
     // RecipeNameScreen
     val RECIPE_NAME_BASE_PADDING = 16.dp
-    val RECIPE_NAME_BUTTON_HEIGHT = 46.dp
     val RECIPE_NAME_BUTTON_WIDTH = 261.dp
     val RECIPE_NAME_FIELD_HEIGHT = 60.dp
     val RECIPE_NAME_FONT_SPACING = 0.14.sp
@@ -344,7 +343,6 @@ object C {
     // PublishRecipeScreen
     val CHEF_IMAGE_DESCRIPTION = "Chef illustration inside an egg"
     val CHEF_IN_EGG_ORIGINAL_RATIO = 412 / 500f
-    const val CORNER_SHAPE_PUBLISH_BUTTON = 8
 
     // CreateRecipeViewModel
     const val RECIPE_PUBLISHED_SUCCESS_MESSAGE = "Recipe published successfully!"
@@ -400,11 +398,15 @@ object C {
     const val ADD_IMAGE_STEP = 4
 
     // TimePickerScreen
-    const val MINUTES_PER_HOUR = 60
-    const val HOUR_RANGE_START = 0
-    const val HOUR_RANGE_END = 23
-    const val MINUTE_RANGE_START = 0
-    const val MINUTE_RANGE_END = 59
+    object TimePickerScreen {
+      const val MINUTES_PER_HOUR = 60
+      const val HOUR_RANGE_START = 0
+      const val HOUR_RANGE_END = 23
+      const val MINUTE_RANGE_START = 0
+      const val MINUTE_RANGE_END = 59
+      const val TIME_PICKER_FONT_ALPHA = 0.7f
+      const val TIME_PICKER_FONT_SIZE = 25
+    }
   }
 
   object Values {
@@ -665,7 +667,6 @@ object C {
       const val INGREDIENT_PREVIEW_ELEVATION = 4
       const val INGREDIENT_PREVIEW_CORNER = 8
       const val INPUT_MAX_LINE = 1
-      const val BUTTON_ROUND = 4
       const val BUTTON_Z = 1f
       const val POP_UP_DELAY = 3000L
       const val POP_UP_WIDTH = 2
