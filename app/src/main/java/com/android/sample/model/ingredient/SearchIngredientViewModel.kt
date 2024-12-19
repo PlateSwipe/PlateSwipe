@@ -96,7 +96,7 @@ interface SearchIngredientViewModel {
       ingredientList: MutableStateFlow<List<Pair<Ingredient, String?>>>
   ) {
     ingredientList.update { currentList ->
-      val existingItemIndex = currentList.indexOfFirst { it.first.barCode == ingredient.barCode }
+      val existingItemIndex = currentList.indexOfFirst { it.first.name == ingredient.name }
 
       if (existingItemIndex != -1) {
         // Ingredient already exists; update its associated String value
