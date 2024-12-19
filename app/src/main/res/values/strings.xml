@@ -186,4 +186,7 @@
     <string name="you_are_offline">You are Offline!</string>
     <string name="this_feature_requires_an_internet_connection_please_check_your_connection_and_try_again">This feature requires an internet connection. Please check your connection and try again.</string>
     <string name="offline">Offline</string>
+    <string name="camera_permission_is_required_to_use_this_feature">Camera permission is required to use this feature.</string>
+    <string name="request_camera_permission">Request Camera Permission</string>
+    <string name="camera_permission_denied_please_allow">Camera permission denied. Please allow it.</string>
 </resources>

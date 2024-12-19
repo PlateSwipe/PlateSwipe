@@ -74,7 +74,8 @@ fun CameraScanCodeBarScreen(
           CameraSection(searchIngredientViewModel)
           IngredientOverlay(searchIngredientViewModel, navigationActions, navigateToNextPage)
         }
-      })
+      },
+      navigationActions)
 }
 
 /** Display the camera view and the barcode frame */
