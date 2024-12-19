@@ -3,7 +3,7 @@ package com.android.sample.ui.utils
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.android.sample.R
-import com.android.sample.resources.C.Tag.MINUTES_PER_HOUR
+import com.android.sample.resources.C.Tag.TimePickerScreen.MINUTES_PER_HOUR
 
 /**
  * Composable function to reformat the time.
