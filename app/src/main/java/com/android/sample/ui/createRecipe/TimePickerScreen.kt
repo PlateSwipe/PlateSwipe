@@ -60,18 +60,18 @@ fun TimePickerScreen(
     createRecipeViewModel: CreateRecipeViewModel,
     isEditing: Boolean = false
 ) {
-  PlateSwipeScaffold(
-      navigationActions = navigationActions,
-      selectedItem = if (isEditing) Route.ACCOUNT else Route.CREATE_RECIPE,
-      showBackArrow = true,
-      content = { paddingValues ->
-        TimePickerContent(
-            currentStep = THIRD_STEP_OF_THE_CREATION,
-            navigationActions = navigationActions,
-            createRecipeViewModel = createRecipeViewModel,
-            modifier = Modifier.fillMaxSize().padding(paddingValues),
-            isEditing = isEditing)
-      })
+    PlateSwipeScaffold(
+        navigationActions = navigationActions,
+        selectedItem = if (isEditing) Route.ACCOUNT else Route.CREATE_RECIPE,
+        showBackArrow = true,
+        content = { paddingValues ->
+            TimePickerContent(
+                currentStep = THIRD_STEP_OF_THE_CREATION,
+                navigationActions = navigationActions,
+                createRecipeViewModel = createRecipeViewModel,
+                modifier = Modifier.fillMaxSize().padding(paddingValues),
+                isEditing = isEditing)
+        })
 }
 
 /**
@@ -90,70 +90,70 @@ fun TimePickerContent(
     createRecipeViewModel: CreateRecipeViewModel,
     isEditing: Boolean
 ) {
-  val totalMinutes = remember { createRecipeViewModel.getRecipeTime()?.toIntOrNull() ?: 0 }
-  val initialHours = totalMinutes / MINUTES_PER_HOUR
-  val initialMinutes = totalMinutes % MINUTES_PER_HOUR
+    val totalMinutes = remember { createRecipeViewModel.getRecipeTime()?.toIntOrNull() ?: 0 }
+    val initialHours = totalMinutes / MINUTES_PER_HOUR
+    val initialMinutes = totalMinutes % MINUTES_PER_HOUR
 
-  val hours = remember { mutableIntStateOf(initialHours) }
-  val minutes = remember { mutableIntStateOf(initialMinutes) }
+    val hours = remember { mutableIntStateOf(initialHours) }
+    val minutes = remember { mutableIntStateOf(initialMinutes) }
 
-  Box(modifier = modifier.padding(PADDING_8.dp), contentAlignment = Alignment.TopCenter) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top) {
-          // Progress Bar
-          RecipeProgressBar(currentStep = currentStep)
+    Box(modifier = modifier.padding(PADDING_8.dp), contentAlignment = Alignment.TopCenter) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top) {
+            // Progress Bar
+            RecipeProgressBar(currentStep = currentStep)
 
-          Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.weight(1f))
 
-          // Title
-          Text(
-              text = stringResource(R.string.select_total_time),
-              style = Typography.displayLarge,
-              color = MaterialTheme.colorScheme.onPrimary,
-              modifier =
-                  Modifier.fillMaxWidth()
-                      .padding(horizontal = PADDING_16.dp)
-                      .testTag(TIME_PICKER_TITLE),
-              textAlign = TextAlign.Center)
+            // Title
+            Text(
+                text = stringResource(R.string.select_total_time),
+                style = Typography.displayLarge,
+                color = MaterialTheme.colorScheme.onPrimary,
+                modifier =
+                Modifier.fillMaxWidth()
+                    .padding(horizontal = PADDING_16.dp)
+                    .testTag(TIME_PICKER_TITLE),
+                textAlign = TextAlign.Center)
 
-          Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.weight(1f))
 
-          // Description
-          Text(
-              text = stringResource(R.string.select_time_description),
-              style = MaterialTheme.typography.bodyMedium,
-              color = MaterialTheme.colorScheme.onPrimary,
-              modifier =
-                  Modifier.padding(horizontal = PADDING_32.dp).testTag(TIME_PICKER_DESCRIPTION),
-              textAlign = TextAlign.Center)
+            // Description
+            Text(
+                text = stringResource(R.string.select_time_description),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onPrimary,
+                modifier =
+                Modifier.padding(horizontal = PADDING_32.dp).testTag(TIME_PICKER_DESCRIPTION),
+                textAlign = TextAlign.Center)
 
-          Spacer(modifier = Modifier.weight(3f))
+            Spacer(modifier = Modifier.weight(3f))
 
-          // WheelTimePicker
-          WheelTimePicker(
-              selectedHour = hours.intValue,
-              selectedMinute = minutes.intValue,
-              onTimeSelected = { selectedHour, selectedMinute ->
-                hours.intValue = selectedHour
-                minutes.intValue = selectedMinute
-              })
+            // WheelTimePicker
+            WheelTimePicker(
+                selectedHour = hours.intValue,
+                selectedMinute = minutes.intValue,
+                onTimeSelected = { selectedHour, selectedMinute ->
+                    hours.intValue = selectedHour
+                    minutes.intValue = selectedMinute
+                })
 
-          Spacer(modifier = Modifier.weight(6f))
+            Spacer(modifier = Modifier.weight(6f))
         }
 
-    // Next Step Button
-    PlateSwipeButton(
-        text = stringResource(R.string.next_step),
-        modifier = Modifier.align(Alignment.BottomCenter).testTag(NEXT_BUTTON),
-        onClick = {
-          val totalTimeInMinutes = (hours.intValue * MINUTES_PER_HOUR) + minutes.intValue
-          createRecipeViewModel.updateRecipeTime(totalTimeInMinutes.toString())
-          navigationActions.navigateTo(
-              if (isEditing) Screen.PUBLISH_EDITED_RECIPE else Screen.CREATE_RECIPE_ADD_IMAGE)
-        })
-  }
+        // Next Step Button
+        PlateSwipeButton(
+            text = stringResource(R.string.next_step),
+            modifier = Modifier.align(Alignment.BottomCenter).testTag(NEXT_BUTTON),
+            onClick = {
+                val totalTimeInMinutes = (hours.intValue * MINUTES_PER_HOUR) + minutes.intValue
+                createRecipeViewModel.updateRecipeTime(totalTimeInMinutes.toString())
+                navigationActions.navigateTo(
+                    if (isEditing) Screen.PUBLISH_EDITED_RECIPE else Screen.CREATE_RECIPE_ADD_IMAGE)
+            })
+    }
 }
 
 /**
@@ -181,66 +181,66 @@ fun TimePickerContent(
  */
 @Composable
 fun WheelTimePicker(selectedHour: Int, selectedMinute: Int, onTimeSelected: (Int, Int) -> Unit) {
-  val currentHour = remember { mutableIntStateOf(selectedHour) }
-  val currentMinute = remember { mutableIntStateOf(selectedMinute) }
-  Column(
-      horizontalAlignment = Alignment.CenterHorizontally,
-      verticalArrangement = Arrangement.spacedBy(PADDING_8.dp),
-      modifier = Modifier.padding(PADDING_32.dp)) {
+    val currentHour = remember { mutableIntStateOf(selectedHour) }
+    val currentMinute = remember { mutableIntStateOf(selectedMinute) }
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(PADDING_8.dp),
+        modifier = Modifier.padding(PADDING_32.dp)) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically) {
-              // Label for Hour
-              Text(
-                  text = stringResource(R.string.hours),
-                  style = MaterialTheme.typography.titleMedium,
-                  color = MaterialTheme.colorScheme.onPrimary,
-                  fontSize = TEXT_FONT_SIZE.sp,
-                  modifier = Modifier.testTag(HOURS_LABEL))
+            // Label for Hour
+            Text(
+                text = stringResource(R.string.hours),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onPrimary,
+                fontSize = TEXT_FONT_SIZE.sp,
+                modifier = Modifier.testTag(HOURS_LABEL))
 
-              // Label for Minute
-              Text(
-                  text = stringResource(R.string.minutes),
-                  style = MaterialTheme.typography.titleMedium,
-                  color = MaterialTheme.colorScheme.onPrimary,
-                  fontSize = TEXT_FONT_SIZE.sp,
-                  modifier = Modifier.testTag(MINUTES_LABEL))
-            }
+            // Label for Minute
+            Text(
+                text = stringResource(R.string.minutes),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onPrimary,
+                fontSize = TEXT_FONT_SIZE.sp,
+                modifier = Modifier.testTag(MINUTES_LABEL))
+        }
 
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.Top) {
-              // Hour Picker
-              NumberPickerComposable(
-                  value = currentHour.intValue,
-                  range = HOUR_RANGE_START..HOUR_RANGE_END,
-                  onValueChange = { hour ->
+            // Hour Picker
+            NumberPickerComposable(
+                value = currentHour.intValue,
+                range = HOUR_RANGE_START..HOUR_RANGE_END,
+                onValueChange = { hour ->
                     currentHour.intValue = hour
                     onTimeSelected(hour, currentMinute.intValue)
-                  },
-                  modifier = Modifier.testTag(HOUR_PICKER))
+                },
+                modifier = Modifier.testTag(HOUR_PICKER))
 
-              // Colon Separator
-              Text(
-                  text = ":",
-                  style =
-                      MaterialTheme.typography.displayLarge.copy(
-                          fontSize = TIME_PICKER_FONT_SIZE.sp),
-                  color = MaterialTheme.colorScheme.onPrimary.copy(alpha = TIME_PICKER_FONT_ALPHA),
-                  modifier = Modifier.align(Alignment.CenterVertically))
-              // Minute Picker
-              NumberPickerComposable(
-                  value = currentMinute.intValue,
-                  range = MINUTE_RANGE_START..MINUTE_RANGE_END,
-                  onValueChange = { minute ->
+            // Colon Separator
+            Text(
+                text = ":",
+                style =
+                MaterialTheme.typography.displayLarge.copy(
+                    fontSize = TIME_PICKER_FONT_SIZE.sp),
+                color = MaterialTheme.colorScheme.onPrimary.copy(alpha = TIME_PICKER_FONT_ALPHA),
+                modifier = Modifier.align(Alignment.CenterVertically))
+            // Minute Picker
+            NumberPickerComposable(
+                value = currentMinute.intValue,
+                range = MINUTE_RANGE_START..MINUTE_RANGE_END,
+                onValueChange = { minute ->
                     currentMinute.intValue = minute
                     onTimeSelected(currentHour.intValue, minute)
-                  },
-                  modifier = Modifier.testTag(MINUTE_PICKER))
-            }
-      }
+                },
+                modifier = Modifier.testTag(MINUTE_PICKER))
+        }
+    }
 }
 
 /**
@@ -275,37 +275,37 @@ fun NumberPickerComposable(
     onValueChange: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-  AndroidView(
-      modifier = modifier.semantics { contentDescription = value.toString() },
-      factory = { context ->
-        NumberPicker(context).apply {
-          minValue = range.first
-          maxValue = range.last
-          this.value = value
-          setOnValueChangedListener { _, _, newValue -> onValueChange(newValue) }
-          // Change the color of the displayed text
-          val count = this.childCount
-          for (i in 0 until count) {
-            val child = this.getChildAt(i)
-            if (child is TextView) {
-              child.setTextColor(R.color.black)
-              child.textSize = TIME_PICKER_FONT_SIZE.toFloat()
+    AndroidView(
+        modifier = modifier.semantics { contentDescription = value.toString() },
+        factory = { context ->
+            NumberPicker(context).apply {
+                minValue = range.first
+                maxValue = range.last
+                this.value = value
+                setOnValueChangedListener { _, _, newValue -> onValueChange(newValue) }
+                // Change the color of the displayed text
+                val count = this.childCount
+                for (i in 0 until count) {
+                    val child = this.getChildAt(i)
+                    if (child is TextView) {
+                        child.setTextColor(R.color.black)
+                        child.textSize = TIME_PICKER_FONT_SIZE.toFloat()
+                    }
+                }
             }
-          }
-        }
-      },
-      update = { numberPicker ->
-        // Update the NumberPicker's value dynamically if needed
-        if (numberPicker.value != value) {
-          numberPicker.value = value
-        }
-        // Ensure the text color stays updated dynamically
-        for (i in 0 until numberPicker.childCount) {
-          val child = numberPicker.getChildAt(i)
-          if (child is TextView) {
-            child.setTextColor(R.color.black)
-            child.textSize = TIME_PICKER_FONT_SIZE.toFloat()
-          }
-        }
-      })
+        },
+        update = { numberPicker ->
+            // Update the NumberPicker's value dynamically if needed
+            if (numberPicker.value != value) {
+                numberPicker.value = value
+            }
+            // Ensure the text color stays updated dynamically
+            for (i in 0 until numberPicker.childCount) {
+                val child = numberPicker.getChildAt(i)
+                if (child is TextView) {
+                    child.setTextColor(R.color.black)
+                    child.textSize = TIME_PICKER_FONT_SIZE.toFloat()
+                }
+            }
+        })
 }
