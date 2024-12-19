@@ -1,8 +1,6 @@
 package com.android.sample.ui.createRecipe
 
-import android.annotation.SuppressLint
 import android.widget.NumberPicker
-import android.widget.TextView
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,22 +22,18 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.android.sample.R
 import com.android.sample.model.recipe.CreateRecipeViewModel
-import com.android.sample.resources.C.Dimension.EditFridgeItemScreen.TEXT_FONT_SIZE
 import com.android.sample.resources.C.Dimension.PADDING_16
 import com.android.sample.resources.C.Dimension.PADDING_32
 import com.android.sample.resources.C.Dimension.PADDING_8
+import com.android.sample.resources.C.Tag.HOUR_RANGE_END
+import com.android.sample.resources.C.Tag.HOUR_RANGE_START
+import com.android.sample.resources.C.Tag.MINUTES_PER_HOUR
+import com.android.sample.resources.C.Tag.MINUTE_RANGE_END
+import com.android.sample.resources.C.Tag.MINUTE_RANGE_START
 import com.android.sample.resources.C.Tag.THIRD_STEP_OF_THE_CREATION
-import com.android.sample.resources.C.Tag.TimePickerScreen.HOUR_RANGE_END
-import com.android.sample.resources.C.Tag.TimePickerScreen.HOUR_RANGE_START
-import com.android.sample.resources.C.Tag.TimePickerScreen.MINUTES_PER_HOUR
-import com.android.sample.resources.C.Tag.TimePickerScreen.MINUTE_RANGE_END
-import com.android.sample.resources.C.Tag.TimePickerScreen.MINUTE_RANGE_START
-import com.android.sample.resources.C.Tag.TimePickerScreen.TIME_PICKER_FONT_ALPHA
-import com.android.sample.resources.C.Tag.TimePickerScreen.TIME_PICKER_FONT_SIZE
 import com.android.sample.resources.C.TestTag.TimePicker.HOURS_LABEL
 import com.android.sample.resources.C.TestTag.TimePicker.HOUR_PICKER
 import com.android.sample.resources.C.TestTag.TimePicker.MINUTES_LABEL
@@ -183,63 +177,56 @@ fun TimePickerContent(
 fun WheelTimePicker(selectedHour: Int, selectedMinute: Int, onTimeSelected: (Int, Int) -> Unit) {
   val currentHour = remember { mutableIntStateOf(selectedHour) }
   val currentMinute = remember { mutableIntStateOf(selectedMinute) }
-  Column(
-      horizontalAlignment = Alignment.CenterHorizontally,
-      verticalArrangement = Arrangement.spacedBy(PADDING_8.dp),
-      modifier = Modifier.padding(PADDING_32.dp)) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceAround,
-            verticalAlignment = Alignment.CenterVertically) {
-              // Label for Hour
-              Text(
-                  text = stringResource(R.string.hours),
-                  style = MaterialTheme.typography.titleMedium,
-                  color = MaterialTheme.colorScheme.onPrimary,
-                  fontSize = TEXT_FONT_SIZE.sp,
-                  modifier = Modifier.testTag(HOURS_LABEL))
+  Row(
+      modifier = Modifier.fillMaxWidth().padding(horizontal = PADDING_32.dp),
+      horizontalArrangement = Arrangement.SpaceAround,
+      verticalAlignment = Alignment.CenterVertically) {
+        // Hour Column
+        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.weight(1f)) {
+          // Label for Hour
+          Text(
+              text = stringResource(R.string.hours),
+              style = MaterialTheme.typography.bodySmall,
+              color = MaterialTheme.colorScheme.onPrimary,
+              modifier = Modifier.testTag(HOURS_LABEL))
 
-              // Label for Minute
-              Text(
-                  text = stringResource(R.string.minutes),
-                  style = MaterialTheme.typography.titleMedium,
-                  color = MaterialTheme.colorScheme.onPrimary,
-                  fontSize = TEXT_FONT_SIZE.sp,
-                  modifier = Modifier.testTag(MINUTES_LABEL))
-            }
+          // Hour Picker
+          NumberPickerComposable(
+              value = currentHour.intValue,
+              range = HOUR_RANGE_START..HOUR_RANGE_END,
+              onValueChange = { hour ->
+                currentHour.intValue = hour
+                onTimeSelected(hour, currentMinute.intValue)
+              },
+              modifier = Modifier.testTag(HOUR_PICKER))
+        }
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceAround,
-            verticalAlignment = Alignment.Top) {
-              // Hour Picker
-              NumberPickerComposable(
-                  value = currentHour.intValue,
-                  range = HOUR_RANGE_START..HOUR_RANGE_END,
-                  onValueChange = { hour ->
-                    currentHour.intValue = hour
-                    onTimeSelected(hour, currentMinute.intValue)
-                  },
-                  modifier = Modifier.testTag(HOUR_PICKER))
+        // Colon Separator
+        Text(
+            text = ":",
+            style = MaterialTheme.typography.displayLarge,
+            color = MaterialTheme.colorScheme.onPrimary,
+            modifier = Modifier.align(Alignment.CenterVertically))
 
-              // Colon Separator
-              Text(
-                  text = ":",
-                  style =
-                      MaterialTheme.typography.displayLarge.copy(
-                          fontSize = TIME_PICKER_FONT_SIZE.sp),
-                  color = MaterialTheme.colorScheme.onPrimary.copy(alpha = TIME_PICKER_FONT_ALPHA),
-                  modifier = Modifier.align(Alignment.CenterVertically))
-              // Minute Picker
-              NumberPickerComposable(
-                  value = currentMinute.intValue,
-                  range = MINUTE_RANGE_START..MINUTE_RANGE_END,
-                  onValueChange = { minute ->
-                    currentMinute.intValue = minute
-                    onTimeSelected(currentHour.intValue, minute)
-                  },
-                  modifier = Modifier.testTag(MINUTE_PICKER))
-            }
+        // Minute Column
+        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.weight(1f)) {
+          // Label for Minute
+          Text(
+              text = stringResource(R.string.minutes),
+              style = MaterialTheme.typography.bodySmall,
+              color = MaterialTheme.colorScheme.onPrimary,
+              modifier = Modifier.testTag(MINUTES_LABEL))
+
+          // Minute Picker
+          NumberPickerComposable(
+              value = currentMinute.intValue,
+              range = MINUTE_RANGE_START..MINUTE_RANGE_END,
+              onValueChange = { minute ->
+                currentMinute.intValue = minute
+                onTimeSelected(currentHour.intValue, minute)
+              },
+              modifier = Modifier.testTag(MINUTE_PICKER))
+        }
       }
 }
 
@@ -267,7 +254,6 @@ fun WheelTimePicker(selectedHour: Int, selectedMinute: Int, onTimeSelected: (Int
  * )
  * ```
  */
-@SuppressLint("ResourceAsColor")
 @Composable
 fun NumberPickerComposable(
     value: Int,
@@ -283,29 +269,12 @@ fun NumberPickerComposable(
           maxValue = range.last
           this.value = value
           setOnValueChangedListener { _, _, newValue -> onValueChange(newValue) }
-          // Change the color of the displayed text
-          val count = this.childCount
-          for (i in 0 until count) {
-            val child = this.getChildAt(i)
-            if (child is TextView) {
-              child.setTextColor(R.color.black) // Replace RED with your desired color
-              child.textSize = TIME_PICKER_FONT_SIZE.toFloat()
-            }
-          }
         }
       },
       update = { numberPicker ->
         // Update the NumberPicker's value dynamically if needed
         if (numberPicker.value != value) {
           numberPicker.value = value
-        }
-        // Ensure the text color stays updated dynamically
-        for (i in 0 until numberPicker.childCount) {
-          val child = numberPicker.getChildAt(i)
-          if (child is TextView) {
-            child.setTextColor(R.color.black) // Replace RED with your desired color
-            child.textSize = TIME_PICKER_FONT_SIZE.toFloat()
-          }
         }
       })
 }
