@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,8 +29,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.android.sample.R
@@ -117,6 +120,8 @@ fun AddInstructionStepContent(
   // see if an instruction is being deleted
   var isDeleting by remember { mutableStateOf(false) }
 
+  val focusManager = LocalFocusManager.current
+
   Column(
       modifier =
           modifier.fillMaxSize().padding(paddingValues).padding(horizontal = HORIZONTAL_PADDING.dp),
@@ -197,7 +202,9 @@ fun AddInstructionStepContent(
                     isError = verifyStepDescription(showError, stepDescription),
                     textStyle = Typography.bodySmall,
                     minLines = MINLINES_VISIBLE_FOR_INSTRUCTION,
-                    maxLines = MAXLINES_VISIBLE_FOR_INSTRUCTION)
+                    maxLines = MAXLINES_VISIBLE_FOR_INSTRUCTION,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                    keyboardActions = KeyboardActions(onNext = { focusManager.clearFocus() }))
 
                 // Error message for empty instruction
                 if (verifyStepDescription(showError, stepDescription)) {
