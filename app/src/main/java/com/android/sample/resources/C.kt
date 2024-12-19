@@ -320,7 +320,7 @@ object C {
     val MAXLINES_RECIPE_NAME_FIELD = 2
 
     // RecipeStepScreen
-    val BASE_PADDING = 16.dp
+    val BASE_PADDING = 8.dp
 
     val BUTTON_WIDTH = 200.dp
     val BUTTON_HEIGHT = 50.dp

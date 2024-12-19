@@ -6,7 +6,6 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,7 +24,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.PhotoCamera
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -52,8 +50,7 @@ import com.android.sample.feature.camera.openGallery
 import com.android.sample.feature.camera.uriToBitmap
 import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.resources.C
-import com.android.sample.resources.C.Tag.RECIPE_NAME_BUTTON_HEIGHT
-import com.android.sample.resources.C.Tag.RECIPE_NAME_BUTTON_WIDTH
+import com.android.sample.resources.C.Dimension.PADDING_8
 import com.android.sample.resources.C.TestTag.RecipeAddImageScreen.BOX_IMAGE
 import com.android.sample.resources.C.TestTag.RecipeAddImageScreen.BOX_NEXT_BUTTON
 import com.android.sample.resources.C.TestTag.RecipeAddImageScreen.CAMERA_BUTTON
@@ -70,7 +67,7 @@ import com.android.sample.resources.C.ZERO
 import com.android.sample.ui.navigation.NavigationActions
 import com.android.sample.ui.navigation.Screen
 import com.android.sample.ui.theme.Typography
-import com.android.sample.ui.theme.lightCream
+import com.android.sample.ui.utils.PlateSwipeButton
 import com.android.sample.ui.utils.PlateSwipeScaffold
 
 /**
@@ -107,22 +104,24 @@ fun RecipeAddImageContent(
     createRecipeViewModel: CreateRecipeViewModel,
     paddingValues: PaddingValues
 ) {
-  Column(
-      modifier = Modifier.fillMaxSize().padding(paddingValues),
-      verticalArrangement = Arrangement.Center,
-      horizontalAlignment = Alignment.CenterHorizontally) {
-        // Display the progress bar for the recipe creation process
-        RecipeProgressBar(currentStep = C.Tag.ADD_IMAGE_STEP)
+  Box(modifier = Modifier.fillMaxSize().padding(PADDING_8.dp)) {
+    Column(
+        modifier = Modifier.fillMaxSize().padding(paddingValues),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally) {
+          // Display the progress bar for the recipe creation process
+          RecipeProgressBar(currentStep = C.Tag.ADD_IMAGE_STEP)
 
-        Spacer(
-            modifier =
-                Modifier.height(
-                    (C.Dimension.RecipeAddImageScreen.SPACER *
-                            LocalConfiguration.current.screenHeightDp)
-                        .dp))
-        // Display the content for adding an image
-        AddImageContent(navigationActions, createRecipeViewModel)
-      }
+          Spacer(
+              modifier =
+                  Modifier.height(
+                      (C.Dimension.RecipeAddImageScreen.SPACER *
+                              LocalConfiguration.current.screenHeightDp)
+                          .dp))
+          // Display the content for adding an image
+          AddImageContent(navigationActions, createRecipeViewModel)
+        }
+  }
 }
 
 /**
@@ -202,7 +201,7 @@ fun AddImageContent(
                                 (C.Dimension.RecipeAddImageScreen.IMAGE *
                                         LocalConfiguration.current.screenHeightDp)
                                     .dp)
-                            .clip(RoundedCornerShape(C.Dimension.PADDING_8.dp))
+                            .clip(RoundedCornerShape(PADDING_8.dp))
                             .testTag(BOX_IMAGE),
                     contentAlignment = Alignment.Center,
                 ) {
@@ -297,26 +296,15 @@ fun AddImageContent(
                       ChefImage()
                     }
                   }
-                  Button(
+                  PlateSwipeButton(
+                      text = stringResource(R.string.next),
+                      modifier = Modifier.testTag("NextStepButton"),
                       onClick = {
                         handleNavigationAndToast(
                             isPictureTaken = isPictureTaken,
                             context = context,
                             navigationActions = navigationActions)
-                      },
-                      modifier =
-                          Modifier.width(RECIPE_NAME_BUTTON_WIDTH)
-                              .height(RECIPE_NAME_BUTTON_HEIGHT)
-                              .background(
-                                  color = lightCream,
-                                  shape = RoundedCornerShape(size = C.Dimension.PADDING_4.dp))
-                              .testTag("NextStepButton"),
-                      shape = RoundedCornerShape(C.Dimension.PADDING_4.dp)) {
-                        Text(
-                            text = stringResource(R.string.next),
-                            style = Typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onPrimary)
-                      }
+                      })
                 }
               }
         }
