@@ -288,7 +288,7 @@ fun NumberPickerComposable(
           for (i in 0 until count) {
             val child = this.getChildAt(i)
             if (child is TextView) {
-              child.setTextColor(R.color.black) // Replace RED with your desired color
+              child.setTextColor(R.color.black)
               child.textSize = TIME_PICKER_FONT_SIZE.toFloat()
             }
           }
@@ -303,7 +303,7 @@ fun NumberPickerComposable(
         for (i in 0 until numberPicker.childCount) {
           val child = numberPicker.getChildAt(i)
           if (child is TextView) {
-            child.setTextColor(R.color.black) // Replace RED with your desired color
+            child.setTextColor(R.color.black)
             child.textSize = TIME_PICKER_FONT_SIZE.toFloat()
           }
         }
