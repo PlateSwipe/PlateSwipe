@@ -67,7 +67,8 @@ fun CameraTakePhotoScreen(
                 })
           }
         }
-      })
+      },
+      navigationActions)
 }
 
 /**
