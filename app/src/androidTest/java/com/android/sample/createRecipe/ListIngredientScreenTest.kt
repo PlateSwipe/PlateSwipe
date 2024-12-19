@@ -73,7 +73,7 @@ class ListIngredientScreenTest {
     composeTestRule.setContent {
       IngredientListScreen(
           navigationActions = mockNavigationActions,
-          ingredientViewModel = ingredientViewModel,
+          searchIngredientViewModel = ingredientViewModel,
           createRecipeViewModel = createRecipeViewModel)
     }
   }

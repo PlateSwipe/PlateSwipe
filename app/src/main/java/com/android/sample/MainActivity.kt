@@ -221,7 +221,7 @@ fun PlateSwipeApp() {
       composable(Screen.CREATE_RECIPE_LIST_INGREDIENTS) {
         IngredientListScreen(
             navigationActions = navigationActions,
-            ingredientViewModel = ingredientViewModel,
+            searchIngredientViewModel = categoryIngredientSearchViewModel,
             createRecipeViewModel = createRecipeViewModel)
       }
       composable(Screen.CAMERA_SCAN_CODE_BAR) {

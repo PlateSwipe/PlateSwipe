@@ -86,6 +86,21 @@ interface SearchIngredientViewModel {
   }
 
   /**
+   * Update quantity
+   *
+   * @param ingredient: the ingredient to update
+   * @param quantity: the quantity to update
+   */
+  fun updateQuantity(ingredient: Ingredient, quantity: String)
+
+  /**
+   * Remove ingredient
+   *
+   * @param ingredient
+   */
+  fun removeIngredient(ingredient: Ingredient)
+
+  /**
    * Add ingredient to the list
    *
    * @param ingredient: new ingredient to add

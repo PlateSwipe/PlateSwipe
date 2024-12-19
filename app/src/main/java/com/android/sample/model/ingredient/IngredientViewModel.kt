@@ -100,7 +100,7 @@ class IngredientViewModel(
    * @param ingredient: the ingredient to update
    * @param quantity: the quantity to update
    */
-  fun updateQuantity(ingredient: Ingredient, quantity: String) {
+  override fun updateQuantity(ingredient: Ingredient, quantity: String) {
     _ingredientList.value =
         _ingredientList.value.map {
           if (it.first == ingredient) {
@@ -130,7 +130,7 @@ class IngredientViewModel(
    *
    * @param ingredient
    */
-  fun removeIngredient(ingredient: Ingredient) {
+  override fun removeIngredient(ingredient: Ingredient) {
     _ingredientList.value = _ingredientList.value.filter { it.first != ingredient }
   }
   /** Clear ingredient after use */

@@ -51,7 +51,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.android.sample.R
 import com.android.sample.model.ingredient.Ingredient
-import com.android.sample.model.ingredient.IngredientViewModel
+import com.android.sample.model.ingredient.SearchIngredientViewModel
 import com.android.sample.model.recipe.CreateRecipeViewModel
 import com.android.sample.resources.C.Dimension.IngredientListScreen.BUTTON_Z
 import com.android.sample.resources.C.Dimension.IngredientListScreen.INGREDIENT_LIST_SIZE
@@ -85,17 +85,17 @@ import kotlinx.coroutines.delay
  * Composable that displays the list of ingredients for a recipe.
  *
  * @param navigationActions the navigation actions to handle navigation.
- * @param ingredientViewModel the view model to handle ingredient operations.
+ * @param searchIngredientViewModel the view model to handle ingredient operations.
  * @param createRecipeViewModel the view model to handle recipe creation.
  */
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun IngredientListScreen(
     navigationActions: NavigationActions,
-    ingredientViewModel: IngredientViewModel,
+    searchIngredientViewModel: SearchIngredientViewModel,
     createRecipeViewModel: CreateRecipeViewModel
 ) {
-  val ingredientList by ingredientViewModel.ingredientList.collectAsState()
+  val ingredientList by searchIngredientViewModel.ingredientList.collectAsState()
   val displayErrorIngredientMessage = remember { mutableStateOf(false) }
   PlateSwipeScaffold(
       navigationActions = navigationActions,
@@ -133,7 +133,7 @@ fun IngredientListScreen(
                           tint = MaterialTheme.colorScheme.onPrimaryContainer,
                           modifier =
                               Modifier.testTag(ADD_INGREDIENT_ICON).clickable {
-                                ingredientViewModel.clearSearchingIngredientList()
+                                searchIngredientViewModel.clearSearchingIngredientList()
                                 navigationActions.navigateTo(
                                     Screen.CREATE_RECIPE_SEARCH_INGREDIENTS)
                               })
@@ -142,7 +142,9 @@ fun IngredientListScreen(
 
               // Column for ingredients with scroll and weight for flexible space distribution
               ColumnIngredient(
-                  ingredientList, ingredientViewModel, Modifier.weight(INGREDIENT_LIST_WEIGHT))
+                  ingredientList,
+                  searchIngredientViewModel,
+                  Modifier.weight(INGREDIENT_LIST_WEIGHT))
 
               // Box for the save button, positioned at the bottom center
               SaveButton(
@@ -216,7 +218,7 @@ private fun SaveButton(
 @Composable
 private fun ColumnIngredient(
     ingredientList: List<Pair<Ingredient, String?>>,
-    ingredientViewModel: IngredientViewModel,
+    searchIngredientViewModel: SearchIngredientViewModel,
     modifier: Modifier = Modifier
 ) {
   Column(
@@ -226,7 +228,7 @@ private fun ColumnIngredient(
               .verticalScroll(rememberScrollState())) {
         for (ingredient in ingredientList) {
           // Display the ingredient
-          IngredientPreview(ingredient, ingredientViewModel)
+          IngredientPreview(ingredient, searchIngredientViewModel)
         }
       }
 }
@@ -272,12 +274,12 @@ private fun ErrorPopUp(displayErrorIngredientMessage: MutableState<Boolean>, mes
  * Composable that displays an ingredient preview with a quantity field and a remove button.
  *
  * @param ingredient the ingredient to display.
- * @param ingredientViewModel the view model to handle ingredient operations.
+ * @param searchIngredientViewModel the view model to handle ingredient operations.
  */
 @Composable
 private fun IngredientPreview(
     ingredient: Pair<Ingredient, String?>,
-    ingredientViewModel: IngredientViewModel
+    searchIngredientViewModel: SearchIngredientViewModel
 ) {
   var quantity by remember { mutableStateOf(ingredient.second ?: ingredient.first.quantity ?: "") }
   val focusManager = LocalFocusManager.current
@@ -321,7 +323,7 @@ private fun IngredientPreview(
                         value = quantity,
                         onValueChange = { newQuantity ->
                           quantity = newQuantity
-                          ingredientViewModel.updateQuantity(ingredient.first, quantity)
+                          searchIngredientViewModel.updateQuantity(ingredient.first, quantity)
                         },
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                         keyboardActions = KeyboardActions(onNext = { focusManager.clearFocus() }),
@@ -351,7 +353,7 @@ private fun IngredientPreview(
 
         // Remove button
         IconButton(
-            onClick = { ingredientViewModel.removeIngredient(ingredient.first) },
+            onClick = { searchIngredientViewModel.removeIngredient(ingredient.first) },
             modifier =
                 Modifier.align(Alignment.TopEnd).padding(end = PADDING_8.dp, top = PADDING_8.dp)) {
               Icon(

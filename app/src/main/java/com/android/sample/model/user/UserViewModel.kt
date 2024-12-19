@@ -673,4 +673,30 @@ class UserViewModel(
   fun addLocalFridgeItem(fridgeItem: FridgeItem) {
     fridgeItemRepository.upsertFridgeItem(fridgeItem)
   }
+
+  /**
+   * Update quantity for a specific
+   *
+   * @param ingredient: the ingredient to update
+   * @param quantity: the quantity to update
+   */
+  override fun updateQuantity(ingredient: Ingredient, quantity: String) {
+    _ingredientList.value =
+        _ingredientList.value.map {
+          if (it.first == ingredient) {
+            Pair(it.first, quantity)
+          } else {
+            it
+          }
+        }
+  }
+
+  /**
+   * Remove ingredient
+   *
+   * @param ingredient
+   */
+  override fun removeIngredient(ingredient: Ingredient) {
+    _ingredientList.value = _ingredientList.value.filter { it.first != ingredient }
+  }
 }
