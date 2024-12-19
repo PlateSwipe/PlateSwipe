@@ -117,7 +117,7 @@ fun PlateSwipeApp() {
     ) {
       composable(Screen.FRIDGE) { FridgeScreen(navigationActions, userViewModel) }
       composable(Screen.FRIDGE_SEARCH_ITEM) {
-        val fridgeIngredientSearchPopUpInformation: PopUpInformation =
+        val fridgeIngredientSearchPopUpInformation =
             PopUpInformation(
                 title = stringResource(R.string.pop_up_title_fridge),
                 confirmationText = stringResource(R.string.pop_up_description_fridge),
@@ -200,13 +200,13 @@ fun PlateSwipeApp() {
       }
 
       composable(Screen.CREATE_RECIPE_SEARCH_INGREDIENTS) {
-        val createRecipePopUpInformation: PopUpInformation =
+        val createRecipePopUpInformation =
             PopUpInformation(
                 title = stringResource(R.string.pop_up_title),
                 confirmationText = stringResource(R.string.pop_up_description),
                 confirmationButtonText = stringResource(R.string.pop_up_confirmation),
                 onConfirmation = {
-                  ingredientViewModel.addIngredient(it)
+                  categoryIngredientSearchViewModel.addIngredient(it)
                   navigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
                 })
 
@@ -227,7 +227,7 @@ fun PlateSwipeApp() {
       composable(Screen.CAMERA_SCAN_CODE_BAR) {
         CameraScanCodeBarScreen(
             navigationActions = navigationActions,
-            searchIngredientViewModel = ingredientViewModel,
+            searchIngredientViewModel = categoryIngredientSearchViewModel,
             navigateToNextPage = {
               navigationActions.navigateTo(Screen.CREATE_RECIPE_LIST_INGREDIENTS)
             })
